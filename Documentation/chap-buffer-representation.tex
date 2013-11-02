@@ -1,0 +1,184 @@
+\chapter{Representation of the editor buffer}
+\label{chap-internals-buffer}
+
+A buffer can have any representation that respects the \emph{buffer
+  protocol}.
+
+\section{Buffer protocols}
+
+The buffer participates in two different buffer protocols:
+
+\begin{enumerate}
+\item The \emph{edit protocol}, used by client editing and
+  cursor-motion operations.
+\item The \emph{query protocol}, used by redisplay operations to
+  determine what items are contained in the buffer. 
+\end{enumerate}
+
+The buffer protocols exposes two levels of abstraction to client code: 
+
+\begin{enumerate}
+\item The \emph{buffer} level represents the \emph{sequence of lines}
+  independently of how the individual lines are represented.  
+\item The \emph{line} level represents individual lines. 
+\end{enumerate}
+
+The buffer protocols do not pretend to manage any equivalence between
+line breaks and some sequence of characters.  It is up to client code
+to model such an equivalence if desired.  As a consequence, the buffer
+protocols do not allow for a cursor at the beginning of a line to
+more backward or a cursor at the end of a line to move forward.  An
+attempt at doing so will result in an error being signaled.  If client
+code wants to impose a model where the line break corresponds to (say)
+the \emph{newline} character, then it must explicitly detach and
+reattach the cursor to a different line in these cases.  It can manage
+that in two different ways: either by explicitly testing for
+\texttt{beginning-of-line} or \texttt{end-of-line} before calling the
+equivalent buffer function, or by handling the error that results from
+the attempt. 
+
+The buffer also does not interpret the meaning of any of items
+contained in it.  For instance, whether an item is to be considered
+part of a \emph{word} or not, is not decided at the buffer level, but
+at the level of the syntax.  As a consequence, the buffer protocol
+does not offer any functions that require such interpretation, such as
+\texttt{forward-word}, \texttt{end-of-paragraph}, etc. 
+
+\Defun {beginning-of-buffer-p} {cursor}
+
+Return \textit{true} if and only if \textit{cursor} is located at the
+beginning of a buffer.
+
+\Defun {end-of-buffer-p} {cursor}
+
+Return \textit{true} if and only if \textit{cursor} is located at the
+end of a buffer.
+
+\Defun {beginning-of-line-p} {cursor}
+
+Return \textit{true} if and only if \textit{cursor} is located at the
+beginning of a line.
+
+\Defun {end-of-line-p} {cursor}
+
+Return \textit{true} if and only if \textit{cursor} is located at the
+end of a line.
+
+\Defun {beginning-of-buffer} {cursor}
+
+Position \textit{cursor} at the very beginning of the buffer.
+
+\Defun {end-of-buffer} {cursor}
+
+Position \textit{cursor} at the very end of the buffer.
+
+\Defun {forward-item} {cursor}
+
+Move \textit{cursor} forward one position.  If \emph{cursor} is at the
+end of the line, the error condition \texttt{end-of-line} will be
+signaled.
+
+\Defun {backward-item} {cursor}
+
+Move \textit{cursor} backward one position.  If \emph{cursor} is at
+the beginning of the line, the error condition
+\texttt{beginning-of-line} will be signaled.
+
+\Defun {insert-item} {cursor item}
+
+Insert an item at the location of \textit{cursor}.  After this
+operation, any left-sticky cursor located at the same position as
+\textit{cursor} will be located before \textit{item}, and any
+right-sticky cursor located at the same position as \textit{cursor}
+will be located after \textit{item}.
+
+\Defun {delete-item} {cursor}
+
+Delete the item immediately to the right of \emph{cursor}.  If
+\emph{cursor} is at the end of the line, the error condition
+\texttt{end-of-line} will be signaled.
+
+\Defun {erase-item} {cursor}
+
+Delete the item immediately to the left of \emph{cursor}.  If
+\emph{cursor} is at the beginning of the line, the error condition
+\texttt{beginning-of-line} will be signaled.
+
+\Defun {item-after-cursor} {cursor}
+
+Return the item located immediately to the right of \textit{cursor}.
+If \emph{cursor} is at the end of the line, the error condition
+\texttt{end-of-line} will be signaled.
+
+\Defun {item-before-cursor} {cursor}
+
+Return the item located immediately to the left of \textit{cursor}.
+If \emph{cursor} is at the beginning of the line, the error condition
+\texttt{beginning-of-line} will be signaled.
+
+\Defun {split-line} {cursor}
+
+Split the line in which \textit{cursor} is located into two lines, the
+first cone containing the text preceding \textit{cursor} and the
+second one containing the text following \textit{cursor}.  After this
+operation, any left-sticky cursor located at the same position as
+\textit{cursor} will be located at the end of the first line, and any
+right-sticky cursor located at the same position as \textit{cursor}
+will be located at the beginning of the second line.
+
+\Defun {join-line} {cursor}
+
+Join the line in which \textit{cursor} is located and the following
+line.  If \textit{cursor} is located at the last line of the buffer,
+the error condition \texttt{end-of-buffer} will be signaled.
+
+\Defun {detach-cursor} {cursor}
+
+The class of \textit{cursor} is changed to \texttt{detached-cursor}
+and it is removed from the line it was initially located in. 
+
+If \textit{cursor} is already detached, this operation has no effect.
+
+\Defun {attach-cursor} {cursor line \optional (position 0)}
+
+Attach \textit{cursor} to \textit{line} at \textit{position}.  If
+\textit{position} is supplied and it is greater than the number of
+items in \textit{line}, the error condition \texttt{end-of-line} is
+signaled.  If \textit{cursor} is already attached to a line, the error
+condition \texttt{cursor-attached} will be signaled.
+
+\Defun {cursor-position} {cursor}
+
+Return the position of \textit{cursor} as two values: the line number
+and the item number within the line. 
+
+\Defun {line-count} {cursor}
+
+Return the number of lines in the buffer in which \textit{cursor} is
+located.
+
+\Defun {item-count} {cursor}
+
+Return the number of items in the line in which \textit{cursor} is
+located.
+
+\section{Standard buffer representation}
+
+The standard buffer representation organizes the lines in a
+\emph{splay tree} \cite{Sleator:1985:SBS:3828.3835}.  This
+organization has several advantages:
+
+\begin{itemize}
+\item A line that is modified moves to the root of the tree, and
+  recently used lines stay close to the root, making some editing
+  operations more efficient.
+\item It is computationally cheap to know the line number of the
+  current line at all times. 
+\end{itemize}
+
+The standard buffer representation uses two different representations
+of a \emph{line}.  Whenever a line is modified, it must be
+\emph{open}.  In the standard buffer representation, an open line is
+represented as a \emph{splay tree} \cite{Sleator:1985:SBS:3828.3835}
+of \emph{items}.  Items are typically characters, but any object is
+allowed.

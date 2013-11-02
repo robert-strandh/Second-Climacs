@@ -1,0 +1,57 @@
+\chapter{General control structure}
+\label{chap-internals-control-structure}
+
+The general control structure was designed with the following goals: 
+
+\begin{itemize}
+\item Most editing operations should be very fast, even when they
+  involve fairly large chunks of buffer contents.  Here, \emph{fast}
+  means that the response time for interactive editing should be
+  short. 
+\item From a software-engineering point of view, the buffer editing
+  operations should not be aware of the presence of any \emph{views}. 
+\end{itemize}
+
+Notice that it was \emph{not} a goal that editing operations use as
+little computational power as possible.  
+
+Input events can be divided into two categories:
+
+\begin{itemize}
+\item Input events that result in some modification to some buffer
+  contents.  Inserting and deleting items are in this category.
+  Modifications can be the result of indirect events such as executing
+  a keyboard macro that inserts or deletes items in one or more
+  buffers. 
+\item Input events that have no effect on any buffer contents.  Moving
+  a cursor, changing the size of a window, or scrolling a view are
+  typical events in this category.  These events influence only the
+  \emph{view} into a buffer.
+\end{itemize}
+
+When an event in the first category occurs, the following chain of
+events is triggered:
+
+\begin{enumerate}
+\item The event itself triggers the execution of some \emph{command}
+  that causes one or more items to be inserted and/or deleted from one
+  or more buffers.  Whether this happens as a direct result or as an
+  indirect result of the event makes no difference.  The buffers
+  involved are modified, but no other action is taken at this time.
+  Lines that are modified or inserted are marked with the
+  \emph{current time stamp} and the current time stamp is
+  incremented, possibly more than once. 
+\item At the end of the execution of the command, all visible views
+  are updated.  If any visible view displays a buffer that was
+  modified in the first step, the \emph{syntax update} is executed for
+  that buffer, allowing the contents to be incrementally parsed
+  according to the syntax associated with the buffer.  If two or more
+  views display the same buffer, the syntax update is executed only
+  once.  The syntax update uses the time stamps of lines in the buffer
+  and of the previous syntax update to compute an up-to-date
+  representation of the buffer.  This computation is done
+  incrementally as much as possible. 
+\item Each view on display recomputes the data presented to the user
+  and redraws the associated window.  Again, time stamps are used to
+  make this computation as incremental as possible.
+\end{enumerate}
