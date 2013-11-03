@@ -26,7 +26,9 @@
   ((%cursors :initarg :cursors :accessor cursors)))
 
 (defclass closed-cursor-mixin ()
-  ((%cursor-position :initarg :cursor-position :accessor cursor-position)))
+  ((%cursor-position
+    :initarg :cursor-position
+    :accessor climacs-buffer:cursor-position)))
 
 (defclass closed-left-sticky-cursor
     (climacs-buffer:attached-cursor
@@ -407,7 +409,7 @@
 ;;; and only if that position is 0.
 (defmethod climacs-buffer:beginning-of-line-p
     ((cursor climacs-buffer:attached-cursor))
-  (zerop (cursor-position cursor)))
+  (zerop (climacs-buffer:cursor-position cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -422,7 +424,8 @@
 ;;; the line.
 (defmethod climacs-buffer:end-of-line-p
     ((cursor climacs-buffer:attached-cursor))
-  (= (cursor-position cursor) (climacs-buffer:item-count (climacs-buffer:line cursor))))
+  (= (climacs-buffer:cursor-position cursor)
+     (climacs-buffer:item-count (climacs-buffer:line cursor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -433,7 +436,9 @@
   (climacs-buffer:insert-item cursor item))
 
 (defmethod climacs-buffer:insert-item ((cursor open-cursor-mixin) item)
-  (insert-item-at-position (climacs-buffer:line cursor) item (cursor-position cursor))
+  (insert-item-at-position (climacs-buffer:line cursor)
+			   item
+			   (climacs-buffer:cursor-position cursor))
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -447,7 +452,8 @@
 (defmethod climacs-buffer:delete-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
-  (delete-item-at-position (climacs-buffer:line cursor) (cursor-position cursor))
+  (delete-item-at-position (climacs-buffer:line cursor)
+			   (climacs-buffer:cursor-position cursor))
   nil)
 
 
@@ -462,7 +468,8 @@
 (defmethod climacs-buffer:erase-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
-  (delete-item-at-position (climacs-buffer:line cursor) (1- (cursor-position cursor)))
+  (delete-item-at-position (climacs-buffer:line cursor)
+			   (1- (climacs-buffer:cursor-position cursor)))
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -476,7 +483,7 @@
 (defmethod climacs-buffer:forward-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
-  (setf (cursor-position cursor) (1+ (cursor-position cursor)))
+  (incf (climacs-buffer:cursor-position cursor))
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -490,7 +497,7 @@
 (defmethod climacs-buffer:backward-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
-  (setf (cursor-position cursor) (1- (cursor-position cursor)))
+  (decf (climacs-buffer:cursor-position cursor))
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -540,13 +547,15 @@
     ((cursor open-left-sticky-cursor))
   (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
-  (item (entry-at-position (climacs-buffer:line cursor) (cursor-position cursor))))
+  (item (entry-at-position (climacs-buffer:line cursor)
+			   (climacs-buffer:cursor-position cursor))))
 
 (defmethod climacs-buffer:item-before-cursor
     ((cursor open-right-sticky-cursor))
   (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
-  (item (entry-at-position (climacs-buffer:line cursor) (1- (cursor-position cursor)))))
+  (item (entry-at-position (climacs-buffer:line cursor)
+			   (1- (climacs-buffer:cursor-position cursor)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -561,11 +570,13 @@
     ((cursor open-left-sticky-cursor))
   (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
-  (item (entry-at-position (climacs-buffer:line cursor) (1+ (cursor-position cursor)))))
+  (item (entry-at-position (climacs-buffer:line cursor)
+			   (1+ (climacs-buffer:cursor-position cursor)))))
 
 (defmethod climacs-buffer:item-after-cursor
     ((cursor open-right-sticky-cursor))
   (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
-  (item (entry-at-position (climacs-buffer:line cursor) (cursor-position cursor))))
+  (item (entry-at-position (climacs-buffer:line cursor)
+			   (climacs-buffer:cursor-position cursor))))
 
