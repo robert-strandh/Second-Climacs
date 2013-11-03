@@ -65,8 +65,32 @@
   ((%current-time :initform 0 :initarg :current-time :accessor current-time)
    (%contents :initarg :contents :accessor contents)))
 
+;;; A mediator sits between a tree node of the splay tree and a line
+;;; object.  Given a tree node, the mediator can be access by using
+;;; the SPLAY-TREE:DATA function, and it can be set using the function
+;;; (SETF SPLAY-TREE:DATA).  From the point of view of a line, the
+;;; mediator can be accessed using the MEDIATOR function, and it can
+;;; be set by using the (SETF MEDIATOR) function.
+;;;
+;;; There are several reasons for the existence of the mediator. One
+;;; is to contain data about the corresponding line that is not
+;;; strictly part of what a line object should contain, such as the
+;;; creation time and modification time of the line, which rather has
+;;; to do with the way the lines are organized into a buffer.  Another
+;;; is to contain information about the entire subree rooted at the
+;;; corresponding node such as the line count and the item count of
+;;; that subtree.
+;;;
+;;; The mediator also contains a reference to the buffer in which it
+;;; is located.  This reference is needed because when a node of the
+;;; tree is splayed, that node must be explicitly assigned to the
+;;; CONTENTS field of the buffer.
 (defclass mediator ()
-  ((%tree-node
+  ((%buffer
+    :initform nil
+    :initarg :buffer
+    :accessor :buffer)
+   (%tree-node
     :initform nil
     :initarg :tree-node
     :accessor tree-node)
@@ -125,6 +149,28 @@
     (make-instance 'buffer
       :current-time 1
       :contents node)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This convenience function allows us to call SPLAY on a line or a
+;;; mediator.  It makes sure that the corresponding tree node is the
+;;; root of the CONTENTS tree of the buffer.
+;;;
+;;; It is recommended to use this function, rather than calling
+;;; SPLAY-TREE:SPLAY directly, because it is easy to forget that
+;;; SPLAY-TREE:SPLAY does not return a useful value, and that it does
+;;; not automatically change the contents of the buffer.
+
+(defgeneric splay (thing))
+
+(defmethod splay ((thing line))
+  (splay (mediator line)))
+
+(defmethod splay ((thing mediator))
+  (let ((node (tree-node mediator)))
+    (setf (contents (buffer mediator)) node)
+    (splay-tree:splay node))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -223,7 +269,7 @@
   (error 'cursor-detached))
 
 (defmethod insert-item :after ((cursor attached-cursor) item)
-  (splay-tree:splay (tree-node (mediator (line cursor))))
+  (splay (line cursor))
   (incf (item-count (mediator (line cursor)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -236,7 +282,7 @@
   (error 'cursor-detached))
 
 (defmethod delete-item :after ((cursor attached-cursor))
-  (splay-tree:splay (tree-node (mediator (line cursor))))
+  (splay (line cursor))
   (decf (item-count (mediator (line cursor)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -249,7 +295,7 @@
   (error 'cursor-detached))
 
 (defmethod erase-item :after ((cursor attached-cursor))
-  (splay-tree:splay (tree-node (mediator (line cursor))))
+  (splay (line cursor))
   (decf (item-count (mediator (line cursor)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -276,6 +322,61 @@
 		     (t
 		      (traverse right (- line-number left-count 1)))))))
     (traverse (contents buffer) line-number)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SPLIT-LINE.
+
+(defgeneric split-line (cursor))
+
+;;; This generic function is part of the line-editing protocol, and
+;;; should not be used directly by the application.  The application
+;;; uses SPLIT-LINE, and SPLIT-LINE calls LINE-SPLIT-LINE.
+;;;
+;;; This generic function removes all the items to the right of the
+;;; cursor in the line in which the cursor is located before the call,
+;;; and returns a second line in which those items have been inserted.
+;;; SPLIT-LINE must then insert that new line AFTER the one that the
+;;; cursor is in before the call.
+(defgeneric line-split-line (cursor))
+
+(defmethod split-line (cursor)
+  (let* ((existing-line (line cursor))
+	 (existing-mediator (mediator existing-line))
+	 (existing-node (tree-node existing-mediator))
+	 (right-node (splay-tree:right existing-node))
+	 (new-line (line-split-line cursor))
+	 (buffer (buffer existing-mediator)))
+    ;; Make sure the existing line is the root of the tree.
+    (splay exiting-mediator)
+    (unless (null right-node)
+      ;; Detach the right subtree from the root.  We must update the
+      ;; mediator so that it accurately reflects the item count and
+      ;; the line count of the subtree.
+      (let ((right-mediator (splay-tree:data right-node)))
+	(decf (item-count existing-mediator) (item-count right-mediator))
+	(decf (line-count existing-mediator) (line-count right-mediator)))
+      (setf (splay-tree:right existing-node) nil))
+    (let* ((new-mediator (make-instance 'mediator
+			  :buffer buffer
+			  :line-count (1+ (line-count existing-mediator))
+			  :item-count (+ (item-count existing-mediator)
+				         (item-count new-line))
+			  :create-time (incf (current-time buffer))
+			  :modify-time (current-time buffer)
+			  :line new-line))
+	   (new-node (splay-tree:make-node new-mediator)))
+      (setf (tree-node new-mediator) new-node)
+      (unless (null right-node)
+	;; We must add the item count and the line count of the right
+	;; subtree to the new node.
+	(let ((right-mediator (splay-tree:data right-node)))
+	  (incf (item-count new-mediator) (item-count right-mediator))
+	  (incf (line-count new-mediator) (line-count right-mediator))))
+      ;; Finally, we must make the new node the root of the buffer
+      ;; splay tree.
+      (setf (contents buffer) new-node)))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
