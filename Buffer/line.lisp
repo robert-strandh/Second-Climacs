@@ -15,6 +15,31 @@
 (defclass open-cursor-mixin ()
   ((%entry :initarg :entry :accessor entry)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class CLOSED-LINE. 
+;;; 
+;;; The contents of a closed line is a vector of items.  At the
+;;; moment, it is always a simple vector.
+
+(defclass closed-line (line)
+  ((%cursors :initarg :cursors :accessor cursors)))
+
+(defclass closed-cursor-mixin ()
+  ((%cursor-position :initarg :cursor-position :accessor cursor-position)))
+
+(defclass closed-left-sticky-cursor
+    (climacs-buffer:attached-cursor
+     closed-cursor-mixin
+     climacs-buffer:left-sticky-mixin)
+  ())
+
+(defclass closed-right-sticky-cursor
+    (climacs-buffer:attached-cursor
+     closed-cursor-mixin
+     climacs-buffer:right-sticky-mixin)
+  ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class OPEN-LEFT-STICKY CURSOR.
@@ -278,31 +303,6 @@
 (defmethod climacs-buffer:items ((line closed-line) &key (start 0) (end nil))
   (subseq (contents line) start end))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class CLOSED-LINE. 
-;;; 
-;;; The contents of a closed line is a vector of items.  At the
-;;; moment, it is always a simple vector.
-
-(defclass closed-line (line)
-  ((%cursors :initarg :cursors :accessor cursors)))
-
-(defclass closed-cursor-mixin ()
-  ((%cursor-position :initarg :cursor-position :accessor cursor-position)))
-
-(defclass closed-left-sticky-cursor
-    (climacs-buffer:attached-cursor
-     closed-cursor-mixin
-     climacs-buffer:left-sticky-mixin)
-  ())
-
-(defclass closed-right-sticky-cursor
-    (climacs-buffer:attached-cursor
-     closed-cursor-mixin
-     climacs-buffer:right-sticky-mixin)
-  ())
-
 (defgeneric close-line (line))
 
 (defmethod close-line ((line closed-line))
@@ -430,7 +430,7 @@
 
 (defmethod climacs-buffer:insert-item ((cursor closed-cursor-mixin) item)
   (open-line (climacs-buffer:line cursor))
-  (insert-item cursor item))
+  (climacs-buffer:insert-item cursor item))
 
 (defmethod climacs-buffer:insert-item ((cursor open-cursor-mixin) item)
   (insert-item-at-position (climacs-buffer:line cursor) item (cursor-position cursor))
@@ -442,10 +442,10 @@
 
 (defmethod climacs-buffer:delete-item ((cursor closed-cursor-mixin))
   (open-line (climacs-buffer:line cursor))
-  (delete-item cursor))
+  (climacs-buffer:delete-item cursor))
 
 (defmethod climacs-buffer:delete-item ((cursor open-cursor-mixin))
-  (when (end-of-line-p cursor)
+  (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
   (delete-item-at-position (climacs-buffer:line cursor) (cursor-position cursor))
   nil)
@@ -457,10 +457,10 @@
 
 (defmethod climacs-buffer:erase-item ((cursor closed-cursor-mixin))
   (open-line (climacs-buffer:line cursor))
-  (erase-item cursor))
+  (climacs-buffer:erase-item cursor))
 
 (defmethod climacs-buffer:erase-item ((cursor open-cursor-mixin))
-  (when (beginning-of-line-p cursor)
+  (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
   (delete-item-at-position (climacs-buffer:line cursor) (1- (cursor-position cursor)))
   nil)
@@ -471,10 +471,10 @@
 
 (defmethod climacs-buffer:forward-item ((cursor closed-cursor-mixin))
   (open-line (climacs-buffer:line cursor))
-  (forward-item cursor))
+  (climacs-buffer:forward-item cursor))
 
 (defmethod climacs-buffer:forward-item ((cursor open-cursor-mixin))
-  (when (end-of-line-p cursor)
+  (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
   (setf (cursor-position cursor) (1+ (cursor-position cursor)))
   nil)
@@ -485,10 +485,10 @@
 
 (defmethod climacs-buffer:backward-item ((cursor closed-cursor-mixin))
   (open-line (climacs-buffer:line cursor))
-  (backward-item cursor))
+  (climacs-buffer:backward-item cursor))
 
 (defmethod climacs-buffer:backward-item ((cursor open-cursor-mixin))
-  (when (beginning-of-line-p cursor)
+  (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
   (setf (cursor-position cursor) (1- (cursor-position cursor)))
   nil)
@@ -507,8 +507,8 @@
 ;;; beginning of the line.
 (defmethod climacs-buffer:beginning-of-line
     ((cursor climacs-buffer:attached-cursor))
-  (loop until (beginning-of-line-p cursor)
-	do (backward-item cursor)))
+  (loop until (climacs-buffer:beginning-of-line-p cursor)
+	do (climacs-buffer:backward-item cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -524,8 +524,8 @@
 ;;; end of the line.
 (defmethod climacs-buffer:end-of-line
     ((cursor climacs-buffer:attached-cursor))
-  (loop until (end-of-line-p cursor)
-	do (forward-item cursor)))
+  (loop until (climacs-buffer:end-of-line-p cursor)
+	do (climacs-buffer:forward-item cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -538,13 +538,13 @@
 
 (defmethod climacs-buffer:item-before-cursor
     ((cursor open-left-sticky-cursor))
-  (when (beginning-of-line-p cursor)
+  (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
   (item (entry-at-position (climacs-buffer:line cursor) (cursor-position cursor))))
 
 (defmethod climacs-buffer:item-before-cursor
     ((cursor open-right-sticky-cursor))
-  (when (beginning-of-line-p cursor)
+  (when (climacs-buffer:beginning-of-line-p cursor)
     (error 'beginning-of-line))
   (item (entry-at-position (climacs-buffer:line cursor) (1- (cursor-position cursor)))))
 
@@ -559,13 +559,13 @@
 
 (defmethod climacs-buffer:item-after-cursor
     ((cursor open-left-sticky-cursor))
-  (when (end-of-line-p cursor)
+  (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
   (item (entry-at-position (climacs-buffer:line cursor) (1+ (cursor-position cursor)))))
 
 (defmethod climacs-buffer:item-after-cursor
     ((cursor open-right-sticky-cursor))
-  (when (end-of-line-p cursor)
+  (when (climacs-buffer:end-of-line-p cursor)
     (error 'end-of-line))
   (item (entry-at-position (climacs-buffer:line cursor) (cursor-position cursor))))
 
