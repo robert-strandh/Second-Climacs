@@ -176,9 +176,21 @@ organization has several advantages:
   current line at all times. 
 \end{itemize}
 
+\refFig{fig-buffer} illustrates this representation.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-buffer.pdf_t}
+\end{center}
+\caption{\label{fig-buffer}
+Representation of the buffer as a splay tree.}
+\end{figure}
+
+
 The standard buffer representation uses two different representations
 of a \emph{line}.  Whenever a line is modified, it must be
 \emph{open}.  In the standard buffer representation, an open line is
 represented as a \emph{splay tree} \cite{Sleator:1985:SBS:3828.3835}
 of \emph{items}.  Items are typically characters, but any object is
 allowed.
+
