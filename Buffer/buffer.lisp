@@ -89,7 +89,7 @@
   ((%buffer
     :initform nil
     :initarg :buffer
-    :accessor :buffer)
+    :accessor buffer)
    (%tree-node
     :initform nil
     :initarg :tree-node
@@ -164,11 +164,11 @@
 (defgeneric splay (thing))
 
 (defmethod splay ((thing line))
-  (splay (mediator line)))
+  (splay (mediator thing)))
 
 (defmethod splay ((thing mediator))
-  (let ((node (tree-node mediator)))
-    (setf (contents (buffer mediator)) node)
+  (let ((node (tree-node thing)))
+    (setf (contents (buffer thing)) node)
     (splay-tree:splay node))
   nil)
 
@@ -348,7 +348,7 @@
 	 (new-line (line-split-line cursor))
 	 (buffer (buffer existing-mediator)))
     ;; Make sure the existing line is the root of the tree.
-    (splay exiting-mediator)
+    (splay existing-mediator)
     (unless (null right-node)
       ;; Detach the right subtree from the root.  We must update the
       ;; mediator so that it accurately reflects the item count and
@@ -377,6 +377,21 @@
       ;; splay tree.
       (setf (contents buffer) new-node)))
   nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; JOIN-LINE.
+
+(defgeneric join-line (cursor))
+
+;;; This generic function is part of the line-editing protocol, and
+;;; should not be used directly by the application.  The application
+;;; uses JOIN-LINE, and JOIN-LINE calls LINE-JOIN-LINE.
+;;;
+;;; This generic function attaches all of the items of the second line
+;;; to the end of the first line.  JOIN-LINE must then delete the
+;;; second of these two lines from the tree in the buffer.
+(defgeneric line-join-line (line1 line2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
