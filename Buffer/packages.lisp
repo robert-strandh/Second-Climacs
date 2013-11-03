@@ -41,4 +41,6 @@
    #:join-line
    #:items
    #:make-empty-buffer
+   #:line-split-line
+   #:line-join-line
    ))
