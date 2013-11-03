@@ -580,3 +580,61 @@
   (item (entry-at-position (climacs-buffer:line cursor)
 			   (climacs-buffer:cursor-position cursor))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on LINE-SPLIT-LINE.
+
+(defmethod climacs-buffer:line-split-line ((cursor closed-cursor-mixin))
+  (open-line (climacs-buffer:line cursor))
+  (climacs-buffer:line-split-line cursor))
+
+(defmethod climacs-buffer:line-split-line ((cursor open-cursor-mixin))
+  (let* ((existing-line (climacs-buffer:line cursor))
+	 (position (climacs-buffer:cursor-position cursor))
+	 (entry (entry-at-position existing-line position))
+	 (new-line (make-instance 'open-line)))
+    (splay entry)
+    ;; The entry that is now the root of the tree is the last entry of
+    ;; the existing line that should be preserved.  If the cursor is
+    ;; at the beginning of the existing line, then that entry is the
+    ;; left sentinel.  Otherwise, it is not a sentinel.  The right
+    ;; child of this entry always exists, but it might be the right
+    ;; sentinel.  In order to split the line, the right child of the
+    ;; entry must be replaced by a new right sentinel.
+    ;;
+    ;; Similary, the right child of the root is the first entry of the
+    ;; existing line that should become part of the new line.  If the
+    ;; cursor is at the end of the existing line, then that entry is
+    ;; the right sentinel.  Otherwise it is not a sentinel.  In order
+    ;; to split the line, this entry should become the right child of
+    ;; a new left-sentinel.
+    ;;
+    ;; The entry count of the right child of the root is correct and
+    ;; thus does not have to be modified.  The entry count of the
+    ;; root, on the other hand, includes the entry count of its right
+    ;; child.  We need to subtract the entry count of the right child
+    ;; from the entry count of the root, and then add 1 to the entry
+    ;; count of the root to account for the new sentinel.
+    ;; The new sentinels will have no cursors attached to them.  
+    (let* ((new-left-sentinel (make-instance 'entry
+				:item nil
+				:line new-line
+				:entry-count 1))
+	   (new-node (splay-tree:make-node new-left-sentinel)))
+      (setf (node new-left-sentinel) new-node)
+      (setf (splay-tree:right new-node)
+	    (splay-tree:right (node entry)))
+      (incf (entry-count new-left-sentinel)
+	    (entry-count (splay-tree:data (splay-tree:right (node entry)))))
+      (setf (contents new-line) new-node))
+    (let* ((new-right-sentinel (make-instance 'entry
+				:item nil
+				:line existing-line
+				:entry-count 1))
+	   (new-node (splay-tree:make-node new-right-sentinel)))
+      (setf (node new-right-sentinel) new-node)
+      (setf (splay-tree:right (node entry)) new-node)
+      (decf (entry-count entry)
+	    (entry-count (splay-tree:data (splay-tree:right (node entry)))))
+      (incf (entry-count entry)))))
+	  
