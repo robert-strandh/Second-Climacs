@@ -40,6 +40,8 @@
    #:split-line
    #:join-line
    #:items
+   #:find-line
+   #:line-number
    #:make-empty-buffer
    #:line-split-line
    #:line-join-line
