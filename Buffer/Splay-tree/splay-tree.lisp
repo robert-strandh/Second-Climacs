@@ -20,10 +20,18 @@
   (assert (null (left node)))
   (setf (parent new-left) node))
 
+(defmethod (setf left) :before ((new-left null) (node node))
+  (unless (null (left node))
+    (setf (parent (left node)) nil)))
+
 (defmethod (setf right) :before ((new-right node) (node node))
   (assert (null (parent new-right)))
   (assert (null (right node)))
   (setf (parent new-right) node))
+
+(defmethod (setf right) :before ((new-right null) (node node))
+  (unless (null (right node))
+    (setf (parent (right node)) nil)))
 
 (defgeneric splay (n))
 (defgeneric splay-2 (n p))
