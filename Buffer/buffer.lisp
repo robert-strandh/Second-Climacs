@@ -57,6 +57,8 @@
 
 (defgeneric attach-cursor (cursor line &optional position))
 
+(defgeneric detach-cursor (cursor))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Buffer.

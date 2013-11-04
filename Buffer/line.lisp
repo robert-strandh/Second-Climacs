@@ -242,9 +242,9 @@
 (defgeneric delete-item-at-position (line position))
 
 (defmethod delete-item-at-position ((line line) position)
-  (assert (<= 1 position (climacs-buffer:item-count line)))
-  (let ((node (node-at-position line position))
-	(prev (node-at-position line (1- position))))
+  (assert (<= 0 position (1- (climacs-buffer:item-count line))))
+  (let ((node (node-at-position line (1+ position)))
+	(prev (node-at-position line position)))
     (splay-tree:splay node)
     (splay-tree:splay prev)
     ;; Check that this intrinsic property of splay trees actually
@@ -329,7 +329,7 @@
 (defmethod climacs-buffer:attach-cursor
     ((cursor climacs-buffer:attached-cursor) line &optional position)
   (declare (ignore line position))
-  (error 'cursor-attached))
+  (error 'climacs-buffer:cursor-attached))
 
 (defmethod climacs-buffer:attach-cursor
     ((cursor climacs-buffer:detached-cursor)
@@ -345,7 +345,7 @@
      &optional
        (position 0))
   (when (> position (climacs-buffer:item-count line))
-    (error 'end-of-line))
+    (error 'climacs-buffer:end-of-line))
   (let ((node (node-at-position line position)))
     (push cursor (cursors node))
     (change-class cursor 'open-left-sticky-cursor
@@ -359,13 +359,33 @@
      &optional
        (position 0))
   (when (> position (climacs-buffer:item-count line))
-    (error 'end-of-line))
+    (error 'climacs-buffer:end-of-line))
   (let ((node (node-at-position line (1+ position))))
     (push cursor (cursors node))
     (change-class cursor 'open-right-sticky-cursor
 		  :line line
 		  :node node))
   nil)
+
+(defmethod climacs-buffer:detach-cursor
+    ((cursor climacs-buffer:detached-cursor))
+  (error 'climacs-buffer:cursor-detached))
+
+(defmethod climacs-buffer:detach-cursor ((cursor closed-cursor-mixin))
+  (open-line (climacs-buffer:line cursor))
+  (climacs-buffer:detach-cursor cursor))
+
+(defmethod climacs-buffer:detach-cursor ((cursor open-left-sticky-cursor))
+  (let ((node (node cursor)))
+    (splay-tree:splay node)
+    (setf (cursors node) (remove cursor (cursors node)))
+    (change-class cursor 'detached-left-sticky-cursor)))
+
+(defmethod climacs-buffer:detach-cursor ((cursor open-right-sticky-cursor))
+  (let ((node (node cursor)))
+    (splay-tree:splay node)
+    (setf (cursors node) (remove cursor (cursors node)))
+    (change-class cursor 'detached-right-sticky-cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -380,7 +400,7 @@
 
 (defmethod climacs-buffer:beginning-of-line-p
     ((cursor climacs-buffer:detached-cursor))
-  (error 'cursor-detached))
+  (error 'climacs-buffer:cursor-detached))
 
 ;;; The default method just calls CURSOR-POSITION and returns true if
 ;;; and only if that position is 0.
@@ -394,7 +414,7 @@
 
 (defmethod climacs-buffer:end-of-line-p
     ((cursor climacs-buffer:detached-cursor))
-  (error 'cursor-detached))
+  (error 'climacs-buffer:cursor-detached))
 
 ;;; The default method just calls CURSOR-POSITION and returns true if
 ;;; and only if that position is the same as the number of items in
@@ -428,7 +448,7 @@
 
 (defmethod climacs-buffer:delete-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:end-of-line-p cursor)
-    (error 'end-of-line))
+    (error 'climacs-buffer:end-of-line))
   (delete-item-at-position (climacs-buffer:line cursor)
 			   (climacs-buffer:cursor-position cursor))
   nil)
@@ -444,7 +464,7 @@
 
 (defmethod climacs-buffer:erase-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:beginning-of-line-p cursor)
-    (error 'beginning-of-line))
+    (error 'climacs-buffer:beginning-of-line))
   (delete-item-at-position (climacs-buffer:line cursor)
 			   (1- (climacs-buffer:cursor-position cursor)))
   nil)
@@ -459,7 +479,7 @@
 
 (defmethod climacs-buffer:forward-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:end-of-line-p cursor)
-    (error 'end-of-line))
+    (error 'climacs-buffer:end-of-line))
   (incf (climacs-buffer:cursor-position cursor))
   nil)
 
@@ -473,7 +493,7 @@
 
 (defmethod climacs-buffer:backward-item ((cursor open-cursor-mixin))
   (when (climacs-buffer:beginning-of-line-p cursor)
-    (error 'beginning-of-line))
+    (error 'climacs-buffer:beginning-of-line))
   (decf (climacs-buffer:cursor-position cursor))
   nil)
 
@@ -485,7 +505,7 @@
 
 (defmethod climacs-buffer:beginning-of-line
     ((cursor climacs-buffer:detached-cursor))
-  (error 'cursor-detached))
+  (error 'climacs-buffer:cursor-detached))
 
 ;;; The default method calls BACKWARD-ITEM until the cursor is at the
 ;;; beginning of the line.
@@ -502,7 +522,7 @@
 
 (defmethod climacs-buffer:end-of-line
     ((cursor climacs-buffer:detached-cursor))
-  (error 'cursor-detached))
+  (error 'climacs-buffer:cursor-detached))
 
 ;;; The default method calls FORWARD-ITEM until the cursor is at the
 ;;; end of the line.
@@ -523,14 +543,14 @@
 (defmethod climacs-buffer:item-before-cursor
     ((cursor open-left-sticky-cursor))
   (when (climacs-buffer:beginning-of-line-p cursor)
-    (error 'beginning-of-line))
+    (error 'climacs-buffer:beginning-of-line))
   (item (node-at-position (climacs-buffer:line cursor)
 			   (climacs-buffer:cursor-position cursor))))
 
 (defmethod climacs-buffer:item-before-cursor
     ((cursor open-right-sticky-cursor))
   (when (climacs-buffer:beginning-of-line-p cursor)
-    (error 'beginning-of-line))
+    (error 'climacs-buffer:beginning-of-line))
   (item (node-at-position (climacs-buffer:line cursor)
 			   (1- (climacs-buffer:cursor-position cursor)))))
 
@@ -546,14 +566,14 @@
 (defmethod climacs-buffer:item-after-cursor
     ((cursor open-left-sticky-cursor))
   (when (climacs-buffer:end-of-line-p cursor)
-    (error 'end-of-line))
+    (error 'climacs-buffer:end-of-line))
   (item (node-at-position (climacs-buffer:line cursor)
 			   (1+ (climacs-buffer:cursor-position cursor)))))
 
 (defmethod climacs-buffer:item-after-cursor
     ((cursor open-right-sticky-cursor))
   (when (climacs-buffer:end-of-line-p cursor)
-    (error 'end-of-line))
+    (error 'climacs-buffer:end-of-line))
   (item (node-at-position (climacs-buffer:line cursor)
 			   (climacs-buffer:cursor-position cursor))))
 
