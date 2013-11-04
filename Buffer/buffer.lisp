@@ -27,7 +27,7 @@
 ;;; Line, cursor.
 
 (defclass line ()
-  ((%mediator :initarg :mediator :initform nil :accessor mediator)))
+  ((%node :initarg :node :initform nil :accessor node)))
 
 (defvar *empty-line-constructor*)
 
@@ -65,112 +65,70 @@
   ((%current-time :initform 0 :initarg :current-time :accessor current-time)
    (%contents :initarg :contents :accessor contents)))
 
-;;; A mediator sits between a tree node of the splay tree and a line
-;;; object.  Given a tree node, the mediator can be access by using
-;;; the SPLAY-TREE:DATA function, and it can be set using the function
-;;; (SETF SPLAY-TREE:DATA).  From the point of view of a line, the
-;;; mediator can be accessed using the MEDIATOR function, and it can
-;;; be set by using the (SETF MEDIATOR) function.
-;;;
-;;; There are several reasons for the existence of the mediator. One
-;;; is to contain data about the corresponding line that is not
-;;; strictly part of what a line object should contain, such as the
-;;; creation time and modification time of the line, which rather has
-;;; to do with the way the lines are organized into a buffer.  Another
-;;; is to contain information about the entire subree rooted at the
-;;; corresponding node such as the line count and the item count of
-;;; that subtree.
-;;;
-;;; The mediator also contains a reference to the buffer in which it
-;;; is located.  This reference is needed because when a node of the
-;;; tree is splayed, that node must be explicitly assigned to the
-;;; CONTENTS field of the buffer.
-(defclass mediator ()
-  ((%buffer
-    :initform nil
-    :initarg :buffer
-    :accessor buffer)
-   (%tree-node
-    :initform nil
-    :initarg :tree-node
-    :accessor tree-node)
+;;; The node contains a reference to the buffer in which it is
+;;; located.  This reference is needed because when a node of the tree
+;;; is splayed, that node must be explicitly assigned to the CONTENTS
+;;; field of the buffer.
+(defclass node (splay-tree:node)
+  ((%buffer :initform nil :initarg :buffer :accessor buffer)
    (;; The line count of the entire subtree.
-    %line-count
-    :initarg :line-count
-    :accessor line-count)
+    %line-count :initarg :line-count :accessor line-count)
    (;; The item count of the entire subtree.
-    %item-count
-    :initarg :item-count
-    :accessor item-count)
-   (%create-time
-    :initarg :create-time
-    :reader create-time)
-   (%modify-time
-    :initarg :modify-time
-    :accessor modify-time)
-   (%line
-    :initarg :line
-    :accessor line)))
+    %item-count :initarg :item-count :accessor item-count)
+   (%create-time :initarg :create-time :reader create-time)
+   (%modify-time :initarg :modify-time :accessor modify-time)
+   (%max-modify-time :initarg :max-modify-time :accessor max-modify-time)
+   (%line :initarg :line :accessor line)))
 
-(defmethod splay-tree:notify-rotate
-    ((mediator1 mediator) (mediator2 mediator) (mediator3 null))
-  (decf (line-count mediator1)
-	(line-count mediator2))
-  (decf (item-count mediator1)
-	(item-count mediator2))
-  (incf (line-count mediator2)
-	(line-count mediator1))
-  (incf (item-count mediator2)
-	(item-count mediator1)))
-  
-  
-(defmethod splay-tree:notify-rotate
-    ((mediator1 mediator) (mediator2 mediator) (mediator3 mediator))
-  (decf (line-count mediator1)
-	(- (line-count mediator2) (line-count mediator3)))
-  (decf (item-count mediator1)
-	(- (item-count mediator2) (item-count mediator3)))
-  (incf (line-count mediator2)
-	(- (line-count mediator1) (line-count mediator3)))
-  (incf (item-count mediator2)
-	(- (item-count mediator1) (item-count mediator3))))
+(defmethod (setf splay-tree:left) :before ((new-left null) (node node))
+  (unless (null (left node))
+    (decf (line-count node) (line-count (left node)))
+    (decf (item-count node) (item-count (left node)))
+    (setf (max-modify-time node)
+	  (max (modify-time node)
+	       (if (null (right node))
+		   0
+		   (max-modify-time (right node)))))))
+
+(defmethod (setf splay-tree:left) :after ((new-left node) (node node))
+  (incf (line-count node) (line-count new-left))
+  (incf (item-count node) (item-count new-left))
+  (setf (max-modify-time node)
+	(max (max-modify-time node)
+	     (max-modify-time new-left))))
+
+(defmethod (setf splay-tree:right) :before ((new-right null) (node node))
+  (unless (null (right node))
+    (decf (line-count node) (line-count (right node)))
+    (decf (item-count node) (item-count (right node)))
+    (setf (max-modify-time node)
+	  (max (modify-time node)
+	       (if (null (left node))
+		   0
+		   (max-modify-time (left node)))))))
+
+(defmethod (setf splay-tree:right) :after ((new-right node) (node node))
+  (incf (line-count node) (line-count new-right))
+  (incf (item-count node) (item-count new-right))
+  (setf (max-modify-time node)
+	(max (max-modify-time node)
+	     (max-modify-time new-right))))
+
+(defmethod splay-tree:splay :after ((node node))
+  (setf (contents (buffer node)) node))
 
 (defun make-empty-buffer ()
   (let* ((line (funcall *empty-line-constructor*))
-	 (mediator (make-instance 'mediator
+	 (node (make-instance 'node
 		     :line-count 1
 		     :item-count 0
 		     :create-time 0
 		     :modify-time 0
-		     :line line))
-	 (node (splay-tree:make-node mediator)))
-    (setf (tree-node mediator) node)
-    (setf (mediator line) mediator)
+		     :line line)))
+    (setf (node line) node)
     (make-instance 'buffer
       :current-time 1
       :contents node)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; This convenience function allows us to call SPLAY on a line or a
-;;; mediator.  It makes sure that the corresponding tree node is the
-;;; root of the CONTENTS tree of the buffer.
-;;;
-;;; It is recommended to use this function, rather than calling
-;;; SPLAY-TREE:SPLAY directly, because it is easy to forget that
-;;; SPLAY-TREE:SPLAY does not return a useful value, and that it does
-;;; not automatically change the contents of the buffer.
-
-(defgeneric splay (thing))
-
-(defmethod splay ((thing line))
-  (splay (mediator thing)))
-
-(defmethod splay ((thing mediator))
-  (let ((node (tree-node thing)))
-    (setf (contents (buffer thing)) node)
-    (splay-tree:splay node))
-  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -183,7 +141,6 @@
 ;;; Given a cursor, return its conceptual position.
 
 (defgeneric cursor-position (cursor))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -248,7 +205,7 @@
 (defgeneric line-count (buffer))
 
 (defmethod line-count ((buffer buffer))
-  (line-count (splay-tree:data (contents buffer))))
+  (line-count (contents buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; 
@@ -257,7 +214,7 @@
 (defgeneric item-count (buffer))
 
 (defmethod item-count ((buffer buffer))
-  (item-count (splay-tree:data (contents buffer))))
+  (item-count (contents buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -269,8 +226,9 @@
   (error 'cursor-detached))
 
 (defmethod insert-item :after ((cursor attached-cursor) item)
-  (splay (line cursor))
-  (incf (item-count (mediator (line cursor)))))
+  (let ((node (node (line cursor))))
+    (splay-tree:splay node)
+    (incf (item-count node))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -282,8 +240,9 @@
   (error 'cursor-detached))
 
 (defmethod delete-item :after ((cursor attached-cursor))
-  (splay (line cursor))
-  (decf (item-count (mediator (line cursor)))))
+  (let ((node (node (line cursor))))
+    (splay-tree:splay node)
+    (decf (item-count node))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -295,8 +254,9 @@
   (error 'cursor-detached))
 
 (defmethod erase-item :after ((cursor attached-cursor))
-  (splay (line cursor))
-  (decf (item-count (mediator (line cursor)))))
+  (let ((node (node (line cursor))))
+    (splay-tree:splay node)
+    (decf (item-count node))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -314,11 +274,11 @@
 		    (right (splay-tree:right node))
 		    (left-count (if (null left)
 				    0
-				    (line-count (splay-tree:data left)))))
+				    (line-count left))))
 	       (cond ((< line-number left-count)
 		      (traverse left line-number))
 		     ((= line-number left-count)
-		      (line (splay-tree:data node)))
+		      (line node))
 		     (t
 		      (traverse right (- line-number left-count 1)))))))
     (traverse (contents buffer) line-number)))
@@ -342,39 +302,22 @@
 
 (defmethod split-line (cursor)
   (let* ((existing-line (line cursor))
-	 (existing-mediator (mediator existing-line))
-	 (existing-node (tree-node existing-mediator))
-	 (right-node (splay-tree:right existing-node))
+	 (existing-node (node existing-line))
 	 (new-line (line-split-line cursor))
-	 (buffer (buffer existing-mediator)))
+	 (new-node (make-instance 'node
+		     :line-count 1
+		     :item-count 0
+		     :create-time 0
+		     :modify-time 0
+		     :line new-line)))
+	 (buffer (buffer existing-node))
+    (setf (node new-line) new-node)
     ;; Make sure the existing line is the root of the tree.
-    (splay existing-mediator)
-    (unless (null right-node)
-      ;; Detach the right subtree from the root.  We must update the
-      ;; mediator so that it accurately reflects the item count and
-      ;; the line count of the subtree.
-      (let ((right-mediator (splay-tree:data right-node)))
-	(decf (item-count existing-mediator) (item-count right-mediator))
-	(decf (line-count existing-mediator) (line-count right-mediator)))
-      (setf (splay-tree:right existing-node) nil))
-    (let* ((new-mediator (make-instance 'mediator
-			  :buffer buffer
-			  :line-count (1+ (line-count existing-mediator))
-			  :item-count (+ (item-count existing-mediator)
-				         (item-count new-line))
-			  :create-time (incf (current-time buffer))
-			  :modify-time (current-time buffer)
-			  :line new-line))
-	   (new-node (splay-tree:make-node new-mediator)))
-      (setf (tree-node new-mediator) new-node)
-      (unless (null right-node)
-	;; We must add the item count and the line count of the right
-	;; subtree to the new node.
-	(let ((right-mediator (splay-tree:data right-node)))
-	  (incf (item-count new-mediator) (item-count right-mediator))
-	  (incf (line-count new-mediator) (line-count right-mediator))))
-      ;; Finally, we must make the new node the root of the buffer
-      ;; splay tree.
+    (splay-tree:splay existing-node)
+    (let ((right-node (splay-tree:right existing-node)))
+      (setf (splay-tree:right existing-node) nil)
+      (setf (splay-tree:left new-node) existing-node)
+      (setf (splay-tree:right new-node) right-node)
       (setf (contents buffer) new-node)))
   nil)
 
