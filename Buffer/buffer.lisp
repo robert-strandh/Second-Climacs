@@ -124,11 +124,14 @@
 		     :item-count 0
 		     :create-time 0
 		     :modify-time 0
-		     :line line)))
+		     :max-modify-time 0
+		     :line line))
+	 (buffer (make-instance 'buffer
+		   :current-time 1
+		   :contents node)))
     (setf (node line) node)
-    (make-instance 'buffer
-      :current-time 1
-      :contents node)))
+    (setf (buffer node) buffer)
+    buffer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -142,6 +145,9 @@
 
 (defgeneric cursor-position (cursor))
 
+(defmethod cursor-position ((cursor detached-cursor))
+  (error 'cursor-detached))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; (SETF CURSOR-POSITION).
@@ -150,11 +156,17 @@
 
 (defgeneric (setf cursor-position) (position cursor))
 
+(defmethod (setf cursor-position) (position (cursor detached-cursor))
+  (error 'cursor-detached))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; BEGINNING-OF-LINE-P.
 
 (defgeneric beginning-of-line-p (cursor))
+
+(defmethod beginning-of-line-p ((cursor detached-cursor))
+  (error 'cursor-detached))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -162,23 +174,17 @@
 
 (defgeneric end-of-line-p (cursor))
 
+(defmethod end-of-line-p ((cursor detached-cursor))
+  (error 'cursor-detached))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; FORWARD-ITEM.
 
 (defgeneric forward-item (cursor))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; BEGINNING-OF-LINE.
-
-(defgeneric beginning-of-line (cursor))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; END-OF-LINE.
-
-(defgeneric end-of-line (cursor))
+(defmethod forward-item ((cursor detached-cursor))
+  (error 'cursor-detached))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -186,17 +192,44 @@
 
 (defgeneric backward-item (cursor))
 
+(defmethod backward-item ((cursor detached-cursor))
+  (error 'cursor-detached))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; BEGINNING-OF-LINE.
+
+(defgeneric beginning-of-line (cursor))
+
+(defmethod beginning-of-line ((cursor detached-cursor))
+  (error 'cursor-detached))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; END-OF-LINE.
+
+(defgeneric end-of-line (cursor))
+
+(defmethod end-of-line ((cursor detached-cursor))
+  (error 'cursor-detached))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; ITEM-BEFORE-CURSOR.
 
 (defgeneric item-before-cursor (cursor))
 
+(defmethod item-before-cursor ((cursor detached-cursor))
+  (error 'cursor-detached))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; ITEM-AFTER-CURSOR.
 
 (defgeneric item-after-cursor (cursor))
+
+(defmethod item-after-cursor ((cursor detached-cursor))
+  (error 'cursor-detached))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; 
