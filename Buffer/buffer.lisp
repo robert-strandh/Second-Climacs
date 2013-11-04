@@ -81,14 +81,14 @@
    (%line :initarg :line :accessor line)))
 
 (defmethod (setf splay-tree:left) :before ((new-left null) (node node))
-  (unless (null (left node))
-    (decf (line-count node) (line-count (left node)))
-    (decf (item-count node) (item-count (left node)))
+  (unless (null (splay-tree:left node))
+    (decf (line-count node) (line-count (splay-tree:left node)))
+    (decf (item-count node) (item-count (splay-tree:left node)))
     (setf (max-modify-time node)
 	  (max (modify-time node)
-	       (if (null (right node))
+	       (if (null (splay-tree:right node))
 		   0
-		   (max-modify-time (right node)))))))
+		   (max-modify-time (splay-tree:right node)))))))
 
 (defmethod (setf splay-tree:left) :after ((new-left node) (node node))
   (incf (line-count node) (line-count new-left))
@@ -98,14 +98,14 @@
 	     (max-modify-time new-left))))
 
 (defmethod (setf splay-tree:right) :before ((new-right null) (node node))
-  (unless (null (right node))
-    (decf (line-count node) (line-count (right node)))
-    (decf (item-count node) (item-count (right node)))
+  (unless (null (splay-tree:right node))
+    (decf (line-count node) (line-count (splay-tree:right node)))
+    (decf (item-count node) (item-count (splay-tree:right node)))
     (setf (max-modify-time node)
 	  (max (modify-time node)
-	       (if (null (left node))
+	       (if (null (splay-tree:left node))
 		   0
-		   (max-modify-time (left node)))))))
+		   (max-modify-time (splay-tree:left node)))))))
 
 (defmethod (setf splay-tree:right) :after ((new-right node) (node node))
   (incf (line-count node) (line-count new-right))
@@ -309,8 +309,8 @@
 		     :item-count 0
 		     :create-time 0
 		     :modify-time 0
-		     :line new-line)))
-	 (buffer (buffer existing-node))
+		     :line new-line))
+	 (buffer (buffer existing-node)))
     (setf (node new-line) new-node)
     ;; Make sure the existing line is the root of the tree.
     (splay-tree:splay existing-node)
