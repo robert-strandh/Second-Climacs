@@ -320,6 +320,63 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; LINE-NUMBER.
+
+(defgeneric line-number (line))
+
+(defmethod line-number (line)
+  (let ((node (node line)))
+    (splay-tree:splay node)
+    (if (null (splay-tree:left node))
+	0
+	(line-count (splay-tree:left node)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FIRST-LINE-P.
+
+(defgeneric first-line-p (line))
+
+(defmethod first-line-p (line)
+  (= (line-number line) 0))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; LAST-LINE-P.
+
+(defgeneric last-line-p (line))
+
+(defmethod last-line-p (line)
+  (= (line-number line) (1- (line-count (buffer (node line))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; BEGINNING-OF-BUFFER-P.
+
+(defgeneric beginning-of-buffer-p (cursor))
+
+(defmethod beginning-of-buffer-p ((cursor detached-cursor))
+  (error 'cursor-detached))
+
+(defmethod beginning-of-buffer-p ((cursor attached-cursor))
+  (and (beginning-of-line-p cursor)
+       (first-line-p (line cursor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; END-OF-BUFFER-P.
+
+(defgeneric end-of-buffer-p (cursor))
+
+(defmethod end-of-buffer-p ((cursor detached-cursor))
+  (error 'cursor-detached))
+
+(defmethod end-of-buffer-p ((cursor attached-cursor))
+  (and (end-of-line-p cursor)
+       (last-line-p (line cursor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; SPLIT-LINE.
 
 (defgeneric split-line (cursor))
@@ -370,6 +427,29 @@
 ;;; to the end of the first line.  JOIN-LINE must then delete the
 ;;; second of these two lines from the tree in the buffer.
 (defgeneric line-join-line (line1 line2))
+
+(defmethod join-line ((cursor detached-cursor))
+  (error 'cursor-detached))
+
+(defmethod join-line ((cursor attached-cursor))
+  (let ((line (line cursor)))
+    (when (last-line-p line)
+      (error 'end-of-buffer))
+    (let* ((line-number (line-number line))
+	   (next-line (find-line (buffer (node line)) (1+ line-number))))
+      (let ((node-line (node line))
+	    (node-next-line (node next-line)))
+	(splay-tree:splay node-next-line)
+	(splay-tree:splay node-line)
+	;; Now LINE is on top and NEXT-LINE is its right child.
+	;; Furthermore NEXT-LINE does not have any left children.
+	(let ((right (splay-tree:right node-next-line)))
+	  (setf (splay-tree:right node-line) nil)
+	  (setf (splay-tree:right node-next-line) nil)
+	  (setf (splay-tree:right node-line) right))
+	(line-join-line line next-line))))
+  nil)
+      
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

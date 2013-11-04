@@ -95,7 +95,7 @@
 (defclass node (splay-tree:node)
   ((%item :initarg :item :reader item)
    (%node-count :initarg :node-count :accessor node-count)
-   (%line :initarg :line :reader line)
+   (%line :initarg :line :accessor line)
    (%cursors :initform '() :accessor cursors)))
 
 (defun make-node (item line)
@@ -628,3 +628,44 @@
       (setf (contents existing-line) new-right-sentinel)
       (setf (contents new-line) new-left-sentinel))
     new-line))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on LINE-JOIN-LINE.
+
+(defmethod climacs-buffer:line-join-line ((line1 closed-line) line2)
+  (open-line line1)
+  (climacs-buffer:line-join-line line1 line2))
+
+(defmethod climacs-buffer:line-join-line (line1 (line2 closed-line))
+  (open-line line2)
+  (climacs-buffer:line-join-line line1 line2))
+
+(defmethod climacs-buffer:line-join-line ((line1 open-line) (line2 open-line))
+  (let ((node1 (node-at-position line1 (- (node-count (contents line1)) 2)))
+	(node2 (node-at-position line2 0)))
+    (splay-tree:splay node1)
+    (splay-tree:splay node2)
+    ;; Any left-sticky cursor at the beginning of LINE2 must be positioned
+    ;; at the end of LINE1.
+    (setf (cursors node1)
+	  (append (cursors node1) (cursors node2)))
+    ;; Any right-sticky cursor at the end of LINE1 must be positioned
+    ;; at the beginning of LINE2.
+    (setf (cursors (splay-tree:right node2))
+	  (append (splay-tree:right node2) (cursors (splay-tree:right node1))))
+    ;; Reassign all the nodes in LINE2 to LINE1
+    (labels ((traverse (node)
+	       (if (null node)
+		   nil
+		   (progn (setf (line node) line1)
+			  (traverse (splay-tree:left node))
+			  (traverse (splay-tree:right node))))))
+      (traverse (splay-tree:right node2)))
+    ;; Finally attach the nodes of LINE2 to the end of the nodes of
+    ;; LINE1.
+    (let ((right (splay-tree:right node2)))
+      (setf (splay-tree:right node1) nil)
+      (setf (splay-tree:right node2) nil)
+      (setf (splay-tree:right node1) right)))
+  nil)
