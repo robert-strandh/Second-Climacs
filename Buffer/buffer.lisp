@@ -67,6 +67,9 @@
   ((%current-time :initform 0 :initarg :current-time :accessor current-time)
    (%contents :initarg :contents :accessor contents)))
 
+;;; Return the buffer of a node, a cursor, or a line.
+(defgeneric buffer (thing))
+
 ;;; The node contains a reference to the buffer in which it is
 ;;; located.  This reference is needed because when a node of the tree
 ;;; is splayed, that node must be explicitly assigned to the CONTENTS
@@ -141,7 +144,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CURSOR-POSITION.
+;;; Generic function BUFFER
+;;;
+;;; Given a line or a cursor, return the buffer to which
+;;; the line or cursor belongs. 
+
+(defmethod buffer ((line line))
+  (buffer (node line)))
+
+(defmethod buffer ((cursor detached-cursor))
+  (error 'cursor-detached))
+
+(defmethod buffer ((cursor attached-cursor))
+  (buffer (line cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function CURSOR-POSITION.
 ;;;
 ;;; Given a cursor, return its conceptual position.
 
@@ -152,7 +171,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; (SETF CURSOR-POSITION).
+;;; Generic function (SETF CURSOR-POSITION).
 ;;;
 ;;; Given a cursor, set its conceptual position.
 
@@ -163,7 +182,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; BEGINNING-OF-LINE-P.
+;;; Generic function BEGINNING-OF-LINE-P.
 
 (defgeneric beginning-of-line-p (cursor))
 
@@ -172,7 +191,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; END-OF-LINE-P.
+;;; Generic function END-OF-LINE-P.
 
 (defgeneric end-of-line-p (cursor))
 
@@ -181,7 +200,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; FORWARD-ITEM.
+;;; Generic function FORWARD-ITEM.
 
 (defgeneric forward-item (cursor))
 
@@ -190,7 +209,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; BACKWARD-ITEM.
+;;; Generic function BACKWARD-ITEM.
 
 (defgeneric backward-item (cursor))
 
@@ -199,7 +218,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; BEGINNING-OF-LINE.
+;;; Generic function BEGINNING-OF-LINE.
 
 (defgeneric beginning-of-line (cursor))
 
@@ -208,7 +227,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; END-OF-LINE.
+;;; Generic function END-OF-LINE.
 
 (defgeneric end-of-line (cursor))
 
@@ -217,7 +236,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; ITEM-BEFORE-CURSOR.
+;;; Generic function ITEM-BEFORE-CURSOR.
 
 (defgeneric item-before-cursor (cursor))
 
@@ -226,7 +245,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; ITEM-AFTER-CURSOR.
+;;; Generic function ITEM-AFTER-CURSOR.
 
 (defgeneric item-after-cursor (cursor))
 
@@ -235,7 +254,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; 
-;;; LINE-COUNT.
+;;; Generic function LINE-COUNT.
 
 (defgeneric line-count (buffer))
 
@@ -244,7 +263,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; 
-;;; ITEM-COUNT.
+;;; Generic function ITEM-COUNT.
 
 (defgeneric item-count (buffer))
 
@@ -253,7 +272,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; INSERT-ITEM.
+;;; Generic function INSERT-ITEM.
 
 (defgeneric insert-item (cursor item))
 
@@ -267,7 +286,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; DELETE-ITEM.
+;;; Generic function DELETE-ITEM.
 
 (defgeneric delete-item (cursor))
 
@@ -281,7 +300,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; ERASE-ITEM.
+;;; Generic function ERASE-ITEM.
 
 (defgeneric erase-item (cursor))
 
@@ -295,7 +314,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; FIND-LINE.
+;;; Generic function FIND-LINE.
 
 (defgeneric find-line (buffer line-number))
 
@@ -320,7 +339,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LINE-NUMBER.
+;;; Generic function LINE-NUMBER.
 
 (defgeneric line-number (line))
 
@@ -333,7 +352,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; FIRST-LINE-P.
+;;; Generic function FIRST-LINE-P.
 
 (defgeneric first-line-p (line))
 
@@ -342,7 +361,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LAST-LINE-P.
+;;; Generic function LAST-LINE-P.
 
 (defgeneric last-line-p (line))
 
@@ -351,7 +370,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; BEGINNING-OF-BUFFER-P.
+;;; Generic function BEGINNING-OF-BUFFER-P.
 
 (defgeneric beginning-of-buffer-p (cursor))
 
@@ -364,7 +383,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; END-OF-BUFFER-P.
+;;; Generic function END-OF-BUFFER-P.
 
 (defgeneric end-of-buffer-p (cursor))
 
@@ -377,7 +396,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; SPLIT-LINE.
+;;; Generic function SPLIT-LINE.
 
 (defgeneric split-line (cursor))
 
@@ -415,7 +434,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; JOIN-LINE.
+;;; Generic function JOIN-LINE.
 
 (defgeneric join-line (cursor))
 
