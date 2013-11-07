@@ -379,13 +379,13 @@
   (let ((node (node cursor)))
     (splay-tree:splay node)
     (setf (cursors node) (remove cursor (cursors node)))
-    (change-class cursor 'detached-left-sticky-cursor)))
+    (change-class cursor 'climacs-buffer:detached-left-sticky-cursor)))
 
 (defmethod climacs-buffer:detach-cursor ((cursor open-right-sticky-cursor))
   (let ((node (node cursor)))
     (splay-tree:splay node)
     (setf (cursors node) (remove cursor (cursors node)))
-    (change-class cursor 'detached-right-sticky-cursor)))
+    (change-class cursor 'climacs-buffer:detached-right-sticky-cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
