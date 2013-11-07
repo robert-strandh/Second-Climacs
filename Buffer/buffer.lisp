@@ -482,4 +482,84 @@
 
 (defgeneric items (line &key start end))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function UPDATE.
 
+(defun update (buffer time sync skip update create)
+  (let ((state :skip)
+	(first-skip 0))
+    (labels ((traverse (node offset)
+	       (if (null node)
+		   nil
+		   (let* ((left (splay-tree:left node))
+			  (left-count (if (null left) 0 (item-count left)))
+			  (node-offset (+ offset left-count))
+			  (right-offset (+ node-offset 1)))
+		     (if (eq state :skip)
+			 (if (> (max-modify-time node) time)
+			     (progn
+			       (traverse (splay-tree:left node) offset)
+			       (if (eq state :skip)
+				   (if (> (modify-time node) time)
+				       (progn 
+					 (let ((skip-count (- node-offset first-skip)))
+					   (unless (zerop skip-count)
+					     (funcall skip skip-count)))
+					 (setf state :update)
+					 (if (> (create-time node) time)
+					     (funcall create (line node))
+					     (funcall update (line node)))
+					 (traverse (splay-tree:right node) right-offset))
+				       (traverse (splay-tree:right node) right-offset))
+				   (if (> (modify-time node) time)
+				       (progn
+					 (if (> (create-time node) time)
+					     (funcall create (line node))
+					     (funcall update (line node)))
+					 (traverse (splay-tree:right node) right-offset))
+				       (progn
+					 (funcall sync (line node))
+					 (setf state :skip)
+					 (setf first-skip right-offset)
+					 (traverse (splay-tree:right node) right-offset)))))
+			     nil)
+			 (if (> (max-modify-time node) time)
+			     (progn
+			       (traverse (splay-tree:left node) offset)
+			       (if (eq state :skip)
+				   (if (> (modify-time node) time)
+				       (progn 
+					 (let ((skip-count (- node-offset first-skip)))
+					   (unless (zerop skip-count)
+					     (funcall skip skip-count)))
+					 (setf state :update)
+					 (if (> (create-time node) time)
+					     (funcall create (line node))
+					     (funcall update (line node)))
+					 (traverse (splay-tree:right node) right-offset))
+				       (traverse (splay-tree:right node) right-offset))
+				   (if (> (modify-time node) time)
+				       (progn
+					 (if (> (create-time node) time)
+					     (funcall create (line node))
+					     (funcall update (line node)))
+					 (traverse (splay-tree:right node) right-offset))
+				       (progn
+					 (funcall sync (line node))
+					 (setf state :skip)
+					 (setf first-skip right-offset)
+					 (traverse (splay-tree:right node) right-offset)))))
+			     (progn
+			       (traverse (splay-tree:left node) offset)
+			       (if (eq state :skip)
+				   nil
+				   (progn 
+				     (funcall sync (line node))
+				     (setf state :skip)
+				     (setf first-skip right-offset))))))))))
+      (traverse (contents buffer) 0)
+      (when (eq state :skip)
+	(let ((skip-count (- (item-count (contents buffer)) first-skip)))
+	  (unless (zerop skip-count)
+	    (funcall skip skip-count)))))))
