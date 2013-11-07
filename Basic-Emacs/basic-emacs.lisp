@@ -76,3 +76,19 @@
 		      (delete-item cursor)))))
     (loop repeat count
 	  do (erase-one-item))))
+
+(defun item-before-cursor (cursor)
+  (cond ((climacs-buffer:beginning-of-buffer-p cursor)
+	 (error 'climacs-buffer:end-of-buffer))
+	((climacs-buffer:beginning-of-line-p cursor)
+	 #\Newline)
+	(t
+	 (climacs-buffer:item-before-cursor cursor))))
+
+(defun item-after-cursor (cursor)
+  (cond ((climacs-buffer:end-of-buffer-p cursor)
+	 (error 'climacs-buffer:end-of-buffer))
+	((climacs-buffer:end-of-line-p cursor)
+	 #\Newline)
+	(t
+	 (climacs-buffer:item-after-cursor cursor))))
