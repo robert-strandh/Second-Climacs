@@ -8,6 +8,7 @@
   (:export
    #:cursor-attached
    #:cursor-detached
+   #:buffer
    #:line
    #:*empty-line-constructor*
    #:attach-line
@@ -28,6 +29,10 @@
    #:end-of-line-p
    #:beginning-of-line
    #:end-of-line
+   #:beginning-of-buffer-p
+   #:end-of-buffer-p
+   #:beginning-of-buffer
+   #:end-of-buffer
    #:item-after-cursor
    #:item-before-cursor
    #:forward-item
