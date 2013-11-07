@@ -415,13 +415,15 @@
   (let* ((existing-line (line cursor))
 	 (existing-node (node existing-line))
 	 (new-line (line-split-line cursor))
+	 (buffer (buffer existing-node))
+	 (time (incf (current-time buffer)))
 	 (new-node (make-instance 'node
 		     :line-count 1
 		     :item-count 0
-		     :create-time 0
-		     :modify-time 0
-		     :line new-line))
-	 (buffer (buffer existing-node)))
+		     :create-time time
+		     :modify-time time
+		     :max-modify-time time
+		     :line new-line)))
     (setf (node new-line) new-node)
     ;; Make sure the existing line is the root of the tree.
     (splay-tree:splay existing-node)
