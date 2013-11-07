@@ -92,3 +92,19 @@
 	 #\Newline)
 	(t
 	 (climacs-buffer:item-after-cursor cursor))))
+
+(defun buffer-from-stream (stream)
+  (let* ((buffer (climacs-buffer:make-empty-buffer))
+	 (line (climacs-buffer:find-line buffer 0))
+	 (cursor (climacs-buffer:make-right-sticky-cursor)))
+    (climacs-buffer:attach-cursor cursor line)
+    (loop for line = (read-line stream nil nil)
+	  until (null line)
+	  do (loop for char across line
+		   do (insert-item cursor char))
+	     (insert-item cursor #\Newline))
+    (climacs-buffer:detach-cursor cursor)
+    buffer))
+
+    
+  
