@@ -98,11 +98,9 @@
 	 (line (climacs-buffer:find-line buffer 0))
 	 (cursor (climacs-buffer:make-right-sticky-cursor)))
     (climacs-buffer:attach-cursor cursor line)
-    (loop for line = (read-line stream nil nil)
-	  until (null line)
-	  do (loop for char across line
-		   do (insert-item cursor char))
-	     (insert-item cursor #\Newline))
+    (loop for char = (read-char stream nil nil)
+	  until (null char)
+	  do (insert-item cursor char))
     (climacs-buffer:detach-cursor cursor)
     buffer))
 
