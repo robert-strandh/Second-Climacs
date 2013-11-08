@@ -600,19 +600,12 @@
     ;; child of the node, and make the node the left chlid of a new
     ;; right sentinel.
     ;;
-    ;; Similary, the right child of the root is the first node of the
-    ;; existing line that should become part of the new line.  If the
-    ;; cursor is at the end of the existing line, then that node is
-    ;; the right sentinel.  Otherwise it is not a sentinel.  In order
-    ;; to split the line, this node should become the right child of
-    ;; a new left sentinel.
-    ;;
-    ;; The node count of the right child of the root is correct and
-    ;; thus does not have to be modified.  The node count of the
-    ;; root, on the other hand, includes the node count of its right
-    ;; child.  We need to subtract the node count of the right child
-    ;; from the node count of the root.
-    ;; The new sentinels will have no cursors attached to them.  
+    ;; Similary, the right child of the root is a node of the existing
+    ;; line that should become part of the new line.  If the cursor is
+    ;; at the end of the existing line, then that node is the right
+    ;; sentinel.  Otherwise it is not a sentinel.  In order to split
+    ;; the line, this node should become the right child of a new left
+    ;; sentinel.
     (let ((new-left-sentinel (make-instance 'node
 			       :item nil
 			       :line new-line
@@ -623,6 +616,16 @@
 				:node-count 1))
 	  (right (splay-tree:right node)))
       (setf (splay-tree:right node) nil)
+      ;; Change the line of all the nodes and cursors in the right
+      ;; subtree to be the new line.
+      (labels ((traverse (node)
+		 (unless (null node)
+		   (setf (line node) new-line)
+		   (loop for cursor in (cursors node)
+			 do (setf (climacs-buffer:line cursor) new-line))
+		   (traverse (splay-tree:left node))
+		   (traverse (splay-tree:right node)))))
+	(traverse right))
       (setf (splay-tree:left new-right-sentinel) node)
       (setf (splay-tree:right new-left-sentinel) right)
       (setf (contents existing-line) new-right-sentinel)
@@ -654,13 +657,14 @@
     ;; at the beginning of LINE2.
     (setf (cursors (splay-tree:right node2))
 	  (append (splay-tree:right node2) (cursors (splay-tree:right node1))))
-    ;; Reassign all the nodes in LINE2 to LINE1
+    ;; Reassign all the nodes and cursors in LINE2 to LINE1.
     (labels ((traverse (node)
-	       (if (null node)
-		   nil
-		   (progn (setf (line node) line1)
-			  (traverse (splay-tree:left node))
-			  (traverse (splay-tree:right node))))))
+	       (unless (null node)
+		 (setf (line node) line1)
+		 (loop for cursor in (cursors node)
+		       do (setf (climacs-buffer:line cursor) line1))
+		 (traverse (splay-tree:left node))
+		 (traverse (splay-tree:right node)))))
       (traverse (splay-tree:right node2)))
     ;; Finally attach the nodes of LINE2 to the end of the nodes of
     ;; LINE1.
