@@ -44,7 +44,18 @@ events is triggered:
 \item At the end of the execution of the command, the \emph{syntax
   update} is executed for all buffers, allowing the contents to be
   incrementally parsed according to the syntax associated with the
-  buffer.  Finally, visible views are repainted using whatever
+  buffer.%
+  \fixme{There seem to be cases where the syntax of one buffer depends
+    not only on its own associated buffer, but also on the contents of
+    other buffers.  It is not a big problem if the dependency is only
+    on the \emph{contents} of other buffers, but if the dependency is
+    also on the \emph{result of the syntax analysis} of other buffers,
+    then one syntax update might invalidate another.  In that case, it
+    might be necessary to loop until all analyses are complete.  This
+    can become very complicated because there can now be circular
+    dependencies so that the entire editor gets caught in an infinite
+    loop.}
+  Finally, visible views are repainted using whatever
   combination they want of the buffer contents and the result of the
   syntax update.  The syntax update uses the time stamps of lines in
   the buffer and of the previous syntax update to compute an
