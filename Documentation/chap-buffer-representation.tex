@@ -40,11 +40,12 @@ The buffer participates in two different buffer protocols:
 \end{enumerate}
 
 The operations in the edit protocol were designed to be \emph{fast}
-(typically less than a microsecond)%
-\fixme{To be more precise, do a test.}
-so that it is practical to use these operations in a loop, say to
-insert or delete a region, or to accomplish several operations inside
-a keyboard macro. 
+(typically around 10 $\mu s$) so that it is practical to use these
+operations in a loop, say to insert or delete a region, or to
+accomplish several operations inside a keyboard macro.  The exceptions
+are the operations \texttt{split-line} and \texttt{join-line} that
+take time proportional to the number of items in second line.%
+\footnote{We may improve on this performance in the future.}
 
 The operations in the update protocol were designed to be called at
 the frequency of the \emph{event loop} of an application, typically
