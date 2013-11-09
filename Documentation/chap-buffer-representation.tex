@@ -2,44 +2,44 @@
 \label{chap-internals-buffer}
 
 A buffer can have any representation that respects the \emph{buffer
-  protocol}.
+  protocols}.
 
 \section{Buffer protocols}
 
-The buffer protocol has been chosen so that it can fit a variety of
-editors.  As a consequence, it is not particularly Emacs-centric.  For
-example, in Emacs, a newline character is just another character, so
-that moving past it using the \texttt{forward-char} command changes
-the line in which \emph{point} is located, and using the
-\texttt{delete-char} command when \emph{point} is to the left of a
-newline character joins the line to the next one.
+The buffer protocols have been chosen so that they can fit a variety
+of editors.  As a consequence, they are not particularly
+Emacs-centric.  For example, in Emacs, a newline character is just
+another character, so that moving past it using the
+\texttt{forward-char} command changes the line in which \emph{point}
+is located, and using the \texttt{delete-char} command when
+\emph{point} is to the left of a newline character joins the line to
+the next one.
 
-In contrast, the buffer protocol documented here is line oriented and
-there is no newline character; only a sequence of lines.  At some
+In contrast, the buffer protocols documented here are line oriented
+and there is no newline character; only a sequence of lines.  At some
 level, it is of course desired to have Emacs-compatible commands, but
 these commands are written separately, using this buffer protocol to
 accomplish the effects.  For example, the Emacs-compatible
-\texttt{forward-item} command will have to check whether it is at the
-end of a line, and if so, detach the cursor from that line and attach
-it to the next one.  Similarly, the Emacs compatible
-\texttt{delete-item} command will have to call \texttt{join-line} in
-the buffer protocol to obtain the desired effect when it is at the end
-of a line.
+\texttt{forward-item} command checks whether it is at the end of a
+line, and if so, detaches the cursor from that line and attaches it to
+the next one.  Similarly, the Emacs compatible \texttt{delete-item}
+command calls \texttt{join-line} in the buffer protocol to obtain the
+desired effect when it is at the end of a line.
 
 By writing the editor commands in two levels like this, we hope it
-will be easier to use the buffer protocol to write emulators for other
-editors, such as \texttt{VIM}.  
+will be easier to use the buffer protocols to write emulators for
+other editors, such as \texttt{VIM}.
 
 The buffer participates in two different buffer protocols:
 
 \begin{enumerate}
 \item The \emph{edit protocol}, used by client editing and
   cursor-motion operations.
-\item The \emph{query protocol}, used by redisplay operations to
+\item The \emph{update protocol}, used by redisplay operations to
   determine what items are contained in the buffer. 
 \end{enumerate}
 
-The buffer protocols exposes two levels of abstraction to client code: 
+The buffer protocols expose two levels of abstraction to client code: 
 
 \begin{enumerate}
 \item The \emph{buffer} level represents the \emph{sequence of lines}
@@ -47,19 +47,19 @@ The buffer protocols exposes two levels of abstraction to client code:
 \item The \emph{line} level represents individual lines. 
 \end{enumerate}
 
-The buffer protocols do not pretend to manage any equivalence between
-line breaks and some sequence of characters.  It is up to client code
-to model such an equivalence if desired.  As a consequence, the buffer
-protocols do not allow for a cursor at the beginning of a line to
-more backward or a cursor at the end of a line to move forward.  An
-attempt at doing so will result in an error being signaled.  If client
-code wants to impose a model where the line break corresponds to (say)
-the \emph{newline} character, then it must explicitly detach and
-reattach the cursor to a different line in these cases.  It can manage
-that in two different ways: either by explicitly testing for
-\texttt{beginning-of-line} or \texttt{end-of-line} before calling the
-equivalent buffer function, or by handling the error that results from
-the attempt. 
+As mentioned above, the buffer protocols do not pretend to manage any
+equivalence between line breaks and some sequence of characters.  It
+is up to client code to model such an equivalence if desired.  As a
+consequence, the buffer protocols do not allow for a cursor at the
+beginning of a line to more backward or a cursor at the end of a line
+to move forward.  An attempt at doing so will result in an error being
+signaled.  If client code wants to impose a model where the line break
+corresponds to (say) the \emph{newline} character, then it must
+explicitly detach and reattach the cursor to a different line in these
+cases.  It can manage that in two different ways: either by explicitly
+testing for \texttt{beginning-of-line} or \texttt{end-of-line} before
+calling the equivalent buffer function, or by handling the error that
+results from the attempt.
 
 The buffer also does not interpret the meaning of any of items
 contained in it.  For instance, whether an item is to be considered
@@ -68,47 +68,57 @@ at the level of the syntax.  As a consequence, the buffer protocol
 does not offer any functions that require such interpretation, such as
 \texttt{forward-word}, \texttt{end-of-paragraph}, etc. 
 
-\Defun {beginning-of-buffer-p} {cursor}
+\subsection{Buffer edit protocol}
+
+\Defgeneric {beginning-of-buffer-p} {cursor}
 
 Return \textit{true} if and only if \textit{cursor} is located at the
 beginning of a buffer.
 
-\Defun {end-of-buffer-p} {cursor}
+\Defgeneric {end-of-buffer-p} {cursor}
 
 Return \textit{true} if and only if \textit{cursor} is located at the
 end of a buffer.
 
-\Defun {beginning-of-line-p} {cursor}
+\Defgeneric {beginning-of-line-p} {cursor}
 
 Return \textit{true} if and only if \textit{cursor} is located at the
 beginning of a line.
 
-\Defun {end-of-line-p} {cursor}
+\Defgeneric {end-of-line-p} {cursor}
 
 Return \textit{true} if and only if \textit{cursor} is located at the
 end of a line.
 
-\Defun {beginning-of-buffer} {cursor}
+\Defgeneric {beginning-of-buffer} {cursor}
 
 Position \textit{cursor} at the very beginning of the buffer.
 
-\Defun {end-of-buffer} {cursor}
+\Defgeneric {end-of-buffer} {cursor}
 
 Position \textit{cursor} at the very end of the buffer.
 
-\Defun {forward-item} {cursor}
+\Defgeneric {beginning-of-line} {cursor}
+
+Position \textit{cursor} at the very beginning of the line.
+
+\Defgeneric {end-of-line} {cursor}
+
+Position \textit{cursor} at the very end of the line.
+
+\Defgeneric {forward-item} {cursor}
 
 Move \textit{cursor} forward one position.  If \emph{cursor} is at the
 end of the line, the error condition \texttt{end-of-line} will be
 signaled.
 
-\Defun {backward-item} {cursor}
+\Defgeneric {backward-item} {cursor}
 
 Move \textit{cursor} backward one position.  If \emph{cursor} is at
 the beginning of the line, the error condition
 \texttt{beginning-of-line} will be signaled.
 
-\Defun {insert-item} {cursor item}
+\Defgeneric {insert-item} {cursor item}
 
 Insert an item at the location of \textit{cursor}.  After this
 operation, any left-sticky cursor located at the same position as
@@ -116,31 +126,31 @@ operation, any left-sticky cursor located at the same position as
 right-sticky cursor located at the same position as \textit{cursor}
 will be located after \textit{item}.
 
-\Defun {delete-item} {cursor}
+\Defgeneric {delete-item} {cursor}
 
 Delete the item immediately to the right of \emph{cursor}.  If
 \emph{cursor} is at the end of the line, the error condition
 \texttt{end-of-line} will be signaled.
 
-\Defun {erase-item} {cursor}
+\Defgeneric {erase-item} {cursor}
 
 Delete the item immediately to the left of \emph{cursor}.  If
 \emph{cursor} is at the beginning of the line, the error condition
 \texttt{beginning-of-line} will be signaled.
 
-\Defun {item-after-cursor} {cursor}
+\Defgeneric {item-after-cursor} {cursor}
 
 Return the item located immediately to the right of \textit{cursor}.
 If \emph{cursor} is at the end of the line, the error condition
 \texttt{end-of-line} will be signaled.
 
-\Defun {item-before-cursor} {cursor}
+\Defgeneric {item-before-cursor} {cursor}
 
 Return the item located immediately to the left of \textit{cursor}.
 If \emph{cursor} is at the beginning of the line, the error condition
 \texttt{beginning-of-line} will be signaled.
 
-\Defun {split-line} {cursor}
+\Defgeneric {split-line} {cursor}
 
 Split the line in which \textit{cursor} is located into two lines, the
 first cone containing the text preceding \textit{cursor} and the
@@ -150,20 +160,20 @@ operation, any left-sticky cursor located at the same position as
 right-sticky cursor located at the same position as \textit{cursor}
 will be located at the beginning of the second line.
 
-\Defun {join-line} {cursor}
+\Defgeneric {join-line} {cursor}
 
 Join the line in which \textit{cursor} is located and the following
 line.  If \textit{cursor} is located at the last line of the buffer,
 the error condition \texttt{end-of-buffer} will be signaled.
 
-\Defun {detach-cursor} {cursor}
+\Defgeneric {detach-cursor} {cursor}
 
 The class of \textit{cursor} is changed to \texttt{detached-cursor}
 and it is removed from the line it was initially located in. 
 
 If \textit{cursor} is already detached, this operation has no effect.
 
-\Defun {attach-cursor} {cursor line \optional (position 0)}
+\Defgeneric {attach-cursor} {cursor line \optional (position 0)}
 
 Attach \textit{cursor} to \textit{line} at \textit{position}.  If
 \textit{position} is supplied and it is greater than the number of
@@ -171,20 +181,74 @@ items in \textit{line}, the error condition \texttt{end-of-line} is
 signaled.  If \textit{cursor} is already attached to a line, the error
 condition \texttt{cursor-attached} will be signaled.
 
-\Defun {cursor-position} {cursor}
+\Defgeneric {cursor-position} {cursor}
 
 Return the position of \textit{cursor} as two values: the line number
 and the item number within the line. 
 
-\Defun {line-count} {cursor}
+\Defgeneric {line-count} {cursor}
 
 Return the number of lines in the buffer in which \textit{cursor} is
 located.
 
-\Defun {item-count} {cursor}
+\Defgeneric {item-count} {cursor}
 
 Return the number of items in the line in which \textit{cursor} is
 located.
+
+\Defgeneric {line} {cursor}
+
+Return the line in which \textit{cursor} is located. 
+
+\Defgeneric {line-number} {line}
+
+Return the line number of \textit{line}.  The first line of the buffer
+has the number $0$. 
+
+\Defgeneric {find-line} {buffer line-number}
+
+Return the line in the buffer with the given \textit{line-number}.  If
+\textit{line-number} is less than $0$ then the error
+\texttt{beginning-of-buffer} is signaled.  If \textit{line-number} is
+greater than or equal to the number of lines in the buffer, then the
+error \texttt{end-of-buffer} is signaled.
+
+\Defgeneric {buffer} {object}
+
+Return the buffer in which \textit{object} is located, where
+\textit{object} is a \emph{cursor} or a \emph{line}.
+
+Notice that the edit protocol does not contain any
+\texttt{delete-line} operation.  This design decision was made on
+purpose.  By only providing \texttt{join-line}, we guarantee that
+removing a line leaves a \emph{trace} in the buffer in the form of a
+modification operation on the first of the two lines that were
+joined.  This features is essential in order for the \emph{update
+  protocol} to work correctly.
+
+\subsection{Buffer update protocol}
+
+At the center of the update protocol is the concept of a \emph{time
+  stamp}.  Each buffer manages a \emph{current time} which is a
+non-negative integer that has the initial value $0$.  Whenever a line
+is modified or created, it is marked with the current time of the
+buffer, and then the current time of the buffer is incremented.
+
+\Defgeneric {current-time} {buffer}
+
+Return the current time of the buffer, and then increment it. 
+
+\Defgeneric {items} {line \key start end}
+
+Return the items of \textit{line} as a vector.  The keyword parameters
+\textit{start} and \textit{end} have the same interpretation as for
+\cl{} sequence functions.
+
+\Defgeneric {update} {buffer time sync skip update create}
+
+The parameters \textit{sync}, \textit{skip}, \textit{update}, and
+\textit{create}, are functions that are called by the \texttt{update}
+function.
 
 \section{Standard buffer representation}
 
