@@ -41,16 +41,15 @@ events is triggered:
   Lines that are modified or inserted are marked with the
   \emph{current time stamp} and the current time stamp is
   incremented, possibly more than once. 
-\item At the end of the execution of the command, all visible views
-  are updated.  If any visible view displays a buffer that was
-  modified in the first step, the \emph{syntax update} is executed for
-  that buffer, allowing the contents to be incrementally parsed
-  according to the syntax associated with the buffer.  If two or more
-  views display the same buffer, the syntax update is executed only
-  once.  The syntax update uses the time stamps of lines in the buffer
-  and of the previous syntax update to compute an up-to-date
-  representation of the buffer.  This computation is done
-  incrementally as much as possible. 
+\item At the end of the execution of the command, the \emph{syntax
+  update} is executed for all buffers, allowing the contents to be
+  incrementally parsed according to the syntax associated with the
+  buffer.  Finally, visible views are repainted using whatever
+  combination they want of the buffer contents and the result of the
+  syntax update.  The syntax update uses the time stamps of lines in
+  the buffer and of the previous syntax update to compute an
+  up-to-date representation of the buffer.  This computation is done
+  incrementally as much as possible.
 \item Each view on display recomputes the data presented to the user
   and redraws the associated window.  Again, time stamps are used to
   make this computation as incremental as possible.
