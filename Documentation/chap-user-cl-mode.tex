@@ -1,0 +1,120 @@
+\chapter{\cl{} mode}
+
+The contents of this chapter was largely written long before the \cl{}
+mode was implemented or even fully designed.  We still use the present
+tense to describe functionality, though, as if it existed. 
+
+\section{Syntax-related information}
+
+Syntax-related information is presented as slight alterations of how
+the code elements in the buffer is displayed to the user.  The
+following methods are used (roughly in decreasing order of frequency):
+
+\begin{itemize}
+\item Changing the background color.
+\item Changing the foreground color.
+\item Changing the font face.
+\item Using a different glyph.
+\end{itemize}
+
+In addition, a code element that is marked in this way also has
+associated textual information that can be read in the minibuffer when
+the cursor is positioned on the text, or as a tooltip when the pointer
+is positioned above the text.  In the remainder of this chapter, we
+give the English version of the textual information.
+Internationalization may change the language according to user
+preference.
+
+Furthermore, in some cases a code element that is marked this way has
+a \emph{context menu} associated with it.
+
+\subsection{Information about symbols}
+
+\subsubsection{Invalid symbol syntax}
+
+A token which does not have any interpretation as a number is
+considered a potential symbol.  If so, there are a few cases where
+token is nevertheless invalid as the name of a symbol.
+
+The token might have an invalid constellation of package markers:
+
+\begin{itemize}
+\item Too many package markers.
+\item Two package markers that are separated by some other character. 
+\item A single package marker at the end of the token.
+\end{itemize}
+
+In this case, the background color of the package markers is vivid
+red, and the background of the symbol itself is a lighter red. 
+
+The associated textual information says ``Illegal constellation of
+package markers''. 
+
+\refFig{fig-invalid-package-markers} illustrates how this type of
+information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-invalid-package-markers.pdf_t}
+\end{center}
+\caption{\label{fig-invalid-package-markers}
+Display of potential symbol with illegal package markers.}
+\end{figure}
+
+No context menu is suggested. 
+
+\subsubsection{Non-existing package}
+
+A symbol with one or two package markers but where the package
+indicated in the prefix does not exists is marked with a pink
+background, and the package name is marked with a vivid red
+background. 
+
+The associated textual information says ``Non-existing package''.
+
+\refFig{fig-non-existing-package} illustrates how this type of
+information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-non-existing-package.pdf_t}
+\end{center}
+\caption{\label{fig-non-existing-package}
+Display of potential symbol with illegal package markers.}
+\end{figure}
+
+The context menu has a single option: ``Create the package''.
+
+\subsubsection{Non-existing symbol}
+
+A symbol token with a single package marker that refers to a
+non-existing symbol is marked with a vivid red background.  The
+associated textual information says ``Non-existing symbol''.  
+
+The context menu gives the following options:
+
+\begin{itemize}
+\item Create and export the symbol in the specified package.
+\item Import the symbol from a different package, and export it from
+  the specified package.  The user will be prompted for the package to
+  import from. 
+\end{itemize}
+
+\subsubsection{Unexported symbol}
+
+A symbol token with a single package marker that refers to an
+existing, but unexported symbol is marked with a vivid
+red background.  The associated textual information says ``The symbol
+is not exported''.
+
+The context menu gives the following options:
+
+\begin{itemize}
+\item Export the symbol from the specified package.
+\end{itemize}
+
+\section{Indentation}
+
+\section{Comments}
+
+%%  LocalWords:  tooltip minibuffer unexported
