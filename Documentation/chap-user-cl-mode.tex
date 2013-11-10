@@ -45,7 +45,7 @@ The token might have an invalid constellation of package markers:
 \end{itemize}
 
 In this case, the background color of the package markers is vivid
-red, and the background of the symbol itself is a lighter red. 
+red, and the background of the symbol itself is pink. 
 
 The associated textual information says ``Illegal constellation of
 package markers''. 
@@ -91,21 +91,65 @@ A symbol token with a single package marker that refers to a
 non-existing symbol is marked with a vivid red background.  The
 associated textual information says ``Non-existing symbol''.  
 
+\refFig{fig-non-existing-symbol} illustrates how this type of
+information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-non-existing-symbol.pdf_t}
+\end{center}
+\caption{\label{fig-non-existing-symbol}
+Display of potential symbol with illegal package markers.}
+\end{figure}
+
 The context menu gives the following options:
 
 \begin{itemize}
 \item Create and export the symbol in the specified package.
-\item Import the symbol from a different package, and export it from
-  the specified package.  The user will be prompted for the package to
-  import from. 
+\item Import the symbol from a different package into the specified
+  package, and also export it from the specified package.  The user
+  will be prompted for the package to import from.
+\end{itemize}
+
+A symbol token with a two package markers that refers to a
+non-existing symbol is marked with a pink background.  The
+associated textual information says ``Non-existing symbol''.  
+
+\refFig{fig-non-existing-symbol-two-package-markers} illustrates how
+this type of information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-non-existing-symbol-two-package-markers.pdf_t}
+\end{center}
+\caption{\label{fig-non-existing-symbol-two-package-markers}
+Display of potential symbol with illegal package markers.}
+\end{figure}
+
+The context menu gives the following options:
+
+\begin{itemize}
+\item Create the symbol in the specified package.
+\item Import the symbol from a different package into the specified
+  package.  The user will be prompted for the package to import from.
 \end{itemize}
 
 \subsubsection{Unexported symbol}
 
 A symbol token with a single package marker that refers to an
-existing, but unexported symbol is marked with a vivid
-red background.  The associated textual information says ``The symbol
-is not exported''.
+existing, but unexported symbol is marked with a pink background.  The
+associated textual information says ``Unexported symbol.
+
+\refFig{fig-unexported-symbol} illustrates how this type of
+information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-unexported-symbol.pdf_t}
+\end{center}
+\caption{\label{fig-unexported-symbol}
+Display of potential symbol with illegal package markers.}
+\end{figure}
 
 The context menu gives the following options:
 
