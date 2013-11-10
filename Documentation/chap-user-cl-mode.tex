@@ -157,6 +157,23 @@ The context menu gives the following options:
 \item Export the symbol from the specified package.
 \end{itemize}
 
+\subsubsection{Illegal use of \cl{} symbols}
+
+When a symbol from the \texttt{common-lisp} package is used in a
+context that \sysname{} can determine is illegal, it is signaled by
+the use of an orange background. 
+
+\refFig{fig-illegal-use-of-cl-symbol} illustrates how this type of
+information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-illegal-use-of-cl-symbol.pdf_t}
+\end{center}
+\caption{\label{fig-illegal-use-of-cl-symbol}
+Display of illegal use of \cl{} symbol.}
+\end{figure}
+
 \section{Indentation}
 
 \section{Comments}
