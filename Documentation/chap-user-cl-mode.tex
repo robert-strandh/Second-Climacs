@@ -25,10 +25,40 @@ give the English version of the textual information.
 Internationalization may change the language according to user
 preference.
 
+Names of specific colors that are mentioned in this section are merely
+\emph{examples}.  They may or may not be the default colors actually
+used, and every color can be customized by the end user. 
+
 Furthermore, in some cases a code element that is marked this way has
 a \emph{context menu} associated with it.
 
 \subsection{Information about symbols}
+
+In general, errors and warnings are indicated by a specific
+\emph{background color}.  Typically these colors are in shades of
+\emph{red}. 
+
+Symbols that have no error or warning information associated with them
+are displayed using some dark foreground color so as to give good
+contrast with the background.  
+
+Except for symbol with lexical bindings and symbols used for
+\texttt{loop} keywords, the \emph{hue} of the color is associated with
+the \emph{home package} of the symbol.  We use \emph{blue} for the
+\cl{} package, \emph{green} for the current package, and
+\emph{magenta} for other packages.
+
+Symbols with lexical bindings use \emph{cyan} colors, independently of
+the home package of the symbol.  Symbols used as \texttt{loop}
+keywords use a dark brown color. 
+
+Within a family of similar hues, the darkest color is used for symbols
+used as \emph{functions} and for symbols used as \emph{global
+  variables}  The two categories can be distinguished because of the
+\emph{position} within an expression.  Slightly lighter colors are
+used for \emph{macros} and \emph{symbol macros}.  
+
+A \emph{context menu} may be associated with certain symbols.
 
 \subsubsection{Invalid symbol syntax}
 
@@ -174,13 +204,63 @@ information is displayed.
 Display of illegal use of \cl{} symbol.}
 \end{figure}
 
+\subsubsection{Names of lexical functions}
+
+Names of functions introduced by \texttt{flet} or \texttt{labels} are
+shown with a dark \emph{cyan} foreground color, independently of the
+home package of the symbol including when that package happens to be
+the \texttt{common-lisp} package.
+
+When the pointer is located over such a name, the corresponding symbol
+in the introducing binding is highlighted with a light blue
+background. 
+
+One entry in the context menu is to jump to location where the binding
+was established. 
+
 \subsubsection{Names of lexical variables}
 
-Names of lexical variables are shown with a mumble%
-\fixme{Decide which color}
-background color, independently of the home package of the symbol
+Names of lexical variables introduced by \texttt{let}, \texttt{let*},
+\texttt{multiple-value-bind}, and by macros that expand into one of
+these special forms are shown with a dark \emph{cyan}
+foreground color, independently of the home package of the symbol
 including when that package happens to be the \texttt{common-lisp}
-package. 
+package.
+
+When the pointer is located over such a name, the corresponding symbol
+in the introducing binding is highlighted with a light blue
+background. 
+
+One entry in the context menu is to jump to location where the binding
+was established. 
+
+\subsubsection{Names of local macros}
+
+Names of local macros are shown with a slightly lighter \emph{cyan}
+foreground color, independently of the home package of the symbol
+including when that package happens to be the \texttt{common-lisp}
+package.
+
+When the pointer is located over such a name, the corresponding symbol
+in the introducing binding is highlighted with a light blue
+background. 
+
+One entry in the context menu is to jump to location where the binding
+was established. 
+
+\subsubsection{Names of local symbol macros}
+
+Names of lexical variables are shown with a slightly lighter
+\emph{cyan} foreground color, independently of the home package of the
+symbol including when that package happens to be the
+\texttt{common-lisp} package.
+
+When the pointer is located over such a name, the corresponding symbol
+in the introducing binding is highlighted with a light blue
+background. 
+
+One entry in the context menu is to jump to location where the binding
+was established. 
 
 \subsubsection{Names of global functions in the current package}
 
@@ -194,15 +274,43 @@ package.
 
 \subsubsection{Names of global functions in the \texttt{common-lisp} package}
 
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named function.
+
+One entry of the context menu is to show the entry in the \hs{}
+associated with the named function.
+
 \subsubsection{Names of global macros in the \texttt{common-lisp} package}
 
-\subsubsection{Names of global symbol macros in the \texttt{common-lisp} package}
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named macro.
+
+One entry of the context menu is to show the entry in the \hs{}
+associated with the named macro.
 
 \subsubsection{Names of global variables in the \texttt{common-lisp} package}
 
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named variable.
+
+One entry of the context menu is to show the entry in the \hs{}
+associated with the named variable.
+
 \subsubsection{Names of constant variables in the \texttt{common-lisp} package}
 
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named constant variable.
+
+One entry of the context menu is to show the entry in the \hs{}
+associated with the named macro.
+
 \subsubsection{Names of special operators}
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named special operator.
+
+One entry of the context menu is to show the entry in the \hs{}
+associated with the named special operator.
 
 \subsubsection{Names of global functions in other packages}
 
