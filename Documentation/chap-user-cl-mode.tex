@@ -466,6 +466,49 @@ information is displayed.
 Display of extraneous whitespace.}
 \end{figure}
 
+\subsection{Argument mismatch}
+
+Argument mismatch is a situation that may occur for the following
+types of forms:
+
+\begin{itemize}
+\item Function calls.
+\item Macro calls.
+\item Special forms.
+\end{itemize}
+
+Argument mismatch corresponds to one of the following situations:
+
+\begin{itemize}
+\item The number of arguments is less than the minimum number required
+  by the function, the macro, or the special operator.
+\item The number of arguments is greater than the maximum number
+  allowed by the function, the macro, or the special operator.
+\item The function, the macro or the special operator admit \&key
+  arguments, and there is an odd number of arguments in that part of
+  the argument list.
+\item The function, the macro or the special operator requires the
+  number of arguments to be even, but an odd number of arguments are
+  given (e.g., for \texttt{setq} and \texttt{setf}).
+\item The function, the macro or the special operator requires the
+  number of arguments to be odd, but an even number of arguments are
+  given.
+\end{itemize}
+
+In the case where the number of arguments is greater than the maximum
+number allowed, each extraneous arguments is highlighted with a vivid
+\emph{red} background.  The tooltip associated with each arguments
+says ``Extraneous argument.'' 
+
+In all other cases, the closing parenthesis is preceded by a
+\emph{red} rectangle.  Notice that this red rectangle does not
+constitute an item in the buffer, and as a consequence it is
+impossible to position the cursor between the red rectangle and the
+closing parenthesis.  Rather, the red rectangle is part of the way the
+closing parenthesis is displayed.  In the case where too few arguments
+were given, the tooltip says ``Too few arguments'', and in the other
+cases it says ``Wrong argument parity''.
+
 \subsection{Indentation}
 
 \subsection{Comments}
