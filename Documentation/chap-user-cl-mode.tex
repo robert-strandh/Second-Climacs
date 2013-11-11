@@ -190,8 +190,8 @@ The context menu gives the following options:
 \subsubsection{Illegal use of \cl{} symbols}
 
 When a symbol from the \texttt{common-lisp} package is used in a
-context that \sysname{} can determine is illegal, it is signaled by
-the use of an orange background. 
+context that can be determined illegal, it is signaled by the use of
+an orange background.
 
 \refFig{fig-illegal-use-of-cl-symbol} illustrates how this type of
 information is displayed.
@@ -264,11 +264,59 @@ was established.
 
 \subsubsection{Names of global functions in the current package}
 
+A dark \emph{green} foreground color is used to display a symbol in the
+current package that is the name of a global function, and that is not
+used as lexical name (of a variable, a function, a macro, or a symbol
+macro).  
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named function.
+
+If the source location where the function was defined can be
+determined, then one entry in the context menu is to jump to that
+location.
+
 \subsubsection{Names of global macros in the current package}
+
+A slightly lighter \emph{green} foreground color is used to display a
+symbol in the current package that is the name of a global macro, and
+that is not used as lexical name (of a variable, a function, a macro,
+or a symbol macro).
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named macro.
+
+If the source location where the macro was defined can be
+determined, then one entry in the context menu is to jump to that
+location.
 
 \subsubsection{Names of global symbol macros in the current package}
 
-\subsubsection{Names of global variables in the current package}
+A slightly lighter \emph{green} foreground color is used to display a
+symbol in the current package that is the name of a global symbol
+macro, and that is not used as lexical name (of a variable, a
+function, a macro, or a symbol macro).
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named symbol macro.
+
+If the source location where the symbol macro was defined can be
+determined, then one entry in the context menu is to jump to that
+location.
+
+\subsubsection{Names of special variables in the current package}
+
+A dark \emph{green} foreground color is used to display a symbol in
+the current package if it is in a context where it is the name of a
+special variable.
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named variable.
+
+If the symbol names a variable that is globally special, and if
+the source location where the variable was defined can be
+determined, then one entry in the context menu is to jump to that
+location.
 
 \subsubsection{Names of constant variables in the current package}
 
