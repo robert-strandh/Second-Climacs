@@ -322,6 +322,11 @@ location.
 
 \subsubsection{Names of global functions in the \texttt{common-lisp} package}
 
+A dark \emph{blue} foreground color is used to display a symbol in the
+\texttt{common-lisp} package that is the name of a global function,
+and that is not used as lexical name (of a variable or a symbol
+macro).
+
 The \emph{tooltip} shows the \texttt{documentation} entry associated
 with the named function.
 
@@ -330,13 +335,21 @@ associated with the named function.
 
 \subsubsection{Names of global macros in the \texttt{common-lisp} package}
 
+A slightly lighter \emph{blue} foreground color is used to display a
+symbol in the \texttt{common-lisp} package that is the name of a
+global macro, and that is not used as lexical name (of a variable or a
+symbol macro).
+
 The \emph{tooltip} shows the \texttt{documentation} entry associated
 with the named macro.
 
 One entry of the context menu is to show the entry in the \hs{}
 associated with the named macro.
 
-\subsubsection{Names of global variables in the \texttt{common-lisp} package}
+\subsubsection{Names of special variables in the \texttt{common-lisp} package}
+
+A dark \emph{blue} foreground color is used to display a symbol in the
+\texttt{common-lisp} package that is the name of a special variable.
 
 The \emph{tooltip} shows the \texttt{documentation} entry associated
 with the named variable.
@@ -362,11 +375,60 @@ associated with the named special operator.
 
 \subsubsection{Names of global functions in other packages}
 
+A dark \emph{magenta} foreground color is used to display a symbol in
+a package other than the current one or the \texttt{common-lisp}
+package that is the name of a global function, and that is not used as
+lexical name (of a variable, a function, a macro, or a symbol macro).
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named function.
+
+If the source location where the function was defined can be
+determined, then one entry in the context menu is to jump to that
+location.
+
 \subsubsection{Names of global macros in other packages}
+
+A slightly lighter \emph{magenta} foreground color is used to display
+a symbol in a package other than the current one or the
+\texttt{common-lisp} package that is the name of a global macro, and
+that is not used as lexical name (of a variable, a function, a macro,
+or a symbol macro).
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named macro.
+
+If the source location where the macro was defined can be determined,
+then one entry in the context menu is to jump to that location.
 
 \subsubsection{Names of global symbol macros in other packages}
 
-\subsubsection{Names of global variables in other packages}
+A slightly lighter \emph{magenta} foreground color is used to display
+a symbol in a package other than the current one or the
+\texttt{common-lisp} package that is the name of a global symbol
+macro, and that is not used as lexical name (of a variable, a
+function, a macro, or a symbol macro).
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named symbol macro.
+
+If the source location where the macro was defined can be determined,
+then one entry in the context menu is to jump to that location.
+
+\subsubsection{Names of special variables in other packages}
+
+A dark \emph{magenta} foreground color is used to display a symbol in
+a package other than the current one or the \texttt{common-lisp}
+package if it is in a context where it is the name of a special
+variable.
+
+The \emph{tooltip} shows the \texttt{documentation} entry associated
+with the named variable.
+
+If the symbol names a variable that is globally special, and if
+the source location where the variable was defined can be
+determined, then one entry in the context menu is to jump to that
+location.
 
 \subsubsection{Names of constant variables in other packages}
 
