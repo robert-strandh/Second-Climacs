@@ -432,8 +432,42 @@ location.
 
 \subsubsection{Names of constant variables in other packages}
 
-\section{Indentation}
+\subsection{Extraneous whitespace}
 
-\section{Comments}
+Whitespace is considered \emph{extraneous} in the following cases: 
 
-%%  LocalWords:  tooltip minibuffer unexported
+\begin{itemize}
+\item When it follows a left parenthesis.
+\item When it precedes a right parenthesis.
+\item When it follows other whitespace that separate two expressions. 
+\item When it follows the last non-whitespace character of a line.
+\end{itemize}
+
+It is \emph{not} considered extraneous in the following cases:
+
+\begin{itemize}
+\item When it precedes the first non-whitespace character on a line. 
+\item When it separates the first semicolon on a line from the last
+  preceding non-whitespace character. 
+\end{itemize}
+
+Extraneous whitespace is marked with a \emph{pink} background.  The
+tooltip associated with the marked background says ``Extraneous
+whitespace''. 
+
+\refFig{fig-extraneous-whitespace} illustrates how this type of
+information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-extraneous-whitespace.pdf_t}
+\end{center}
+\caption{\label{fig-extraneous-whitespace}
+Display of extraneous whitespace.}
+\end{figure}
+
+\subsection{Indentation}
+
+\subsection{Comments}
+
+%%  LocalWords:  tooltip minibuffer unexported whitespace
