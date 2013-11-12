@@ -4,11 +4,24 @@ The contents of this chapter was largely written long before the \cl{}
 mode was implemented or even fully designed.  We still use the present
 tense to describe functionality, though, as if it existed. 
 
-\section{Syntax-related information}
+\cl{} mode consists of two parts:
 
-Syntax-related information is presented as slight alterations of how
-the code elements in the buffer is displayed to the user.  The
-following methods are used (roughly in decreasing order of frequency):
+\begin{itemize}
+\item The \emph{code analyzer}, which is responsible for analyzing
+  the contents of the buffer and presenting the result of this
+  analysis to the user.
+\item A set of \emph{commands} that take advantage of the result if
+  the analysis. 
+\end{itemize}
+
+\section{Code analyzer}
+
+\subsection{Display of information from code analysis}
+
+Information derived by the code analyzer is presented as slight
+alterations of how the code elements in the buffer is displayed to the
+user.  The following methods are used (roughly in decreasing order of
+frequency):
 
 \begin{itemize}
 \item Changing the background color.
@@ -31,8 +44,6 @@ used, and every color can be customized by the end user.
 
 Furthermore, in some cases a code element that is marked this way has
 a \emph{context menu} associated with it.
-
-\subsection{Information about symbols}
 
 In general, errors and warnings are indicated by a specific
 \emph{background color}.  Typically these colors are in shades of
@@ -60,7 +71,43 @@ used for \emph{macros} and \emph{symbol macros}.
 
 A \emph{context menu} may be associated with certain symbols.
 
-\subsubsection{Invalid symbol syntax}
+\subsection{Analyzer phases}
+
+The code analyzer works in three phases.
+
+\begin{enumerate}
+\item Surface syntax analysis.
+\item Structure syntax analysis.
+\item Semantic analysis.
+\end{enumerate}
+
+\subsection{Surface syntax analysis}
+
+This phase consists of repeated applying a custom version of the \cl{}
+\texttt{read} function to the contents of the buffer in order to
+obtain a \emph{succession of top-level expressions}.  
+
+The following types of errors are detected during this phase:
+
+\begin{itemize}
+\item Invalid tokens.  An invalid token is either a token that has an
+  invalid constellation of package markers, or a token with an invalid
+  constellation of escape characters.  In the latter case, it could be
+  a \emph{single escape} character at the very end of the buffer (not
+  even followed by a newline) or an odd number of \emph{multiple
+    escape} characters.
+\item A left parenthesis at the top level of the buffer.
+\item An \emph{incomplete} expression, i.e., an expression that is not
+  terminated, typically as a result of too few closing parentheses.
+\item Extraneous whitespace. 
+\end{itemize}
+
+As mentioned previously, the result of this analysis is a succession
+of top-level expressions, where the last one may incomplete.  An
+incomplete expression is nevertheless parsed in order to determine the
+presence of invalid tokens.  
+
+\subsubsection{Invalid token syntax}
 
 A token which does not have any interpretation as a number is
 considered a potential symbol.  If so, there are a few cases where
@@ -91,7 +138,83 @@ information is displayed.
 Display of potential symbol with illegal package markers.}
 \end{figure}
 
-No context menu is suggested. 
+A token with a \emph{single escape} character immediately at the end
+of the buffer is displayed with a \emph{pink} background.  The single
+escape character itself has a vivid \emph{red} background.  The
+tooltip says ``Single escape followed by end of buffer''.
+
+A token with an odd number of \emph{multiple escape} characters is
+displayed with a \emph{pink} background from the start of the token up
+to the character immediately preceding the last multiple escape
+character.  The last multiple escape character and the characters
+following it are displayed with a vivid \emph{red} background.  The
+tooltip says ``Odd number of multiple escape characters''.
+
+No context menu is suggested for tokens with invalid syntax.
+
+\subsubsection{Extraneous whitespace}
+
+Whitespace is considered \emph{extraneous} in the following cases: 
+
+\begin{itemize}
+\item When it follows a left parenthesis.
+\item When it precedes a right parenthesis.
+\item When it follows other whitespace that separate two expressions. 
+\item When it follows the last non-whitespace character of a line.
+\end{itemize}
+
+It is \emph{not} considered extraneous in the following cases:
+
+\begin{itemize}
+\item When it precedes the first non-whitespace character on a line. 
+\item When it separates the first semicolon on a line from the last
+  preceding non-whitespace character. 
+\end{itemize}
+
+Extraneous whitespace is marked with a \emph{pink} background.  The
+tooltip associated with the marked background says ``Extraneous
+whitespace''. 
+
+\refFig{fig-extraneous-whitespace} illustrates how this type of
+information is displayed.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-extraneous-whitespace.pdf_t}
+\end{center}
+\caption{\label{fig-extraneous-whitespace}
+Display of extraneous whitespace.}
+\end{figure}
+
+\subsection{Structure syntax analysis}
+
+A top-level expression that passes the first phase of the code
+analyzer is then analyzed as a \emph{form} with respect to its
+\emph{structure syntax}.
+
+This phase checks the form as follows:
+
+\begin{itemize}
+\item If the form has the syntax of a symbol with one or two package
+  markers (other than when the form has the syntax of a \emph{keyword}
+  symbol), then a check is made that the package exists. 
+\item If the form has the syntax of a symbol with a single package
+  marker (other than when the package marker is the first character),
+  then a check is made that the symbol exists in the package
+  indicated, and that it is exported from that package.
+\item If the form has the syntax of a symbol with two package markers,
+  then a check is also made that the symbol exists in the package
+  indicated, but with a less severe error display if it does not
+  exist.
+\item If the form is a compound form where the \texttt{car} is not a
+  symbol, a check is made that the \texttt{car} of the form is a
+  plausible \texttt{lambda} expression.
+\item If form is a compound form, and the \texttt{car} of the compound
+  form is a \emph{special operator} or a \emph{standard macro}, then
+  the \emph{structure syntax} is verified.  For example, it is
+  verified that the bindings of a \texttt{let} have the right form,
+  and that \texttt{setf} has an even number of arguments. 
+\end{itemize}
 
 \subsubsection{Non-existing package}
 
@@ -186,6 +309,11 @@ The context menu gives the following options:
 \begin{itemize}
 \item Export the symbol from the specified package.
 \end{itemize}
+
+\subsection{Semantic analysis}
+
+Only when a top-level form passes the second phase of the analysis is
+it subject to \emph{semantic analysis}.  
 
 \subsubsection{Illegal use of \cl{} symbols}
 
@@ -432,41 +560,7 @@ location.
 
 \subsubsection{Names of constant variables in other packages}
 
-\subsection{Extraneous whitespace}
-
-Whitespace is considered \emph{extraneous} in the following cases: 
-
-\begin{itemize}
-\item When it follows a left parenthesis.
-\item When it precedes a right parenthesis.
-\item When it follows other whitespace that separate two expressions. 
-\item When it follows the last non-whitespace character of a line.
-\end{itemize}
-
-It is \emph{not} considered extraneous in the following cases:
-
-\begin{itemize}
-\item When it precedes the first non-whitespace character on a line. 
-\item When it separates the first semicolon on a line from the last
-  preceding non-whitespace character. 
-\end{itemize}
-
-Extraneous whitespace is marked with a \emph{pink} background.  The
-tooltip associated with the marked background says ``Extraneous
-whitespace''. 
-
-\refFig{fig-extraneous-whitespace} illustrates how this type of
-information is displayed.
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-extraneous-whitespace.pdf_t}
-\end{center}
-\caption{\label{fig-extraneous-whitespace}
-Display of extraneous whitespace.}
-\end{figure}
-
-\subsection{Argument mismatch}
+\subsubsection{Argument mismatch}
 
 Argument mismatch is a situation that may occur for the following
 types of forms:
@@ -509,7 +603,7 @@ closing parenthesis is displayed.  In the case where too few arguments
 were given, the tooltip says ``Too few arguments'', and in the other
 cases it says ``Wrong argument parity''.
 
-\subsection{Indentation}
+\subsubsection{Indentation}
 
 A line that is indented incorrectly is displayed with a \emph{pink}
 arrow in the left margin.  If the indentation of the line is
@@ -527,6 +621,28 @@ information is displayed.
 Display of extraneous whitespace.}
 \end{figure}
 
-\subsection{Comments}
+\subsection{Other analyses}
+
+\subsubsection{Comments}
+
+Comments can be checked for spelling errors. 
+
+\section{Commands}
+
+\begin{itemize}
+\item \texttt{Forward expression}
+\item \texttt{Backward expression}
+\item \texttt{Beginning of expression}
+\item \texttt{End of expression}
+\item \texttt{Beginning of top-level expression}
+\item \texttt{End of top-level expression}
+\item \texttt{Exchange expressions}
+\item \texttt{Down expression}
+\item \texttt{Indent line}
+\item \texttt{Indent region}
+\item \texttt{Indent top-level expression}
+\item \texttt{Indent buffer}
+\item \texttt{Complete symbol}
+\end{itemize}
 
 %%  LocalWords:  tooltip minibuffer unexported whitespace
