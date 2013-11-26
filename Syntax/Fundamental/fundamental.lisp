@@ -1,82 +1,150 @@
 (defpackage #:climacs-analyzer-fundamental
   (:use #:common-lisp)
+  (:shadow fresh-line)
   (:export
    ))
 
 (in-package #:climacs-analyzer-fundamental)
 
-(defclass thing ()
-  ((%buffer :initarg :buffer :reader buffer)
-   (%time-stamp :initform -1 :accessor time-stamp)
+(defgeneric current-time (clock))
+
+(defclass clock ()
+  ((%current-time :initform 0 :accessor current-time)))
+
+(defun make-clock ()
+  (make-instance 'clock))
+
+(defun new-time (clock)
+  (incf (current-time clock)))
+
+(defclass fundamental-analyzer ()
+  (;; The buffer being analyzed.
+   (%buffer :initarg :buffer :reader buffer)
+   ;; This slot contains the current time of the buffer as it was when
+   ;; it was last analyzed.  Only if the current time of the buffer is
+   ;; greater than the contents of this slot is an update required.
+   (%buffer-time :initform -1 :accessor buffer-time)
+   ;; A list of paragraphs resulting from the analysis.  The first
+   ;; element of the list is always NIL and it serves as a sentinel.
+   ;; Initially, i.e., before the first analysis has taken place, this
+   ;; contains no paragraphs, only the sentinel.
    (%paragraphs :initform (list nil) :reader paragraphs)
+   ;; Each analyzer defines it own time so it has its own clock.  We
+   ;; do not reuse the clock of the buffer, because some analyzers may
+   ;; have more than one buffer in them.  This clock is used as usual
+   ;; to mark when some item (paragraph or line) was created and when
+   ;; it was modified.  This clock does not tick very fast; only once
+   ;; for for every complete analysis of the buffer.  When the
+   ;; analysis is complete, the current time of this clock is the same
+   ;; as the create time of any paragraph or line that was created as
+   ;; a result of the anlysis, and as the modify time of any paragraph
+   ;; or line that was modified as a result of the analysis.
+   (%clock :initform (make-clock) :reader clock)
+   ;; This slot contains some suffix of the list of paragraphs.  The
+   ;; paragraph considered the "current" pagraph, is the second
+   ;; element (the CADR) of the remaining list.  This way we can
+   ;; access the paragraph immediately preceding the current one as
+   ;; the fist element of the list and we can delete the current
+   ;; paragraph by modifying the CDR of the remaining list.
    (%remaining :initform nil :accessor remaining)
-   (%relative-line-number :initform nil :accessor relative-line-number)
-   ;; The zone that holds all the paragraphs.
-   (%zone :initform (clim3:vbox*) :reader zone)
-   ;; This flag is true when a paragraph has been inserted or deleted.
-   (%dirty-p :initform t :accessor dirty-p)))
+   ;; The relative line number is the line element number of the
+   ;; current line in the list of lines of the current paragraph.  
+   (%relative-line-number :initform nil :accessor relative-line-number)))
 
-(defun make-thing (buffer)
-  (make-instance 'thing :buffer buffer))
+(defun make-fundamental-analyzer (buffer)
+  (make-instance 'fundamental-analyzer :buffer buffer))
 
-(defclass paragraph ()
-  ((%lines :initarg :lines :initform '() :accessor lines)
-   (%line-count :initarg :line-count :accessor line-count)
-   ;; The zone that holds all the lines of the paragraph.
-   (%zone :initform (clim3:vbox*) :reader zone)
-   ;; This flag is true when a line has been inserted or deleted.
-   (%dirty-p :initform t :accessor dirty-p)))
+;;; When the analysis starts, this variable is bound to the result of
+;;; calling NEW-TIME on the clock of the analyzer.  Any creation or
+;;; modification during the analysis should be considered has having
+;;; taken place at the time indicated by this variable.
+(defvar *current-time*)
 
-(defclass line ()
-  ((%buffer-line :initarg :buffer-line :reader buffer-line)
-   ;; The zone that holds all the characters of the line.
-   (%zone :initform (clim3:vbox*) :reader zone)))
+(defclass time-mixin ()
+  (;; The analyzer time at which this item was created.
+   (%create-time :initform *current-time* :reader create-time)
+   ;; The analyzer time at which this item was last modified.
+   (%modify-time :initform *current-time* :accessor modify-time)
+   ;; This slot is set to true when the item is about to be deleted.
+   ;; The purpose is to inform client code that holds on to references
+   ;; to this item that it should be descarded.
+   (%deleted-p :initform nil :accessor deleted-p)))
+  
+(defclass paragraph (time-mixin)
+  (;; A simple list of all the lines of this paragraph.
+   (%lines :initarg :lines :initform '() :accessor lines)
+   ;; The length of the list in the LINES slot.  This slot exists only
+   ;; for efficiency reasons so that we don't have to traverse the
+   ;; list of lines of a paragraph each time we want to know how many
+   ;; lines there are.
+   (%line-count :accessor line-count)))
 
-(defun compute-line-zones (line)
-  (setf (clim3:children (zone line))
-	(clim3:hbox*
-	 (clim3-text:text (climacs-buffer:items (buffer-line line))
-			  (clim3:text-style :free :fixed :roman 12)
-			  (clim3:make-color 0.0 0.0 0.0))
-	 (clim3:sponge))))
+(defun touch (thing)
+  (setf (modify-time thing) *current-time*))
+
+(defun kill (thing)
+  (setf (deleted-p thing) t))
+
+;;; We avoid having to remember to initialize and update the line
+;;; count by automatically updating it when the lines are updated.
+(defmethod initialize-instance :after
+    ((paragraph paragraph) &key &allow-other-keys)
+  (setf (line-count paragraph) (length (lines paragraph))))
+
+;;; We also avoid having to rememeber to touch the paragraph manually
+;;; when the lines are updated by automatically touching it.
+(defmethod (setf lines) :around (new-lines (paragraph paragraph))
+  (let ((lines-before (lines paragraph)))
+    (call-next-method)
+    (let ((lines-after (lines paragraph)))
+      ;; Kill every line that existed before but that no longer does.
+      (loop for line in (set-difference lines-before lines-after)
+	    do (kill line))
+      (setf (line-count paragraph) (length lines-after))))
+  (touch paragraph))
+
+(defclass line (time-mixin)
+  ((%buffer-line :initarg :buffer-line :reader buffer-line)))
+
+(defun fresh-line (line)
+  (make-instance 'line :buffer-line (buffer-line line)))
+
+(defun fresh-lines (lines)
+  (mapcar #'fresh-line lines))
 
 (defun delete-current-line (thing)
   (let ((paragraph (cadr (remaining thing)))
+	(prev (car (remaining thing)))
+	(next (caddr (remaining thing)))
 	(line-number (relative-line-number thing)))
     (if (= (line-count paragraph) 1)
 	;; We are deleting the only line in a paragraph, so the
 	;; paragraph must be deleted as well.
-	(progn
-	  (if (or (null (car (remaining thing)))
-		  (null (cddr (remaining thing))))
-	      ;; The paragraph to delete is either the first one or
-	      ;; the last one in the buffer.  Just remove it.
-	      (pop (cdr (remaining thing)))
-	      ;; The paragraph to delete is surrounded by other
-	      ;; paragraphs.  We need to merge the surrounding
-	      ;; paragraphs.
-	      (let ((next (caddr (remaining thing))))
-		(setf (lines paragraph)
-		      (append (lines paragraph) (lines next)))
-		(incf (line-count paragraph) (line-count next))
-		(pop (cddr (remaining thing)))
-		;; Since we added lines to the current paragraph, we
-		;; must mark it as dirty.
-		(setf (dirty-p paragraph) t)))
-	  ;; Since we have deleted a paragraph, we must indicate that
-	  ;; the thing is now dirty.
-	  (setf (dirty-p thing) t))
+	(if (or (null prev) (null next))
+	    ;; The paragraph to delete is either the first one or
+	    ;; the last one in the buffer.  Just remove it.
+	    (progn (kill paragraph)
+		   (pop (cdr (remaining thing))))
+	    ;; The paragraph to delete is surrounded by other
+	    ;; paragraphs.  We need to merge the surrounding
+	    ;; paragraphs.  We do this by adding to the preceding
+	    ;; paragraph fresh copies of the lines in the following
+	    ;; paragraph, and then deleting both the current and the
+	    ;; following paragraph.
+	    (progn (setf (lines prev)
+			 (append (lines prev)
+				 (fresh-lines (lines next))))
+		   ;; Delete the current and the following paragraphs.
+		   (kill paragraph)
+		   (kill next)
+		   (pop (cdr (remaining thing)))
+		   (pop (cdr (remaining thing)))))
 	;; There there is more than one line in the current paragraph.
 	;; This is the easy case, because we can just delete the line
 	;; and keep the paragraph.
-	(progn 
-	  (setf (lines paragraph)
-		(append (subseq (lines paragraph) 0 line-number)
-			(subseq (lines paragraph) (1+ line-number))))
-	  (decf (line-count paragraph))
-	  ;; Since we deleted a line from the current paragraph, we
-	  ;; must mark it as dirty.
-	  (setf (dirty-p paragraph) t)))))
+	(setf (lines paragraph)
+	      (append (subseq (lines paragraph) 0 line-number)
+		      (subseq (lines paragraph) (1+ line-number)))))))
 	   
 (defun blank-line-p (buffer-line)
   (every (lambda (x) (member x '(#\Space #\Tab)))
@@ -89,44 +157,32 @@
 
 (defun insert-line (thing buffer-line)
   (let* ((paragraph (cadr (remaining thing)))
+	 (prev (car (remaining thing)))
 	 (lines (if (null paragraph) nil (lines paragraph)))
 	 (line-number (relative-line-number thing))
 	 (new-line (make-instance 'line :buffer-line buffer-line)))
     (if (equal (remaining thing) '(nil))
 	;; There are no paragraphs.  This situation can only happen
-	;; when we update for the first time.
-	(progn (push (make-instance 'paragraph
-		       :lines (list new-line)
-		       :line-count 1)
+	;; when we update for the first time.  We insert a new
+	;; paragraph and then position ourselves at the very end.
+	(progn (push (make-instance 'paragraph :lines (list new-line))
 		     (cdr (remaining thing)))
-	       (pop (remaining thing))
-	       ;; Since we have added a paragraph, we must indicate
-	       ;; that the thing is now dirty.
-	       (setf (dirty-p thing) t))
+	       (pop (remaining thing)))
 	(cond ((null paragraph)
 	       ;; We are positioned at the very end, so there is no
 	       ;; current paragraph.
-	       (let ((prev (car (remaining thing))))
-		 (if (same-line-type buffer-line
-				     (buffer-line (car (lines prev))))
-		     ;; We insert the line at the end of the last
-		     ;; paragraph.
-		     (progn
-		       (setf (lines prev)
-			     (append (lines prev) (list new-line)))
-		       (incf (line-count prev))
-		       ;; Since we added lines to the last paragraph,
-		       ;; we must mark it as dirty.
-		       (setf (dirty-p prev) t))
-		     ;; We must add a new paragraph
-		     (let ((new (make-instance 'paragraph
-				  :lines (list new-line)
-				  :line-count 1)))
-		       (push new (cdr (remaining thing)))
-		       (pop (remaining thing))
-		       ;; Since we have added a paragraph, we must
-		       ;; indicate that the thing is now dirty.
-		       (setf (dirty-p thing) t)))))
+	       (if (same-line-type buffer-line
+				   (buffer-line (car (lines prev))))
+		   ;; We insert the line at the end of the last
+		   ;; paragraph, and we keep the current position.
+		   (setf (lines prev)
+			 (append (lines prev) (list new-line)))
+		   ;; We must add a new paragraph, and position
+		   ;; ourselves at the following paragraph.
+		   (progn
+		     (push (make-instance 'paragraph :lines (list new-line))
+			   (cdr (remaining thing)))
+		     (pop (remaining thing)))))
 	      ((same-line-type buffer-line
 			       (buffer-line (car (lines paragraph))))
 	       ;; Either the line to be inserted contains only
@@ -140,38 +196,27 @@
 		     (append (subseq lines 0 line-number)
 			     (list new-line)
 			     (subseq lines line-number)))
-	       (incf (line-count paragraph))
-	       (incf (relative-line-number thing))
-	       ;; Since we added lines to the current paragraph, we
-	       ;; must mark it as dirty.
-	       (setf (dirty-p paragraph) t))
+	       ;; Advance our relative position to the next line.
+	       (incf (relative-line-number thing)))
 	      ((zerop line-number)
 	       ;; In this case, the line does not belong to the
 	       ;; current paragraph, and it belongs to the paragraph
 	       ;; immediately preceding the current one, if it exists.
 	       ;; If it does not exist, we must create one.
-	       (if (null (car (remaining thing)))
+	       (if (null prev)
 		   ;; The current paragraph is the first one, so we
 		   ;; must create a new paragraph to hold the new
 		   ;; line.
-		   (let ((new (make-instance 'paragraph
-				:lines (list new-line)
-				:line-count 1)))
-		     (push new (cdr (remaining thing)))
-		     (pop (remaining thing))
-		     ;; Since we have added a paragraph, we must
-		     ;; indicate that the thing is now dirty.
-		     (setf (dirty-p thing) t))
-		   ;; There is a paragraph preceding the current
-		   ;; one, and we insert the new line last in
-		   ;; that paragraph.
-		   (let ((prev (car (remaining thing))))
-		     (setf (lines prev)
-			   (append (lines prev) (list new-line)))
-		     (incf (line-count prev))
-		     ;; Since we added lines to the paragraph, we must
-		     ;; mark it as dirty.
-		     (setf (dirty-p prev) t))))
+		   (progn
+		     (push (make-instance 'paragraph :lines (list new-line))
+			   (cdr (remaining thing)))
+		     ;; We want to keep the position that we had.
+		     (pop (remaining thing)))
+		   ;; There is a paragraph preceding the current one,
+		   ;; and we insert the new line last in that
+		   ;; paragraph.
+		   (setf (lines prev)
+			 (append (lines prev) (list new-line)))))
 	      (t
 	       ;; In this situation, the new line does not belong to
 	       ;; the current paragraph, but it should be inserted
@@ -179,30 +224,24 @@
 	       ;; We therefore need to split the current paragraph
 	       ;; into two parts, and create a new paragraph holding
 	       ;; the new line that will sit between the two parts.
-	       (let ((prefix (subseq (lines paragraph) 0 line-number)))
-		 (setf (lines paragraph)
-		       (subseq (lines paragraph) line-number))
-		 (decf (line-count paragraph) line-number)
-		 ;; Since we removed lines to the current paragraph,
-		 ;; we must mark it as dirty.
-		 (setf (dirty-p paragraph) t)
-		 (push (make-instance 'paragraph
-			 :lines prefix
-			 :line-count line-number)
+	       ;; We keep the original paragraph to hold the prefix,
+	       ;; and we create new paragraphs to hold the new line
+	       ;; and the suffix.
+	       (let ((prefix (subseq (lines paragraph) 0 line-number))
+		     (suffix (subseq (lines paragraph) line-number)))
+		 (setf (lines paragraph) prefix)
+		 (pop (remaining thing))
+		 (push (make-instance 'paragraph :lines (list new-line))
 		       (cdr (remaining thing)))
 		 (pop (remaining thing))
-		 (push (make-instance 'paragraph
-			 :lines (list new-line)
-			 :line-count 1)
+		 (push (make-instance 'paragraph :lines (fresh-lines suffix))
 		       (cdr (remaining thing)))
-		 (pop (remaining thing))
-		 (setf (relative-line-number thing) 0)
-		 ;; Since we have added paragraphs, we must indicate
-		 ;; that the thing is now dirty.
-		 (setf (dirty-p thing) t)))))))
+		 (setf (relative-line-number thing) 0)))))))
 
 (defun modify-current-line (thing)
   (let* ((paragraph (cadr (remaining thing)))
+	 (prev (car (remaining thing)))
+	 (next (caddr (remaining thing)))
 	 (line-number (relative-line-number thing))
 	 (line (elt (lines paragraph) line-number)))
     (if (= (line-count paragraph) 1)
@@ -210,47 +249,44 @@
 	;; such a way that this paragraph changed from being one with
 	;; all lines containing only whitespace, to one with all lines
 	;; containing text, or vice versa.
-	(if (null (car (remaining thing)))
+	(if (null prev)
 	    ;; The current paragraph is the first one in the buffer.
-	    (if (null (cddr (remaining thing)))
+	    (if (null next)
 		;; The current paragraph is the only one in the
 		;; buffer, so no matter what type paragraph it is,
 		;; just keep it as it is.
 		(progn
-		  ;; Set the current line to the end. 
+		  (touch line)
+		  (touch paragraph)
+		  ;; Set the position to the very end.
 		  (pop (remaining thing))
 		  (setf (relative-line-number thing) 0))
 		;; The current paragraph is the first in the buffer,
 		;; and there is at least one more paragraph in the
 		;; buffer.  We must check whether the line now should
 		;; be added to the second paragraph instead.
-		(let ((next (caddr (remaining thing))))
-		  (if (same-line-type (buffer-line line)
-				      (buffer-line (first (lines next))))
-		      ;; The first paragraph should disappear and the
-		      ;; only line that it contained should be added
-		      ;; to the beginning of the second paragraph.
-		      (progn
-			(push line (lines next))
-			(incf (line-count next))
-			;; Since we added a line to the next
-			;; paragraph, we must mark it as dirty.
-			(setf (dirty-p next) t)
-			(pop (cdr (remaining thing)))
-			;; Since we have deleted a paragraph, we must
-			;; indicate that the thing is now dirty.
-			(setf (dirty-p thing) t))
-		      ;; The modified line has a different type from
-		      ;; the lines of the following paragraph, so we
-		      ;; keep the current paragraph intact.
-		      (progn
-			;; Advance the current line to the first one
-			;; of the next paragraph.
-			(pop (remaining thing))
-			(setf (relative-line-number thing) 0)))))
+		(if (same-line-type (buffer-line line)
+				    (buffer-line (first (lines next))))
+		    ;; The first paragraph should disappear and the
+		    ;; only line that it contained should be added
+		    ;; to the beginning of the second paragraph.
+		    (progn
+		      (push (fresh-line line) (lines next))
+		      (kill paragraph)
+		      (pop (cdr (remaining thing))))
+		    ;; The modified line has a different type from
+		    ;; the lines of the following paragraph, so we
+		    ;; keep the current paragraph intact.
+		    (progn
+		      (touch line)
+		      (touch paragraph)
+		      ;; Advance the current line to the first one
+		      ;; of the next paragraph.
+		      (pop (remaining thing))
+		      (setf (relative-line-number thing) 0))))
 	    ;; The current paragraph is not the first one in the
 	    ;; buffer.
-	    (if (null (cddr (remaining thing)))
+	    (if (null next)
 		;; The current paragraph is the last one in the
 		;; buffer, but there is at least one paragraph
 		;; preceding it.  We must check wheter the line now
@@ -264,18 +300,14 @@
 		      (progn
 			(setf (lines prev)
 			      (append (lines prev) (list line)))
-			(incf (line-count prev))
-			;; Since we added lines to the next-to-last
-			;; paragraph, we must mark it as dirty.
-			(setf (dirty-p prev) t)
-			(pop (cdr (remaining thing)))
-			;; Since we have deleted a paragraph, we must
-			;; indicate that the thing is now dirty.
-			(setf (dirty-p thing) t))
+			(kill paragraph)
+			(pop (cdr (remaining thing))))
 		      ;; The modified line has a different type from
 		      ;; the lines in the preceding paragraph, so we
 		      ;; keep the current paragraph intact.
 		      (progn
+			(touch line)
+			(touch paragraph)
 			;; Advance the current line to the first one
 			;; of the next paragraph.
 			(pop (remaining thing))
@@ -289,9 +321,10 @@
 				     (if (zerop line-number)
 					 1
 					 0))))
-	       ;; The line still belongs in the current paragraph, so
-	       ;; for now just advance the current line.  Later, we
-	       ;; update the zones to be displayed.
+	       ;; The line still belongs in the current paragraph.
+	       ;; Just mark it as modified.
+	       (touch line)
+	       (touch paragraph)
 	       (incf (relative-line-number thing))
 	       (when (= (relative-line-number thing)
 			(line-count paragraph))
@@ -305,37 +338,22 @@
 		   ;; buffer.  We must therefore create a new
 		   ;; paragraph to hold the modified line.
 		   (let ((new (make-instance 'paragraph
-				:lines (list line)
-				:line-count 1)))
+				:lines (list (fresh-line line)))))
 		     ;; Remove the line from the current paragraph.
 		     (pop (lines paragraph))
-		     (decf (line-count paragraph))
-		     ;; Since we removed a line from the current
-		     ;; paragraph, we must mark it as dirty.
-		     (setf (dirty-p paragraph) t)
 		     (push new (cdr (remaining thing)))
 		     ;; Make the next paragraph the current one.
-		     (pop (remaining thing))
-		     ;; Since we have added a paragraph, we must indicate that
-		     ;; the thing is now dirty.
-		     (setf (dirty-p thing) t))
+		     (pop (remaining thing)))
 		   ;; There is a paragraph preceding the current one.
 		   ;; Move the modified line to it.
-		   (let ((prev (car (remaining thing))))
+		   (progn
 		     ;; Remove the line from the current paragraph.
 		     (pop (lines paragraph))
-		     (decf (line-count paragraph))
-		     ;; Since we removed a line from the current
-		     ;; paragraph, we must mark it as dirty.
-		     (setf (dirty-p paragraph) t)
 		     ;; Insert it at the end of the preceding
 		     ;; paragraph.
 		     (setf (lines prev)
-			   (append (lines prev) (list line)))
-		     (incf (line-count prev))
-		     ;; Since we added a line to the previous
-		     ;; paragraph, we must mark it as dirty.
-		     (setf (dirty-p prev) t))))
+			   (append (lines prev)
+				   (list (fresh-line line)))))))
 	      ((= line-number (1- (line-count paragraph)))
 	       ;; The line no longer belongs in the current paragraph
 	       ;; in which it is the last line.
@@ -344,80 +362,53 @@
 		   ;; buffer.  We must therefore create a new
 		   ;; paragraph to hold the modified line.
 		   (let ((new (make-instance 'paragraph
-				  :lines (list line)
-				  :line-count 1)))
+				  :lines (list (fresh-line line)))))
 		     ;; Remove the line from the current paragraph.
 		     (setf (lines paragraph) (butlast (lines paragraph)))
-		     (decf (line-count paragraph))
-		     ;; Since we deleted a line from the current
-		     ;; paragraph, we must mark it as dirty.
-		     (setf (dirty-p paragraph) t)
 		     ;; Add the paragraph.
 		     (push new (cddr (remaining thing)))
-		     ;; Since we have added a paragraph, we must
-		     ;; indicate that the thing is now dirty.
-		     (setf (dirty-p thing) t)
 		     ;; Advance to the end.
 		     (pop (remaining thing))
 		     (pop (remaining thing))
 		     (setf (relative-line-number thing) 0))
 		   ;; There is a paragraph following the current
 		   ;; one.  Move the modified line to it.
-		   (let ((next (caddr (remaining thing))))
+		   (progn
 		     ;; Remove the line from the current paragraph.
 		     (setf (lines paragraph) (butlast (lines paragraph)))
-		     (decf (line-count paragraph))
-		     ;; Since we removed a line from the current
-		     ;; paragraph, we must mark it as dirty.
-		     (setf (dirty-p paragraph) t)
 		     ;; Insert it at the beginning of the following
 		     ;; paragraph.
-		     (push line (lines next))
-		     (incf (line-count next))
-		     ;; Since we added a line to the next paragraph,
-		     ;; we must mark it as dirty.
-		     (setf (dirty-p next) t)
+		     (push (fresh-line line) (lines next))
 		     ;; Advance the current line.
 		     (pop (remaining thing))
 		     (setf (relative-line-number thing) 1))))
 	      (t
-	       ;; The line no longer belongs in the current paragraph,
-	       ;; but it is neither the first nor the last line of
-	       ;; that paragraph.  We must therefore split the current
-	       ;; paragraph into two parts, and add a new paragraph
-	       ;; between the two parts.
-	       (let ((prefix (subseq (lines paragraph) 0 line-number)))
-		 (setf (lines paragraph)
-		       (subseq (lines paragraph) (1+ line-number)))
-		 (decf (line-count paragraph) (1+ line-number))
-		 ;; Since we removed lines to the current paragraph,
-		 ;; we must mark it as dirty.
-		 (setf (dirty-p paragraph) t)
-		 (push (make-instance 'paragraph
-			 :lines prefix
-			 :line-count line-number)
-		       (cdr (remaining thing)))
+	       ;; In this situation, the modified line no longer
+	       ;; belongs to the current paragraph, but it is neither
+	       ;; the first nor the last line of that paragraph.  We
+	       ;; therefore need to split the current paragraph into
+	       ;; two parts, and create a new paragraph holding the
+	       ;; modified line that will sit between the two parts.
+	       ;; We keep the original paragraph to hold the prefix,
+	       ;; and we create new paragraphs to hold the modified
+	       ;; line and the suffix.
+	       (let ((prefix (subseq (lines paragraph) 0 line-number))
+		     (suffix (subseq (lines paragraph) (1+ line-number))))
+		 (setf (lines paragraph) prefix)
 		 (pop (remaining thing))
 		 (push (make-instance 'paragraph
-			 :lines (list line)
-			 :line-count 1)
+			 :lines (list (fresh-line line)))
 		       (cdr (remaining thing)))
 		 (pop (remaining thing))
-		 (setf (relative-line-number thing) 0)
-		 ;; Since we have added paragraphs, we must indicate
-		 ;; that the thing is now dirty.
-		 (setf (dirty-p thing) t)))))))
+		 (push (make-instance 'paragraph :lines (fresh-lines suffix))
+		       (cdr (remaining thing)))
+		 (setf (relative-line-number thing) 0)))))))
 		 
 (defun update (thing)
   ;; Initialize REMAINING and RELATIVE-LINE-NUMBER to prepare for the
   ;; update.
   (setf (remaining thing) (paragraphs thing))
   (setf (relative-line-number thing) 0)
-  ;; Clear all the dirty flags.
-  (loop for paragraph in (paragraphs thing)
-	do (setf (dirty-p paragraph) nil)
-	   (loop for line in (lines paragraph)
-		 do (setf (dirty-p line) nil)))
   ;; Do the update.
   (flet ((sync (line)
 	   (break)
@@ -435,7 +426,7 @@
 				       (relative-line-number thing))
 		   do (if (>= n rest-count)
 			  (progn (decf n rest-count)
-				 (pop (cdr (remaining thing)))
+				 (pop (remaining thing))
 				 (setf (relative-line-number thing) 0))
 			  (progn (incf (relative-line-number n))
 				 (setf n 0))))
@@ -450,18 +441,8 @@
 	     (insert-line thing line)
 	     (break)))
       (climacs-buffer:update (buffer thing)
-			     (time-stamp thing)
+			     (buffer-time thing)
 			     #'sync #'skip #'modify #'create)))
   ;; Record the time at which this update was made.
-  (setf (time-stamp thing)
-	(climacs-buffer:current-time (buffer thing)))
-  ;; Update the children of paragraphs with the dirty flag set.
-  (loop for paragraph in (paragraphs thing)
-	do (when (dirty-p paragraph)
-	     (setf (clim3:children (zone paragraph))
-		   (mapcar #'zone (lines paragraph)))))
-  ;; If the dirty flag is set for the entire thing, then update
-  ;; the children of the thing as well.
-  (when (dirty-p thing)
-    (setf (clim3:children (zone thing))
-	  (mapcar #'zone (paragraphs thing)))))
+  (setf (buffer-time thing)
+	(climacs-buffer:current-time (buffer thing))))
