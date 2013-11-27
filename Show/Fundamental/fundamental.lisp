@@ -1,15 +1,4 @@
-(defpackage #:climacs-show-fundamental
-  (:use #:common-lisp)
-  (:import-from #:climacs-analyzer-fundamental
-		#:fundamental-analyzer
-		#:paragraphs
-		#:lines
-		#:buffer-line)
-  (:export
-   #:fundamental-show
-   ))
-
-(in-package #:climacs-show-fundamental)
+(cl:in-package #:climacs-show-fundamental)
 
 ;;;; This initial version is not incremental at all, and should be
 ;;;; considered a tempoary version just to test all the concepts.  A
