@@ -88,16 +88,22 @@
 (defun point ()
   *point*)
 
+(defun message (control-string &rest arguments)
+  (apply #'format *error-output* control-string arguments)
+  (terpri *error-output*))
+
 (clim3:define-command no-match (keystrokes)
-  (format *error-output*
-	  "No match for keystrokes: ~s~%"
-	  keystrokes))
+  (message "No match for keystrokes: ~s" keystrokes))
 
 (clim3:define-command forward-item (&optional (count 1))
-  (climacs-basic-emacs:forward-item (point) count))
+  (handler-case (climacs-basic-emacs:forward-item (point) count)
+    (climacs-buffer:end-of-buffer ()
+      (message "End of buffer"))))
 
 (clim3:define-command backward-item (&optional (count 1))
-  (climacs-basic-emacs:backward-item (point) count))
+  (handler-case (climacs-basic-emacs:backward-item (point) count)
+    (climacs-buffer:beginning-of-buffer ()
+      (message "Beginning of buffer"))))
 
 (clim3:define-command insert-character
     ((character character) &optional (count 1))
@@ -112,6 +118,12 @@
 (clim3:define-command quit ()
   (throw :quit nil))
 
+(clim3:define-command beginning-of-line ()
+  (climacs-buffer:beginning-of-line (point)))
+
+(clim3:define-command end-of-line ()
+  (climacs-buffer:end-of-line (point)))
+
 ;;; FIXME: make several groups
 (defparameter *command-mappings*
   '((((#\x :control) (#\c :control))
@@ -120,6 +132,14 @@
      (forward-item :opt-num))
     (((#\b :control))
      (backward-item :opt-num))
+    (((#\d :control))
+     (delete-item :opt-num))
+    (((#\h :control))
+     (erase-item :opt-num))
+    (((#\a :control))
+     (beginning-of-line))
+    (((#\e :control))
+     (end-of-line))
     (((#\x :control) (#\f :control))
      (find-file))
     (((#\x :control) (#\i))
