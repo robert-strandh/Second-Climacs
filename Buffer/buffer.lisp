@@ -517,7 +517,7 @@
 	       (if (null node)
 		   nil
 		   (let* ((left (splay-tree:left node))
-			  (left-count (if (null left) 0 (item-count left)))
+			  (left-count (if (null left) 0 (line-count left)))
 			  (node-offset (+ offset left-count))
 			  (right-offset (+ node-offset 1)))
 		     (if (eq state :skip)
@@ -584,6 +584,6 @@
 				     (setf first-skip right-offset))))))))))
       (traverse (contents buffer) 0)
       (when (eq state :skip)
-	(let ((skip-count (- (item-count (contents buffer)) first-skip)))
+	(let ((skip-count (- (line-count (contents buffer)) first-skip)))
 	  (unless (zerop skip-count)
 	    (funcall skip skip-count)))))))
