@@ -1,11 +1,4 @@
-(cl:in-package #:common-lisp-user)
-
-(defpackage #:climacs-gui
-  (:use #:common-lisp)
-  (:export
-   #:climacs))
-
-(in-package #:climacs-gui)
+(cl:in-package #:climacs-gui)
 
 (defun status-line ()
   (let* ((background-color (clim3:make-color 0.7 0.7 0.7))
