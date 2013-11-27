@@ -39,7 +39,7 @@
 	(let ((pos (climacs-buffer:cursor-position (cursor show)))
 	      (cursor (clim3:brick
 		       5 20
-		       (clim3:opaque (clim3:make-color 1.0 0.0 0.0)))))
+		       (clim3:opaque (clim3:make-color 0.0 0.0 1.0)))))
 	  (cond ((= pos 0)
 		 (clim3:hbox*
 		  cursor
