@@ -101,6 +101,11 @@
 (defun point ()
   *point*)
 
+(clim3:define-command no-match (keystrokes)
+  (format *error-output*
+	  "No match for keystrokes: ~s~%"
+	  keystrokes))
+
 (clim3:define-command forward-item (&optional (count 1))
   (climacs-basic-emacs:forward-item (point) count))
 
@@ -145,6 +150,14 @@
 	for char = (code-char code)
 	collect `(((,char)) (insert-character ,char :opt-num))))
   
+(clim3:define-command inspect-application ()
+  (clueless:inspect clim3:*application*))
+
+;;; Various mappings for debugging purposes.
+(defparameter *debug-mappings*
+  '((((#\i :control :meta))
+     (inspect-application))))
+
 ;;; FIXME: make a generic function called (say) make-command-processor
 ;;; that dispatches on the type of the view.  Right now we have only
 ;;; one type of view, so that problem would have to be addressed
@@ -154,4 +167,5 @@
     :mappings (append
 	       *command-mappings*
 	       *ascii-insert-mappings*
-	       *latin-1-insert-mappings*)))
+	       *latin-1-insert-mappings*
+	       *debug-mappings*)))
