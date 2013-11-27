@@ -21,9 +21,8 @@
     (clim3:pile* thing background height)))
 
 (defclass climacs (clim3:application)
-  ((%current-view
-    :initarg :current-view
-    :accessor clim3:current-view)))
+  ((%current-view :initarg :current-view :accessor clim3:current-view)
+   (%zones :initarg :zones :accessor zones)))
 
 (defmethod clim3:command-loop-iteration :around ((application climacs) view)
   (let ((climacs-commands:*point* (climacs-view:cursor view)))
@@ -60,7 +59,9 @@
 		 :cursor cursor))
 	 (info (clim3:vbox* scroll status minibuffer))
 	 (all (clim3:pile* tooltip info size))
-	 (clim3:*application* (make-instance 'climacs :current-view view)))
+	 (clim3:*application* (make-instance 'climacs
+				:current-view view
+				:zones all)))
     (climacs-analyzer-fundamental:update analyzer)
     (climacs-show:update show)
     ;; (clueless:inspect all)
