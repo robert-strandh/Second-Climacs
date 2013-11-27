@@ -1,15 +1,4 @@
-(defpackage #:climacs-view
-  (:use #:common-lisp)
-  (:export
-   #:analyzer
-   #:show
-   #:command-table
-   #:command-key-processor
-   #:cursor
-   #:view
-   ))
-
-(in-package #:climacs-view)
+(cl:in-package #:climacs-view)
 
 (defclass view ()
   ((%analyzer :initarg :analyzer :reader analyzer)
