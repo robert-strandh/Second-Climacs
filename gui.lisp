@@ -2,7 +2,8 @@
 
 (defpackage #:climacs-gui
   (:use #:common-lisp)
-  (:export))
+  (:export
+   #:climacs))
 
 (in-package #:climacs-gui)
 
@@ -26,36 +27,54 @@
 	 (height (clim3:vframe 20 20 20)))
     (clim3:pile* thing background height)))
 
-(defun text ()
-  (let ((style (clim3:text-style :free :fixed :roman 12))
-	(color (clim3:make-color 0.0 0.0 0.0)))
-    ;; Put in a text for testing purposes.
-    (let ((test-text (clim3-text:text "this is a test"
-				      style
-				      color)))
-      (clim3:bboard* test-text))))
-  
+(defclass climacs (clim3:application)
+  ((%current-view
+    :initarg :current-view
+    :accessor clim3:current-view)))
+
+(defmethod clim3:command-loop-iteration :around ((application climacs) view)
+  (let ((climacs-commands:*point* (climacs-view:cursor view)))
+    (call-next-method))
+  ;; FIXME: update every analyzer, not only that of the current view.
+  (climacs-analyzer-fundamental:update (climacs-view:analyzer view))
+  ;; FIXME: update every visible view, not only the current view.
+  (let ((show (climacs-view:show view)))
+    (unless (null show)
+      (climacs-show:update show))))
+
 (defun climacs ()
-  (let* ((size (clim3:brick 800 1000))
+  (let* ((wrap (clim3:wrap))
+	 (scroll (clim3:scroll wrap))
+	 (size (clim3:brick 800 1000))
 	 (tooltip (clim3:bboard*))
-	 (text (text))
 	 (status (status-line))
 	 (minibuffer (minibuffer))
-	 (info (clim3:vbox* text status minibuffer))
+	 (buffer (with-open-file (stream "test-input" :direction :input)
+		   (climacs-basic-emacs:buffer-from-stream stream)))
+	 (analyzer (make-instance 'climacs-analyzer-fundamental:fundamental-analyzer
+		     :buffer buffer))
+	 (cursor (let* ((line0 (climacs-buffer:find-line buffer 0))
+			(cursor (climacs-buffer:make-right-sticky-cursor)))
+		   (climacs-buffer:attach-cursor cursor line0 0)
+		   cursor))
+	 (show (climacs-show:make-show analyzer cursor wrap))
+	 (command-processor
+	   (climacs-commands:make-fundamental-command-processor))
+	 (view (make-instance 'climacs-view:view
+		 :analyzer analyzer
+		 :show show
+		 :command-key-processor command-processor
+		 :cursor cursor))
+	 (info (clim3:vbox* scroll status minibuffer))
 	 (all (clim3:pile* tooltip info size))
-	 (port (clim3:make-port :clx-framebuffer))
-	 (command-processor (make-instance 'emacs-style-command-processor
-			      :mappings *mappings*))
-	 (clim3:*key-handler*
-	   (make-instance 'clim3::read-keystroke-key-handler
-	     :receiver
-	     (lambda (keystroke)
-	       ;; Why can keystroke be NIL?
-	       (unless (null keystroke)
-		 (multiple-value-bind (answer additional)
-		     (submit-keystroke command-processor keystroke)
-		   (when (eq answer :complete-match)
-		     (format t "~s~%" (cadr additional)))))))))
-    (clim3:connect all port)
-    (clim3:event-loop port)))
+	 (clim3:*application* (make-instance 'climacs :current-view view)))
+    (climacs-analyzer-fundamental:update analyzer)
+    (climacs-show:update show)
+    ;; (clueless:inspect all)
+    (let ((clim3:*port* (clim3:make-port :clx-framebuffer)))
+      (clim3:connect all clim3:*port*)
+      (catch :quit
+	(clim3:command-loop))
+      (clim3:disconnect all clim3:*port*))))
+	
 
