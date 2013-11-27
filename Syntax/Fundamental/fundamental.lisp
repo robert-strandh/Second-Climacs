@@ -2,6 +2,14 @@
   (:use #:common-lisp)
   (:shadow fresh-line)
   (:export
+   #:paragraphs
+   #:lines
+   #:buffer-line
+   #:buffer
+   #:fundamental-analyzer
+   ;; FIXME: replace this with a generic function that dispatches
+   ;; on the type of the analyzer.
+   #:update
    ))
 
 (in-package #:climacs-analyzer-fundamental)
@@ -24,11 +32,8 @@
    ;; it was last analyzed.  Only if the current time of the buffer is
    ;; greater than the contents of this slot is an update required.
    (%buffer-time :initform -1 :accessor buffer-time)
-   ;; A list of paragraphs resulting from the analysis.  The first
-   ;; element of the list is always NIL and it serves as a sentinel.
-   ;; Initially, i.e., before the first analysis has taken place, this
-   ;; contains no paragraphs, only the sentinel.
-   (%paragraphs :initform (list nil) :reader paragraphs)
+   ;; A list of paragraphs resulting from the analysis.
+   (%paragraphs :initform '() :accessor paragraphs)
    ;; Each analyzer defines it own time so it has its own clock.  We
    ;; do not reuse the clock of the buffer, because some analyzers may
    ;; have more than one buffer in them.  This clock is used as usual
@@ -404,45 +409,40 @@
 		       (cdr (remaining thing)))
 		 (setf (relative-line-number thing) 0)))))))
 		 
-(defun update (thing)
+(defun update (analyzer)
   ;; Initialize REMAINING and RELATIVE-LINE-NUMBER to prepare for the
   ;; update.
-  (setf (remaining thing) (paragraphs thing))
-  (setf (relative-line-number thing) 0)
-  ;; Do the update.
-  (flet ((sync (line)
-	   (break)
-	   (loop until (eq (buffer-line
-			    (elt (lines (cadr (remaining thing)))
-				 (relative-line-number thing)))
-			   line)
-		 do (delete-current-line thing))
-	   (break)))
-    (flet ((skip (n)
-	     (break)
-	     (loop while (plusp n)
-		   for paragraph = (cadr (remaining thing))
-		   for rest-count = (- (line-count paragraph)
-				       (relative-line-number thing))
-		   do (if (>= n rest-count)
-			  (progn (decf n rest-count)
-				 (pop (remaining thing))
-				 (setf (relative-line-number thing) 0))
-			  (progn (incf (relative-line-number n))
-				 (setf n 0))))
-	     (break))
-	   (modify (line)
-	     (break)
-	     (sync line)
-	     (modify-current-line thing)
-	     (break))
-	   (create (line)
-	     (break)
-	     (insert-line thing line)
-	     (break)))
-      (climacs-buffer:update (buffer thing)
-			     (buffer-time thing)
-			     #'sync #'skip #'modify #'create)))
+  (setf (relative-line-number analyzer) 0)
+  (let ((*current-time* (current-time (clock analyzer)))
+	(remaining (cons nil (paragraphs analyzer))))
+    (setf (remaining analyzer) remaining)
+    ;; Do the update.
+    (flet ((sync (line)
+	     (loop until (eq (buffer-line
+			      (elt (lines (cadr (remaining analyzer)))
+				   (relative-line-number analyzer)))
+			     line)
+		   do (delete-current-line analyzer))))
+      (flet ((skip (n)
+	       (loop while (plusp n)
+		     for paragraph = (cadr (remaining analyzer))
+		     for rest-count = (- (line-count paragraph)
+					 (relative-line-number analyzer))
+		     do (if (>= n rest-count)
+			    (progn (decf n rest-count)
+				   (pop (remaining analyzer))
+				   (setf (relative-line-number analyzer) 0))
+			    (progn (incf (relative-line-number analyzer) n)
+				   (setf n 0)))))
+	     (modify (line)
+	       (sync line)
+	       (modify-current-line analyzer))
+	     (create (line)
+	       (insert-line analyzer line)))
+	(climacs-buffer:update (buffer analyzer)
+			       (buffer-time analyzer)
+			       #'sync #'skip #'modify #'create)))
+    (setf (paragraphs analyzer) (cdr remaining)))
   ;; Record the time at which this update was made.
-  (setf (buffer-time thing)
-	(climacs-buffer:current-time (buffer thing))))
+  (setf (buffer-time analyzer)
+	(climacs-buffer:current-time (buffer analyzer))))
