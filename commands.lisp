@@ -1,15 +1,29 @@
 (defpackage #:climacs-commands
-  (:use #:common-lisp))
+  (:use #:common-lisp)
+  (:export
+   #:emacs-style-command-processor
+   #:*command-mappings*
+   #:*ascii-insert-mappings*
+   #:*latin-1-insert-mappings*
+   #:*point*
+   ;; FIXME: remove this later when we create command the processors
+   ;; based on the type of the view.
+   #:make-fundamental-command-processor
+   ))
 
 (in-package #:climacs-commands)
 
-(defclass emacs-style-command-processor ()
+(defclass emacs-style-command-processor
+    (clim3:command-table)
   ((%mappings :initarg :mappings :accessor mappings)
    (%numeric-argument :initform nil :accessor numeric-argument)
    (%keystrokes-so-far :initform '() :accessor keystrokes-so-far)
    (%state :initform :start :accessor state)))
 
-(defgeneric submit-keystroke (key-processor keystroke))
+(defmethod clim3:command-name-in-table-p
+    (command-name (command-table emacs-style-command-processor))
+  (member command-name (mappings command-table)
+	  :test #'eq :key #'cadr))
 
 (defun prefix-p (partial-sentence sentence)
   (and (<= (length partial-sentence) (length sentence))
@@ -22,7 +36,7 @@
 	  (append (butlast template) (list numeric-argument)))
       (substitute numeric-argument :num template)))
 
-(defmethod submit-keystroke
+(defmethod clim3:submit-keystroke
     ((key-processor emacs-style-command-processor) keystroke)
   (with-accessors ((mappings mappings)
 		   (numeric-argument numeric-argument)
@@ -82,25 +96,10 @@
 		    (t
 		     nil)))))))
 
-(defclass climacs-view (clim3:view)
-  ((%command-table
-    :initarg :command-table
-    :accessor command-table)
-   (%command-key-processor
-    :initform (make-instance 'emacs-style-command-processor)
-    :initarg :command-key-processor
-    :accessor command-key-processor)
-   (%cursor :initarg cursor :reader cursor)
-   (%buffer :initarg :buffer :reader buffer)))
-
-(defclass climacs (clim3:application)
-  ((%current-view
-    :initarg :current-view
-    :accessor clim3:current-view)
-   (%views :initarg :views :accessor views)))
+(defvar *point*)
 
 (defun point ()
-  (cursor (current-view clim3:*application*)))
+  *point*)
 
 (clim3:define-command forward-item (&optional (count 1))
   (climacs-basic-emacs:forward-item (point) count))
@@ -110,7 +109,7 @@
 
 (clim3:define-command insert-character
     ((character character) &optional (count 1))
-  (climacs-basic-emacs:insert-item character (point) count))
+  (climacs-basic-emacs:insert-item (point) character count))
 
 (clim3:define-command delete-item (&optional (count 1))
   (climacs-basic-emacs:delete-item (point) count))
@@ -118,8 +117,11 @@
 (clim3:define-command erase-item (&optional (count 1))
   (climacs-basic-emacs:erase-item (point) count))
 
+(clim3:define-command quit ()
+  (throw :quit nil))
+
 ;;; FIXME: make several groups
-(defparameter *mappings*
+(defparameter *command-mappings*
   '((((#\x :control) (#\c :control))
      (quit))
     (((#\f :control))
@@ -129,17 +131,27 @@
     (((#\x :control) (#\f :control))
      (find-file))
     (((#\x :control) (#\i))
-     (insert-file))
+     (insert-file))))
 
 ;;; We assume ASCII encoding
 (defparameter *ascii-insert-mappings*
   (loop for code from #x20 to #x7e
 	for char = (code-char code)
-	collect `(((,char)) (insert-char ,char :opt-num))))
+	collect `(((,char)) (insert-character ,char :opt-num))))
 
 ;;; We assume Unicode encoding.
 (defparameter *latin-1-insert-mappings*
   (loop for code from #xa0 to #xff
 	for char = (code-char code)
-	collect `(((,char)) (insert-char ,char :opt-num))))
+	collect `(((,char)) (insert-character ,char :opt-num))))
   
+;;; FIXME: make a generic function called (say) make-command-processor
+;;; that dispatches on the type of the view.  Right now we have only
+;;; one type of view, so that problem would have to be addressed
+;;; first.
+(defun make-fundamental-command-processor ()
+  (make-instance 'emacs-style-command-processor
+    :mappings (append
+	       *command-mappings*
+	       *ascii-insert-mappings*
+	       *latin-1-insert-mappings*)))
