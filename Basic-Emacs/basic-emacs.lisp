@@ -38,7 +38,8 @@
 			 (prev-line
 			   (climacs-buffer:find-line buffer (1- lineno))))
 		    (climacs-buffer:detach-cursor cursor)
-		    (climacs-buffer:attach-cursor cursor prev-line)))
+		    (climacs-buffer:attach-cursor cursor prev-line)
+		    (climacs-buffer:end-of-line cursor)))
 		 (t
 		  (climacs-buffer:backward-item cursor)))))
     (cond ((zerop count)
