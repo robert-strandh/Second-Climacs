@@ -124,6 +124,57 @@
 (clim3:define-command end-of-line ()
   (climacs-buffer:end-of-line (point)))
 
+;;; This command currently does not do what the equivalent Emacs
+;;; command does.  This one currently preserves the horizontal
+;;; position as defined by the number of items to the left of the
+;;; cursor in the line.  Emacs, on the other hand, works on lines as
+;;; they are displayed, so that if a logical line is displayed as
+;;; several physical lines, then the Emacs command might stay within
+;;; the logical line and move to the next physical line.  In addition,
+;;; Emacs preserves the horizontal position as defined by the number
+;;; of pixels to the left of the cursor in the line, so that if the
+;;; font is proportional, the number of character to the left of the
+;;; cursor may be quite different before and after executing the
+;;; command.
+;;;
+;;; Furthermore, the equivalent Emacs command "remembers" the original
+;;; column so that if this command is repeated, it tries to position
+;;; itself in the original colum.  We don't do that yet. 
+(clim3:define-command next-line (&optional (count 1))
+  (if (minusp count)
+      (previous-line count)
+      (let* ((cursor (point))
+	     (pos (climacs-buffer:cursor-position cursor))
+	     (line (climacs-buffer:line cursor))
+	     (line-number (climacs-buffer:line-number line))
+	     (buffer (climacs-buffer:buffer cursor))
+	     (line-count (climacs-buffer:line-count buffer))
+	     (new-line-number (min (1- line-count) (+ line-number count))))
+	(when (>= (+ line-number count) line-count)
+	  (message "End of buffer"))
+	(climacs-buffer:detach-cursor cursor)
+	(let* ((new-line (climacs-buffer:find-line buffer new-line-number))
+	       (line-length (climacs-buffer:item-count new-line))
+	       (new-pos (min line-length pos)))
+	  (climacs-buffer:attach-cursor cursor new-line new-pos)))))
+
+(clim3:define-command previous-line (&optional (count 1))
+  (if (minusp count)
+      (next-line (- count))
+      (let* ((cursor (point))
+	     (pos (climacs-buffer:cursor-position cursor))
+	     (line (climacs-buffer:line cursor))
+	     (line-number (climacs-buffer:line-number line))
+	     (buffer (climacs-buffer:buffer cursor))
+	     (new-line-number (max 0 (- line-number count))))
+	(when (minusp (- line-number count))
+	  (message "Beginning of buffer"))
+	(climacs-buffer:detach-cursor cursor)
+	(let* ((new-line (climacs-buffer:find-line buffer new-line-number))
+	       (line-length (climacs-buffer:item-count new-line))
+	       (new-pos (min line-length pos)))
+	  (climacs-buffer:attach-cursor cursor new-line new-pos)))))
+
 ;;; FIXME: make several groups
 (defparameter *command-mappings*
   '((((#\x :control) (#\c :control))
@@ -140,6 +191,10 @@
      (beginning-of-line))
     (((#\e :control))
      (end-of-line))
+    (((#\p :control))
+     (previous-line :opt-num))
+    (((#\n :control))
+     (next-line :opt-num))
     (((#\x :control) (#\f :control))
      (find-file))
     (((#\x :control) (#\i))
