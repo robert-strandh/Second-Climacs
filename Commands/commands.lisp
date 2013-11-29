@@ -175,6 +175,10 @@
 	       (new-pos (min line-length pos)))
 	  (climacs-buffer:attach-cursor cursor new-line new-pos)))))
 
+(clim3:define-command newline (&optional (count 1))
+  (loop repeat count
+	do (climacs-basic-emacs:insert-item (point) #\Newline count)))
+
 ;;; FIXME: make several groups
 (defparameter *command-mappings*
   '((((#\x :control) (#\c :control))
@@ -195,6 +199,8 @@
      (previous-line :opt-num))
     (((#\n :control))
      (next-line :opt-num))
+    (((#\Return))
+     (newline :opt-num))
     (((#\x :control) (#\f :control))
      (find-file))
     (((#\x :control) (#\i))
