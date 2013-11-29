@@ -1,8 +1,6 @@
 \chapter{Representation of the editor buffer}
 \label{chap-internals-buffer}
 
-\section{Standard buffer representation}
-
 The standard buffer representation organizes the lines in a
 \emph{splay tree} \cite{Sleator:1985:SBS:3828.3835}.  This
 organization has several advantages:
@@ -17,8 +15,42 @@ organization has several advantages:
 
 The standard buffer representation uses two different representations
 of a \emph{line}.  Whenever a line is modified, it must be
-\emph{open}.  In the standard buffer representation, an open line is
-represented as a \emph{splay tree} \cite{Sleator:1985:SBS:3828.3835}
-of \emph{items}.  Items are typically characters, but any object is
-allowed.
+\emph{open}.  An open line is represented as a \emph{gap buffer}.  A
+closed line is currently represented as a simple vector, but a more
+compact representation could be chosen based on the contents of the
+line.
 
+A line is closed whenever its contents is asked for, using the
+function \code{items}.  Then, if the entire contents is asked for, the
+simple vector is simply returned.  Otherwise, the result of calling
+\code{subseq} on the simple vector is returned. 
+
+The fact that a line is closed whenever its contents is asked for may
+seem wasteful, because for a simple editing operation such as
+inserting or deleting an item, the line will be opened and closed for
+every key stroke.  However, this system was not designed to optimize
+that particular use case.  When a line is opened and closed at the
+frequency of a key stroke, it will typically take very little CPU time
+(as a percentage of full CPU use) because of the relative slowness of
+the human operator.  Instead it was optimized for the use case when
+several simple editing operations result from a small number of
+keystrokes.  A typical example would be loading a file into a buffer
+or executing a keyboard macro that inserts several items.  For this
+use case, the affected lines typically remain open for the duration of
+the interaction, and they are closed only as a result of the result
+being displayed. 
+
+A \emph{cursor} can be either \emph{detached} or \emph{attached} as
+reflected by its \emph{class}.  When a cursor needs to move from one
+line to another line, it is first detached from its current line and
+then attached to its target line.  An attached cursor contains a slot
+that refers to the line to which it is attached, and a slot that
+contains its \emph{logical position} within the line.  A cursor can
+also be either open or closed, depending on whether it is in an open
+line or a closed line.  Currently, there is no difference between the
+representation of an open cursor and of a closed cursor.  In
+applications where a line can have many (i.e., hundreds) of cursors,
+it might be good to store the \emph{physical position} in the gap
+buffer.  This way, cursor positions will only have to be updated when
+the gap moves, as opposed to after every editing operation, at least
+for insert operations.  
