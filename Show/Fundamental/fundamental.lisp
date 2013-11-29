@@ -33,7 +33,7 @@
   
 (defun zones-from-line (show line)
   (let* ((buffer-line (climacs-analyzer-fundamental:buffer-line line))
-	 (items (climacs-buffer:items buffer-line))
+	 (items (coerce (climacs-buffer:items buffer-line) 'string))
 	 (length (length items)))
     (if (eq (climacs-buffer:line (cursor show)) buffer-line)
 	(let ((pos (climacs-buffer:cursor-position (cursor show)))
