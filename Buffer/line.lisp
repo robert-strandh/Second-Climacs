@@ -341,7 +341,7 @@
 	  ((> pos (gap-start line))
 	   (replace contents contents
 		    :start2 (gap-end line)
-		    :start1 (gap-start line) :end2 pos)
+		    :start1 (gap-start line) :end1 pos)
 	   (incf (gap-end line) (- pos (gap-start line)))
 	   (setf (gap-start line) pos))
 	  (t
