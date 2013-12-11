@@ -83,13 +83,16 @@
 	(1
 	 (insert-item (list (random 1000000)) *container* 1)))
       ;; There are at lest two items.
-      (ecase (random 3)
-	(0 (let ((position (random (node-count *container*))))
-	     (modify-node *container* position (random 1000000))))
-	(1 (let ((position (1+ (random (node-count *container*)))))
-	     (insert-item (list (random 1000000)) *container* position)))
-	(2 (let ((position (1+ (random (1- (node-count *container*))))))
-	     (delete-node *container* position))))))
+      (ecase (random 4)
+	(0
+	 (let ((position (random (node-count *container*))))
+	   (modify-node *container* position (random 1000000))))
+	((1 2)
+	 (let ((position (1+ (random (node-count *container*)))))
+	   (insert-item (list (random 1000000)) *container* position)))
+	(3
+	 (let ((position (1+ (random (1- (node-count *container*))))))
+	   (delete-node *container* position))))))
 
 (defun compare-containers (container list)
   (every (lambda (a b)
@@ -143,8 +146,8 @@
 					  #'sync #'skip #'modify #'create)))
 	     ;; (format t "***list after: ~d~%" (cdr list))
 	     ))
-      (loop repeat 100000
-	  do (loop repeat 50
+      (loop repeat 10000
+	  do (loop repeat 20
 		   do (one-operation)
 		      (setf length (max length (node-count *container*))))
 	     (synchronize)
