@@ -11,27 +11,30 @@
 (defgeneric (setf right) (new-right node))
 
 (defclass node ()
-  ((%parent :initform nil :initarg :parent :accessor parent)
+  ((%parent :initform nil
+	    :initarg :parent
+	    :reader parent
+	    :writer set-parent)
    (%left :initform nil :accessor left)
    (%right :initform nil :accessor right)))
 
 (defmethod (setf left) :before ((new-left node) (node node))
   (assert (null (parent new-left)))
   (assert (null (left node)))
-  (setf (parent new-left) node))
+  (set-parent node new-left))
 
 (defmethod (setf left) :before ((new-left null) (node node))
   (unless (null (left node))
-    (setf (parent (left node)) nil)))
+    (set-parent nil (left node))))
 
 (defmethod (setf right) :before ((new-right node) (node node))
   (assert (null (parent new-right)))
   (assert (null (right node)))
-  (setf (parent new-right) node))
+  (set-parent node new-right))
 
 (defmethod (setf right) :before ((new-right null) (node node))
   (unless (null (right node))
-    (setf (parent (right node)) nil)))
+    (set-parent nil (right node))))
 
 (defgeneric splay (n))
 (defgeneric splay-2 (n p))
@@ -39,7 +42,8 @@
 (defgeneric splay-4 (n p gp ggp))
 
 (defmethod splay ((n node))
-  (splay-2 n (parent n)))
+  (splay-2 n (parent n))
+  n)
 
 (defmethod splay-2 ((n node) (p null))
   nil)
