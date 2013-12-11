@@ -52,10 +52,32 @@
 	(max (max-modify-time node)
 	     (max-modify-time new-right))))
 
+(defparameter *call-count* 0)
+(defparameter *node-count* 0)
+(defparameter *traversed-node-count* 0)
+(defparameter *run-time* 0)
+
+(defun reset ()
+  (setf *call-count* 0
+	*node-count* 0
+	*traversed-node-count* 0
+	*run-time* 0))
+
+(defun report ()
+  (format t "~%")
+  (format t "Number of calls: ~d~%" *call-count*)
+  (format t "Average number of nodes in tree: ~d~%"
+	  (round (/ *node-count* *call-count*)))
+  (format t "Average number of nodes traversed: ~d~%"
+	  (round (/ *traversed-node-count* *call-count*)))
+  (format t "Average runtime per call: ~a ms~%"
+	  (float (/ *run-time* *call-count*))))
 
 (defun synchronize (root time sync skip modify create)
   (let ((state :skip)
-	(first-skip 0))
+	(first-skip 0)
+	(start-time (get-internal-run-time)))
+    (incf *call-count*)
     (labels ((traverse (node offset)
 	       (if (null node)
 		   nil
@@ -63,6 +85,7 @@
 			  (left-count (if (null left) 0 (node-count left)))
 			  (node-offset (+ offset left-count))
 			  (right-offset (+ node-offset 1)))
+		     (incf *traversed-node-count*)
 		     (if (eq state :skip)
 			 (if (> (max-modify-time node) time)
 			     ;; We are in the :SKIP state and some
@@ -225,8 +248,11 @@
 				     (funcall sync node)
 				     (setf state :skip)
 				     (setf first-skip right-offset))))))))))
+      (unless (null root)
+	(incf *node-count* (node-count root)))
       (traverse root 0)
       (when (eq state :skip)
 	(let ((skip-count (- (node-count root) first-skip)))
 	  (unless (zerop skip-count)
-	    (funcall skip skip-count)))))))
+	    (funcall skip skip-count)))))
+    (incf *run-time* (- (get-internal-run-time) start-time))))
