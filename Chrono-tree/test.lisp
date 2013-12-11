@@ -143,8 +143,8 @@
 					  #'sync #'skip #'modify #'create)))
 	     ;; (format t "***list after: ~d~%" (cdr list))
 	     ))
-      (loop repeat 10000
-	  do (loop repeat 100
+      (loop repeat 100000
+	  do (loop repeat 50
 		   do (one-operation)
 		      (setf length (max length (node-count *container*))))
 	     (synchronize)
