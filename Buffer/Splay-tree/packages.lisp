@@ -3,8 +3,9 @@
 (defpackage #:splay-tree
   (:use #:common-lisp)
   (:export
-   node
-   splay
-   left
-   right
+   #:node
+   #:splay
+   #:left
+   #:right
+   #:parent
    ))
