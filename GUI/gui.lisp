@@ -1,7 +1,8 @@
 (cl:in-package #:climacs-gui)
 
 (defun status-line ()
-  (let* ((background-color (clim3:make-color 0.7 0.7 0.7))
+  (let* ((background-color
+	   (clim3-gadgets:background-color clim3-gadgets:*theme*))
 	 (background (clim3:opaque background-color))
 	 (style (clim3:text-style :free :fixed :bold 12))
 	 (color (clim3:make-color 0.0 0.0 0.0))
@@ -37,6 +38,8 @@
 (defun climacs ()
   (let* ((wrap (clim3:wrap))
 	 (scroll (clim3:scroll wrap))
+	 (scrollbar (clim3-gadgets:vscrollbar scroll))
+	 (hbox (clim3:hbox* scrollbar scroll))
 	 (size (clim3:brick 800 1000))
 	 (tooltip (clim3:bboard*))
 	 (status (status-line))
@@ -57,7 +60,7 @@
 		 :show show
 		 :command-key-processor command-processor
 		 :cursor cursor))
-	 (info (clim3:vbox* scroll status minibuffer))
+	 (info (clim3:vbox* hbox status minibuffer))
 	 (all (clim3:pile* tooltip info size))
 	 (clim3:*application* (make-instance 'climacs
 				:current-view view
