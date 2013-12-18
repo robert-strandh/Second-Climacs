@@ -45,6 +45,37 @@
     (modify-line show line)
     (clim3:insert-zone (clim3:children (wrap show)) line line-number)))
 
+(defun maybe-adjust-vpos (show)
+  (let* ((wrap (wrap show))
+	 (tree (clim3:children wrap))
+	 (cursor-line (climacs-buffer:line (cursor show)))
+	 (line-number (climacs-buffer:line-number cursor-line))
+	 (leaf (clim3:find-zone tree line-number))
+	 (offset (clim3:offset leaf))
+	 (scroll-height (clim3:height (clim3-ext:parent wrap)))
+	 (leaf-height (clim3:height leaf)))
+    (cond ((and (>= (+ offset (clim3:vpos wrap)) 0)
+		(<= (+ offset (clim3:vpos wrap) leaf-height) scroll-height))
+	   ;; The line of the cursor is entirely visible, so we don't
+	   ;; need to do anything.
+	   nil)
+	  ((< scroll-height leaf-height)
+	   ;; In this situation, the line is currently not visible,
+	   ;; and we eigther have a very tall line or a very short
+	   ;; scroller.  We do our best and position the bottom of the
+	   ;; line at the bottom of the scroll zone.
+	   (setf (clim3:vpos wrap) (- scroll-height leaf-height)))
+	  (t
+	   ;; In this situation, the line is currently not visible,
+	   ;; but the scroll zone is sufficiently tall to show the
+	   ;; entire line.  We position the wrap so that the current
+	   ;; line is in the middle of the scroll zone, or if that
+	   ;; would make the position of the entire positive, then set
+	   ;; it to 0 instead.
+	   (setf (clim3:vpos wrap)
+		 (min 0
+		      (- (floor (- scroll-height leaf-height) 2) offset)))))))
+
 (defmethod climacs-show:update (show)
   (let ((line-number 0)
 	(tree (clim3:children (wrap show))))
@@ -73,7 +104,8 @@
 	     #'sync #'skip #'modify #'create)))
     (setf (previous-cursor-line show)
 	  (climacs-buffer:line-number (climacs-buffer:line (cursor show))))
-    (modify-line show (clim3:find-zone tree (previous-cursor-line show)))))
+    (modify-line show (clim3:find-zone tree (previous-cursor-line show)))
+    (maybe-adjust-vpos show)))
 
 (defmethod climacs-show:make-show
     ((analyzer climacs-analyzer-fundamental:fundamental-analyzer)
