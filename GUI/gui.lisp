@@ -22,18 +22,19 @@
     (clim3:pile* thing background height)))
 
 (defclass climacs (clim3:application)
-  ((%current-view :initarg :current-view :accessor clim3:current-view)
+  ((%views :initarg :views :reader views)
+   (%current-view :initarg :current-view :accessor clim3:current-view)
    (%zones :initarg :zones :accessor zones)))
 
 (defmethod clim3:command-loop-iteration :around ((application climacs) view)
+  (declare (ignore view))
   (let ((climacs-commands:*point* (climacs-view:cursor view)))
     (call-next-method))
-  ;; FIXME: update every analyzer, not only that of the current view.
-  (climacs-analyzer-fundamental:update (climacs-view:analyzer view))
-  ;; FIXME: update every visible view, not only the current view.
-  (let ((show (climacs-view:show view)))
-    (unless (null show)
-      (climacs-show:update show))))
+  (loop for view in (views application)
+	do (climacs-analyzer-fundamental:update (climacs-view:analyzer view))
+	   (let ((show (climacs-view:show view)))
+	     (unless (null show)
+	       (climacs-show:update show)))))
 
 (defun climacs ()
   (let* ((wrap (clim3:wrap))
@@ -66,6 +67,7 @@
 	 (info (clim3:vbox* hbox status minibuffer))
 	 (all (clim3:pile* tooltip info size))
 	 (clim3:*application* (make-instance 'climacs
+				:views (list view)
 				:current-view view
 				:zones all)))
     (climacs-analyzer-fundamental:update analyzer)
