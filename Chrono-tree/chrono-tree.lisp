@@ -256,3 +256,5 @@
 	  (unless (zerop skip-count)
 	    (funcall skip skip-count)))))
     (incf *run-time* (- (get-internal-run-time) start-time))))
+
+;;  LocalWords:  subtree

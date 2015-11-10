@@ -15,7 +15,7 @@
 ;;;; represented in any particular way.
 ;;;;
 ;;;; Second, the updates of the buffer and the updates of the analyzer
-;;;; happen at different frequencies and granularities.  The buffer
+;;;; happen at different frequencies and granularity.  The buffer
 ;;;; contents is updated by each elementary operation on an item.  The
 ;;;; analyzer is updated for each iteration around the command loop.
 ;;;; There could be arbitrary many buffer updates in a single
@@ -23,16 +23,16 @@
 ;;;;
 ;;;; Third, while the organization of the buffer tree depends only the
 ;;;; hot spots of buffer modification, the organization of the
-;;;; analyzer tree might also depend on what part of the buffer
-;;;; is currently on display in the visible views.
+;;;; analyzer tree might also depend on what part of the buffer is
+;;;; currently on display in the visible views.
 ;;;;
 ;;;; Recall that the result of the analysis can depend only on the
-;;;; buffer contents, and not on how that contents is ultimatly
+;;;; buffer contents, and not on how that contents is ultimately
 ;;;; displayed, and that several views might share an analyzer.  So
 ;;;; for instance, different views might be on display in windows with
-;;;; different width, requireing a buffer line to be split in
-;;;; different ways in different views.  The syntax analyzer can not
-;;;; take such display-specific information into account. 
+;;;; different width, requiring a buffer line to be split in different
+;;;; ways in different views.  The syntax analyzer can not take such
+;;;; display-specific information into account.
 
 (defgeneric current-time (clock))
 
@@ -94,8 +94,8 @@
    ;; for for every complete analysis of the buffer.  When the
    ;; analysis is complete, the current time of this clock is the same
    ;; as the create time of any paragraph or line that was created as
-   ;; a result of the anlysis, and as the modify time of any paragraph
-   ;; or line that was modified as a result of the analysis.
+   ;; a result of the analysis, and as the modify time of any
+   ;; paragraph or line that was modified as a result of the analysis.
    (%clock :initform (make-clock) :reader clock)
    ;; 
    (%contents :initform '() :accessor contents)))
