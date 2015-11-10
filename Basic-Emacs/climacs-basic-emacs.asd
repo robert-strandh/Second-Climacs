@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :climacs-basic-emacs
+(defsystem :climacs-basic-emacs
   :depends-on (:climacs-buffer)
   :components
   ((:file "packages")
