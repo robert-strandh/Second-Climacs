@@ -64,7 +64,9 @@
 ;;;;    positions.
 
 (defun update (buffer time sync skip modify create)
-  (let ((state :skip)
+  (let (;; We maintain a STATE that can be either :SKIP or :MODIFY.
+	;; Initially, we are in the :SKIP state.
+	(state :skip)
 	(first-skip 0))
     (labels ((traverse (node offset)
 	       (if (null node)
