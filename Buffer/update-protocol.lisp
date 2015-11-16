@@ -3,24 +3,38 @@
 ;;;; This function implements the buffer update protocol for a buffer
 ;;;; represented as a splay tree.
 ;;;;
+;;;; The purpose of the buffer update protocol is to allow for a
+;;;; number of edit operations to the buffer without updating the view
+;;;; of the buffer.  This functionality is important because a single
+;;;; command may result in an arbitrary number of edit operations to
+;;;; the buffer, and we typically want the view to be updated only
+;;;; once, when all those edit operations have been executed.
+;;;;
+;;;; The buffer update protocol has been designed to allow for
+;;;; different representations of the view.  Seen from the UPDATE
+;;;; function, the view takes the form of four different editing
+;;;; operations, namely CREATE, MODIFY, SYNC, and SKIP.
+;;;;
 ;;;; BUFFER is a buffer that might have been modified since the last
 ;;;; call to UPDATE.  TIME is the last time UPDATE was called; the
 ;;;; UPDATE function will report modifications since that time.
 ;;;;
-;;;; SYNC, SKIP, UPDATE, and CREATE are functions that are called by
+;;;; SYNC, SKIP, MODIFY, and CREATE are functions that are called by
 ;;;; the UPDATE function.  They can be thought of as edit operations
 ;;;; on some representation of the buffer as it was after the previous
-;;;; call to UPDATE.  The operations have the following meaning:
+;;;; call to UPDATE.
+
+;;;; The operations have the following meaning:
 ;;;;
 ;;;;  * CREATE indicates that a line has been created.  The function
 ;;;;    CREATE is called with the line as the argument.
 ;;;;
-;;;;  * UPDATE indicates that a line has been modified.  The function
-;;;;    UPDATE is called with the modified line as the argument.
+;;;;  * MODIFY indicates that a line has been modified.  The function
+;;;;    MODIFY is called with the modified line as the argument.
 ;;;;
 ;;;;  * SYNC indicates the first unmodified line after a sequence of
 ;;;;    new or modified lines.  Accordingly, this function is called
-;;;;    once, following one or more calls to CREATE or UPDATE.  This
+;;;;    once, following one or more calls to CREATE or MODIFY.  This
 ;;;;    function is called with a single argument: the unmodified
 ;;;;    line.
 ;;;;
