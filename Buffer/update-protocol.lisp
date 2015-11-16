@@ -1,5 +1,37 @@
 (cl:in-package #:climacs-buffer)
 
+;;;; This function implements the buffer update protocol for a buffer
+;;;; represented as a splay tree.
+;;;;
+;;;; BUFFER is a buffer that might have been modified since the last
+;;;; call to UPDATE.  TIME is the last time UPDATE was called; the
+;;;; UPDATE function will report modifications since that time.
+;;;;
+;;;; SYNC, SKIP, UPDATE, and CREATE are functions that are called by
+;;;; the UPDATE function.  They can be thought of as edit operations
+;;;; on some representation of the buffer as it was after the previous
+;;;; call to UPDATE.  The operations have the following meaning:
+;;;;
+;;;;  * CREATE indicates that a line has been created.  The function
+;;;;    CREATE is called with the line as the argument.
+;;;;
+;;;;  * UPDATE indicates that a line has been modified.  The function
+;;;;    UPDATE is called with the modified line as the argument.
+;;;;
+;;;;  * SYNC indicates the first unmodified line after a sequence of
+;;;;    new or modified lines.  Accordingly, this function is called
+;;;;    once, following one or more calls to CREATE or UPDATE.  This
+;;;;    function is called with a single argument: the unmodified
+;;;;    line.
+;;;;
+;;;;  * SKIP indicates that a number of lines have not been subject to
+;;;;    any modifications since the last call to UPDATE.  The SKIP
+;;;;    function takes a single argument: the number of lines to skip.
+;;;;    The SKIP function is called first, to indicate that a prefix
+;;;;    of the buffer is unmodified, or after a SYNC operation to
+;;;;    indicate that that many lines following the one given as
+;;;;    argument to the SYNC operation are unmodified.
+
 (defun update (buffer time sync skip update create)
   (let ((state :skip)
 	(first-skip 0))
