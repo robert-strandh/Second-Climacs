@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :climacs-buffer
+(defsystem :climacs-buffer
   :depends-on (:splay-tree)
   :serial t
   :components
