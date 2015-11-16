@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "buffer")
+   (:file "update-protocol")
    (:file "line")))
