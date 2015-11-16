@@ -13,18 +13,22 @@
 ;;;; The buffer update protocol has been designed to allow for
 ;;;; different representations of the view.  Seen from the UPDATE
 ;;;; function, the view takes the form of four different editing
-;;;; operations, namely CREATE, MODIFY, SYNC, and SKIP.
+;;;; operations, namely CREATE, MODIFY, SYNC, and SKIP.  These editing
+;;;; operations are represented as functions that are supplied by
+;;;; client code as arguments to the UPDATE function.  The editing
+;;;; operations only assume that the view keeps a copy of the
+;;;; structure of the lines of the buffer, and that this copy has a
+;;;; cursor that is affected by the editing operations.  This cursor
+;;;; can be before the first line of the view, after the last line of
+;;;; the view, or between two lines of the view.  When BUFFER is
+;;;; called by client code, the cursor is located before the first
+;;;; line of the view.
 ;;;;
 ;;;; BUFFER is a buffer that might have been modified since the last
 ;;;; call to UPDATE.  TIME is the last time UPDATE was called; the
 ;;;; UPDATE function will report modifications since that time.
 ;;;;
-;;;; SYNC, SKIP, MODIFY, and CREATE are functions that are called by
-;;;; the UPDATE function.  They can be thought of as edit operations
-;;;; on some representation of the buffer as it was after the previous
-;;;; call to UPDATE.
-
-;;;; The operations have the following meaning:
+;;;; The editing operations have the following meaning:
 ;;;;
 ;;;;  * CREATE indicates that a line has been created.  The function
 ;;;;    CREATE is called with the line as the argument.
