@@ -109,9 +109,7 @@
 					 ;; MODIFY operation, and also
 					 ;; flip to the :MODIFY state.
 					 (progn 
-					   (let ((skip-count (- node-offset first-skip)))
-					     (unless (zerop skip-count)
-					       (funcall skip skip-count)))
+					   (issue-skip node-offset)
 					   (setf state :modify)
 					   (if (> (create-time node) time)
 					       (funcall create (line node))
@@ -158,10 +156,8 @@
 					 ;; MODIFY operation, and we
 					 ;; must flip the state.
 					 (progn 
-					   ;; Issue hte SKIP operation.
-					   (let ((skip-count (- node-offset first-skip)))
-					     (unless (zerop skip-count)
-					       (funcall skip skip-count)))
+					   ;; Issue the SKIP operation.
+					   (issue-skip node-offset)
 					   ;; Flip the state.
 					   (setf state :modify)
 					   ;; Issue the CREATE or MODIFY operation.
@@ -247,6 +243,4 @@
 				       (setf first-skip right-offset))))))))))
 	(traverse (contents buffer) 0)
 	(when (eq state :skip)
-	  (let ((skip-count (- (line-count (contents buffer)) first-skip)))
-	    (unless (zerop skip-count)
-	      (funcall skip skip-count))))))))
+	  (issue-skip (line-count (contents buffer))))))))
