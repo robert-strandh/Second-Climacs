@@ -88,7 +88,7 @@
 				   ;; state, either because none of
 				   ;; the nodes in the left subtree
 				   ;; were modified, or because we
-				   ;; flipped to :UPDATE and then back
+				   ;; flipped to :MODIFY and then back
 				   ;; to :SKIP.
 				   (if (> (modify-time node) time)
 				       ;; We are in the :SKIP state
@@ -97,12 +97,12 @@
 				       ;; issue the SKIP operation,
 				       ;; and then the CREATE or
 				       ;; MODIFY operation, and also
-				       ;; flip to the :UPDATE state.
+				       ;; flip to the :MODIFY state.
 				       (progn 
 					 (let ((skip-count (- node-offset first-skip)))
 					   (unless (zerop skip-count)
 					     (funcall skip skip-count)))
-					 (setf state :update)
+					 (setf state :modify)
 					 (if (> (create-time node) time)
 					     (funcall create (line node))
 					     (funcall modify (line node)))
@@ -111,7 +111,7 @@
 				       ;; and the current node has not
 				       ;; been modified.
 				       (traverse (splay-tree:right node) right-offset))
-				   ;; We are in the :UPDATE state. 
+				   ;; We are in the :MODIFY state.
 				   (if (> (modify-time node) time)
 				       (progn
 					 (if (> (create-time node) time)
@@ -124,9 +124,9 @@
 					 (setf first-skip right-offset)
 					 (traverse (splay-tree:right node) right-offset)))))
 			     nil)
-			 ;; We are in the :UPDATE state.
+			 ;; We are in the :MODIFY state.
 			 (if (> (max-modify-time node) time)
-			     ;; We are in the :UPDATE state, and some
+			     ;; We are in the :MODIFY state, and some
 			     ;; nodes in this subtree have been
 			     ;; modified.
 			     (progn
@@ -134,7 +134,7 @@
 			       (if (eq state :skip)
 				   ;; In this situation, the traversal
 				   ;; of the left subtree resulted in
-				   ;; a state flip from :UPDATE to
+				   ;; a state flip from :MODIFY to
 				   ;; :SKIP.  This means that the
 				   ;; nodes in some suffix of those in
 				   ;; the left subtree have not been
@@ -153,7 +153,7 @@
 					   (unless (zerop skip-count)
 					     (funcall skip skip-count)))
 					 ;; Flip the state.
-					 (setf state :update)
+					 (setf state :modify)
 					 ;; Issue the CREATE or MODIFY operation.
 					 (if (> (create-time node) time)
 					     (funcall create (line node))
@@ -171,7 +171,7 @@
 				       (traverse (splay-tree:right node) right-offset))
 				   ;; After traversing the left
 				   ;; subtree, we are now in the
-				   ;; :UPDATE state, either because
+				   ;; :MODIFY state, either because
 				   ;; the state was never flipped, or
 				   ;; because it flipped to :SKIP and
 				   ;; then back.
@@ -189,7 +189,7 @@
 					 (traverse (splay-tree:right node) right-offset))
 				       ;; The current node was not
 				       ;; modified, but we are in the
-				       ;; :UPDATE state, so we need to
+				       ;; :MODIFY state, so we need to
 				       ;; flip to the :SKIP state and
 				       ;; issue a SYNC operation.
 				       (progn
@@ -197,7 +197,7 @@
 					 (setf state :skip)
 					 (setf first-skip right-offset)
 					 (traverse (splay-tree:right node) right-offset)))))
-			     ;; We are in the :UPDATE state, but none
+			     ;; We are in the :MODIFY state, but none
 			     ;; of the nodes in this subtree have been
 			     ;; modified or inserted.  This means that
 			     ;; the previous node (call it P) that was
@@ -225,7 +225,7 @@
 				   ;; The traversal of the left
 				   ;; subtree did not result in a
 				   ;; state flip to :SKIP, so we are
-				   ;; still in the :UPDATE state.
+				   ;; still in the :MODIFY state.
 				   ;; This happens only when the left
 				   ;; subtree is NIL, and so because
 				   ;; the current node has not been
