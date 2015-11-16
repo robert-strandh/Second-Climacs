@@ -46,7 +46,7 @@
 ;;;;    indicate that that many lines following the one given as
 ;;;;    argument to the SYNC operation are unmodified.
 
-(defun update (buffer time sync skip update create)
+(defun update (buffer time sync skip modify create)
   (let ((state :skip)
 	(first-skip 0))
     (labels ((traverse (node offset)
@@ -79,7 +79,7 @@
 				       ;; been modified, so we must
 				       ;; issue the SKIP operation,
 				       ;; and then the CREATE or
-				       ;; UPDATE operation, and also
+				       ;; MODIFY operation, and also
 				       ;; flip to the :UPDATE state.
 				       (progn 
 					 (let ((skip-count (- node-offset first-skip)))
@@ -88,7 +88,7 @@
 					 (setf state :update)
 					 (if (> (create-time node) time)
 					     (funcall create (line node))
-					     (funcall update (line node)))
+					     (funcall modify (line node)))
 					 (traverse (splay-tree:right node) right-offset))
 				       ;; We are in the :SKIP state,
 				       ;; and the current node has not
@@ -99,7 +99,7 @@
 				       (progn
 					 (if (> (create-time node) time)
 					     (funcall create (line node))
-					     (funcall update (line node)))
+					     (funcall modify (line node)))
 					 (traverse (splay-tree:right node) right-offset))
 				       (progn
 					 (funcall sync (line node))
@@ -128,7 +128,7 @@
 				       ;; been modified, so we must
 				       ;; issue a SKIP operation and
 				       ;; then either a CREATE or an
-				       ;; UPDATE operation, and we
+				       ;; MODIFY operation, and we
 				       ;; must flip the state.
 				       (progn 
 					 ;; Issue hte SKIP operation.
@@ -137,10 +137,10 @@
 					     (funcall skip skip-count)))
 					 ;; Flip the state.
 					 (setf state :update)
-					 ;; Issue the CREATE or UPDATE operation.
+					 ;; Issue the CREATE or MODIFY operation.
 					 (if (> (create-time node) time)
 					     (funcall create (line node))
-					     (funcall update (line node)))
+					     (funcall modify (line node)))
 					 ;; Continue traversing the
 					 ;; remaining nodes in this
 					 ;; subtree.
@@ -160,11 +160,11 @@
 				   ;; then back.
 				   (if (> (modify-time node) time)
 				       ;; We maintain a sequence of
-				       ;; CREATE or UPDATE operations. 
+				       ;; CREATE or MODIFY operations.
 				       (progn
 					 (if (> (create-time node) time)
 					     (funcall create (line node))
-					     (funcall update (line node)))
+					     (funcall modify (line node)))
 					 ;; Continue traversing the
 					 ;; remaining nodes in this
 					 ;; subtree without changing
