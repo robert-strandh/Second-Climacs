@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem :climacs-gui
+(asdf:defsystem :climacs-climatis-gui
   :depends-on (:climatis
 	       :climacs-view
 	       :climacs-buffer
