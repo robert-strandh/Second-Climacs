@@ -72,8 +72,10 @@
 	;; we issue a SKIP editing operation with the difference
 	;; between the current offset and FIRST-SKIP.
 	(first-skip 0))
-    (flet ((skip-count (offset)
-	     (- offset first-skip)))
+    (flet ((issue-skip (offset)
+	     (let ((skip-count (- offset first-skip)))
+	       (unless (zerop skip-count)
+		 (funcall skip skip-count)))))
       (labels ((traverse (node offset)
 		 (if (null node)
 		     nil
