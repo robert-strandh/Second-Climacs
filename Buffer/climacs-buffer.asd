@@ -2,7 +2,8 @@
 
 (asdf:defsystem :climacs-buffer
   :depends-on (:splay-tree)
+  :serial t
   :components
   ((:file "packages")
-   (:file "buffer" :depends-on ("packages"))
-   (:file "line" :depends-on ("packages" "buffer"))))
+   (:file "buffer")
+   (:file "line")))
