@@ -31,24 +31,37 @@
 ;;;; The editing operations have the following meaning:
 ;;;;
 ;;;;  * CREATE indicates that a line has been created.  The function
-;;;;    CREATE is called with the line as the argument.
+;;;;    CREATE is called with the line as the argument.  Client code
+;;;;    should insert the new line at the position of the cursor, and
+;;;;    then leave the cursor positioned immediately after the
+;;;;    inserted line.
 ;;;;
 ;;;;  * MODIFY indicates that a line has been modified.  The function
-;;;;    MODIFY is called with the modified line as the argument.
+;;;;    MODIFY is called with the modified line as the argument.  The
+;;;;    line that has been modified is the one immediately after the
+;;;;    cursor.  At the end of this operation, client code should
+;;;;    leave the cursor positioned immediately after the modified
+;;;;    line.
 ;;;;
 ;;;;  * SYNC indicates the first unmodified line after a sequence of
 ;;;;    new or modified lines.  Accordingly, this function is called
 ;;;;    once, following one or more calls to CREATE or MODIFY.  This
 ;;;;    function is called with a single argument: the unmodified
-;;;;    line.
+;;;;    line.  Call this line L.  Client code must delete lines
+;;;;    immediately following the cursor until the line immediately
+;;;;    following the cursor is L.  At the end of this operation,
+;;;;    client code should leave the cursor positioned immediately
+;;;;    after L.
 ;;;;
 ;;;;  * SKIP indicates that a number of lines have not been subject to
 ;;;;    any modifications since the last call to UPDATE.  The SKIP
 ;;;;    function takes a single argument: the number of lines to skip.
-;;;;    The SKIP function is called first, to indicate that a prefix
-;;;;    of the buffer is unmodified, or after a SYNC operation to
-;;;;    indicate that that many lines following the one given as
-;;;;    argument to the SYNC operation are unmodified.
+;;;;    Call this number N.  The SKIP function is called first, to
+;;;;    indicate that a prefix of length N of the buffer is
+;;;;    unmodified, or after a SYNC operation to indicate that N lines
+;;;;    following the one given as argument to the SYNC operation are
+;;;;    unmodified.  Client code should move the cursor forward N
+;;;;    positions.
 
 (defun update (buffer time sync skip modify create)
   (let ((state :skip)
