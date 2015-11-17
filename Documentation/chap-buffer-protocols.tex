@@ -260,7 +260,7 @@ modified since the last update operation.  The \textit{time} parameter
 is the last time the update operation was called, so that the
 \texttt{update} function will report modifications since that time. 
 
-The parameters \textit{sync}, \textit{skip}, \textit{update}, and
+The parameters \textit{sync}, \textit{skip}, \textit{modify}, and
 \textit{create}, are functions that are called by the \texttt{update}
 function.  They are to be considered as \emph{edit operations} on some
 representation of the buffer as it was after the previous call to
@@ -269,14 +269,13 @@ representation of the buffer as it was after the previous call to
 \begin{itemize}
 \item \textit{create} indicates a line that has been created.  The
   function is called with that line as an argument.
-\item \textit{update}%
-  \fixme{Maybe rename this operation \textit{modify}?}
+\item \textit{modify}%
   indicates a line that has been modified.  The
   function is called with that line as an argument.
 \item \textit{sync} indicates the first unmodified line after a
   sequence of new or modified lines.  Accordingly, this function is
   called once, following one or more calls to \textit{create} or
-  \textit{update}.  This function is called with a single argument:
+  \textit{modify}.  This function is called with a single argument:
   the unmodified line.
 \item \textit{skip} indicates that a number of lines have not been
   subject to any modifications since the last update.  The function
