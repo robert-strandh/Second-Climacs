@@ -7,5 +7,4 @@
    #:splay
    #:left
    #:right
-   #:parent
-   ))
+   #:parent))
