@@ -1,7 +1,7 @@
 (cl:in-package #:splay-tree)
 
 ;;;; Abbreviations:   n = node
-;;;;                  p = paren
+;;;;                  p = parent
 ;;;;                 gp = grandparent
 ;;;;                ggp = great grandparent
 
