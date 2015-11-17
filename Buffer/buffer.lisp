@@ -73,7 +73,7 @@
 ;;; The node contains a reference to the buffer in which it is
 ;;; located.  This reference is needed because when a node of the tree
 ;;; is splayed, that node must be explicitly assigned to the CONTENTS
-;;; field of the buffer.
+;;; slot of the buffer.
 (defclass node (splay-tree:node)
   ((%buffer :initform nil :initarg :buffer :accessor buffer)
    (;; The line count of the entire subtree.
