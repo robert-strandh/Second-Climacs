@@ -10,4 +10,5 @@
 	       :climacs-basic-emacs)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "gui")))
