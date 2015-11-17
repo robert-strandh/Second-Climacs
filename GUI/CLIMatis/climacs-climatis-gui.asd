@@ -8,6 +8,7 @@
 	       :climacs-show-fundamental
 	       :climacs-commands
 	       :climacs-basic-emacs)
+  :serial t
   :components
   ((:file "packages")
-   (:file "gui" :depends-on ("packages"))))
+   (:file "gui")))
