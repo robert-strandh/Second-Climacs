@@ -60,7 +60,7 @@ As mentioned above, the buffer protocols do not pretend to manage any
 equivalence between line breaks and some sequence of characters.  It
 is up to client code to model such an equivalence if desired.  As a
 consequence, the buffer protocols do not allow for a cursor at the
-beginning of a line to more backward or a cursor at the end of a line
+beginning of a line to move backward or a cursor at the end of a line
 to move forward.  An attempt at doing so will result in an error being
 signaled.  If client code wants to impose a model where the line break
 corresponds to (say) the \emph{newline} character, then it must
