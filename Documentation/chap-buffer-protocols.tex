@@ -237,6 +237,13 @@ joined.  This features is essential in order for the \emph{update
 
 \section{Buffer update protocol}
 
+The purpose of the buffer update protocol is to allow for a number of
+edit operations to the buffer without updating the view of the buffer.
+This functionality is important because a single command may result in
+an arbitrary number of edit operations to the buffer, and we typically
+want the view to be updated only once, when all those edit operations
+have been executed.
+
 At the center of the update protocol is the concept of a \emph{time
   stamp}.  Each buffer manages a \emph{current time} which is a
 non-negative integer that has the initial value $0$.  Whenever a line
