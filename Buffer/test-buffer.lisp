@@ -24,5 +24,3 @@
 			       (coerce mirror 'vector))))))
       (loop repeat 1000000
 	    do (test)))))
-
-		   
