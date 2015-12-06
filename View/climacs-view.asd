@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem #:climacs-view
+(defsystem #:climacs-view
   :depends-on (:climacs-buffer
 	       :climacs-syntax-fundamental
 	       :climacs-show-fundamental)
