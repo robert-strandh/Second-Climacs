@@ -29,7 +29,7 @@
    (%children :initform '() :initarg :children :accessor children)))
 
 (defun items (line)
-  (climacs-buffer:items (buffer-line line)))
+  (cluffer:items (buffer-line line)))
 
 (defclass node-mixin ()
   ((%parent :initarg :parent :accessor parent)
@@ -257,7 +257,7 @@
 	      tree
 	      (make-instance 'line
 		:buffer-line buffer-line
-		:cache (make-array (length (climacs-buffer:items buffer-line))
+		:cache (make-array (length (cluffer:items buffer-line))
 			:initial-element nil))
 	      current-line-number)
 	     (incf current-line-number))
@@ -269,7 +269,7 @@
 	   (skip (count)
 	     (incf current-line-number count))
 	   (modify (buffer-line)
-	     (let ((items (climacs-buffer:items buffer-line)))
+	     (let ((items (cluffer:items buffer-line)))
 	       (loop for line = (2-3-tree:find tree current-line-number)
 		     until (eq (buffer-line line) buffer-line)
 		     do (2-3-tree:delete tree current-line-number)
@@ -277,11 +277,11 @@
 				   (make-array (length items)
 					       :initial-element nil))))
 	     (incf current-line-number)))
-      (climacs-buffer:update (buffer analyzer)
+      (cluffer:update (buffer analyzer)
 			     (buffer-time analyzer)
 			     #'sync #'skip #'modify #'create)))
   ;; Record the time at which this update was made.
   (setf (buffer-time analyzer)
-	(climacs-buffer:current-time (buffer analyzer))))
+	(cluffer:current-time (buffer analyzer))))
 
    
