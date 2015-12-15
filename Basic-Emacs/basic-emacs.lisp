@@ -95,10 +95,12 @@
 	 (cluffer:item-after-cursor cursor))))
 
 (defun buffer-from-stream (stream)
-  (let* ((buffer (cluffer:make-empty-buffer))
-	 (line (cluffer:find-line buffer 0))
-	 (cursor (cluffer:make-right-sticky-cursor)))
-    (cluffer:attach-cursor cursor line)
+  (let* ((line (make-instance 'cluffer-standard-line:closed-line))
+	 (buffer (make-instance 'cluffer-standard-buffer:buffer
+		   :initial-line line))
+	 (cursor (make-instance
+		     'cluffer-standard-line:detached-right-sticky-cursor))
+	 (cluffer:attach-cursor cursor line)
     (loop for char = (read-char stream nil nil)
 	  until (null char)
 	  do (insert-item cursor char))
