@@ -2,6 +2,7 @@
 
 (defsystem :climacs-climatis-gui
   :depends-on (:climatis
+	       :cluffer
 	       :climacs-view
 	       :climacs-buffer
 	       :climacs-syntax-fundamental
