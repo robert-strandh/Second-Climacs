@@ -52,9 +52,10 @@
 		   (climacs-basic-emacs:buffer-from-stream stream)))
 	 (analyzer (make-instance 'climacs-analyzer-fundamental:fundamental-analyzer
 		     :buffer buffer))
-	 (cursor (let* ((line0 (climacs-buffer:find-line buffer 0))
-			(cursor (climacs-buffer:make-right-sticky-cursor)))
-		   (climacs-buffer:attach-cursor cursor line0 0)
+	 (cursor (let* ((line0 (cluffer:find-line buffer 0))
+			(cursor (make-instance
+				    'cluffer-standard-line:detached-right-sticky-cursor)))
+		   (cluffer:attach-cursor cursor line0 0)
 		   cursor))
 	 (show (climacs-show:make-show analyzer cursor wrap))
 	 (command-processor
