@@ -162,12 +162,10 @@
 		   do (delete-node node))
 	     (touch (splay (find-node current-line-number analyzer)))
 	     (incf current-line-number)))
-      (cluffer:update (buffer analyzer)
-		      (buffer-time analyzer)
-		      #'sync #'skip #'modify #'create)))
-  ;; Record the time at which this update was made.
-  (setf (buffer-time analyzer)
-	(cluffer:current-time (buffer analyzer))))
+      (setf (buffer-time analyzer)
+	    (cluffer:update (buffer analyzer)
+			    (buffer-time analyzer)
+			    #'sync #'skip #'modify #'create)))))
 
 (defun synchronize (analyzer time sync skip modify create)
   (update analyzer)
