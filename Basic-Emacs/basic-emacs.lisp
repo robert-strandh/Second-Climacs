@@ -99,8 +99,8 @@
 	 (buffer (make-instance 'cluffer-standard-buffer:buffer
 		   :initial-line line))
 	 (cursor (make-instance
-		     'cluffer-standard-line:right-sticky-cursor))
-	 (cluffer:attach-cursor cursor line))
+		     'cluffer-standard-line:right-sticky-cursor)))
+    (cluffer:attach-cursor cursor line)
     (loop for char = (read-char stream nil nil)
 	  until (null char)
 	  do (insert-item cursor char))
