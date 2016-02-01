@@ -2,22 +2,15 @@
 
 (asdf:defsystem :climacs-syntax-common-lisp
   :depends-on (:trivial-gray-streams)
+  :serial t
   :components
   ((:file "packages")
-   (:file "analyzer" :depends-on ("packages"))
-   (:file "more-variables"
-    :depends-on ("packages"))
-   (:file "additional-conditions"
-    :depends-on ("packages"))
-   (:file "utilities"
-    :depends-on ("packages" "more-variables"))
-   (:file "tokens"
-    :depends-on ("packages" "more-variables"))
-   (:file "reader"
-    :depends-on ("packages" "tokens" "more-variables" "utilities" "analyzer"))
-   (:file "macro-functions"
-    :depends-on ("packages" "more-variables" "utilities"))
-   (:file "init"
-    :depends-on ("macro-functions"))
-   (:file "quasiquote-macro"
-    :depends-on ("additional-conditions"))))
+   (:file "analyzer")
+   (:file "more-variables")
+   (:file "additional-conditions")
+   (:file "utilities")
+   (:file "tokens")
+   (:file "reader")
+   (:file "macro-functions")
+   (:file "init")
+   (:file "quasiquote-macro")))
