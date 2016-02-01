@@ -277,11 +277,7 @@
 				   (make-array (length items)
 					       :initial-element nil))))
 	     (incf current-line-number)))
-      (cluffer:update (buffer analyzer)
-			     (buffer-time analyzer)
-			     #'sync #'skip #'modify #'create)))
-  ;; Record the time at which this update was made.
-  (setf (buffer-time analyzer)
-	(cluffer:current-time (buffer analyzer))))
-
-   
+      (setf (buffer-time analyzer)
+	    (cluffer:update (buffer analyzer)
+			    (buffer-time analyzer)
+			    #'sync #'skip #'modify #'create)))))
