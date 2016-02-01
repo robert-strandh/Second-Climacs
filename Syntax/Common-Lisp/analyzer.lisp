@@ -176,7 +176,7 @@
 	    (setf (column stream-position)
 		  (length (cache (line stream-position)))))))))
   
-(defmethod sb-gray:stream-read-char ((stream stream-position))
+(defmethod trivial-gray-streams:stream-read-char ((stream stream-position))
   (if (eof-p stream)
       nil
       (let* ((line (line stream))
@@ -187,10 +187,12 @@
 		   (aref (items line) column))
 	  (forward stream)))))
 
-(defmethod sb-gray:stream-read-char-no-hang ((stream stream-position))
-  (sb-gray:stream-read-char stream))
+(defmethod trivial-gray-streams:stream-read-char-no-hang
+    ((stream stream-position))
+  (trivial-gray-streams:stream-read-char stream))
 
-(defmethod sb-gray:stream-unread-char ((stream stream-position) char)
+(defmethod trivial-gray-streams:stream-unread-char
+    ((stream stream-position) char)
   (declare (ignore char))
   (backward stream))
 
