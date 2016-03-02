@@ -36,7 +36,7 @@
 	     (unless (null show)
 	       (climacs-show:update show)))))
 
-(defun climacs ()
+(defun climacs (filename)
   (let* ((wrap (clim3:wrap))
 	 (scroll (clim3:scroll wrap))
 	 (scrollbar (clim3-gadgets:vscrollbar scroll))
@@ -48,13 +48,13 @@
 	 (tooltip (clim3:bboard*))
 	 (status (status-line))
 	 (minibuffer (minibuffer))
-	 (buffer (with-open-file (stream "test-input" :direction :input)
-		   (climacs-basic-emacs:buffer-from-stream stream)))
+	 (buffer (with-open-file (stream filename :direction :input)
+                   (climacs-basic-emacs:buffer-from-stream stream)))
 	 (analyzer (make-instance 'climacs-analyzer-fundamental:fundamental-analyzer
-		     :buffer buffer))
+                                  :buffer buffer))
 	 (cursor (let* ((line0 (cluffer:find-line buffer 0))
 			(cursor (make-instance
-				    'cluffer-standard-line:detached-right-sticky-cursor)))
+				    'cluffer-standard-line:right-sticky-cursor)))
 		   (cluffer:attach-cursor cursor line0 0)
 		   cursor))
 	 (show (climacs-show:make-show analyzer cursor wrap))
