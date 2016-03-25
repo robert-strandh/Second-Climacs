@@ -37,3 +37,9 @@
   ((%parent :initarg parent :accessor parent)
    (%dx :initarg :dx :accessor dx)
    (%dy :initarg :dy :accessor dy)))
+
+(defmethod clim:output-record-position
+    ((record relative-coordinates-output-record-mixin))
+  (multiple-value-bind (x y)
+      (clim:output-record-position (parent record))
+    (values (+ x (dx record)) (+ y (dy record)))))
