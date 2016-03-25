@@ -16,3 +16,11 @@
 
 (define-record-test-command (inspect :name t) ()
   (clueless:inspect clim:*application-frame*))
+
+(define-record-test-command (com-trace :name t) ()
+  (format *trace-output* "~%++++++++++++++++++++ trace~%")
+  (trace clim:replay-output-record))
+
+(define-record-test-command (com-untrace :name t) ()
+  (format *trace-output* "~%-------------------- untrace~%")
+  (untrace))
