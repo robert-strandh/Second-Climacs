@@ -13,3 +13,37 @@
    ;; This slot contains the child output record representing the line
    ;; of this node.
    (%line :initarg :line :reader line)))
+
+(defmethod (setf clump-binary-tree:left) :before (new-left (node node))
+  (declare (ignore new-left))
+  (let ((left (clump-binary-tree:left node)))
+    (unless (null left)
+      (decf (height node) (height left))
+      (setf (width node)
+	    (max (width (line node))
+		 (if (null (clump-binary-tree:right node))
+		     0
+		     (width (clump-binary-tree:right node))))))))
+
+(defmethod (setf clump-binary-tree:left) :after ((new-left node) (node node))
+  (incf (height node) (height new-left))
+  (setf (width node)
+	(max (width node)
+	     (width new-left))))
+
+(defmethod (setf clump-binary-tree:right) :before (new-right (node node))
+  (declare (ignore new-right))
+  (let ((right (clump-binary-tree:right node)))
+    (unless (null right)
+      (decf (height node) (height right))
+      (setf (width node)
+	    (max (width (line node))
+		 (if (null (clump-binary-tree:left node))
+		     0
+		     (width (clump-binary-tree:left node))))))))
+
+(defmethod (setf clump-binary-tree:right) :after ((new-right node) (node node))
+  (incf (height node) (height new-right))
+  (setf (width node)
+	(max (width node)
+	     (width new-right))))
