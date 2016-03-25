@@ -63,3 +63,18 @@
 
 (defmethod clump-binary-tree:splay :after ((node node))
   (setf (contents (record node)) node))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods to satisfy the CLIM requirements for output records.
+
+(defmethod clim:output-record-parent ((node node))
+  (let ((tree-parent (clump-binary-tree:parent node)))
+    (if (null tree-parent)
+	;; This means that NODE is the root of the binary tree.  And
+	;; this, in turn, means that the parent output record is the
+	;; top-level output record.
+	(record node)
+	;; Otherwise, the parent of the output record is the same as
+	;; the parent in the binary tree.
+	tree-parent)))
