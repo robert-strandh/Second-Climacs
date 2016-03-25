@@ -32,3 +32,8 @@
 ;;; caching the position of our relative output records, because those
 ;;; positions may change as a result of editing operations, and
 ;;; without (SETF* OUTPUT-RECORD-POSITION) being called.
+
+(defclass relative-coordinates-output-record-mixin ()
+  ((%parent :initarg parent :accessor parent)
+   (%dx :initarg :dx :accessor dx)
+   (%dy :initarg :dy :accessor dy)))
