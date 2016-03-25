@@ -31,4 +31,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "record")
    (:file "node")))
