@@ -50,3 +50,6 @@
   (setf (width node)
 	(max (width node)
 	     (width new-right))))
+
+(defmethod clump-binary-tree:splay :after ((node node))
+  (setf (contents (record node)) node))
