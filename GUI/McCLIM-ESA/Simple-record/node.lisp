@@ -1,6 +1,8 @@
 (cl:in-package #:clim-simple-editor-record)
 
-(defclass node (clump-binary-tree:node-with-parent)
+(defclass node (clump-binary-tree:node-with-parent
+		clim:output-record
+		relative-coordinates-output-record-mixin)
   (;; This slot contains the total number of lines in the entire
    ;; subtree rooted at this node.
    (%line-count :initarg :line-count :accessor line-count)
@@ -16,6 +18,14 @@
    ;; This slot contains a reference to the RECORD instance contains
    ;; this node.
    (%record :initarg :record :reader record)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Auxiliary methods specialized to our nodes.
+;;;
+;;; These methods are invoked by CLUMP when it alters the structure of
+;;; the tree in order to splay or just rotate some nodes.  We use
+;;; these methods to update summary information in the nodes.
 
 (defmethod (setf clump-binary-tree:left) :before (new-left (node node))
   (declare (ignore new-left))
