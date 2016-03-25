@@ -33,6 +33,10 @@
 ;;; positions may change as a result of editing operations, and
 ;;; without (SETF* OUTPUT-RECORD-POSITION) being called.
 
+;;; We make this class a MIXIN class so that it can be used to define
+;;; subclasses of existing CLIM output record classes such as
+;;; TEXT-OUTPUT-RECORD, thereby overriding the default behavior of the
+;;; parent class.
 (defclass relative-coordinates-output-record-mixin ()
   ((%dx :initarg :dx :accessor dx)
    (%dy :initarg :dy :accessor dy)))
