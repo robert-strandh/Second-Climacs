@@ -32,4 +32,5 @@
   :components
   ((:file "packages")
    (:file "record")
-   (:file "node")))
+   (:file "node")
+   (:file "line-output-records")))
