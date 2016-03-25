@@ -2,4 +2,4 @@
 
 (defpackage #:clim-simple-editor-record
   (:use #:common-lisp)
-  (:export))
+  (:export #:relative-coordinates-output-record-mixin))
