@@ -12,7 +12,10 @@
    (%width :initarg :width :accessor width)
    ;; This slot contains the child output record representing the line
    ;; of this node.
-   (%line :initarg :line :reader line)))
+   (%line :initarg :line :reader line)
+   ;; This slot contains a reference to the RECORD instance contains
+   ;; this node.
+   (%record :initarg :record :reader record)))
 
 (defmethod (setf clump-binary-tree:left) :before (new-left (node node))
   (declare (ignore new-left))
