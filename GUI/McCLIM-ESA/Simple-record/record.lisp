@@ -11,6 +11,15 @@
       (values 0 0 0 0)
       (clim:bounding-rectangle* (contents record))))
 
+(defmethod clim:replay-output-record ((record record) stream
+				      &optional
+					(region clim:+everywhere+)
+					x-offset y-offset)
+  (declare (ignore x-offset y-offset))
+  (unless (or (null (contents record))
+	      (eq region clim:+nowhere+))
+    (clim:replay-output-record (contents record) stream region)))
+
 ;;; The CLIM II specification requires the position of an output
 ;;; record to be relative to the stream in which it is located, rather
 ;;; than to its parent.  We interpret that to mean that the following
