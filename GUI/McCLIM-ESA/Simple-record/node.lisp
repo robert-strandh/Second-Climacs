@@ -78,3 +78,8 @@
 	;; Otherwise, the parent of the output record is the same as
 	;; the parent in the binary tree.
 	tree-parent)))
+
+(defmethod clim:bounding-rectangle* ((node node))
+  (multiple-value-bind (x y)
+      (clim:output-record-position node)
+    (values x y (+ x (width node)) (+ y (height node)))))
