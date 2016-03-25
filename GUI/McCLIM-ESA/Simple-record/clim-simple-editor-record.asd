@@ -30,4 +30,5 @@
   :depends-on (:mcclim :clump)
   :serial t
   :components
-  ())
+  ((:file "packages")
+   (:file "node")))
