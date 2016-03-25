@@ -34,12 +34,11 @@
 ;;; without (SETF* OUTPUT-RECORD-POSITION) being called.
 
 (defclass relative-coordinates-output-record-mixin ()
-  ((%parent :initarg parent :accessor parent)
-   (%dx :initarg :dx :accessor dx)
+  ((%dx :initarg :dx :accessor dx)
    (%dy :initarg :dy :accessor dy)))
 
 (defmethod clim:output-record-position
     ((record relative-coordinates-output-record-mixin))
   (multiple-value-bind (x y)
-      (clim:output-record-position (parent record))
+      (clim:output-record-position (clim:output-record-parent record))
     (values (+ x (dx record)) (+ y (dy record)))))
