@@ -6,6 +6,11 @@
    ;; this slot contains NIL.
    (%contents :initform nil :initarg :contents :accessor contents)))
 
+(defmethod clim:bounding-rectangle* ((record record))
+  (if (null (contents record))
+      (values 0 0 0 0)
+      (clim:bounding-rectangle* (contents record))))
+
 ;;; The CLIM II specification requires the position of an output
 ;;; record to be relative to the stream in which it is located, rather
 ;;; than to its parent.  We interpret that to mean that the following
