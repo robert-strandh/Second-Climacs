@@ -23,6 +23,9 @@
     (declare (ignore x-min x-max))
     (- y-max y-min)))
 
+(defmethod clim:bounding-rectangle-max-x ((record record))
+  (nth-value 2 (clim:bounding-rectangle* record)))
+
 (defmethod clim:clear-output-record ((record record))
   (setf (contents record) nil))
 
