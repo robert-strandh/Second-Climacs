@@ -11,6 +11,12 @@
       (values 0 0 0 0)
       (clim:bounding-rectangle* (contents record))))
 
+(defmethod clim:bounding-rectangle-width ((record record))
+  (multiple-value-bind (x-min y-min x-max y-max)
+      (clim:bounding-rectangle* record)
+    (declare (ignore y-min y-max))
+    (- x-max x-min)))
+
 (defmethod clim:clear-output-record ((record record))
   (setf (contents record) nil))
 
