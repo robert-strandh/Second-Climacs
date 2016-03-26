@@ -24,3 +24,11 @@
 (define-record-test-command (com-untrace :name t) ()
   (format *trace-output* "~%-------------------- untrace~%")
   (untrace))
+
+;;; Replace the existing top-level output record in the application
+;;; pane by an instance of our new one.
+(define-record-test-command (com-replace :name t) ()
+  (let ((pane (clim:find-pane-named clim:*application-frame* 'app)))
+    (reinitialize-instance
+     pane
+     :output-record (make-instance 'clim-simple-editor-record:record))))
