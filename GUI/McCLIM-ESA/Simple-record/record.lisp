@@ -11,6 +11,9 @@
       (values 0 0 0 0)
       (clim:bounding-rectangle* (contents record))))
 
+(defmethod clim:clear-output-record ((record record))
+  (setf (contents record) nil))
+
 (defmethod clim:replay-output-record ((record record) stream
 				      &optional
 					(region clim:+everywhere+)
