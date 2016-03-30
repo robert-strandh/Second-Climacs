@@ -99,3 +99,26 @@
 
 (defmethod clim:bounding-rectangle-max-y ((node node))
   (nth-value 3 (clim:bounding-rectangle* node)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Find a node by its number.
+
+(defmethod line-count ((node null))
+  0)
+
+(defun find-node-by-number (root node-number)
+  (labels ((find-aux (node node-number)
+	     (let* ((left (clump-binary-tree:left node))
+		    (left-line-count (line-count left)))
+	       (cond ((< node-number left-line-count)
+		      (find-aux left node-number))
+		     ((= node-number left-line-count)
+		      node)
+		     (t
+		      (find-aux (clump-binary-tree:right node)
+				(- node-number left-line-count)))))))
+    (if (<= 0 node-number (1- (line-count root)))
+	(find-aux root node-number)
+	(error "Node number ~d was given for a tree with ~d nodes."
+	       node-number (line-count root)))))
