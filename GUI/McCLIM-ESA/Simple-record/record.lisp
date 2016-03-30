@@ -81,3 +81,11 @@
   (multiple-value-bind (x y)
       (clim:output-record-position (clim:output-record-parent record))
     (values (+ x (dx record)) (+ y (dy record)))))
+
+(defmethod clim:map-over-output-records-containing-position
+    (function (record record) x y &optional x-offset y-offset &rest args)
+  (declare (ignore x-offset y-offset args))
+  (let ((contents (contents record)))
+    (unless (null contents)
+      (clim:map-over-output-records-containing-position
+       function contents x y))))
