@@ -83,3 +83,6 @@
   (multiple-value-bind (x y)
       (clim:output-record-position node)
     (values x y (+ x (width node)) (+ y (height node)))))
+
+(defmethod clim:bounding-rectangle-min-x ((node node))
+  0)
