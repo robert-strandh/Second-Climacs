@@ -86,3 +86,6 @@
 
 (defmethod clim:bounding-rectangle-min-x ((node node))
   0)
+
+(defmethod clim:bounding-rectangle-max-x ((node node))
+  (width node))
