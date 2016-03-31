@@ -122,3 +122,57 @@
 	(find-aux root node-number)
 	(error "Node number ~d was given for a tree with ~d nodes."
 	       node-number (line-count root)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on MAP-OVER-OUTPUT-RECORDS-CONTAINING-POSITION.
+;;;
+;;; There can be at most one output record containing a particular
+;;; position.  As a result, we can search the tree using iteration
+;;; until we either find THE record containing the position, or we
+;;; discover that no output record contains that position.
+;;;
+;;; Furthermore, we do not need to call the CLIM functions for
+;;; determining the position of the output record during the search,
+;;; which is good because they rely on stream-relative positions which
+;;; might be a bit costly here.  Instead, we can use our relative
+;;; positions and update those positions as we walk down the tree.
+;;;
+;;; We do not bother to restructure the tree in this method.
+;;; Restructuring is done in REPLAY-OUTPUT-RECORD and in
+;;; MAP-OVER-OUTPUT-RECORD-OVERLAPPING-REGION, and since one of those
+;;; has been called before there is one ore more calls to
+;;; MAP-OVER-OUTPUT-RECORDS-CONTAINING-POSITION, we can count on the
+;;; tree having a reasonable structure to search here.
+
+(defmethod clim:map-over-output-records-containing-position
+    (function (node node) x y &optional x-offset y-offset &rest args)
+  (declare (ignore x-offset y-offset))
+  (loop with relative-y = y
+	with current-node = node
+	do (let* ((line (line current-node))
+		  (dy (dy line))
+		  (height (clim:bounding-rectangle-height line))
+		  (left (clump-binary-tree:left current-node))
+		  (right (clump-binary-tree:right current-node)))
+	     (cond ((<= dy relative-y (1- (+ dy height)))
+		    ;; We found THE line containing the position
+		    (apply function current-node args)
+		    (loop-finish))
+		   ((< relative-y dy)
+		    ;; If there is a record containing the position,
+		    ;; then it must be one of the ones in the left
+		    ;; child of CURRENT-NODE.
+		    (if (null left)
+			(loop-finish)
+			(setf current-node left)))
+		   (t
+		    ;; Come here when RELATIVE-Y is greater than or
+		    ;; equal to the sum of DY and HEIGHT.  If there is
+		    ;; a record containing the position, then it must
+		    ;; be one of the ones in the right child of
+		    ;; CURRENT-NODE.
+		    (if (null right)
+			(loop-finish)
+			(progn (setf current-node left)
+			       (incf relative-y (+ dy height)))))))))
