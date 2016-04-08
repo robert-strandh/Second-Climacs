@@ -219,6 +219,10 @@
     (or (>= min-y (+ dy height))
 	(<= max-y dy))))
 
+(defun root-node-precedes-band-p (node max-y)
+  (let ((record (record node)))
+    (<= max-y (dy record))))
+
 (defun root-node-follows-band-p (node min-y)
   (let ((record (record node)))
     (>= min-y (+ (dy record) (height record)))))
