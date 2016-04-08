@@ -183,16 +183,23 @@
 ;;;
 ;;; We define a BAND in the Y direction based on the Y coordinates of
 ;;; the bounding rectangle of REGION.  This band is the basis for the
-;;; restructuring.  We restructure the tree so that the lines that are
-;;; strictly ABOVE the band are located in a subtree that contain only
-;;; those lines, and all the lines that are strictly BELOW the band
-;;; are located in a subtree that contains only those lines.
+;;; restructuring.
 ;;;
-;;; In other words, in the restructured tree, there is a subtree L
-;;; that can be found by following only LEFT subtrees from the root
-;;; such that L contains every line above the band, and there is a
-;;; subtree R that can be found by following only RIGHT subtrees from
-;;; the root such that R contains every line below the band.
+;;; We say that a subtree T rooted at some node N is either IRRELEVANT
+;;; to some band B, or RELEVANT to B.  We say that T is IRRELEVANT to
+;;; B if none of the nodes of T overlaps B.  If T is RELEVANT to B
+;;; then the root node of T overlaps B and T is either COMPLETELY
+;;; RELEVANT, LEFT RELEVANT, RIGHT RELEVANT, or MIDDLE RELEVANT to B.
+;;; We say that T is COMPLETELY RELEVANT to B if every node of T
+;;; overlaps B.  We say that T is LEFT RELEVANT to B if the left
+;;; subtree of T is completely relevant to B and the right subtree of
+;;; T is either irrelevant to B or left relevant to B.  We say that T
+;;; is RIGHT RELEVANT to B if the right subtree of T is completely
+;;; relevant to B and the left subtree of T is either irrelevant to B
+;;; or right relevant to B.  We say that T is MIDDLE RELEVANT to B if
+;;; the left subtree of T is either irrelevant to B or right relevant
+;;; to B, and if the right subtree of T is either irrelevant to B or
+;;; left relevant to B.
 ;;;
 ;;; The purpose of this exercise is to have a DENSE PREFIX of the tree
 ;;; that overlaps the band.  Every line in this dense prefix needs to
