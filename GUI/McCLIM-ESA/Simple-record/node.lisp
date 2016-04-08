@@ -186,20 +186,20 @@
 ;;; restructuring.
 ;;;
 ;;; We say that a subtree T rooted at some node N is either IRRELEVANT
-;;; to some band B, or RELEVANT to B.  We say that T is IRRELEVANT to
-;;; B if none of the nodes of T overlaps B.  If T is RELEVANT to B
-;;; then the root node of T overlaps B and T is either COMPLETELY
-;;; RELEVANT, LEFT RELEVANT, RIGHT RELEVANT, or MIDDLE RELEVANT to B.
-;;; We say that T is COMPLETELY RELEVANT to B if every node of T
-;;; overlaps B.  We say that T is LEFT RELEVANT to B if the left
-;;; subtree of T is completely relevant to B and the right subtree of
-;;; T is either irrelevant to B or left relevant to B.  We say that T
-;;; is RIGHT RELEVANT to B if the right subtree of T is completely
-;;; relevant to B and the left subtree of T is either irrelevant to B
-;;; or right relevant to B.  We say that T is MIDDLE RELEVANT to B if
-;;; the left subtree of T is either irrelevant to B or right relevant
-;;; to B, and if the right subtree of T is either irrelevant to B or
-;;; left relevant to B.
+;;; to some band B, RELEVANT to B, or neither.  We say that T is
+;;; IRRELEVANT to B if none of the nodes of T overlaps B.  If T is
+;;; RELEVANT to B then the root node of T overlaps B and T is either
+;;; COMPLETELY RELEVANT, LEFT RELEVANT, RIGHT RELEVANT, or MIDDLE
+;;; RELEVANT to B.  We say that T is COMPLETELY RELEVANT to B if every
+;;; node of T overlaps B.  We say that T is LEFT RELEVANT to B if the
+;;; left subtree of T is completely relevant to B and the right
+;;; subtree of T is either irrelevant to B or left relevant to B.  We
+;;; say that T is RIGHT RELEVANT to B if the right subtree of T is
+;;; completely relevant to B and the left subtree of T is either
+;;; irrelevant to B or right relevant to B.  We say that T is MIDDLE
+;;; RELEVANT to B if the left subtree of T is either irrelevant to B
+;;; or right relevant to B, and if the right subtree of T is either
+;;; irrelevant to B or left relevant to B.
 ;;;
 ;;; The purpose of this exercise is to have a DENSE PREFIX of the tree
 ;;; that overlaps the band.  Every line in this dense prefix needs to
