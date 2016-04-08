@@ -176,3 +176,44 @@
 			(loop-finish)
 			(progn (setf current-node left)
 			       (incf relative-y (+ dy height)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Restructure a tree according to a region.
+;;;
+;;; We define a BAND in the Y direction based on the Y coordinates of
+;;; the bounding rectangle of REGION.  This band is the basis for the
+;;; restructuring.  We restructure the tree so that the lines that are
+;;; strictly ABOVE the band are located in a subtree that contain only
+;;; those lines, and all the lines that are strictly BELOW the band
+;;; are located in a subtree that contains only those lines.
+;;;
+;;; In other words, in the restructured tree, there is a subtree L
+;;; that can be found by following only LEFT subtrees from the root
+;;; such that L contains every line above the band, and there is a
+;;; subtree R that can be found by following only RIGHT subtrees from
+;;; the root such that R contains every line below the band.
+;;;
+;;; The purpose of this exercise is to have a DENSE PREFIX of the tree
+;;; that overlaps the band.  Every line in this dense prefix needs to
+;;; be visited when the record is replayed.  In most likely scenarios,
+;;; this dense prefix is only going to change occasionally, making the
+;;; traversal of the tree very efficient compared to traversing
+;;; several nodes that do not overlap the region.
+
+;;; NODE is the root of the tree to restructure, which means that,
+;;; although the coordinates are relative to the parent, for the root,
+;;; the parent is the entire output record, so the coordinates happen
+;;; to also be absolute.
+(defun restructure-tree (node region)
+  (multiple-value-bind (min-x min-y max-x max-y)
+      (clim:bounding-rectangle* region)
+    (declare (ignore min-x max-x))
+    (let ((dy (dy node))
+	  (height (height node)))
+      (unless (or (>= min-y (+ dy height))
+		  (<= max-y dy))
+	;; We only restructure the tree if there is some overlap
+	;; between REGION and the lines of the tree.
+	(restructure-left node min-y max-y)
+	(restructure-right node min-y max-y)))))
