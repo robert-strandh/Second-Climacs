@@ -32,3 +32,7 @@
     (reinitialize-instance
      pane
      :output-record (make-instance 'clim-simple-editor-record:record))))
+
+(define-record-test-command (com-insert :name t)
+    ((line-number 'integer) (text 'string))
+  (declare (ignore line-number text)))
