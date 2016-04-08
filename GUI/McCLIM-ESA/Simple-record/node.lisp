@@ -219,6 +219,10 @@
     (or (>= min-y (+ dy height))
 	(<= max-y dy))))
 
+(defun root-node-above-band-p (node max-y)
+  (let ((record (record node)))
+    (>= max-y (+ (dy record) (height record)))))
+
 ;;; NODE is the root of the tree to restructure, which means that,
 ;;; although the coordinates are relative to the parent, for the root,
 ;;; the parent is the entire output record, so the coordinates happen
