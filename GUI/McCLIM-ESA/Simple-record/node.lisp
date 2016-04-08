@@ -208,6 +208,11 @@
 ;;; traversal of the tree very efficient compared to traversing
 ;;; several nodes that do not overlap the region.
 
+(defun transform-band-for-right-subtree (node min-y max-y)
+  (let* ((left (clump-binary-tree:left node))
+	 (delta (if (null left) 0 (height left))))
+    (values (+ min-y delta) (+ max-y delta))))
+
 ;;; NODE is the root of the tree to restructure, which means that,
 ;;; although the coordinates are relative to the parent, for the root,
 ;;; the parent is the entire output record, so the coordinates happen
