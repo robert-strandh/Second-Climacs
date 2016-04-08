@@ -186,27 +186,27 @@
 ;;; restructuring.
 ;;;
 ;;; We say that a subtree T rooted at some node N is either IRRELEVANT
-;;; to some band B, RELEVANT to B, or neither.  We say that T is
-;;; IRRELEVANT to B if none of the nodes of T overlaps B.  If T is
-;;; RELEVANT to B then the root node of T overlaps B and T is either
-;;; COMPLETELY RELEVANT, LEFT RELEVANT, RIGHT RELEVANT, or MIDDLE
-;;; RELEVANT to B.  We say that T is COMPLETELY RELEVANT to B if every
-;;; node of T overlaps B.  We say that T is LEFT RELEVANT to B if the
-;;; left subtree of T is completely relevant to B and the right
-;;; subtree of T is either irrelevant to B or left relevant to B.  We
-;;; say that T is RIGHT RELEVANT to B if the right subtree of T is
-;;; completely relevant to B and the left subtree of T is either
-;;; irrelevant to B or right relevant to B.  We say that T is MIDDLE
-;;; RELEVANT to B if the left subtree of T is either irrelevant to B
-;;; or right relevant to B, and if the right subtree of T is either
-;;; irrelevant to B or left relevant to B.
+;;; to some band B, or RELEVANT to B.  We say that T is IRRELEVANT to
+;;; B if none of the nodes of T overlaps B.  If T is RELEVANT to B
+;;; then it is either DENSE or NOT DENSE for B.  If T is DENSE for B,
+;;; then the root node of T overlaps B AND T is either COMPLETELY
+;;; DENSE, LEFT DENSE, RIGHT DENSE, or MIDDLE DENSE for B.  We say
+;;; that T is COMPLETELY DENSE for B if every node of T overlaps B.
+;;; We say that T is LEFT DENSE for B if the left subtree of T is
+;;; completely dense for B and the right subtree of T is either
+;;; irrelevant to B or left dense for B.  We say that T is RIGHT DENSE
+;;; for B if the right subtree of T is completely dense for B and the
+;;; left subtree of T is either irrelevant to B or right dense for B.
+;;; We say that T is MIDDLE DENSE for B if the left subtree of T is
+;;; either irrelevant to B or right dense for B, and if the right
+;;; subtree of T is either irrelevant to B or left dense for B.
 ;;;
-;;; The purpose of this exercise is to have a DENSE PREFIX of the tree
-;;; that overlaps the band.  Every line in this dense prefix needs to
-;;; be visited when the record is replayed.  In most likely scenarios,
-;;; this dense prefix is only going to change occasionally, making the
-;;; traversal of the tree very efficient compared to traversing
-;;; several nodes that do not overlap the region.
+;;; The purpose of this exercise is to obtain a DENSE tree from an
+;;; arbitrary tree.  A dense tree has a PREFIX of nodes, all of which
+;;; need to be visited when the record is replayed.  In most likely
+;;; scenarios, this prefix is only going to change occasionally,
+;;; making the traversal of the tree very efficient compared to
+;;; traversing several nodes that do not overlap the region.
 
 (defun transform-band-for-right-subtree (node min-y max-y)
   (let* ((left (clump-binary-tree:left node))
