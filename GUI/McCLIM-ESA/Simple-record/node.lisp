@@ -243,3 +243,33 @@
 	;; between REGION and the lines of the tree.
 	(restructure-left node min-y max-y)
 	(restructure-right node min-y max-y)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on MAP-OVER-OUTPUT-RECORDS-OVERLAPPING-REGION.
+;;;
+;;; We define a band in the Y direction based on the Y coordinates of
+;;; the bounding rectangle of REGION and we use that band as an
+;;; initial hit detection.  Lines that fall into that band are then
+;;; tested directly against the region.
+;;;
+;;; By using relative coordinates for the band, we can avoid
+;;; potentially costly computations of stream-relative positions of
+;;; the nodes in the tree.
+;;;
+;;; We restructure the tree as we search it so that it has a "prefix"
+;;; of nodes that are entirely within the band.
+
+;;; Assume the tree is dense for the band defined by MIN-Y and MAX-Y.
+(defun map-over-nodes-overlapping-band (function node min-y max-y)
+  (map-right-dense function (clump-binary-tree:left node) min-y max-y)
+  (funcall function node)
+  (multiple-value-bind (min-yy max-yy)
+      (transform-band-for-right-subtree node min-y max-y)
+    (map-left-dense function (clump-binary-tree:right node) min-yy max-yy)))
+
+(defun map-completely-dense (function node)
+  (unless (null node)
+    (map-completely-dense function (clump-binary-tree:left node))
+    (funcall function node)
+    (map-completely-dense function (clump-binary-tree:right node))))
