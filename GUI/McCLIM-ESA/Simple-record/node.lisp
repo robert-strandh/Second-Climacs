@@ -88,18 +88,6 @@
       (clim:output-record-position node)
     (values x y (+ x (width node)) (+ y (height node)))))
 
-(defmethod clim:bounding-rectangle-min-x ((node node))
-  0)
-
-(defmethod clim:bounding-rectangle-max-x ((node node))
-  (width node))
-
-(defmethod clim:bounding-rectangle-min-y ((node node))
-  (nth-value 0 (clim:bounding-rectangle* node)))
-
-(defmethod clim:bounding-rectangle-max-y ((node node))
-  (nth-value 3 (clim:bounding-rectangle* node)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Find a node by its number.
