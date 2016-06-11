@@ -24,4 +24,5 @@
     (reinitialize-instance
      pane
      :output-record
-     (make-instance 'climacs-list-output-history:list-output-history))))
+     (make-instance 'climacs-list-output-history:list-output-history
+       :stream pane))))
