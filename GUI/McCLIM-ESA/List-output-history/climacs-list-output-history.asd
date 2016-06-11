@@ -4,5 +4,5 @@
   :depends-on (:mcclim)
   :serial t
   :components
-  ((:file "packages")))
-
+  ((:file "packages")
+   (:file "list-output-history")))
