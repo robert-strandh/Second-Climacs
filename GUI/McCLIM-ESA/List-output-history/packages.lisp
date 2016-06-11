@@ -2,4 +2,4 @@
 
 (defpackage #:climacs-list-output-history
   (:use #:common-lisp)
-  (:export))
+  (:export #:list-output-history))
