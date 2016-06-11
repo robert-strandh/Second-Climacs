@@ -2,4 +2,7 @@
 
 (defpackage #:climacs-list-output-history
   (:use #:common-lisp)
-  (:export #:list-output-history))
+  (:export #:list-output-history
+	   #:lines
+	   #:time-stamp
+	   #:buffer))
