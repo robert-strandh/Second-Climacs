@@ -26,3 +26,25 @@
      :output-record
      (make-instance 'climacs-list-output-history:list-output-history
        :stream pane))))
+
+(define-history-test-command (com-insert :name t)
+    ((place 'integer) (text 'string))
+  (let* ((pane (clim:find-pane-named clim:*application-frame* 'app))
+	 (history (clim:stream-output-history pane))
+	 (lines (climacs-list-output-history:lines history))
+	 (prev lines)
+	 (x 0)
+	 (new-record (clim:with-output-to-output-record (pane)
+		       (format pane "~a" text)))
+	 (height (clim:bounding-rectangle-height new-record)))
+    (loop repeat place
+	  do (setf prev (cdr prev))
+	     (incf x (+ (clim:bounding-rectangle-height (car prev)) 5)))
+    (loop for record in (cdr prev)
+	  do (multiple-value-bind (x y) (clim:output-record-position record)
+	       (setf (clim:output-record-position record)
+		     (values (+ x height 5) y))))
+    (setf (clim:output-record-position new-record)
+	  (values (+ x height) 0))
+    (clim:add-output-record new-record history)
+    (push new-record (cdr prev))))
