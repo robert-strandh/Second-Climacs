@@ -3,7 +3,7 @@
 (clim:define-application-frame history-test ()
   ()
   (:panes
-   (app :application :width 200 :height 300)
+   (app :application :width 200 :height 300 :display-time nil)
    (int :interactor :width 200 :height 100))
   (:layouts
    (default (clim:vertically () app int))))
