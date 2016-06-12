@@ -15,7 +15,9 @@
   (clim:frame-exit clim:*application-frame*))
 
 (define-history-test-command (inspect :name t) ()
-  (clueless:inspect clim:*application-frame*))
+  (clouseau:inspector
+   (clim:stream-output-history
+    (clim:find-pane-named clim:*application-frame* 'app))))
 
 ;;; Replace the existing top-level output record in the application
 ;;; pane by an instance of our new one.
