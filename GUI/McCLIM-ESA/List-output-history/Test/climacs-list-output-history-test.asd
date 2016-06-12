@@ -3,7 +3,7 @@
 (defsystem :climacs-list-output-history-test
   :depends-on (:mcclim
 	       :climacs-list-output-history
-	       :clueless)
+	       :clouseau)
   :serial t
   :components
   ((:file "packages")
