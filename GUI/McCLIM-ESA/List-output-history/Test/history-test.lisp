@@ -23,11 +23,9 @@
 ;;; pane by an instance of our new one.
 (define-history-test-command (com-replace :name t) ()
   (let ((pane (clim:find-pane-named clim:*application-frame* 'app)))
-    (reinitialize-instance
-     pane
-     :output-record
-     (make-instance 'climacs-list-output-history:list-output-history
-       :stream pane))))
+    (setf (clim:stream-recording-p pane) nil)
+    (change-class (clim:stream-output-history pane)
+		  'climacs-list-output-history:list-output-history)))
 
 (define-history-test-command (com-insert :name t)
     ((place 'integer) (text 'string))
