@@ -21,3 +21,6 @@
 	for y = 0 then (+ y height 5)
 	do (setf (clim:output-record-position record) (values 0 y))
 	   (clim:replay-output-record record stream region)))
+
+(defmethod clim:bounding-rectangle* ((history list-output-history))
+  (values 0 0 (width history) (height history)))
