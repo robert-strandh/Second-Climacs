@@ -5,7 +5,9 @@
   ((%parent :initarg :parent :reader clim:output-record-parent)
    (%lines :initform (list nil) :reader lines)
    (%time-stamp :initform nil :accessor time-stamp)
-   (%buffer :initarg :buffer :reader buffer)))
+   (%buffer :initarg :buffer :reader buffer)
+   (%width :initform 0 :accessor width)
+   (%height :initform 0 :accessor height)))
 
 (defmethod clim:replay-output-record
     ((record list-output-history) stream &optional region x-offset y-offset)
