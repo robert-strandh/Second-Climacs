@@ -42,4 +42,8 @@
     (push new-record (cdr (nthcdr place lines)))
     (incf (climacs-list-output-history::height history)
 	  (clim:bounding-rectangle-height new-record))
+    (clim:change-space-requirements
+     pane
+     :width (climacs-list-output-history::width history)
+     :height (climacs-list-output-history::height history))
     (clim:replay-output-record history pane)))
