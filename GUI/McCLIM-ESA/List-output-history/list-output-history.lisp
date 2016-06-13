@@ -10,6 +10,10 @@
 (defmethod clim:replay-output-record
     ((record list-output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset))
+  (multiple-value-bind (left top right bottom)
+      (clim:bounding-rectangle* (clim:pane-viewport-region stream))
+    (clim:medium-clear-area (clim:sheet-medium stream)
+			    left top right bottom))
   (loop for record in (cdr (lines record))
 	for height = (clim:bounding-rectangle-height record)
 	for y = 0 then (+ y height 5)
