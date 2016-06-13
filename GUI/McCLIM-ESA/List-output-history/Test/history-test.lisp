@@ -40,4 +40,6 @@
 	 (new-record (clim:with-output-to-output-record (pane)
 		       (format pane "~a" text))))
     (push new-record (cdr (nthcdr place lines)))
+    (incf (climacs-list-output-history::height history)
+	  (clim:bounding-rectangle-height new-record))
     (clim:replay-output-record history pane)))
