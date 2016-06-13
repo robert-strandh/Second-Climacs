@@ -25,7 +25,8 @@
   (let ((pane (clim:find-pane-named clim:*application-frame* 'app)))
     (setf (clim:stream-recording-p pane) nil)
     (change-class (clim:stream-output-history pane)
-		  'climacs-list-output-history:list-output-history)))
+		  'climacs-list-output-history:list-output-history
+		  :parent pane)))
 
 (define-history-test-command (com-insert :name t)
     ((place 'integer) (text 'string))
