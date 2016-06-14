@@ -36,14 +36,11 @@
     ((place 'integer) (text 'string))
   (let* ((pane (clim:find-pane-named clim:*application-frame* 'app))
 	 (history (clim:stream-output-history pane))
-	 (lines (climacs-list-output-history:lines history))
-	 (new-record (clim:with-output-to-output-record (pane)
-		       (format pane "~a" text))))
-    (push new-record (cdr (nthcdr place lines)))
-    (incf (climacs-list-output-history::height history)
-	  (clim:bounding-rectangle-height new-record))
-    (clim:change-space-requirements
-     pane
-     :width (climacs-list-output-history::width history)
-     :height (climacs-list-output-history::height history))
-    (clim:replay-output-record history pane)))
+	 (buffer (climacs-list-output-history:buffer history))
+	 (line (cluffer:find-line buffer place))
+	 (ignore (cluffer:split-line-at-position line 0))
+	 (new-line (cluffer:find-line buffer place)))
+    (declare (ignore ignore))
+    (loop for char across text
+	  for pos from 0
+	  do (cluffer:insert-item-at-position new-line char pos))))
