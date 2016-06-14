@@ -81,8 +81,8 @@
 	       (incf index n))
 	     (create (line)
 	       (adjust-to-index)
-	       (let* ((contents (cluffer-standard-line::contents line))
-		      (string (coerce contents 'string))
+	       (let* ((items (cluffer:items line))
+		      (string (coerce items 'string))
 		      (record (clim:with-output-to-output-record (pane)
 				(format pane "~a" string)))
 		      (line (make-instance 'line
