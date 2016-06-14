@@ -17,6 +17,22 @@
    (%width :initform 0 :accessor width)
    (%height :initform 0 :accessor height)))
 
+(defun backward (history)
+  (push (pop (suffix history)) (prefix history))
+  (incf (prefix-height history)
+	(+ 5 (clim:bounding-rectangle-height
+	      (record (contents (car (prefix history)))))))
+  (incf (prefix-length history))
+  (decf (suffix-length history)))
+
+(defun forward (history)
+  (push (pop (prefix history)) (suffix history))
+  (decf (prefix-height history)
+	(+ 5 (clim:bounding-rectangle-height
+	      (record (contents (car (suffix history)))))))
+  (decf (prefix-length history))
+  (incf (suffix-length history)))
+
 (defun adjust-prefix-and-suffix (history viewport-top)
   ;; If there are lines in the suffix that are entirely above the
   ;; viewport, then move them to the prefix.
@@ -25,22 +41,12 @@
 		     (clim:bounding-rectangle-height
 		      (record (contents (car (suffix history))))))
 		  viewport-top)
-	do (push (pop (suffix history)) (prefix history))
-	   (incf (prefix-height history)
-		 (+ 5 (clim:bounding-rectangle-height
-		       (record (contents (car (prefix history)))))))
-	   (incf (prefix-length history))
-	   (decf (suffix-length history)))
+	do (backward history))
   ;; If there are lines in the prefix that are not entirely above
   ;; the viewport, then move them to the suffix.
   (loop until (null (prefix history))
 	while (> (prefix-height history) viewport-top)
-	do (push (pop (prefix history)) (suffix history))
-	   (decf (prefix-height history)
-		 (+ 5 (clim:bounding-rectangle-height
-		       (record (contents (car (suffix history)))))))
-	   (decf (prefix-length history))
-	   (incf (suffix-length history))))
+	do (forward history)))
 
 (defmethod clim:replay-output-record
     ((record list-output-history) stream &optional region x-offset y-offset)
