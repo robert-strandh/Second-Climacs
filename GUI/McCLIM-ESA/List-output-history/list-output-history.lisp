@@ -7,7 +7,11 @@
 (defclass list-output-history
     (clim:output-record clim:stream-output-history-mixin)
   ((%parent :initarg :parent :reader clim:output-record-parent)
-   (%lines :initform (list nil) :reader lines)
+   (%prefix :initform '() :accessor prefix)
+   (%prefix-length :initform 0 :accessor prefix-length)
+   (%prefix-height :initform 0 :accessor prefix-height)
+   (%suffix :initform '() :accessor suffix)
+   (%suffix-length :initform 0 :accessor suffix-length)
    (%time-stamp :initform nil :accessor time-stamp)
    (%buffer :initarg :buffer :reader buffer)
    (%width :initform 0 :accessor width)
