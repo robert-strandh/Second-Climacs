@@ -43,4 +43,5 @@
     (declare (ignore ignore))
     (loop for char across text
 	  for pos from 0
-	  do (cluffer:insert-item-at-position new-line char pos))))
+	  do (cluffer:insert-item-at-position new-line char pos))
+    (climacs-list-output-history::update history)))
