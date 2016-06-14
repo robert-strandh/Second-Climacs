@@ -64,6 +64,8 @@
 	  do (setf (clim:output-record-position record) (values 0 y))
 	     (clim:replay-output-record record stream region))))
 
+;;; FIXME: adjust the height and the width when lines are inserted,
+;;; deleted, or modified.
 (defun update (history)
   (let ((index 0)
 	(pane (clim:output-record-parent history)))
