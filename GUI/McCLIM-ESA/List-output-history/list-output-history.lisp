@@ -1,5 +1,9 @@
 (cl:in-package #:climacs-list-output-history)
 
+(defclass line ()
+  ((%contents :initarg :contents :reader contents)
+   (%record :initarg :record :reader record)))
+
 (defclass list-output-history
     (clim:output-record clim:stream-output-history-mixin)
   ((%parent :initarg :parent :reader clim:output-record-parent)
