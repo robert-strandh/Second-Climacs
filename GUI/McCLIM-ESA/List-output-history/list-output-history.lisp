@@ -26,7 +26,7 @@
   (push (pop (suffix history)) (prefix history))
   (incf (prefix-height history)
 	(+ 5 (clim:bounding-rectangle-height
-	      (record (contents (car (prefix history)))))))
+	      (record (car (prefix history))))))
   (incf (prefix-length history))
   (decf (suffix-length history)))
 
@@ -34,7 +34,7 @@
   (push (pop (prefix history)) (suffix history))
   (decf (prefix-height history)
 	(+ 5 (clim:bounding-rectangle-height
-	      (record (contents (car (suffix history)))))))
+	      (record (car (suffix history))))))
   (decf (prefix-length history))
   (incf (suffix-length history)))
 
