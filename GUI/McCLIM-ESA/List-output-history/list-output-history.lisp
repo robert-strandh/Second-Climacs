@@ -66,7 +66,7 @@
 	  for height = (clim:bounding-rectangle-height line-record)
 	  for y = (+ (prefix-height record) 5)  then (+ y height 5)
 	  while (< y bottom)
-	  do (setf (clim:output-record-position record) (values 0 y))
+	  do (setf (clim:output-record-position line-record) (values 0 y))
 	     (clim:replay-output-record record stream region))))
 
 (defun adjust-to-index (history index)
