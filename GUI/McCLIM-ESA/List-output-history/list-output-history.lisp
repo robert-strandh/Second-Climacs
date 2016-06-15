@@ -44,7 +44,7 @@
   (loop until (null (suffix history))
 	while (<= (+ (prefix-height history)
 		     (clim:bounding-rectangle-height
-		      (record (contents (car (suffix history))))))
+		      (record (car (suffix history)))))
 		  viewport-top)
 	do (backward history))
   ;; If there are lines in the prefix that are not entirely above
