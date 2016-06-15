@@ -86,6 +86,21 @@
     (decf (suffix-length history))
     (pop suffix)))
 
+(defun create-new-line (history pane buffer-line)
+  (let* ((items (cluffer:items buffer-line))
+	 (string (coerce items 'string))
+	 (record (clim:with-output-to-output-record (pane)
+		   (format pane "~a" string)))
+	 (line (make-instance 'line
+		 :record record
+		 :contents buffer-line)))
+    (setf (width history)
+	  (max (width history)
+	       (clim:bounding-rectangle-width record)))
+    (push line (suffix history))
+    (incf (suffix-length history))
+    (forward history)))
+
 ;;; FIXME: adjust the height and the width when lines are inserted,
 ;;; deleted, or modified.
 (defun update (history)
@@ -99,24 +114,17 @@
 	     (incf index n))
 	   (create (line)
 	     (adjust-to-index history index)
-	     (let* ((items (cluffer:items line))
-		    (string (coerce items 'string))
-		    (record (clim:with-output-to-output-record (pane)
-			      (format pane "~a" string)))
-		    (line (make-instance 'line
-			    :record record
-			    :contents line)))
-	       (push line (suffix history))
-	       (incf (suffix-length history))
-	       (forward history))))
-      (flet ((modify (line)
-	       (adjust-to-index history index)
-	       (pop (suffix history))
-	       (create line)))
-	(setf (time-stamp history)
-	      (cluffer:update (buffer history)
-			      (time-stamp history)
-			      #'sync #'skip #'modify #'create))))))
+	     (create-new-line history pane line))
+	   (modify (line)
+	     (adjust-to-index history index)
+	     (loop until (eq (contents (car (suffix history))) line)
+		   do (delete-current-line history))
+	     (delete-current-line history)
+	     (create-new-line history pane line)))
+      (setf (time-stamp history)
+	    (cluffer:update (buffer history)
+			    (time-stamp history)
+			    #'sync #'skip #'modify #'create)))))
 
 (defmethod clim:bounding-rectangle* ((history list-output-history))
   (values 0 0 (width history) (height history)))
