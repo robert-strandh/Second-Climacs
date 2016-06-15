@@ -130,6 +130,10 @@
 	    (cluffer:update (buffer history)
 			    (time-stamp history)
 			    #'sync #'skip #'modify #'create))
+      (clim:change-space-requirements
+       pane
+       :width (width history)
+       :height (height history))
       (clim:replay history pane))))
 
 (defmethod clim:bounding-rectangle* ((history list-output-history))
