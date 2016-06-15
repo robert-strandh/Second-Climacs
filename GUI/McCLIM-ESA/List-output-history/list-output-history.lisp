@@ -70,6 +70,22 @@
   (loop repeat (- (prefix-length history) index)
 	do (backward history)))
 
+(defun delete-current-line (history)
+  (with-accessors ((suffix suffix) (width width))
+      history
+    (when (> (clim:bounding-rectangle-width (record (car suffix))) width)
+      (setf width
+	    (max (loop for line in (prefix history)
+		       for record = (record line)
+		       maximize (clim:bounding-rectangle-width record))
+		 (loop for line in suffix
+		       for record = (record line)
+		       maximize (clim:bounding-rectangle-width record)))))
+    (decf (height history)
+	  (clim:bounding-rectangle-height (record (car suffix))))
+    (decf (suffix-length history))
+    (pop suffix)))
+
 ;;; FIXME: adjust the height and the width when lines are inserted,
 ;;; deleted, or modified.
 (defun update (history)
