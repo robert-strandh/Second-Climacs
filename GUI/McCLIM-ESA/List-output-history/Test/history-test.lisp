@@ -28,6 +28,7 @@
 (define-history-test-command (com-replace :name t) ()
   (let ((pane (clim:find-pane-named clim:*application-frame* 'app)))
     (setf (clim:stream-recording-p pane) nil)
+    (setf (clim:stream-end-of-line-action pane) :allow)
     (change-class (clim:stream-output-history pane)
 		  'climacs-list-output-history:list-output-history
 		  :parent pane)))
