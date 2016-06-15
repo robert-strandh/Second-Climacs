@@ -128,7 +128,8 @@
       (setf (time-stamp history)
 	    (cluffer:update (buffer history)
 			    (time-stamp history)
-			    #'sync #'skip #'modify #'create)))))
+			    #'sync #'skip #'modify #'create))
+      (clim:replay history pane))))
 
 (defmethod clim:bounding-rectangle* ((history list-output-history))
   (values 0 0 (width history) (height history)))
