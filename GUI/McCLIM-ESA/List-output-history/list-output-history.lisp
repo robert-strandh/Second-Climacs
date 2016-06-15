@@ -4,6 +4,11 @@
   ((%contents :initarg :contents :reader contents)
    (%record :initarg :record :reader record)))
 
+(defun make-empty-buffer ()
+  (let ((line (make-instance 'cluffer-standard-line:closed-line)))
+    (make-instance 'cluffer-standard-buffer:buffer
+      :initial-line line)))
+
 (defclass list-output-history
     (clim:output-record clim:stream-output-history-mixin)
   ((%parent :initarg :parent :reader clim:output-record-parent)
@@ -13,7 +18,7 @@
    (%suffix :initform '() :accessor suffix)
    (%suffix-length :initform 0 :accessor suffix-length)
    (%time-stamp :initform nil :accessor time-stamp)
-   (%buffer :initarg :buffer :reader buffer)
+   (%buffer :initform (make-empty-buffer) :reader buffer)
    (%width :initform 0 :accessor width)
    (%height :initform 0 :accessor height)))
 
