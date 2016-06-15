@@ -103,6 +103,8 @@
 	  (max (width history)
 	       (clim:bounding-rectangle-width record)))
     (push line (suffix history))
+    (incf (height history)
+	  (clim:bounding-rectangle-height (record (car (suffix history)))))
     (incf (suffix-length history))
     (forward history)))
 
