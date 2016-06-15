@@ -104,7 +104,7 @@
 	       (clim:bounding-rectangle-width record)))
     (push line (suffix history))
     (incf (suffix-length history))
-    (forward history)))
+    (backward history)))
 
 (defun update (history)
   (let ((index 0)
