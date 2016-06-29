@@ -21,6 +21,22 @@
 	(+ 5 (clim:bounding-rectangle-height
 	      (flexichain:element* (lines history) (prefix-end history))))))
 
+(defun adjust-prefix (history viewport-top)
+  ;; If there are lines in the suffix that are entirely above the
+  ;; viewport, then move them to the prefix.
+  (loop with lines = (lines history)
+	until (= (prefix-end history) (flexichain:nb-elements lines))
+	while (<= (+ (prefix-height history)
+		     (clim:bounding-rectangle-height
+		      (flexichain:element* lines (prefix-end history))))
+		  viewport-top)
+	do (forward history))
+  ;; If there are lines in the prefix that are not entirely above
+  ;; the viewport, then move them to the suffix.
+  (loop until (zerop (prefix-end history))
+	while (> (prefix-height history) viewport-top)
+	do (backward history)))
+
 (defmethod clim:replay-output-record
     ((record flexichain-output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset))
