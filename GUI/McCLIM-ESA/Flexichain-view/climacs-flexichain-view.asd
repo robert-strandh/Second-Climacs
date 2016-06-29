@@ -4,4 +4,4 @@
   :depends-on (:flexichain)
   :serial t
   :components
-  ())
+  ((:file "packages")))
