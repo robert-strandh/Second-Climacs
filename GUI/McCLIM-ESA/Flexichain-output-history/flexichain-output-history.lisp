@@ -44,12 +44,13 @@
       (clim:bounding-rectangle* (clim:pane-viewport-region stream))
     (clim:medium-clear-area (clim:sheet-medium stream)
 			    left top right bottom)
+    (adjust-prefix record top)
     (loop with lines = (lines record)
 	  with length = (flexichain:nb-elements lines)
-	  for i from 0 below length
-	  for line = (flexichain:element* lines i) 
+	  for i from (prefix-end record) below length
+	  for line = (flexichain:element* lines i)
 	  for height = (clim:bounding-rectangle-height line)
-	  for y = 0 then (+ y height 5)
+	  for y = (+ (prefix-height record) 5)  then (+ y height 5)
 	  while (< y bottom)
 	  do (setf (clim:output-record-position line) (values 0 y))
 	     (clim:replay-output-record line stream region))))
