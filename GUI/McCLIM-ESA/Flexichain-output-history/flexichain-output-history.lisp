@@ -9,6 +9,18 @@
    (%width :initform 0 :accessor width)
    (%height :initform 0 :accessor height)))
 
+(defun forward (history)
+  (incf (prefix-height history)
+	(+ 5 (clim:bounding-rectangle-height
+	      (flexichain:element* (lines history) (prefix-end history)))))
+  (incf (prefix-end history)))
+
+(defun backward (history)
+  (decf (prefix-end history))
+  (decf (prefix-height history)
+	(+ 5 (clim:bounding-rectangle-height
+	      (flexichain:element* (lines history) (prefix-end history))))))
+
 (defmethod clim:replay-output-record
     ((record flexichain-output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset))
