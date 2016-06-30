@@ -57,3 +57,10 @@
 
 (defmethod clim:bounding-rectangle* ((history flexichain-output-history))
   (values 0 0 (width history) (height history)))
+
+(defun insert (history record index)
+  (when (> (prefix-end history) index)
+    (incf (prefix-end history))
+    (incf (prefix-height history)
+	  (clim:bounding-rectangle-height record)))
+  (flexichain:insert* (lines history) index record))
