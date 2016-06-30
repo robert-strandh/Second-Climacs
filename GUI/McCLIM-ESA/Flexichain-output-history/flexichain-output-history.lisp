@@ -64,3 +64,11 @@
     (incf (prefix-height history)
 	  (clim:bounding-rectangle-height record)))
   (flexichain:insert* (lines history) index record))
+
+(defun delete (history index)
+  (when (> (prefix-end history) index)
+    (decf (prefix-height history)
+	  (clim:bounding-rectangle-height
+	   (flexichain:element* (lines history) index)))
+    (decf (prefix-end history)))
+  (flexichain:delete* (lines history) index))
