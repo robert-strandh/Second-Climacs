@@ -45,6 +45,31 @@ sequence of whitespace characters.
 This class is a subclass of the class \texttt{code}.  It represents a
 \commonlisp{} comment.
 
+In order to avoid updating the entire tree whenever text is inserted
+or deleted, positions of code are \emph{relative} to some other
+position $p$.  A position takes the form $<l,c>$, where $l$ indicates
+\emph{lines} and $c$ indicates \emph{columns}.  If $l = 0$, then $c$
+is the number of columns to add to the position indicated by $p$ to
+obtain the new position.  If instead $l > 0$, then $l$ indicates the
+number of lines between $p$ and the new position, and $c$ is the
+\emph{absolute} position from the beginning of the line.
+
+The position given in some node $n$ is relative to its parent in the
+following cases:
+
+\begin{itemize}
+\item The parent of $n$ is a code node.
+\item The parent of $n$ is a binary tree node and $n$ is the
+  \emph{left} child of the parent.
+\item The parent of $n$ is a binary tree node, $n$ is the
+  \emph{right} child of the parent, and $n$ has no left sibling.
+\end{itemize}
+
+Otherwise, i.e., if the parent of some node $n$ is a binary tree node
+and $n$ is the \emph{right} child of the parent, and $n$ has a left
+sibling then the position given in $n$ is relative to the left
+sibling.
+
 \commonlisp{} syntax contains a special version of the \commonlisp{}
 \emph{reader}.  It differs from the standard reader in the following
 ways:
