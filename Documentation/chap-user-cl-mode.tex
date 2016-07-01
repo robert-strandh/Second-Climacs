@@ -1,10 +1,11 @@
-\chapter{\cl{} mode}
+\chapter{\commonlisp{} mode}
 
-The contents of this chapter was largely written long before the \cl{}
-mode was implemented or even fully designed.  We still use the present
-tense to describe functionality, though, as if it existed. 
+The contents of this chapter was largely written long before the
+\commonlisp{} mode was implemented or even fully designed.  We still
+use the present tense to describe functionality, though, as if it
+existed.
 
-\cl{} mode consists of two parts:
+\commonlisp{} mode consists of two parts:
 
 \begin{itemize}
 \item The \emph{code analyzer}, which is responsible for analyzing
@@ -56,7 +57,7 @@ contrast with the background.
 Except for symbol with lexical bindings and symbols used for
 \texttt{loop} keywords, the \emph{hue} of the color is associated with
 the \emph{home package} of the symbol.  We use \emph{blue} for the
-\cl{} package, \emph{green} for the current package, and
+\commonlisp{} package, \emph{green} for the current package, and
 \emph{magenta} for other packages.
 
 Symbols with lexical bindings use \emph{cyan} colors, independently of
@@ -83,9 +84,9 @@ The code analyzer works in three phases.
 
 \subsection{Surface syntax analysis}
 
-This phase consists of repeated applying a custom version of the \cl{}
-\texttt{read} function to the contents of the buffer in order to
-obtain a \emph{succession of top-level expressions}.  
+This phase consists of repeated applying a custom version of the
+\commonlisp{} \texttt{read} function to the contents of the buffer in
+order to obtain a \emph{succession of top-level expressions}.
 
 The following types of errors are detected during this phase:
 
@@ -315,7 +316,7 @@ The context menu gives the following options:
 Only when a top-level form passes the second phase of the analysis is
 it subject to \emph{semantic analysis}.  
 
-\subsubsection{Illegal use of \cl{} symbols}
+\subsubsection{Illegal use of \commonlisp{} symbols}
 
 When a symbol from the \texttt{common-lisp} package is used in a
 context that can be determined illegal, it is signaled by the use of
@@ -329,7 +330,7 @@ information is displayed.
 \inputfig{fig-illegal-use-of-cl-symbol.pdf_t}
 \end{center}
 \caption{\label{fig-illegal-use-of-cl-symbol}
-Display of illegal use of \cl{} symbol.}
+Display of illegal use of \commonlisp{} symbol.}
 \end{figure}
 
 \subsubsection{Names of lexical functions}

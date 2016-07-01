@@ -1,9 +1,9 @@
-\chapter{\cl{} mode}
+\chapter{\commonlisp{} mode}
 \label{chap-internals-common-lisp-mode}
 
 \section{Syntax}
 
-The \cl{} syntax maintains a \emph{splay tree}
+The \commonlisp{} syntax maintains a \emph{splay tree}
 \cite{Sleator:1985:SBS:3828.3835} of \emph{paragraphs}.  A paragraph
 is a sequence of adjacent lines. There are three kinds of paragraphs:
 
@@ -17,8 +17,9 @@ is a sequence of adjacent lines. There are three kinds of paragraphs:
   a \emph{code paragraph}.
 \end{itemize}
 
-\cl{} syntax contains a special version of the \cl{} \emph{reader}.
-It differs from the standard reader in the following ways:
+\commonlisp{} syntax contains a special version of the \commonlisp{}
+\emph{reader}.  It differs from the standard reader in the following
+ways:
 
 \begin{itemize}
 \item It never signals an error.
@@ -28,10 +29,10 @@ It differs from the standard reader in the following ways:
   that character sequence as being a symbol in the current package. 
 \end{itemize}
 
-On the other hand, it behaves like the ordinary \cl{} reader in that
-it can handle custom reader macros, even though it provides reader
-macros for standard macro characters that behave slightly differently
-from the standard reader macros. 
+On the other hand, it behaves like the ordinary \commonlisp{} reader
+in that it can handle custom reader macros, even though it provides
+reader macros for standard macro characters that behave slightly
+differently from the standard reader macros.
 
 When some illegal syntax is encountered, it tries to do something
 reasonable.  For instance if \emph{end of file} is encountered in the

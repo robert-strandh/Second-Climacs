@@ -14,18 +14,19 @@ Before a buffer can be viewed, its \emph{syntax} must be analyzed by a
 \emph{syntax analyzer}.  Normally, there is a single syntax analyzer
 for a buffer, and it is chosen based on the contents of the buffer,
 which is typically determined by the extension of the file from which
-the buffer was created.  Thus, for instance, a buffer containing \cl{}
-code is typically analyzed using the analyzer for \cl{} code.
-However, it is possible for a single buffer to have several different
-simultaneous syntax analyzers.  The syntax analyzers of a buffer
-generally analyze the syntax \emph{incrementally} whenever possible.
-This incremental analysis is triggered by the command loop after the
-execution of a command.  Every syntax analyzer is triggered after each
-iteration of the command loop, though typically most buffers have not
-been modified so the incremental analysis then terminates
-immediately.  Though in most cases a syntax analyzer refers to a
-single buffer, it is possible for a syntax analyzer to refer to
-several buffer, or even to other syntax analyzers.  
+the buffer was created.  Thus, for instance, a buffer containing
+\commonlisp{} code is typically analyzed using the analyzer for
+\commonlisp{} code.  However, it is possible for a single buffer to
+have several different simultaneous syntax analyzers.  The syntax
+analyzers of a buffer generally analyze the syntax
+\emph{incrementally} whenever possible.  This incremental analysis is
+triggered by the command loop after the execution of a command.  Every
+syntax analyzer is triggered after each iteration of the command loop,
+though typically most buffers have not been modified so the
+incremental analysis then terminates immediately.  Though in most
+cases a syntax analyzer refers to a single buffer, it is possible for
+a syntax analyzer to refer to several buffer, or even to other syntax
+analyzers.
 
 All user interaction, both input and output, is mediated through a
 \emph{view}.  The view typically contains a single syntax analyzer
