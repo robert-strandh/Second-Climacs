@@ -3,19 +3,47 @@
 
 \section{Syntax}
 
-The \commonlisp{} syntax maintains a \emph{splay tree}
-\cite{Sleator:1985:SBS:3828.3835} of \emph{paragraphs}.  A paragraph
-is a sequence of adjacent lines. There are three kinds of paragraphs:
+The \commonlisp{} syntax maintains a tree representing the contents of
+the buffer.  A node in the tree is either a \emph{code node} or
+a \emph{binary tree node}.
 
-\begin{itemize}
-\item Paragraphs that contain only lines that are either empty or
-  that contain only whitespace.  Such a paragraph is called a
-  \emph{blank paragraph}. 
-\item Paragraphs that contain only lines that start with a semicolon.
-  Such a paragraph is called a \emph{comment paragraph}.
-\item Paragraphs that contain other lines.  Such a paragraph is called
-  a \emph{code paragraph}.
-\end{itemize}
+\Defclass {code}
+
+This class has a slot representing the position in the buffer where
+this code fragment starts and ends.
+
+\Defclass {binary-tree}
+
+A binary tree node represents a \emph{sequence}%
+\footnote{Not a \commonlisp{} sequence; just a suite.}  of code
+fragments.  If a buffer contains more than one consecutive top-level
+expression, then the root node of the buffer representation is a
+binary-tree node.
+
+The binary-tree nodes are treated as a \emph{splay tree}
+\cite{Sleator:1985:SBS:3828.3835}, in that they can be dynamically
+reorganized according to the access pattern.
+There are three subclass of \texttt{code}:
+
+\Defclass {expression}
+
+This class is a subclass of the class \texttt{code}.  It represents a
+\commonlisp{} expression.  The node has a slot containing the
+expression being represented.  An expression node also
+contains a slot holding its \emph{children}.  This slot may contain
+\texttt{nil} if the node has no children, another expression node if
+the node has exactly one child, or a binary-tree node if the node has
+more than one child.
+
+\Defclass {whitespace}
+
+This class is a subclass of the class \texttt{code}.  It represents a
+sequence of whitespace characters.
+
+\Defclass {comment}
+
+This class is a subclass of the class \texttt{code}.  It represents a
+\commonlisp{} comment.
 
 \commonlisp{} syntax contains a special version of the \commonlisp{}
 \emph{reader}.  It differs from the standard reader in the following
