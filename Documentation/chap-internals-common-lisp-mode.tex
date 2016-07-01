@@ -54,8 +54,8 @@ obtain the new position.  If instead $l > 0$, then $l$ indicates the
 number of lines between $p$ and the new position, and $c$ is the
 \emph{absolute} position from the beginning of the line.
 
-The position given in some node $n$ is relative to its parent in the
-following cases:
+The start position given in some node $n$ is relative to its parent in
+the following cases:
 
 \begin{itemize}
 \item The parent of $n$ is a code node.
@@ -67,8 +67,11 @@ following cases:
 
 Otherwise, i.e., if the parent of some node $n$ is a binary tree node
 and $n$ is the \emph{right} child of the parent, and $n$ has a left
-sibling then the position given in $n$ is relative to the left
+sibling then the start position given in $n$ is relative to the left
 sibling.
+
+The end position given in some node $n$ is relative to the start
+position of $n$.
 
 \commonlisp{} syntax contains a special version of the \commonlisp{}
 \emph{reader}.  It differs from the standard reader in the following
