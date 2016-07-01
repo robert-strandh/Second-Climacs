@@ -22,7 +22,15 @@ binary-tree node.
 
 The binary-tree nodes are treated as a \emph{splay tree}
 \cite{Sleator:1985:SBS:3828.3835}, in that they can be dynamically
-reorganized according to the access pattern.
+reorganized according to the access pattern.  A binary-tree node has a
+\emph{contents} slot that contains a code node.  It also has a
+\emph{left child} and a \emph{right child} slot.  The child of a
+binary-tree node can be another binary-tree node or a code node.
+Either the left child or the right child of a binary-tree node may be
+\texttt{nil}, but not both.%
+\footnote{If both children where \texttt{nil} the contents node of the
+  binary-tree node would replace the binary-tree node.}
+
 There are three subclass of \texttt{code}:
 
 \Defclass {expression}
