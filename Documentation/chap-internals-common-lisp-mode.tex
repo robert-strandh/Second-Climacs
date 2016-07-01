@@ -72,9 +72,10 @@ the following cases:
 \item The parent of $n$ is a code node.
 \item The parent of $n$ is a binary tree node and $n$ is the
   \emph{left} child of the parent.
-\item The parent of $n$ is a binary tree node, $n$ is the
-  \emph{right} child of the parent, and $n$ has no left sibling.
 \end{itemize}
+
+The start position of the contents node of a binary-tree node with a
+left child that is not \texttt{nil} is relative to that left child.
 
 Otherwise, i.e., if the parent of some node $n$ is a binary tree node
 and $n$ is the \emph{right} child of the parent, and $n$ has a left
