@@ -38,7 +38,8 @@ more than one child.
 \Defclass {whitespace}
 
 This class is a subclass of the class \texttt{code}.  It represents a
-sequence of whitespace characters.
+sequence of whitespace characters.  A node of this type is only
+present when the whitespace is located at the beginning of a line.
 
 \Defclass {comment}
 
@@ -72,6 +73,24 @@ sibling.
 
 The end position given in some node $n$ is relative to the start
 position of $n$.
+
+Consider the following buffer contents, where the initial left
+parenthesis is positioned in column $0$:
+
+\begin{verbatim}
+(let ((x 1)) ; comment
+  x)
+\end{verbatim}
+
+The code tree for that code fragment is shown in \refFig{fig-code-tree}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-code-tree.pdf_t}
+\end{center}
+\caption{\label{fig-code-tree}
+Example of code tree.}
+\end{figure}
 
 \commonlisp{} syntax contains a special version of the \commonlisp{}
 \emph{reader}.  It differs from the standard reader in the following
