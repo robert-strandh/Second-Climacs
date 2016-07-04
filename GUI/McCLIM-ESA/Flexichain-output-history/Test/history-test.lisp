@@ -41,3 +41,10 @@
 		   (format pane "~a" text))))
     (climacs-flexichain-output-history:insert history record place)
     (clim:replay history pane)))
+
+(define-history-test-command (com-delete :name t)
+    ((place 'integer))
+  (let* ((pane (clim:find-pane-named clim:*application-frame* 'app))
+	 (history (clim:stream-output-history pane)))
+    (climacs-flexichain-output-history:delete history place)
+    (clim:replay history pane)))
