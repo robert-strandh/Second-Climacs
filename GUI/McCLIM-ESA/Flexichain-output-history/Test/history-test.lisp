@@ -39,4 +39,5 @@
 	 (history (clim:stream-output-history pane))
 	 (record (clim:with-output-to-output-record (pane)
 		   (format pane "~a" text))))
-    (climacs-flexichain-output-history:insert history record place)))
+    (climacs-flexichain-output-history:insert history record place)
+    (clim:replay history pane)))
