@@ -3,4 +3,7 @@
 (defpackage #:climacs-flexichain-output-history
   (:use #:common-lisp)
   (:shadow #:delete #:replace)
-  (:export #:flexichain-output-history))
+  (:export #:flexichain-output-history
+	   #:insert
+	   #:delete
+	   #:replace))
