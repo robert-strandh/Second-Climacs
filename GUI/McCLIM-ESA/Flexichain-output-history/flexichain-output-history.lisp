@@ -87,7 +87,7 @@
     (decf (height history)
 	  (clim:bounding-rectangle-height existing))
     (flexichain:delete* (lines history) index)
-    (when (= (width existing) (width history))
+    (when (= (clim:bounding-rectangle-width existing) (width history))
       (recompute-width history))))
 
 (defun replace (history record index)
