@@ -106,3 +106,20 @@
 		(clim:bounding-rectangle-width record)))
 	(when (= (clim:bounding-rectangle-width existing) (width history))
 	  (recompute-width history)))))
+
+(defmethod clim:map-over-output-records-containing-position
+    (function
+     (history flexichain-output-history)
+     x y
+     &optional
+       x-offset
+       y-offset
+     &rest function-args)
+  (declare (ignore x-offset y-offset))
+  ;; For now, loop over all the records.  To do this better, do a
+  ;; binary search.
+  (loop with lines = (lines history )
+	for index from 0 below (flexichain:nb-elements lines)
+	for record = (flexichain:element* lines index)
+	when (clim:region-contains-position-p record x y)
+	  do (apply function record function-args)))
