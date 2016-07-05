@@ -40,6 +40,7 @@
 	 (record (clim:with-output-to-output-record (pane)
 		   (format pane "~a" text))))
     (climacs-flexichain-output-history:insert history record place)
+    (climacs-flexichain-output-history:change-space-requirements history)
     (clim:replay history pane)))
 
 (define-history-test-command (com-delete :name t)
@@ -47,6 +48,7 @@
   (let* ((pane (clim:find-pane-named clim:*application-frame* 'app))
 	 (history (clim:stream-output-history pane)))
     (climacs-flexichain-output-history:delete history place)
+    (climacs-flexichain-output-history:change-space-requirements history)
     (clim:replay history pane)))
 
 (define-history-test-command (com-replace :name t)
@@ -56,4 +58,5 @@
 	 (record (clim:with-output-to-output-record (pane)
 		   (format pane "~a" text))))
     (climacs-flexichain-output-history:replace history record place)
+    (climacs-flexichain-output-history:change-space-requirements history)
     (clim:replay history pane)))
