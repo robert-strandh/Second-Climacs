@@ -6,4 +6,5 @@
   (:export #:flexichain-output-history
 	   #:insert
 	   #:delete
-	   #:replace))
+	   #:replace
+	   #:change-space-requirements))
