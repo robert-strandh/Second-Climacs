@@ -1,8 +1,0 @@
-(cl:in-package #:asdf-user)
-
-(defsystem :climacs-list-output-history
-  :depends-on (:mcclim :cluffer)
-  :serial t
-  :components
-  ((:file "packages")
-   (:file "list-output-history")))
