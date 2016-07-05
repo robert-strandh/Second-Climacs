@@ -124,3 +124,9 @@
 	for record = (flexichain:element* lines index)
 	when (clim:region-contains-position-p record x y)
 	  do (apply function record function-args)))
+
+(defun change-space-requirements (output-history)
+  (clim:change-space-requirements
+   (clim:output-record-parent output-history)
+   :width (width output-history)
+   :height (height output-history)))
