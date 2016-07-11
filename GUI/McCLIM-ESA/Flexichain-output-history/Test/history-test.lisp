@@ -63,3 +63,7 @@
     (climacs-flexichain-output-history:replace history record place)
     (climacs-flexichain-output-history:change-space-requirements history)
     (clim:replay history pane)))
+
+(define-history-test-command (com-input :name t)
+    ((text 'string))
+  (format *trace-output* "~a~%" text))
