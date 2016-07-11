@@ -50,9 +50,10 @@
 	  with length = (flexichain:nb-elements lines)
 	  for i from (prefix-end record) below length
 	  for line = (flexichain:element* lines i)
-	  for height = (clim:bounding-rectangle-height line)
 	  for y = (prefix-height record)  then (+ y height)
+	  for height = (clim:bounding-rectangle-height line)
 	  while (< y bottom)
+	  do (format *trace-output* "height: ~a y ~a~%" height y)
 	  do (setf (clim:output-record-position line) (values 0 y))
 	     (clim:replay-output-record line stream region))))
 
