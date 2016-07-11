@@ -37,7 +37,10 @@
     ((place 'integer) (text 'string))
   (let* ((pane (clim:find-pane-named clim:*application-frame* 'app))
 	 (history (clim:stream-output-history pane))
-	 (record (clim:with-output-to-output-record (pane)
+	 (record (clim:with-output-to-output-record
+		     (pane 'clim:standard-presentation dummy-var
+			   :object text
+			   :type 'string)
 		   (format pane "~a" text))))
     (climacs-flexichain-output-history:insert history record place)
     (climacs-flexichain-output-history:change-space-requirements history)
