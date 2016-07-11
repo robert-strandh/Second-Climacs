@@ -12,15 +12,15 @@
 
 (defun forward (history)
   (incf (prefix-height history)
-	(+ 5 (clim:bounding-rectangle-height
-	      (flexichain:element* (lines history) (prefix-end history)))))
+	(clim:bounding-rectangle-height
+	 (flexichain:element* (lines history) (prefix-end history))))
   (incf (prefix-end history)))
 
 (defun backward (history)
   (decf (prefix-end history))
   (decf (prefix-height history)
-	(+ 5 (clim:bounding-rectangle-height
-	      (flexichain:element* (lines history) (prefix-end history))))))
+	(clim:bounding-rectangle-height
+	 (flexichain:element* (lines history) (prefix-end history)))))
 
 (defun adjust-prefix (history viewport-top)
   ;; If there are lines in the suffix that are entirely above the
@@ -51,7 +51,7 @@
 	  for i from (prefix-end record) below length
 	  for line = (flexichain:element* lines i)
 	  for height = (clim:bounding-rectangle-height line)
-	  for y = (+ (prefix-height record) 5)  then (+ y height 5)
+	  for y = (prefix-height record)  then (+ y height)
 	  while (< y bottom)
 	  do (setf (clim:output-record-position line) (values 0 y))
 	     (clim:replay-output-record line stream region))))
