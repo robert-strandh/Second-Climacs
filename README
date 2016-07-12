@@ -1,0 +1,53 @@
+Second Climacs is an Emacs-like editor written entirely in
+Common Lisp.  It is called Second Climacs because it is a complete
+rewrite of the Climacs text editor.
+
+Climacs gave us some significant experience with writing a text
+editor, and we think we can improve on a number of aspects of it.  As
+a result, there are some major differences between Climacs and
+Second Climacs:
+
+  * We implemented a better buffer representation, and extracted it
+    from the editor code into a separate library named Cluffer.  The
+    new buffer representation will have better performance, especially
+    on large buffers, and it will make it easier to write
+    sophisticated parsers for buffer contents.
+
+  * The incremental parser for Common Lisp syntax of Climacs is very
+    hard to maintain, and while it is better than that of Emacs, it is
+    still not good enough.  Second Climacs uses a modified version of
+    the Common Lisp reader in order to parse buffer contents, making
+    it much closer to the way the contents is read by the Common Lisp
+    compiler.
+
+  * Climacs depends on McCLIM for its graphic user interface.  Second
+    Climacs is independent of any particular library for making
+    graphic user interfaces, allowing it to be configured with
+    different such libraries.
+
+Currently, Second Climacs is not in a complete enough state to be
+executed.  We are working on several aspects of it:
+
+  * We are writing a special output history class for McCLIM that will
+    be adapted for use with Second Climacs.  We have a working version
+    using the Flexichain library, but we want an implementation that
+    uses Splay trees.
+
+  * We are working on a special version of the Common Lisp READ
+    function that will be adapted so that it can read invalid buffer
+    contents such as unmatched parentheses and symbols with package
+    prefixes naming packages that do not exist.
+
+  * We are designing an structure for representing Common Lisp code
+    that can be incrementally updated as buffer contents changes.
+
+  * We are working on a way of representing commands.  We will
+    probably go for something similar to the CLIM macro DEFINE-COMMAND
+    that mentions the types of the arguments.
+
+The immediate next step is to make it possible to execute Second
+Climacs with something that resembles "Fundamental mode" in Emacs,
+i.e., with no particular syntax analysis, and only very basic
+commands.  This step requires a design for representing commands.  It
+is not a particularly difficult design, but we might as well give it
+some thought in order to get it right.
