@@ -108,6 +108,15 @@
 	(when (= (clim:bounding-rectangle-width existing) (width history))
 	  (recompute-width history)))))
 
+(defmethod clim:clear-output-record ((history flexichain-output-history))
+  (let ((chain (lines history)))
+    (flexichain:delete-elements* chain 0 (flexichain:nb-elements chain))))
+
+(defmethod clim:add-output-record
+    ((record clim:standard-updating-output-record)
+     (history flexichain-output-history))
+  (flexichain:push-end (lines history) record))
+
 (defmethod clim:map-over-output-records-containing-position
     (function
      (history flexichain-output-history)
