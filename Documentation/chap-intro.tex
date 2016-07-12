@@ -1,3 +1,29 @@
 \chapter{Introduction}
 \pagenumbering{arabic}
 
+\sysname{} is an \emacs{}-like editor written entirely in
+\commonlisp{}.  It is called \sysname{} because it is a complete
+rewrite of the \climacs{} text editor.
+
+\climacs{} gave us some significant experience with writing a text
+editor, and we think we can improve on a number of aspects of it.  As
+a result, there are some major differences between \climacs{} and
+\sysname{}:
+
+\begin{itemize}
+\item We implemented a better buffer representation, and extracted it
+  from the editor code into a separate library named \cluffer{}.  The
+  new buffer representation will have better performance, especially
+  on large buffers, and it will make it easier to write sophisticated
+  parsers for buffer contents.
+\item The incremental parser for \commonlisp{} syntax of \climacs{} is
+  very hard to maintain, and while it is better than that of \emacs{},
+  it is still not good enough.  \sysname{} uses a modified version of
+  the \commonlisp{} reader in order to parse buffer contents, making
+  it much closer to the way the contents is read by the \commonlisp{}
+  compiler.
+\item \climacs{} depends on \mcclim{} for its graphic user interface.
+  \sysname{} is independent of any particular library for making
+  graphic user interfaces, allowing it to be configured with different
+  such libraries.
+\end{itemize}
