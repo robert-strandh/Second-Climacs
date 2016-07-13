@@ -56,3 +56,6 @@
 	      (:generic-function-class command))
 	    (reinitialize-instance #',name
 				   :types ',types))))
+
+(defgeneric command-pretty-name (command-name language)
+  (:method (command-name language) nil))
