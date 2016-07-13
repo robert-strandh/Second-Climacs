@@ -28,3 +28,12 @@
 		    collect (if (symbolp req) t (second req)))
 	      (append ordinary-required gf-optionals)
 	      (append ordinary-required optional)))))
+
+(defmacro define-command (name lambda-list &body body)
+  (multiple-value-bind (types gf-lambda-list method-lambda-list)
+      (extract-lambda-lists lambda-list)
+    `(progn (defgeneric ,name ,gf-lambda-list
+	      (:method ,method-lambda-list ,@body)
+	      (:generic-function-class command))
+	    (reinitialize-instance #',name
+				   :types ',types))))
