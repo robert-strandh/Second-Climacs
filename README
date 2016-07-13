@@ -51,3 +51,11 @@ i.e., with no particular syntax analysis, and only very basic
 commands.  This step requires a design for representing commands.  It
 is not a particularly difficult design, but we might as well give it
 some thought in order to get it right.
+
+Repositories:
+
+  Second Climacs: https://github.com/robert-strandh/Second-Climacs
+
+  Cluffer: https://github.com/robert-strandh/Cluffer
+
+  McCLIM: https://github.com/robert-strandh/McCLIM
