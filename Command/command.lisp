@@ -11,3 +11,12 @@
 		       position-or-nil)))
     (values (subseq lambda-list 0 position)
 	    (subseq lambda-list position))))
+
+(defun extract-lambda-lists (lambda-list)
+  (multiple-value-bind (required optional)
+      (split-lambda-list lambda-list)
+    (values (loop for req in required
+		  collect (if (symbolp req) t (second req)))
+	    (append (loop for req in required
+			  collect (if (symbolp req) req (first req)))
+		    optional))))
