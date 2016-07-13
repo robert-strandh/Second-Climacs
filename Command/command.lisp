@@ -1,5 +1,24 @@
 (cl:in-package #:climacs-command)
 
+;;; A COMMAND consists of two parts:
+;;;
+;;;   * A FUNCTION that is called to execute some code that may modify
+;;;     the model or the view.  This function can either be called
+;;;     directly as a normal Common Lisp function, or through the
+;;;     process of COMMAND INVOCATION.
+;;;
+;;;   * A list of TYPE NAMES, one for each required parameter of the
+;;;     function.
+;;;
+;;; When a command is invoked, the arguments are first acquired
+;;; according to the types.  The function is then called with those
+;;; arguments.
+;;;
+;;; In order to keep the two parts of a command together, we define a
+;;; class COMMAND to be a subclass of STANDARD-GENERIC-FUNCTION.  That
+;;; way, we can add new slots for keeping track of the list of type
+;;; names and perhaps of other information as well.
+
 (defclass command (standard-generic-function)
   ((%types :initarg :types :reader types))
   (:metaclass #.(class-name (class-of (find-class 'standard-generic-function)))))
