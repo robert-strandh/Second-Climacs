@@ -3,4 +3,4 @@
 (defsystem :climacs-command
   :serial t
   :components
-  ())
+  ((:file "packages")))
