@@ -41,10 +41,6 @@ executed.  We are working on several aspects of it:
   * We are designing an structure for representing Common Lisp code
     that can be incrementally updated as buffer contents changes.
 
-  * We are working on a way of representing commands.  We will
-    probably go for something similar to the CLIM macro DEFINE-COMMAND
-    that mentions the types of the arguments.
-
 The immediate next step is to make it possible to execute Second
 Climacs with something that resembles "Fundamental mode" in Emacs,
 i.e., with no particular syntax analysis, and only very basic
