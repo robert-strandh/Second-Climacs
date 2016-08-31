@@ -4,7 +4,7 @@
 (defclass line ()
   ((%parent :initarg :parent :accessor parent)
    ;; The corresponding buffer line so that we can synchronize and ask
-   ;; for the iterms.
+   ;; for the items.
    (%buffer-line :initarg :buffer-line :reader buffer-line)
    ;; A simple vector which has the same length as the items of the
    ;; line and which contains instances of the class ENTRY, or
