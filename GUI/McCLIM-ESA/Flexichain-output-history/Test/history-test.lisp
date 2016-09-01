@@ -1,16 +1,21 @@
 (cl:in-package #:climacs-flexichain-output-history-test)
 
+(defclass my-pane (clim:application-pane)
+  ()
+  (:default-initargs
+   :display-time nil))
+
 (clim:define-application-frame history-test ()
   ()
   (:panes
-   (app :application
-	:width 200
-	:height 300
-	:display-time nil
-	:scroll-bars t)
+   (app (clim:make-pane 'my-pane
+			:width 200
+			:height 300))
    (int :interactor :width 200 :height 100))
   (:layouts
-   (default (clim:vertically () app int))))
+   (default (clim:vertically ()
+	      (clim:scrolling (:scroll-bars t) app)
+	      int))))
 
 (defun history-test ()
   (clim:run-frame-top-level (clim:make-application-frame 'history-test)))
