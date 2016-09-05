@@ -1,1 +1,52 @@
 \chapter{\commonlisp{} mode}
+
+\section{Syntax}
+
+\subsection{Parsing using the \commonlisp{} reader}
+
+We use a special version of the \commonlisp{} reader to parse the
+contents of a buffer.  We use a special version of the reader for the
+following reasons:
+
+\begin{itemize}
+\item We need a different action from that of the standard reader when
+  it comes to interpreting tokens.  In particular, we do not
+  necessarily want the incremental parser to intern symbols
+  automatically, and we do not want the reader to fail when a symbol
+  with an explicit package prefix does not exist.
+\item We need for the reader to return not only a resulting
+  expression, but an object that describes the start and end positions
+  in the buffer where the expression was read.
+\item The reader needs to return source elements that are not returned
+  by an ordinary reader, such as comments and expressions that are
+  skipped by certain other reader macros.
+\item The reader can not fail when an incorrect character is
+  encountered, nor when end of file is encountered in the middle of a
+  call.
+\end{itemize}
+
+We call the data structure referred to in the last item a \emph{parse
+  result}.  It contains the following slots:
+
+\begin{itemize}
+\item The start and the end location of the parse result in the
+  buffer.  For details on how this parse result is represented,
+  \refSec{sec-common-lisp-mode-syntax-data-structure}.
+\item The expression that was read, with some possible modifications.
+  Tokens are not represented as themselves for reasons mentioned
+  above.
+\item A list of \emph{children}.  These are parse results that were
+  returned by recursive calls to the reader.  The children are
+  represented in the order they were encountered in the buffer.  This
+  order may be different from the order in which the corresponding
+  expressions appear in the expression resulting from the call to the
+  reader.
+\end{itemize}
+
+\subsection{Data structure}
+\label{sec-common-lisp-mode-syntax-data-structure}
+
+The \commonlisp{} syntax maintains a sequence%
+\footnote{It is not a \commonlisp{} sequence, but just a suite
+  represented in a different way.}
+of top-level parse results.
