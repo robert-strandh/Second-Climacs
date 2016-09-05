@@ -46,7 +46,25 @@ We call the data structure referred to in the last item a \emph{parse
 \subsection{Data structure}
 \label{sec-common-lisp-mode-syntax-data-structure}
 
+A location in the buffer is considered a \emph{top-level location} if
+and only if, when the buffer is parsed by a number of consecutive
+calls to \texttt{read}, when this location is reached, the reader is
+in its initial state with no recursive pending invocations.
+
 The \commonlisp{} syntax maintains a sequence%
 \footnote{It is not a \commonlisp{} sequence, but just a suite
-  represented in a different way.}
-of top-level parse results.
+  represented in a different way.}  of \emph{top-level parse results}.
+A parse result is considered top-level if it is the result of an
+immediate call to \texttt{read}, as opposed to of a recursive call.
+
+This sequence is organized as two ordinary \commonlisp{} lists, called
+the \emph{prefix} and the \emph{suffix}.  Given a top-level location
+$L$ in the buffer, the prefix contains a list of the top-level parse
+results that precede $L$ and the suffix contains a list of the
+top-level parse results that follow $L$.  The top-level parse results
+in the prefix occur in reverse order compared to order in which they
+appear in the buffer.  The top-level parse results in the suffix occur
+in the same order as they appear in the buffer.  the location $L$ is
+typically immediately before or immediately after the top-level
+expression in which the \emph{cursor} of the current view is located,
+but that is not a requirement.
