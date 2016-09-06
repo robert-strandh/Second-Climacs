@@ -13,7 +13,8 @@ following reasons:
   it comes to interpreting tokens.  In particular, we do not
   necessarily want the incremental parser to intern symbols
   automatically, and we do not want the reader to fail when a symbol
-  with an explicit package prefix does not exist.
+  with an explicit package prefix does not exist or when the package
+  corresponding to the package prefix does not exists.
 \item We need for the reader to return not only a resulting
   expression, but an object that describes the start and end positions
   in the buffer where the expression was read.
