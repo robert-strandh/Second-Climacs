@@ -67,7 +67,9 @@ appear in the buffer.  The top-level parse results in the suffix occur
 in the same order as they appear in the buffer.  the location $L$ is
 typically immediately before or immediately after the top-level
 expression in which the \emph{cursor} of the current view is located,
-but that is not a requirement.
+but that is not a requirement.  \refFig{fig-cl-parser-prefix-suffix}
+illustrates the prefix and the suffix of a buffer with five top-level
+expressions.
 
 \begin{figure}
 \begin{center}
@@ -75,4 +77,19 @@ but that is not a requirement.
 \end{center}
 \caption{\label{fig-cl-parser-prefix-suffix}
 Prefix and suffix containing top-level parse results.}
+\end{figure}
+
+Either the prefix or the suffix or both may be the empty list.  The
+location $L$ may be moved.  It suffices to pop an element off of one
+of the lists and push it onto the other.
+
+The representation of a parse result is shown in
+\refFig{fig-parse-result}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-parse-result.pdf_t}
+\end{center}
+\caption{\label{fig-parse-result}
+Representation of parse result.}
 \end{figure}
