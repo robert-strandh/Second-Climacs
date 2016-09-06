@@ -154,3 +154,12 @@ and it is computed as follows:
   \texttt{end-column} of the preceding sibling parse result and the
   initial character of this parse result.
 \end{itemize}
+
+The value of the slot \texttt{end-line} of some parse result is the
+number of lines between the value of the slot \texttt{start-line} of
+the same parse result and the final character of the parse result.
+If the parse result starts and ends on the same line, then the value
+of this slot is $0$.
+
+The value of the slot \texttt{end-column} is the absolute column
+number of the final character of the parse result.
