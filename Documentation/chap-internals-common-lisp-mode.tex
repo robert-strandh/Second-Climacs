@@ -93,3 +93,64 @@ The representation of a parse result is shown in
 \caption{\label{fig-parse-result}
 Representation of parse result.}
 \end{figure}
+
+Let the \emph{initial character} of some parse result be the first
+non-whitespace character encountered during the call to the reader
+that produced this parse result.  Similarly, let the \emph{final
+  character} of some parse result be the last character encountered
+during the call to the reader that produced this parse result,
+excluding any look-ahead character that could be un-read before the
+parse result was returned.
+
+The slot named \texttt{start-line} is computed as follows:
+
+\begin{itemize}
+\item If the parse result is the first top-level parse result of the
+  buffer, then the value of this slot is the absolute line number of
+  the initial character of this parse result.  The first line of the
+  buffer is numbered $0$.
+\item If the parse result is a top-level parse result other than the
+  first of the buffer, then the value of this slot is the number of
+  lines between the value of the slot \texttt{end-line} of the
+  preceding parse result and the initial character of this parse
+  result.  A value of $0$ indicates the same line as the
+  \texttt{end-line} of the preceding parse result.
+\item If this parse result is the first in a list of children of some
+  parent parse result, then the value of this slot is the number of
+  lines between the value of the slot \texttt{start-line} of the parent
+  parse result and the initial character of this parse result.
+\item If this parse result is the child other than the first in a list
+  of children of some parent parse result, then the value of this slot
+  is the number of lines between the value of the slot
+  \texttt{end-line} of the preceding sibling parse result and the
+  initial character of this parse result.
+\end{itemize}
+
+If the value of \texttt{start-line} is greater than $0$, then the
+value of the slot \texttt{start-column} is the absolute column number
+of the initial character of this parse result.  A value of $0$ means
+the leftmost column.
+
+If the value of \texttt{start-line} is equal to $0$, then the value of
+the slot \texttt{start-column} is always strictly greater than $0$,
+and it is computed as follows:
+
+\begin{itemize}
+\item If the parse result is the first top-level parse result of the
+  buffer, then the value of this slot is the absolute column number of
+  the initial character of this parse result.
+\item If the parse result is a top-level parse result other than the
+  first of the buffer, then the value of this slot is the number of
+  columns between the value of the slot \texttt{end-column} of the
+  preceding parse result and the initial character of this parse
+  result.
+\item If this parse result is the first in a list of children of some
+  parent parse result, then the value of this slot is the number of
+  columns between the value of the slot \texttt{start-column} of the parent
+  parse result and the initial character of this parse result.
+\item If this parse result is the child other than the first in a list
+  of children of some parent parse result, then the value of this slot
+  is the number of columns between the value of the slot
+  \texttt{end-column} of the preceding sibling parse result and the
+  initial character of this parse result.
+\end{itemize}
