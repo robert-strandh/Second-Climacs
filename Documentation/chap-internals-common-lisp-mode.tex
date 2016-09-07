@@ -143,6 +143,54 @@ of this slot is $0$.
 The value of the slot \texttt{end-column} is the absolute column
 number of the final character of the parse result.
 
+\subsection{Moving top-level parse results}
+
+Occasionally, some top-level parse results need to be moved from the
+prefix to the suffix or from the suffix to the prefix.  There could be
+several reasons for such moves:
+
+\begin{itemize}
+\item The place between the prefix and the suffix must always be near
+  the part of the buffer currently on display when the contents are
+  presented to the user.  If the part on display changes as a result
+  of scrolling or as a result of the user moving the current cursor,
+  then the prefix and suffix must be adjusted to reflect the new
+  position prior to the presentation.
+\item After items have been inserted into or deleted from the buffer,
+  the incremental parser may have to adjust the prefix and the suffix
+  so that the altered top-level parse results are near the beginning
+  of the suffix.
+\end{itemize}
+
+These adjustments are always accomplished by repeatedly moving a
+single top-level parse result.
+
+To move a single top-level parse result $P$ from the prefix to the
+suffix, the following actions are executed:
+
+\begin{enumerate}
+\item Modify the slot \texttt{start-line} of the first parse result of
+  the suffix so that, instead of containing the absolute line number,
+  it contains the line number relative the value of the slot
+  \texttt{end-line} of $P$.
+\item Pop $P$ from the prefix and push it onto the suffix.  Rather
+  than using the straightforward technique, the \texttt{cons} cell
+  referring to $P$ can be reused so as to avoid unnecessary consing.
+\end{enumerate}
+
+To move a single top-level parse-result $P$ from the suffix to the
+prefix, the following actions are executed:
+
+\begin{enumerate}
+\item If $P$ has a successor $S$ in the suffix, then the slot
+  \texttt{start-line} of $S$ is adjusted so that it contains the
+  absolute line number as opposed to the line number relative to the
+  slot \texttt{end-line} of $P$.
+\item Pop $P$ from the suffix and push it onto the prefix.  Rather
+  than using the straightforward technique, the \texttt{cons} cell
+  referring to $P$ can be reused so as to avoid unnecessary consing.
+\end{enumerate}
+
 \subsection{Incremental update}
 
 Modifications to the buffer are reported at the granularity of entire
