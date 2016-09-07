@@ -106,13 +106,14 @@ parse result was returned.
 The slot named \texttt{start-line} is computed as follows:
 
 \begin{itemize}
-\item If the parse result is the first top-level parse result of the
-  buffer, then the value of this slot is the absolute line number of
-  the initial character of this parse result.  The first line of the
-  buffer is numbered $0$.
-\item If the parse result is a top-level parse result other than the
-  first of the buffer, then the value of this slot is the number of
-  lines between the value of the slot \texttt{end-line} of the
+\item If the parse result is one of the top-level parse results in the
+  prefix or the first top-level parse result in the suffix, then the
+  value of this slot is the absolute line number of the initial
+  character of this parse result.  The first line of the buffer is
+  numbered $0$.
+\item If the parse result is a top-level parse result in the suffix
+  other than the first one, then the value of this slot is the number
+  of lines between the value of the slot \texttt{end-line} of the
   preceding parse result and the initial character of this parse
   result.  A value of $0$ indicates the same line as the
   \texttt{end-line} of the preceding parse result.
