@@ -139,3 +139,36 @@ of this slot is $0$.
 
 The value of the slot \texttt{end-column} is the absolute column
 number of the final character of the parse result.
+
+\subsection{Incremental update}
+
+Modifications to the buffer are reported at the granularity of entire
+lines.  The following operations are possible:
+
+\begin{itemize}
+\item A line may be modified.
+\item A line may be inserted.
+\item A line may be deleted.
+\end{itemize}
+
+Several different lines may be modified between two incremental
+updates, and in different ways.  The first step in an incremental
+update step is to invalidate parse results that are no longer known to
+be correct after these modifications.  This step modifies the data
+structure described in
+\refSec{sec-common-lisp-mode-syntax-data-structure} in the following
+way:
+
+\begin{itemize}
+\item After the invalidation step, the prefix contains the parse
+  results preceding the first modified line, so that these parse
+  results are still valid.
+\item The suffix contains those parse results following the last
+  modified line.  These parse results are still valid, but they may no
+  longer be top-level parse results, because the nesting may have
+  changed as a result of the modifications preceding the suffix.
+\item An additional list of \emph{residual parse results} is created.
+  This list contains parse results that have not been invalidated by
+  the modifications, i.e. that appear only in lines that have not been
+  modified.
+\end{itemize}
