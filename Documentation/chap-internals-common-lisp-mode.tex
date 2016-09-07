@@ -223,3 +223,55 @@ way:
   the modifications, i.e. that appear only in lines that have not been
   modified.
 \end{itemize}
+
+The order of the parse results in the list of residual parse results
+is the same as the order of the parse results in the buffer.  The slot
+\texttt{start-line} of each parse result in the list is the absolute
+line number of the initial character of that parse result.
+
+\subsubsection{Processing modifications}
+
+While the list of residual parse results is being constructed, its
+elements are in the reverse order.  Only when all buffer updates have
+been processed is the list of residual parse results reversed to
+obtain the final representation.
+
+All line modifications are reported in increasing order of line
+number.  Before the first modification is processed, the prefix and
+the suffix are positioned as indicated above, and the list of residual
+parse results is initialized to the empty list.
+
+The following actions are taken, depending on the position of the
+modified line with respect to the suffix, and on the nature of the
+modification:
+
+\begin{itemize}
+\item If a line has been modified, and either the suffix is empty or
+  the modified line precedes the first parse result of the suffix,
+  then no action is taken.
+\item If a line has been deleted, and the suffix is empty, then no
+  action is taken.
+\item If a line has been deleted, and it precedes the first parse
+  result of the suffix, then the slot \texttt{start-line} of the first
+  parse result of the suffix is decremented.
+\item If a line has been inserted, and the suffix is empty, then no
+  action is taken.
+\item If a line has been inserted, and it precedes the first parse
+  result of the suffix, then the slot \texttt{start-line} of the first
+  parse result of the suffix is incremented.
+\item If a line has been modified and the entire first parse result of
+  the suffix is entirely contained in this line, then remove the first
+  parse result from the suffix and start the entire process again with
+  the same modified line.  To remove the first parse result from the
+  suffix, first adjust the slot \texttt{start-line} of the second
+  element of the suffix (if any) to reflect the absolute start line.
+  Then pop the first element off the suffix.
+\item If a line has been modified, deleted, or inserted, in a way that
+  may affect the first parse result of the suffix, then this parse
+  result is first removed from the suffix and then processed as
+  indicated below.  Finally, start the entire process again with the
+  same modified line.  To remove the first parse result from the
+  suffix, first adjust the slot \texttt{start-line} of the second
+  element of the suffix (if any) to reflect the absolute start line.
+  Then pop the first element off the suffix.
+\end{itemize}
