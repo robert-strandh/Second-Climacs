@@ -226,6 +226,46 @@ prefix, the following actions are executed:
   referring to $P$ can be reused so as to avoid unnecessary consing.
 \end{enumerate}
 
+\begin{verbatim}
+prefix
+...
+suffix
+34 00 (f 10)
+02 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+06 00 (f 20)
+...
+\end{verbatim}
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+suffix
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+06 00 (f 20)
+...
+\end{verbatim}
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+42 00 (f 20)
+suffix
+...
+\end{verbatim}
+
 \subsection{Incremental update}
 
 Modifications to the buffer are reported at the granularity of entire
