@@ -49,3 +49,14 @@
       ;; Reuse the CONS cell rather than allocating a new one.
       (setf (rest first-cons-cell) suffix)
       (setf suffix first-cons-cell))))
+
+(defun finish-analysis (analyzer)
+  (with-accessors ((residue residue)
+		   (worklist worklist))
+      analyzer
+    (loop for parse-results in worklist
+	  do (loop for (first second) on parse-results
+		   unless (null second)
+		     do (incf (start-line second) (start-line first))
+		   do (push first residue)))
+    (setf residue (nreverse residue))))
