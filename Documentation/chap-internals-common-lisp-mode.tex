@@ -226,6 +226,10 @@ prefix, the following actions are executed:
   referring to $P$ can be reused so as to avoid unnecessary consing.
 \end{enumerate}
 
+We illustrate this process by showing four possible top-level
+locations in the example buffer.  If all three top-level parse results
+are located in the suffix, we have the following situation:
+
 \begin{verbatim}
 prefix
 ...
@@ -236,6 +240,12 @@ suffix
 ...
 \end{verbatim}
 
+In the example, we do not show the children of the top-level parse
+results.
+
+If the prefix contains the first top-level expression and the suffix
+the other two, we have the following situation:
+
 \begin{verbatim}
 prefix
 ...
@@ -246,6 +256,9 @@ suffix
 ...
 \end{verbatim}
 
+If the prefix contains the first two top-level expressions and the suffix
+the remaining one, we have the following situation:
+
 \begin{verbatim}
 prefix
 ...
@@ -255,6 +268,10 @@ suffix
 42 00 (f 20)
 ...
 \end{verbatim}
+
+Finally, if the prefix contains all three top-level expressions, we
+have the following situation:
+
 
 \begin{verbatim}
 prefix
