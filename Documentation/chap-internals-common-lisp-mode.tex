@@ -115,10 +115,10 @@ The slot named \texttt{start-line} is computed as follows:
   numbered $0$.
 \item If the parse result is a top-level parse result in the suffix
   other than the first one, then the value of this slot is the number
-  of lines between the value of the slot \texttt{end-line} of the
+  of lines between the value of the slot \texttt{start-line} of the
   preceding parse result and the initial character of this parse
   result.  A value of $0$ indicates the same line as the
-  \texttt{end-line} of the preceding parse result.
+  \texttt{start-line} of the preceding parse result.
 \item If this parse result is the first in a list of children of some
   parent parse result, then the value of this slot is the number of
   lines between the value of the slot \texttt{start-line} of the parent
@@ -126,7 +126,7 @@ The slot named \texttt{start-line} is computed as follows:
 \item If this parse result is the child other than the first in a list
   of children of some parent parse result, then the value of this slot
   is the number of lines between the value of the slot
-  \texttt{end-line} of the preceding sibling parse result and the
+  \texttt{start-line} of the preceding sibling parse result and the
   initial character of this parse result.
 \end{itemize}
 
@@ -207,7 +207,7 @@ suffix, the following actions are executed:
 \item Modify the slot \texttt{start-line} of the first parse result of
   the suffix so that, instead of containing the absolute line number,
   it contains the line number relative the value of the slot
-  \texttt{end-line} of $P$.
+  \texttt{start-line} of $P$.
 \item Pop $P$ from the prefix and push it onto the suffix.  Rather
   than using the straightforward technique, the \texttt{cons} cell
   referring to $P$ can be reused so as to avoid unnecessary consing.
@@ -220,7 +220,7 @@ prefix, the following actions are executed:
 \item If $P$ has a successor $S$ in the suffix, then the slot
   \texttt{start-line} of $S$ is adjusted so that it contains the
   absolute line number as opposed to the line number relative to the
-  slot \texttt{end-line} of $P$.
+  slot \texttt{start-line} of $P$.
 \item Pop $P$ from the suffix and push it onto the prefix.  Rather
   than using the straightforward technique, the \texttt{cons} cell
   referring to $P$ can be reused so as to avoid unnecessary consing.
