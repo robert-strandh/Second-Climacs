@@ -13,3 +13,21 @@
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
    (%worklist :initform '() :accessor worklist)))
+
+(defun suffix-to-prefix (analyzer)
+  (with-accessors ((prefix prefix)
+		   (suffix suffix))
+      analyzer
+    (assert (not (null suffix)))
+    (let* ((first-cons-cell prefix)
+	   (first-parse-result (first first-cons-cell)))
+      (setf suffix (rest suffix))
+      (unless (null suffix)
+	;; Convert start-line of new first element of suffix
+	;; to absolute line number by adding the absolute line
+	;; number of element we are removing.
+	(incf (start-line (first suffix))
+	      (start-line first-parse-result)))
+      ;; Reuse the CONS cell rather than allocating a new one.
+      (setf (rest first-cons-cell) prefix)
+      (setf prefix first-cons-cell))))
