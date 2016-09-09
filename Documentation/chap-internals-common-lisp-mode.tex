@@ -143,6 +143,41 @@ of this slot is $0$.
 The value of the slot \texttt{end-column} is the absolute column
 number of the final character of the parse result.
 
+To illustrate the data structure, we use the following example:
+
+\begin{verbatim}
+...
+34 (f 10)
+35
+36 (let ((x 1)
+37       (y 2))
+38   (g (h x)
+39      (i y)
+40      (j x y)))
+41
+42 (f 20)
+...
+\end{verbatim}
+
+Each line is preceded by the absolute line number.  If the parse
+result starting at line 36 is the prefix or if it is the first element
+of the suffix, it would be represented like this:
+
+\begin{verbatim}
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+   00 01 ((x 1) (y 2))
+      00 00 (x 1)
+      01 00 (y 2)
+   02 02 (g (h x) (i y) (j x y))
+      00 00 (h x)
+      01 00 (i y)
+      02 00 (j x y)
+\end{verbatim}
+
+Since column numbers are uninteresting for our illustration, we
+show only line numbers.  Furthermore, we present a list as a table for
+a more compact presentation.
+
 \subsection{Moving top-level parse results}
 
 Occasionally, some top-level parse results need to be moved from the
