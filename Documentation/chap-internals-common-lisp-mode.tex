@@ -321,6 +321,26 @@ is the same as the order of the parse results in the buffer.  The slot
 \texttt{start-line} of each parse result in the list is the absolute
 line number of the initial character of that parse result.
 
+Suppose, for example, that the buffer contents in our running example
+was modified so that line 37 was altered in some way, and a line was
+inserted between the lines 39 and 40.  As a result of this update, we
+need to represent the following parse results:
+
+\begin{verbatim}
+...
+34 (f 10)
+35
+36       (x 1)
+37
+38      (h x)
+39      (i y)
+40
+41      (j x y)
+42
+43 (f 20)
+...
+\end{verbatim}
+
 \subsubsection{Processing modifications}
 
 While the list of residual parse results is being constructed, its
