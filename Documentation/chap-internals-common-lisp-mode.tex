@@ -341,6 +341,22 @@ need to represent the following parse results:
 ...
 \end{verbatim}
 
+In other words, we need to obtain the following representation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residual
+36 00 (x 1)
+38 00 (h x)
+39 00 (i y)
+41 00 (j x y)
+suffix
+43 00 (f 20)
+...
+\end{verbatim}
+
 \subsubsection{Processing modifications}
 
 While the list of residual parse results is being constructed, its
