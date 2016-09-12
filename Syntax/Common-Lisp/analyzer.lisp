@@ -69,5 +69,5 @@
 		   (worklist worklist))
       analyzer
     (loop until (null worklist)
-	  do (push (pop-from-worklist analyzer) residue))
+	  do (move-to-residue analyzer))
     (setf residue (nreverse residue))))
