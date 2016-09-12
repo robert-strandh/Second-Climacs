@@ -447,3 +447,28 @@ suffix
 42 00 (f 20)
 ...
 \end{verbatim}
+
+The first element of the worklist is affected by the modification of
+line 37.  We therefore remove it from the worklist, and push the list
+of its children as a new level on the worklist.  In doing so, we make
+the \texttt{start-line} of the remaining element of the worklist and
+that of the first child to be pushed reflect absolute line numbers.
+We obtain the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+worklist
+36 00 (x 1)
+01 00 (y 2)
+--
+38 02 (g (h x) (i y) (j x y))
+   00 00 (h x)
+   01 00 (i y)
+   02 00 (j x y)
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
