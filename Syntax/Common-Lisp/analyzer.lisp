@@ -50,6 +50,16 @@
       (setf (rest first-cons-cell) suffix)
       (setf suffix first-cons-cell))))
 
+(defun pop-from-worklist (analyzer)
+  (with-accessors ((worklist worklist)) analyzer
+    (assert (not (null worklist)))
+    (let ((result (pop (first worklist))))
+      (if (null (first worklist))
+	  (pop worklist)
+	  (incf (start-line (first worklist))
+		(start-line result)))
+      result)))
+
 (defun finish-analysis (analyzer)
   (with-accessors ((residue residue)
 		   (worklist worklist))
