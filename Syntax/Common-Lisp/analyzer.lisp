@@ -56,7 +56,7 @@
     (let ((result (pop (first worklist))))
       (if (null (first worklist))
 	  (pop worklist)
-	  (incf (start-line (first worklist))
+	  (incf (start-line (first (first worklist)))
 		(start-line result)))
       result)))
 
