@@ -422,3 +422,28 @@ suffix
 06 00 (f 20)
 ...
 \end{verbatim}
+
+The first parse result of the suffix is affected by the fact that line
+37 has been modified.  We must move the children of that parse result
+to the worklist.  In doing so, we make the \texttt{start-line} of the
+first child reflect the absolute line number, and we also make the
+\texttt{start-line} of the next parse result of the suffix also
+reflect the absolute line number.  We obtain the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+worklist
+36 01 ((x 1) (y 2))
+   00 00 (x 1)
+   01 00 (y 2)
+02 02 (g (h x) (i y) (j x y))
+   00 00 (h x)
+   01 00 (i y)
+   02 00 (j x y)
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
