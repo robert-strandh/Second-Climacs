@@ -403,3 +403,22 @@ modification:
   element of the suffix (if any) to reflect the absolute start line.
   Then pop the first element off the suffix.
 \end{itemize}
+
+Let us see how we process the modifications in our running example.
+
+Line 37 has been altered, so our first task is to adjust the prefix
+and the suffix so that the prefix contains the last parse result that
+is unaffected by the modifications.  This adjustment results in the
+following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+worklist
+suffix
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+06 00 (f 20)
+...
+\end{verbatim}
