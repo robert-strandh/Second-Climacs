@@ -503,3 +503,27 @@ suffix
 42 00 (f 20)
 ...
 \end{verbatim}
+
+The modification of line 37 is now entirely processed.  We know this
+because the first parse result on the worklist occurs beyond the
+modified line in the buffer.  We therefore start processing the line
+inserted between the existing lines 39 and 40.  The first item on the
+worklist is affected by this insertion.  We therefore remove it from
+the worklist and push its children instead.  In doing so, we make the
+\texttt{start-line} slot of the first child reflect the absolute line
+number.  We obtain the following result:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+worklist
+38 00 (h x)
+01 00 (i y)
+02 00 (j x y)
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
