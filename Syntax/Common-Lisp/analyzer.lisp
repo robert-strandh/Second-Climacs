@@ -60,6 +60,10 @@
 		(start-line result)))
       result)))
 
+(defun move-to-residue (analyzer)
+  (push (pop-from-worklist analyzer)
+	(residue analyzer)))
+
 (defun finish-analysis (analyzer)
   (with-accessors ((residue residue)
 		   (worklist worklist))
