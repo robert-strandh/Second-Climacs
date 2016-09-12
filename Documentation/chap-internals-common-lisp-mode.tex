@@ -485,3 +485,21 @@ suffix
 42 00 (f 20)
 ...
 \end{verbatim}
+
+The first parse result of the top of the worklist is affected by the
+modification.  It has no children, so we pop it off the worklist.
+Furthermore, there are no more parse result left on the top of the
+worklist, so we remove the entire top of the worklist.
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+worklist
+38 02 (g (h x) (i y) (j x y))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
