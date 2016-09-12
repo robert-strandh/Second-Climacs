@@ -64,9 +64,6 @@
   (with-accessors ((residue residue)
 		   (worklist worklist))
       analyzer
-    (loop for parse-results in worklist
-	  do (loop for (first second) on parse-results
-		   unless (null second)
-		     do (incf (start-line second) (start-line first))
-		   do (push first residue)))
+    (loop until (null worklist)
+	  do (push (pop-from-worklist analyzer) residue))
     (setf residue (nreverse residue))))
