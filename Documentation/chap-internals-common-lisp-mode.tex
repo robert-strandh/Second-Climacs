@@ -464,3 +464,24 @@ suffix
 42 00 (f 20)
 ...
 \end{verbatim}
+
+The first element of the worklist is unaffected by the modification,
+because it precedes the modified line entirely.  We therefore move it
+to the residue list.  In doing so, we make the \texttt{start-line}
+slot of the next element on the top of the worklist reflect the
+absolute line number.  We now have the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+worklist
+37 00 (y 2)
+--
+38 02 (g (h x) (i y) (j x y))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
