@@ -71,3 +71,12 @@
     (loop until (null worklist)
 	  do (move-to-residue analyzer))
     (setf residue (nreverse residue))))
+
+(defun pop-from-suffix (analyzer)
+  (with-accessors ((suffix suffix)) analyzer
+    (assert (not (null suffix)))
+    (let ((result (pop suffix)))
+      (unless (null suffix)
+	(incf (start-line (first suffix))
+	      (start-line result)))
+      result)))
