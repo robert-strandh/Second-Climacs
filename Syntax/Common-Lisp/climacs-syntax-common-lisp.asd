@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :climacs-syntax-common-lisp
-  :depends-on (:trivial-gray-streams :cluffer)
+  :depends-on (:trivial-gray-streams :cluffer :flexichain)
   :serial t
   :components
   ((:file "packages")
