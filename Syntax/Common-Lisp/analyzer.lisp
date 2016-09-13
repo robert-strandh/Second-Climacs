@@ -72,12 +72,10 @@
 	(residue analyzer)))
 
 (defun finish-analysis (analyzer)
-  (with-accessors ((residue residue)
-		   (worklist worklist))
-      analyzer
-    (loop until (null worklist)
-	  do (move-to-residue analyzer))
-    (setf residue (nreverse residue))))
+  (loop until (null (worklist analyzer))
+	do (move-to-residue analyzer))
+  (setf (residue analyzer)
+	(nreverse (residue analyzer))))
 
 (defun pop-from-suffix (analyzer)
   (with-accessors ((suffix suffix)) analyzer
