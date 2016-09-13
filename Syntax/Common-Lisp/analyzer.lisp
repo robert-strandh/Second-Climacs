@@ -13,6 +13,9 @@
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
    (%worklist :initform '() :accessor worklist)
+   ;; This slot contains a flexichain of the lines in the buffer.
+   (%lines :initform (make-instance 'flexichain:standard-flexichain)
+	   :reader lines)
    ;; This slot contains the counter that is maintained during the
    ;; execution of the update function.
    (%line-count :initform 0 :accessor line-count)
