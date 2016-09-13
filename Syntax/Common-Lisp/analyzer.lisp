@@ -12,7 +12,10 @@
   ((%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
-   (%worklist :initform '() :accessor worklist)))
+   (%worklist :initform '() :accessor worklist)
+   ;; This slot contains the counter that is maintained during the
+   ;; execution of the update function.
+   (%line-count :initform 0 :accessor line-count)))
 
 (defun suffix-to-prefix (analyzer)
   (with-accessors ((prefix prefix)
