@@ -15,7 +15,11 @@
    (%worklist :initform '() :accessor worklist)
    ;; This slot contains the counter that is maintained during the
    ;; execution of the update function.
-   (%line-count :initform 0 :accessor line-count)))
+   (%line-count :initform 0 :accessor line-count)
+   ;; This slot is set to TRUE as soon as the first modification,
+   ;; insertion, or deletion is encountered during the execution of
+   ;; the update function.
+   (%update-p :initform nil :accessor update-p)))
 
 (defun suffix-to-prefix (analyzer)
   (with-accessors ((prefix prefix)
