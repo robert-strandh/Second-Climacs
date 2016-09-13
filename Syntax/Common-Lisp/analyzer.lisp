@@ -75,7 +75,8 @@
   (loop until (null (worklist analyzer))
 	do (move-to-residue analyzer))
   (setf (residue analyzer)
-	(nreverse (residue analyzer))))
+	(nreverse (residue analyzer)))
+  (setf (update-p analyzer) nil))
 
 (defun pop-from-suffix (analyzer)
   (with-accessors ((suffix suffix)) analyzer
