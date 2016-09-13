@@ -108,3 +108,6 @@
 		     (< (start-line (first (suffix analyzer)))
 			(line-count analyzer)))
 	  do (suffix-to-prefix analyzer))))
+
+(defun handle-skip (analyzer count)
+  (incf (line-count analyzer) count))
