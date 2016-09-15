@@ -165,3 +165,8 @@
 (defun handle-modified-line (analyzer line-number)
   (loop until (next-parse-result-is-beyond-line-p analyzer line-number)
 	do (process-next-parse-result analyzer line-number)))
+
+(defun handle-inserted-line (analyzer line-number)
+  (loop until (next-parse-result-is-beyond-line-p analyzer (1- line-number))
+	do (process-next-parse-result analyzer line-number))
+  (adjust-worklist-and-suffix analyzer 1))
