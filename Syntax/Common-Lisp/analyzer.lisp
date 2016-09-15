@@ -16,6 +16,9 @@
    ;; This slot contains a flexichain of the lines in the buffer.
    (%lines :initform (make-instance 'flexichain:standard-flexichain)
 	   :reader lines)
+   ;; The time stamp passed to and returned by the Cluffer update
+   ;; protocol.
+   (%time-stamp :initform nil :accessor time-stamp)
    ;; This slot contains the counter that is maintained during the
    ;; execution of the update function.
    (%line-count :initform 0 :accessor line-count)
