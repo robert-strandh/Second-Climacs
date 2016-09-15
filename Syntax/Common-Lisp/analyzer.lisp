@@ -124,3 +124,11 @@
 	     (or (null suffix)
 		 (> (start-line (first suffix)) line-number)))
 	(> (start-line (first (first worklist))) line-number))))
+
+;;; Return true if and only if LINE-NUMBER is one of the lines of
+;;; PARSE-RESULT.  The START-LINE of PARSE-RESULT is an absolute line
+;;; number.
+(defun line-is-inside-parse-result-p (parse-result line-number)
+  (<= (start-line parse-result)
+      line-number
+      (+ (start-line parse-result) (end-line parse-result))))
