@@ -117,9 +117,6 @@
 			(line-count analyzer)))
 	  do (suffix-to-prefix analyzer))))
 
-(defun handle-skip (analyzer count)
-  (incf (line-count analyzer) count))
-
 ;;; Return true if and only if either there are no more parse results,
 ;;; or the first parse result starts at a line that is strictly
 ;;; greater than LINE-NUMBER.
