@@ -141,3 +141,12 @@
 	do (incf (start-line (first parse-results)) increment))
   (unless (null (suffix analyzer))
     (incf (start-line (first (suffix analyzer))) increment)))
+
+;;; If the worklist is empty then move a parse result from the suffix
+;;; to the worklist (in that case, it is known that the suffix is not
+;;; empty).
+(defun ensure-worklist-not-empty (analyzer)
+  (with-accessors ((worklist worklist)) analyzer
+    (when (null worklist)
+      (push (list (pop-from-suffix analyzer))
+	    worklist))))
