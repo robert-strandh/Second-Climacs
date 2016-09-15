@@ -132,3 +132,12 @@
   (<= (start-line parse-result)
       line-number
       (+ (start-line parse-result) (end-line parse-result))))
+
+;;; Add INCREMENT to the absolute line number of every parse result
+;;; that is first on ever list in the worklist, and of the first parse
+;;; result of the suffix, if any.
+(defun adjust-worklist-and-suffix (analyzer increment)
+  (loop for parse-results in (worklist analyzer)
+	do (incf (start-line (first parse-results)) increment))
+  (unless (null (suffix analyzer))
+    (incf (start-line (first (suffix analyzer))) increment)))
