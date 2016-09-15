@@ -13,6 +13,8 @@
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
    (%worklist :initform '() :accessor worklist)
+   ;; This slot contains the buffer that is being analyzed.
+   (%buffer :initarg :buffer :accessor buffer)
    ;; This slot contains a flexichain of the lines in the buffer.
    (%lines :initform (make-instance 'flexichain:standard-flexichain)
 	   :reader lines)
