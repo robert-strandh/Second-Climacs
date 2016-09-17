@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "analyzer")
+   (:file "stream")
    (:file "more-variables")
    (:file "additional-conditions")
    (:file "utilities")
