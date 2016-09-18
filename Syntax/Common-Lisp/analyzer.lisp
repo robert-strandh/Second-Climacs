@@ -198,7 +198,8 @@
     (flet ((skip (count)
 	     (incf line-count count))
 	   (modify (line)
-	     (loop until (eq line (flexichain:element* lines line-count))
+	     (loop until (eq line
+			     (cluffer-line (flexichain:element* lines line-count)))
 		   do (flexichain:delete* lines line-count)
 		      (handle-deleted-line analyzer line-count))
 	     (handle-modified-line analyzer line-count))
@@ -209,7 +210,8 @@
 	       (flexichain:insert* lines line-count temp))
 	     (handle-inserted-line analyzer line-count))
 	   (sync (line)
-	     (loop until (eq line (flexichain:element* lines line-count))
+	     (loop until (eq line
+			     (cluffer-line (flexichain:element* lines line-count)))
 		   do (flexichain:delete* lines line-count)
 		      (handle-deleted-line analyzer line-count))))
       (cluffer:update (buffer analyzer)
