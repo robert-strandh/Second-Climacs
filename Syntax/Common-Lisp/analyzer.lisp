@@ -8,6 +8,17 @@
    (%children :initarg :children :accessor children)
    (%expression :initarg expression :accessor expression)))
 
+;;; We do not use the line object from Cluffer directly, because the
+;;; contents of such a line may change after we have asked for it, so
+;;; that we get a different contents each time we ask for it.  But we
+;;; still need the line object from Cluffer, because that one is used
+;;; as a comparison in the update protocol.  The solution is to store
+;;; both the Cluffer line object and the contents as it was when we
+;;; asked for it.
+(defclass line ()
+  ((%cluffer-line :initarg :cluffer-line :reader cluffer-line)
+   (%contents :initarg :contents :accessor contents)))
+
 (defclass analyzer ()
   ((%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
