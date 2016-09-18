@@ -26,7 +26,9 @@
    (%worklist :initform '() :accessor worklist)
    ;; This slot contains the buffer that is being analyzed.
    (%buffer :initarg :buffer :accessor buffer)
-   ;; This slot contains a flexichain of the lines in the buffer.
+   ;; This slot contains a flexichain of the lines in the buffer.  A
+   ;; line is represented by an instance of the LINE class defined
+   ;; above.
    (%lines :initform (make-instance 'flexichain:standard-flexichain)
 	   :reader lines)
    ;; The time stamp passed to and returned by the Cluffer update
