@@ -203,7 +203,10 @@
 		      (handle-deleted-line analyzer line-count))
 	     (handle-modified-line analyzer line-count))
 	   (create (line)
-	     (flexichain:insert* lines line-count line)
+	     (let ((temp (make-instance 'line
+			   :cluffer-line line
+			   :contents (cluffer:items line))))
+	       (flexichain:insert* lines line-count temp))
 	     (handle-inserted-line analyzer line-count))
 	   (sync (line)
 	     (loop until (eq line (flexichain:element* lines line-count))
