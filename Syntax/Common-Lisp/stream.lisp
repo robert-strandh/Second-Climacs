@@ -12,3 +12,21 @@
 	 (= (current-column analyzer-stream)
 	    (let ((last-line (flexichain:element* lines (1- count))))
 	      (length (contents last-line)))))))
+
+(defmethod trivial-gray-streams:stream-read-char ((stream analyzer-stream))
+  (if (eof-p stream)
+      nil
+      (with-accessors ((analyzer analyzer)
+		       (current-line current-line)
+		       (current-column current-column))
+	  stream
+	(let* ((lines (lines analyzer))
+	       (line (flexichain:element* lines current-line))
+	       (contents (contents line))
+	       (length (length contents)))
+	  (if (= length current-column)
+	      (prog1 #\Newline
+		(incf current-line)
+		(setf current-column 0))
+	      (prog1 (aref contents current-column)
+		(incf current-column)))))))
