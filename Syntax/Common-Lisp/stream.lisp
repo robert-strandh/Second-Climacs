@@ -30,3 +30,17 @@
 		(setf current-column 0))
 	      (prog1 (aref contents current-column)
 		(incf current-column)))))))
+
+(defmethod trivial-gray-streams:stream-unread-char
+    ((stream analyzer-stream) character)
+  (declare (ignore character))
+  (with-accessors ((analyzer analyzer)
+		   (current-line current-line)
+		   (current-column current-column))
+      stream
+    (if (zerop current-column)
+	(let* ((lines (lines analyzer))
+	       (line (flexichain:element* lines (1- current-line))))
+	  (decf current-line)
+	  (setf current-column (length (contents line))))
+	(decf current-column))))
