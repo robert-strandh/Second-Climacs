@@ -47,9 +47,10 @@
 
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
-;;; that start before the current stream position are no longer valid,
-;;; so we remove them.  Two places are considered for recycling,
-;;; namely the list of residual parse results and the suffix.
+;;; that start before the current stream position are either no longer
+;;; valid, or have been recycled already, so we remove them.  Two
+;;; places are considered for recycling, namely the list of residual
+;;; parse results and the suffix.
 (defun pop-to-stream-position (analyzer-stream)
   (let ((analyzer (analyzer analyzer-stream)))
     (loop until (or (null (residue analyzer))
