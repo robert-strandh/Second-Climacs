@@ -44,3 +44,28 @@
 	  (decf current-line)
 	  (setf current-column (length (contents line))))
 	(decf current-column))))
+
+;;; Make sure that the first parse result that we consider recycling
+;;; starts at or beyond the current stream position.  Parse results
+;;; that start before the current stream position are no longer valid,
+;;; so we remove them.  Two places are considered for recycling,
+;;; namely the list of residual parse results and the suffix.
+(defun pop-to-stream-position (analyzer-stream)
+  (let ((analyzer (analyzer analyzer-stream)))
+    (loop until (or (null (residue analyzer))
+		    (> (start-line (first (residue analyzer)))
+		       (current-line analyzer-stream))
+		    (and (= (start-line (first (residue analyzer)))
+			    (current-line analyzer-stream))
+			 (>= (start-column (first (residue analyzer)))
+			     (current-column analyzer-stream))))
+	  do (pop-from-residue analyzer))
+    (when (null (residue analyzer))
+      (loop until (or (null (suffix analyzer))
+		      (> (start-line (first (suffix analyzer)))
+			 (current-line analyzer-stream))
+		      (and (= (start-line (first (suffix analyzer)))
+			      (current-line analyzer-stream))
+			   (>= (start-column (first (suffix analyzer)))
+			       (current-column analyzer-stream))))
+	    do (pop-from-suffix analyzer)))))
