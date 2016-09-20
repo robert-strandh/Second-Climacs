@@ -60,7 +60,7 @@
 			    (current-line analyzer-stream))
 			 (>= (start-column (first (residue analyzer)))
 			     (current-column analyzer-stream))))
-	  do (pop-from-residue analyzer))
+	  do (pop (residue analyzer)))
     (when (null (residue analyzer))
       (loop until (or (null (suffix analyzer))
 		      (> (start-line (first (suffix analyzer)))
