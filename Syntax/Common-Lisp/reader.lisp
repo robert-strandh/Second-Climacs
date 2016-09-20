@@ -8,6 +8,26 @@
 
 (defvar *parent-entry*)
 
+(defun cached-parse-result (analyzer-stream)
+  (let* ((analyzer (analyzer analyzer-stream))
+	 (residue (residue analyzer))
+	 (suffix (suffix analyzer)))
+    (cond ((not (null residue))
+	   (if (and (= (start-line (first residue))
+		       (current-line analyzer-stream))
+		    (= (start-column (first residue))
+		       (current-column analyzer-stream)))
+	       (first residue)
+	       nil))
+	  ((not (null suffix))
+	   (if (and (= (start-line (first suffix))
+		       (current-line analyzer-stream))
+		    (= (start-column (first suffix))
+		       (current-column analyzer-stream)))
+	       (first suffix)
+	       nil))
+	  (t nil))))
+
 ;;; FIXME: handle characters with invalid consituent traits.
 (defun read-common (&optional
 		      (input-stream *standard-input*)
