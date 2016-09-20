@@ -56,7 +56,7 @@
 	       ((eq (syntax-type char) :whitespace)
 		(go step-1-start))
 	       (t
-		(backward input-stream)
+		(unread-char char input-stream)
 		(let* ((line (line input-stream))
 		       (column (column input-stream))
 		       (entry (aref (cache line) column)))
