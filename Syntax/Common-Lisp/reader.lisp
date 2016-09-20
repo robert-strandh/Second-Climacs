@@ -1,11 +1,5 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defclass no-value-interval (interval)
-  ())
-
-(defclass value-interval (interval)
-  ((%value :initarg :value :reader value)))
-
 (defclass error-token ()
   ((%name :initarg :name :reader name)))
 
