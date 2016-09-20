@@ -28,6 +28,14 @@
 	       nil))
 	  (t nil))))
 
+(defun advance-stream-to-beyond-parse-result (analyzer-stream parse-result)
+  (setf (current-line analyzer-stream)
+	(+ (start-line parse-result)
+	   (end-line parse-result)))
+  (setf (current-column analyzer-stream)
+	(end-column parse-result))
+  (read-char input-stream nil nil))
+
 ;;; FIXME: handle characters with invalid consituent traits.
 (defun read-common (&optional
 		      (input-stream *standard-input*)
@@ -57,12 +65,11 @@
 		(go step-1-start))
 	       (t
 		(unread-char char input-stream)
-		(let* ((line (line input-stream))
-		       (column (column input-stream))
-		       (entry (aref (cache line) column)))
-		  (if (not (null entry))
+		(let ((result (cached-parse-result input-stream)))
+		  (if (not (null result))
 		      (progn
-			(clobber-position input-stream (end entry))
+			(advance-stream-to-beyond-parse-result
+			 input-stream result)
 			(push entry (children *parent-entry*))
 			(if (null (value entry))
 			    (go step-1-start)
