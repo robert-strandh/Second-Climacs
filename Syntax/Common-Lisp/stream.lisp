@@ -13,6 +13,16 @@
 	    (let ((last-line (flexichain:element* lines (1- count))))
 	      (length (contents last-line)))))))
 
+(defun forward (analyzer-stream)
+  (with-accessors ((analyzer analyzer)
+		   (current-line current-line)
+		   (current-column current-column))
+      analyzer-stream
+    (multiple-value-bind (l c)
+	(next-position analyzer current-line current-column)
+      (setf current-line l)
+      (setf current-column c))))
+
 (defmethod trivial-gray-streams:stream-read-char ((stream analyzer-stream))
   (if (eof-p stream)
       nil
