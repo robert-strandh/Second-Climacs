@@ -24,12 +24,13 @@
 	       (line (flexichain:element* lines current-line))
 	       (contents (contents line))
 	       (length (length contents)))
-	  (if (= length current-column)
-	      (prog1 #\Newline
-		(incf current-line)
-		(setf current-column 0))
-	      (prog1 (aref contents current-column)
-		(incf current-column)))))))
+	  (prog1 (if (= length current-column)
+		     #\Newline
+		     (aref contents current-column))
+	    (multiple-value-bind (l c)
+		(next-position analyzer current-line current-column)
+	      (setf current-line l)
+	      (setf current-column c)))))))
 
 (defmethod trivial-gray-streams:stream-unread-char
     ((stream analyzer-stream) character)
