@@ -39,12 +39,10 @@
 		   (current-line current-line)
 		   (current-column current-column))
       stream
-    (if (zerop current-column)
-	(let* ((lines (lines analyzer))
-	       (line (flexichain:element* lines (1- current-line))))
-	  (decf current-line)
-	  (setf current-column (length (contents line))))
-	(decf current-column))))
+    (multiple-value-bind (l c)
+	(previous-position analyzer current-line current-column)
+      (setf current-line l)
+      (setf current-column c))))
 
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
