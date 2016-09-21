@@ -47,10 +47,7 @@
 	  (prog1 (if (= length current-column)
 		     #\Newline
 		     (aref contents current-column))
-	    (multiple-value-bind (l c)
-		(next-position analyzer current-line current-column)
-	      (setf current-line l)
-	      (setf current-column c)))))))
+	    (forward stream))))))
 
 (defmethod trivial-gray-streams:stream-unread-char
     ((stream analyzer-stream) character)
