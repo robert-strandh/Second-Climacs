@@ -42,6 +42,15 @@
    ;; the update function.
    (%update-p :initform nil :accessor update-p)))
 
+(defun next-position (analyzer line-number column-number)
+  (let* ((lines (lines analyzer))
+	 (line (flexichain:element* lines line-number))
+	 (contents (contents line))
+	 (length (length contents)))
+    (if (= length column-number)
+	(values (1+ line-number) 0)
+	(values line-number (1+ column-number)))))
+
 (defun suffix-to-prefix (analyzer)
   (with-accessors ((prefix prefix)
 		   (suffix suffix))
