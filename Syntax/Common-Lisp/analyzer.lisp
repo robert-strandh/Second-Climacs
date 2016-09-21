@@ -51,6 +51,16 @@
 	(values (1+ line-number) 0)
 	(values line-number (1+ column-number)))))
 
+(defun previous-position (analyzer line-number column-number)
+  (assert (not (and (zerop line-number) (zerop column-number))))
+  (if (zerop column-number)
+      (let* ((lines (lines analyzer))
+	     (line (flexichain:element* lines (1- line-number)))
+	     (contents (contents line))
+	     (length (length contents)))
+	(values 0 length))
+      (values line-number (1- column-number))))
+
 (defun suffix-to-prefix (analyzer)
   (with-accessors ((prefix prefix)
 		   (suffix suffix))
