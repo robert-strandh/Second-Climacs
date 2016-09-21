@@ -23,6 +23,16 @@
       (setf current-line l)
       (setf current-column c))))
 
+(defun backward (analyzer-stream)
+  (with-accessors ((analyzer analyzer)
+		   (current-line current-line)
+		   (current-column current-column))
+      analyzer-stream
+    (multiple-value-bind (l c)
+	(previous-position analyzer current-line current-column)
+      (setf current-line l)
+      (setf current-column c))))
+
 (defmethod trivial-gray-streams:stream-read-char ((stream analyzer-stream))
   (if (eof-p stream)
       nil
