@@ -52,14 +52,7 @@
 (defmethod trivial-gray-streams:stream-unread-char
     ((stream analyzer-stream) character)
   (declare (ignore character))
-  (with-accessors ((analyzer analyzer)
-		   (current-line current-line)
-		   (current-column current-column))
-      stream
-    (multiple-value-bind (l c)
-	(previous-position analyzer current-line current-column)
-      (setf current-line l)
-      (setf current-column c))))
+  (backward stream))
 
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
