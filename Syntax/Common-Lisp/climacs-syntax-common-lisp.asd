@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "folio")
    (:file "analyzer")
    (:file "stream")
    (:file "more-variables")
