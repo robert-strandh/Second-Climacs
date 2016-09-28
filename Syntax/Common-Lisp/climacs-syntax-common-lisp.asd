@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "folio")
+   (:file "flexichain-folio")
    (:file "analyzer")
    (:file "stream")
    (:file "more-variables")
