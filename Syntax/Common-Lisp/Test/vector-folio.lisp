@@ -5,11 +5,14 @@
 (defclass vector-folio (climacs-syntax-common-lisp:folio)
   ((%contents :initarg :contents :accessor contents)))
 
-(defmethod line-count ((folio flexichain-folio))
+(defmethod climacs-syntax-common-lisp:line-count
+    ((folio vector-folio))
   (length (contents folio)))
 
-(defmethod line-length ((folio flexichain-folio) line-number)
-  (length (faref (contents folio) line-number)))
+(defmethod climacs-syntax-common-lisp:line-length
+    ((folio vector-folio) line-number)
+  (length (aref (contents folio) line-number)))
 
-(defmethod item ((folio flexichain-folio) line-number item-number)
+(defmethod climacs-syntax-common-lisp:item
+    ((folio vector-folio) line-number item-number)
   (aref (aref (contents folio) line-number) item-number))
