@@ -4,4 +4,7 @@
   (:use #:common-lisp)
   (:export
    #:folio
+   #:line-count
+   #:line-length
+   #:item
    #:synchronize))
