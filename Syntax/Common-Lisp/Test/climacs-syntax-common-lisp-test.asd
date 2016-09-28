@@ -2,4 +2,5 @@
   :depends-on (#:climacs-syntax-common-lisp)
   :serial t
   :components
-  ())
+  ((:file "packages")))
+
