@@ -13,5 +13,3 @@
 
 (defmethod item ((folio flexichain-folio) line-number item-number)
   (aref (flexichain:element* (contents folio) line-number) item-number))
-
-  
