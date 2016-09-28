@@ -3,4 +3,5 @@
 (defpackage #:climacs-syntax-common-lisp
   (:use #:common-lisp)
   (:export
+   #:folio
    #:synchronize))
