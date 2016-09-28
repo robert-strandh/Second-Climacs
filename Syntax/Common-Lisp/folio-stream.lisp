@@ -20,3 +20,12 @@
   (if (zerop item-number)
       (values 0 (line-length folio (1- line-number)))
       (values line-number (1- item-number))))
+
+(defgeneric eof-p (folio-stream))
+
+(defmethod eof-p ((stream folio-stream))
+  (let* ((folio (folio stream))
+	 (last-line-number (1- (line-count (folio stream))))
+	 (last-line-length (line-length folio last-line-number)))
+    (and (= (current-line-number stream) last-line-number)
+	 (= (current-item-number stream) last-line-length))))
