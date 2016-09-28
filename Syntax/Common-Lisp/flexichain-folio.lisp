@@ -1,5 +1,7 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
+;;; The CONTENTS slot contains a flexichain of lines, where each line
+;;; is a vector of items.
 (defclass flexichain-folio (folio)
   ((%contents :initarg :contents :reader contents)))
 
