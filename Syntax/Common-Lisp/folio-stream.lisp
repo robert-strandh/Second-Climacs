@@ -75,12 +75,15 @@
 
 (defvar *stack*)
 
+(defun skip-whitespace (stream)
+  (loop for char = (read-char input-stream nil nil)
+	while (member char '(#\Space #\Tab #\Newline))
+	finally (unread-char char input-stream)))
+
 (defmethod sicl-reader:read-common :around
     ((input-stream folio-stream) eof-error-p eof-value)
   (declare (ignore eof-error-p eof-value))
-  (loop for char = (read-char input-stream nil nil)
-	while (member char '(#\Space #\Tab #\Newline))
-	finally (unread-char char input-stream))
+  (skip-whitespace input-stream)
   (let ((*stack* (cons '() *stack*))
 	(start-line (current-line-number input-stream))
 	(start-column (current-item-number input-stream)))
