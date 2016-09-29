@@ -3,5 +3,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "vector-folio")))
-
+   (:file "vector-folio")
+   (:file "folio")))
