@@ -85,7 +85,7 @@
 	(start-line (current-line-number input-stream))
 	(start-column (current-item-number input-stream)))
     (let ((result (call-next-method)))
-      (push (make-instance 'parse-result
+      (push (make-instance 'expression-parse-result
 	      :expression result
 	      :children (nreverse (first *stack*))
 	      :start-line start-line
@@ -101,8 +101,7 @@
 	(start-column (current-item-number input-stream)))
     (let ((result (multiple-value-list (call-next-method))))
       (when (null result)
-	(push (make-instance 'parse-result
-		:expression (car result)
+	(push (make-instance 'no-expression-parse-result
 		:children (nreverse (first *stack*))
 		:start-line start-line
 		:start-column start-column
