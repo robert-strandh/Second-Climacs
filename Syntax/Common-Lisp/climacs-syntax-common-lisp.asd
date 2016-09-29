@@ -1,7 +1,10 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :climacs-syntax-common-lisp
-  :depends-on (:trivial-gray-streams :cluffer :flexichain)
+  :depends-on (:trivial-gray-streams
+	       :cluffer
+	       :flexichain
+	       :sicl-reader-simple)
   :serial t
   :components
   ((:file "packages")
