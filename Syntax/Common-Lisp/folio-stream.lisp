@@ -70,3 +70,43 @@
 (defmethod trivial-gray-streams:stream-unread-char ((stream folio-stream) char)
   (declare (ignore char))
   (backward stream))
+
+;;; Reader customization.
+
+(defvar *stack*)
+
+(defmethod sicl-reader:read-common :around
+    ((input-stream folio-stream) eof-error-p eof-value)
+  (declare (ignore eof-error-p eof-value))
+  (loop for char = (read-char input-stream nil nil)
+	while (member char '(#\Space #\Tab #\Newline))
+	finally (unread-char char input-stream))
+  (let ((*stack* (cons '() *stack*))
+	(start-line (current-line-number input-stream))
+	(start-column (current-item-number input-stream)))
+    (let ((result (call-next-method)))
+      (push (make-instance 'parse-result
+	      :expression result
+	      :children (nreverse (first *stack*))
+	      :start-line start-line
+	      :start-column start-column
+	      :end-line (current-line-number input-stream)
+	      :end-column (current-item-number input-stream))
+	    (second *stack*))
+      result)))
+
+(defmethod sicl-reader:call-reader-macro :around
+    (function (input-stream folio-stream) char)
+  (let ((start-line (current-line-number input-stream))
+	(start-column (current-item-number input-stream)))
+    (let ((result (multiple-value-list (call-next-method))))
+      (when (null result)
+	(push (make-instance 'parse-result
+		:expression (car result)
+		:children (nreverse (first *stack*))
+		:start-line start-line
+		:start-column start-column
+		:end-line (current-line-number input-stream)
+		:end-column (current-item-number input-stream))
+	      (second *stack*)))
+      (apply #'values result))))
