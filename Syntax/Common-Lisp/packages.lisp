@@ -7,4 +7,5 @@
    #:line-count
    #:line-length
    #:item
+   #:folio-stream
    #:synchronize))
