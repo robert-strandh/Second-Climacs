@@ -29,3 +29,44 @@
 	 (last-line-length (line-length folio last-line-number)))
     (and (= (current-line-number stream) last-line-number)
 	 (= (current-item-number stream) last-line-length))))
+
+(defgeneric forward (folio-stream))
+
+(defmethod forward ((stream folio-stream))
+  (with-accessors ((folio folio)
+		   (current-line-number current-line-number)
+		   (current-item-number current-item-number))
+      stream
+    (multiple-value-bind (l c)
+	(next-position folio current-line-number current-item-number)
+      (setf current-line-number l)
+      (setf current-item-number c))))
+
+(defgeneric backward (folio-stream))
+
+(defmethod backward ((stream folio-stream))
+  (with-accessors ((folio folio)
+		   (current-line-number current-line-number)
+		   (current-item-number current-item-number))
+      stream
+    (multiple-value-bind (l c)
+	(previous-position folio current-line-number current-item-number)
+      (setf current-line-number l)
+      (setf current-item-number c))))
+
+(defmethod trivial-gray-streams:stream-read-char ((stream folio-stream))
+  (if (eof-p stream)
+      :eof
+      (with-accessors ((folio folio)
+		       (current-line-number current-line-number)
+		       (current-item-number current-item-number))
+	  stream
+	(prog1 (if (= (line-length folio current-line-number)
+		      current-item-number)
+		   #\Newline
+		   (item folio current-line-number current-item-number))
+	  (forward stream)))))
+
+(defmethod trivial-gray-streams:stream-unread-char ((stream folio-stream) char)
+  (declare (ignore char))
+  (backward stream))
