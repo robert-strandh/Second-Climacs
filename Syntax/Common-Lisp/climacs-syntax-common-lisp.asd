@@ -13,7 +13,6 @@
    (:file "folio-stream")
    (:file "flexichain-folio")
    (:file "analyzer")
-   (:file "stream")
    (:file "more-variables")
    (:file "additional-conditions")
    (:file "read-forms")
