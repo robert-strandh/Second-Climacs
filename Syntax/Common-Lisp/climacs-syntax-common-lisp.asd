@@ -18,4 +18,5 @@
    (:file "macro-functions")
    (:file "init")
    (:file "quasiquote-macro")
-   (:file "read-forms")))
+   (:file "read-forms")
+   (:file "analyzer-stream")))
