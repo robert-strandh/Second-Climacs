@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "parse-result")
    (:file "folio")
    (:file "folio-stream")
    (:file "flexichain-folio")
