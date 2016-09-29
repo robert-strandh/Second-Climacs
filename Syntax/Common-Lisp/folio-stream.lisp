@@ -76,9 +76,9 @@
 (defvar *stack*)
 
 (defun skip-whitespace (stream)
-  (loop for char = (read-char input-stream nil nil)
+  (loop for char = (read-char stream nil nil)
 	while (member char '(#\Space #\Tab #\Newline))
-	finally (unread-char char input-stream)))
+	finally (unread-char char stream)))
 
 (defmethod sicl-reader:read-common :around
     ((input-stream folio-stream) eof-error-p eof-value)
