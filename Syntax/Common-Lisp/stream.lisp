@@ -5,27 +5,6 @@
    (%current-line :initform 0 :accessor current-line)
    (%current-column :initform 0 :accessor current-column)))
 
-(defmethod trivial-gray-streams:stream-read-char ((stream analyzer-stream))
-  (if (eof-p stream)
-      nil
-      (with-accessors ((analyzer analyzer)
-		       (current-line current-line)
-		       (current-column current-column))
-	  stream
-	(let* ((lines (lines analyzer))
-	       (line (flexichain:element* lines current-line))
-	       (contents (contents line))
-	       (length (length contents)))
-	  (prog1 (if (= length current-column)
-		     #\Newline
-		     (aref contents current-column))
-	    (forward stream))))))
-
-(defmethod trivial-gray-streams:stream-unread-char
-    ((stream analyzer-stream) character)
-  (declare (ignore character))
-  (backward stream))
-
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
 ;;; that start before the current stream position are either no longer
