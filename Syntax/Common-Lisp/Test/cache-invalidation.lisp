@@ -69,3 +69,9 @@
       (list node)
       (loop for child in (children node)
 	    append (handle-modified-line child line-number))))
+
+(defun move-node (node delta)
+  (incf (start-line node))
+  (incf (end-line node))
+  (loop for child in (children node)
+	do (move-node child delta)))
