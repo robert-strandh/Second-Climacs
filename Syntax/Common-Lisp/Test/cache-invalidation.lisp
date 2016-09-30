@@ -60,3 +60,12 @@
 	 (end-line (+ start-line (random 20))))
     (make-instance 'cache
       :nodes (make-random-children (random 10) start-line end-line))))
+
+;;; Return a list of residual nodes that are not affected by the
+;;; modification.
+(defun handle-modified-line (node line-number)
+  (if (or (< line-number (start-line node))
+	  (> line-number (end-line node)))
+      (list node)
+      (loop for child in (children node)
+	    append (handle-modified-line child line-number))))
