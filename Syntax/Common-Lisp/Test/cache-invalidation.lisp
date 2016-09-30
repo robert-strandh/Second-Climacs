@@ -27,6 +27,12 @@
 	((zerop (random 2)) 10)
 	(t 11)))
 
+(defun make-random-node (start-line end-line)
+  (make-instance 'node
+    :start-line start-line
+    :end-line end-line
+    :children (make-random-children (random-child-count) start-line end-line)))
+
 ;;; Given two values A and B such that A <= B, return two random
 ;;; values C and D such that A <= C <= D <= B.
 (defun random-middle (a b)
@@ -36,3 +42,15 @@
 	(values c (if (= c b)
 		      c
 		      (+ c (random (1+ (- b c))))))))
+
+(defun make-random-children (child-count start-line end-line)
+  (cond ((zerop child-count) '())
+	((= child-count 1)
+	 (list (make-random-node start-line end-line)))
+	(t (multiple-value-bind (end1 start2)
+	       (random-middle start-line end-line)
+	     (let ((half (floor child-count 2)))
+	       (append (make-random-children
+			half start-line end1)
+		       (make-random-children
+			(- child-count half) start2 end-line)))))))
