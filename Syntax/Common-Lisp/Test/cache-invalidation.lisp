@@ -54,3 +54,9 @@
 			half start-line end1)
 		       (make-random-children
 			(- child-count half) start2 end-line)))))))
+
+(defun make-random-cache ()
+  (let* ((start-line (random 10))
+	 (end-line (+ start-line (random 20))))
+    (make-instance 'cache
+      :nodes (make-random-children (random 10) start-line end-line))))
