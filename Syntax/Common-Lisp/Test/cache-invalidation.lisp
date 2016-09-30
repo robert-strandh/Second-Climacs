@@ -75,3 +75,15 @@
   (incf (end-line node))
   (loop for child in (children node)
 	do (move-node child delta)))
+
+;;; Return a list of residual nodes that are not affected by the
+;;; insertion.
+(defun handle-inserted-line (node line-number)
+  (cond ((> line-number (end-line node))
+	 (list node))
+	((<= line-number (start-line node))
+	 (move-node node 1)
+	 (list node))
+	(t
+	 (loop for child in (children node)
+	       append (handle-inserted-line child line-number)))))
