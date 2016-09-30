@@ -12,3 +12,17 @@
 
 (defclass cache ()
   ((%nodes :initarg :nodes :accessor nodes)))
+
+(defun random-child-count ()
+  (cond ((zerop (random 2)) 0)
+	((zerop (random 2)) 1)
+	((zerop (random 2)) 2)
+	((zerop (random 2)) 3)
+	((zerop (random 2)) 4)
+	((zerop (random 2)) 5)
+	((zerop (random 2)) 6)
+	((zerop (random 2)) 7)
+	((zerop (random 2)) 8)
+	((zerop (random 2)) 9)
+	((zerop (random 2)) 10)
+	(t 11)))
