@@ -26,3 +26,13 @@
 	((zerop (random 2)) 9)
 	((zerop (random 2)) 10)
 	(t 11)))
+
+;;; Given two values A and B such that A <= B, return two random
+;;; values C and D such that A <= C <= D <= B.
+(defun random-middle (a b)
+  (if (= a b)
+      (values a a))
+      (let ((c (+ a (random (1+ (- b a))))))
+	(values c (if (= c b)
+		      c
+		      (+ c (random (1+ (- b c))))))))
