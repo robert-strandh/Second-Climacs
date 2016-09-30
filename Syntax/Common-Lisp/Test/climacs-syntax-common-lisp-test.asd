@@ -4,4 +4,5 @@
   :components
   ((:file "packages")
    (:file "vector-folio")
-   (:file "folio")))
+   (:file "folio")
+   (:file "cache-invalidation")))
