@@ -9,3 +9,6 @@
   ((%start-line :initarg :start-line :accessor start-line)
    (%end-line :initarg :end-line :accessor end-line)
    (%children :initarg :children :accessor children)))
+
+(defclass cache ()
+  ((%nodes :initarg :nodes :accessor nodes)))
