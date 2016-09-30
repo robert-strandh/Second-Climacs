@@ -100,6 +100,21 @@
 	 (loop for child in (children node)
 	       append (handle-deleted-line child line-number)))))
 
+(defun handle-modify (cache line-number)
+  (setf (children cache)
+	(loop for child in (children cache)
+	      append (handle-modified-line child line-number))))
+
+(defun handle-insert (cache line-number)
+  (setf (children cache)
+	(loop for child in (children cache)
+	      append (handle-inserted-line child line-number))))
+
+(defun handle-delete (cache line-number)
+  (setf (children cache)
+	(loop for child in (children cache)
+	      append (handle-deleted-line child line-number))))
+
 (defun random-update (cache)
   (let ((current-line-number 0))
     (flet ((random-operation ()
@@ -107,19 +122,13 @@
 	       (0 ;; Skip operation.
 		(incf current-line-number (random 3)))
 	       (1 ;; The current line has been modified.
-		(setf (children cache)
-		      (loop for child in (children cache)
-			    append (handle-modified-line child current-line-number)))
+		(handle-modify cache current-line-number)
 		(incf current-line-number))
 	       (2 ;; A line has been inserted before the current line.
-		(setf (children cache)
-		      (loop for child in (children cache)
-			    append (handle-inserted-line child current-line-number)))
+		(handle-insert cache current-line-number)
 		(incf current-line-number))
 	       (3 ;; The current line has been deleted.
-		(setf (children cache)
-		      (loop for child in (children cache)
-			    append (handle-deleted-line child current-line-number)))
+		(handle-delete cache current-line-number)
 		;; Do not increment the current line number
 		))))
       (loop repeat 4
