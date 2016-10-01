@@ -167,3 +167,28 @@
 			    (start-line node)))
 		 (assert (= (climacs-syntax-common-lisp::end-line parse-result)
 			    (- (end-line node) (start-line node)))))))))
+
+(defun analyzer-from-cache (cache prefix-length)
+  (let* ((class-name 'climacs-syntax-common-lisp::parse-result)
+	 (prefix (loop for node in (nodes cache)
+		       for start-line = (start-line node)
+		       for end-line = (end-line node)
+		       repeat prefix-length
+		       collect (make-instance class-name
+				 :start-line start-line
+				 :end-line (- end-line start-line))))
+	 (rest (nthcdr prefix-length (nodes cache)))
+	 (suffix (cons (make-instance class-name
+			 :start-line (start-line (first rest))
+			 :end-line (- (end-line (first rest))
+				      (start-line (first rest))))
+		       (loop for (prev node) on rest
+			     until (null node)
+			     collect (make-instance 'class-name
+				       :start-line (- (start-line node)
+						      (start-line prev))
+				       :end-line (- (end-line node)
+						    (start-line node)))))))
+    (make-instance 'climacs-syntax-common-lisp::analyzer
+      :prefix prefix
+      :suffix suffix)))
