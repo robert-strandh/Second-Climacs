@@ -193,3 +193,10 @@
     (setf (climacs-syntax-common-lisp::prefix analyzer) prefix)
     (setf (climacs-syntax-common-lisp::suffix analyzer) suffix)
     analyzer))
+
+(defun test-translation-and-comparison (n)
+  (loop repeat n
+	for cache = (make-random-cache)
+	for prefix-length = (random (1+ (length (nodes cache))))
+	for analyzer = (analyzer-from-cache cache prefix-length)
+	do (compare-caches analyzer cache)))
