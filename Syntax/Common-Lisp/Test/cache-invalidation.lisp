@@ -184,11 +184,12 @@
 				      (start-line (first rest))))
 		       (loop for (prev node) on rest
 			     until (null node)
-			     collect (make-instance 'class-name
+			     collect (make-instance class-name
 				       :start-line (- (start-line node)
 						      (start-line prev))
 				       :end-line (- (end-line node)
-						    (start-line node)))))))
-    (make-instance 'climacs-syntax-common-lisp::analyzer
-      :prefix prefix
-      :suffix suffix)))
+						    (start-line node))))))
+	 (analyzer (make-instance 'climacs-syntax-common-lisp::analyzer)))
+    (setf (climacs-syntax-common-lisp::prefix analyzer) prefix)
+    (setf (climacs-syntax-common-lisp::suffix analyzer) suffix)
+    analyzer))
