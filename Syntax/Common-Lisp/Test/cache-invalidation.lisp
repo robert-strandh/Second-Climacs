@@ -134,11 +134,11 @@
       (loop repeat 4
 	    do (random-operation)))))
 
-(defun compare-caches (real-cache test-cache)
-  (let ((prefix (climacs-syntax-common-lisp::prefix real-cache))
-	(residue (climacs-syntax-common-lisp::residue real-cache))
-	(suffix (climacs-syntax-common-lisp::suffix real-cache))
-	(nodes (nodes test-cache)))
+(defun compare-caches (analyzer cache)
+  (let ((prefix (climacs-syntax-common-lisp::prefix analyzer))
+	(residue (climacs-syntax-common-lisp::residue analyzer))
+	(suffix (climacs-syntax-common-lisp::suffix analyzer))
+	(nodes (nodes cache)))
     (assert (= (length nodes)
 	       (+ (length prefix)
 		  (length residue)
