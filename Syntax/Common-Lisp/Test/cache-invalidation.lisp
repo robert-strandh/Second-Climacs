@@ -160,7 +160,7 @@
 	      for line-number = (+ (climacs-syntax-common-lisp::start-line
 				    (first suffix))
 				   (climacs-syntax-common-lisp::start-line
-				    (first (rest suffix))))
+				    (second suffix)))
 		then (+ line-number (climacs-syntax-common-lisp::start-line
 				     parse-result))
 	      do (assert (= (climacs-syntax-common-lisp::start-line parse-result)
