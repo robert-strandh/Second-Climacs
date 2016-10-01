@@ -133,3 +133,37 @@
 		))))
       (loop repeat 4
 	    do (random-operation)))))
+
+(defun compare-caches (real-cache test-cache)
+  (let ((prefix (climacs-syntax-common-lisp::prefix real-cache))
+	(residue (climacs-syntax-common-lisp::residue real-cache))
+	(suffix (climacs-syntax-common-lisp::suffix real-cache))
+	(nodes (nodes test-cache)))
+    (assert (= (length nodes)
+	       (+ (length prefix)
+		  (length residue)
+		  (length suffix))))
+    (loop for parse-result in (append prefix residue)
+	  for node in nodes
+	  do (assert (= (climacs-syntax-common-lisp::start-line parse-result)
+			(start-line node)))
+	     (assert (= (climacs-syntax-common-lisp::end-line parse-result)
+			(- (end-line node) (start-line node)))))
+    (let ((rest (nthcdr (+ (length prefix) (length residue)) nodes)))
+      (unless (null suffix)
+	(assert (= (climacs-syntax-common-lisp::start-line (first suffix))
+		   (start-line (first rest))))
+	(assert (= (climacs-syntax-common-lisp::end-line (first suffix))
+		   (- (end-line (first rest)) (start-line (first rest)))))
+	(loop for parse-result in (rest suffix)
+	      for node in (rest rest)
+	      for line-number = (+ (climacs-syntax-common-lisp::start-line
+				    (first suffix))
+				   (climacs-syntax-common-lisp::start-line
+				    (first (rest suffix))))
+		then (+ line-number (climacs-syntax-common-lisp::start-line
+				     parse-result))
+	      do (assert (= (climacs-syntax-common-lisp::start-line parse-result)
+			    (start-line node)))
+		 (assert (= (climacs-syntax-common-lisp::end-line parse-result)
+			    (- (end-line node) (start-line node)))))))))
