@@ -168,6 +168,15 @@
 		 (assert (= (climacs-syntax-common-lisp::end-line parse-result)
 			    (- (end-line node) (start-line node)))))))))
 
+;;; Given a node, create a parse-result with an absolute location.
+;;; The children of the parse results have relative locations as
+;;; usual.
+(defun make-absolute (node)
+  (make-instance 'climacs-syntax-common-lisp::parse-result
+    :start-line (start-line node)
+    :end-line (- (end-line node) (start-line node))
+    :children (make-relative-list (children node) (start-line node))))
+
 (defun analyzer-from-cache (cache prefix-length)
   (let* ((class-name 'climacs-syntax-common-lisp::parse-result)
 	 (prefix (loop for node in (nodes cache)
