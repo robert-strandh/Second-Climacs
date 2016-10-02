@@ -155,6 +155,13 @@
 			    (children node)
 			    (start-line node))))
 
+(defun equal-relative-list (parse-results nodes base)
+  (or (and (null parse-results) (null nodes))
+      (equal-relative (first parse-results) (first nodes) base)
+      (equal-relative-list (rest parse-results)
+			   (rest nodes)
+			   (+ base (start-line (first nodes))))))
+
 (defun compare-caches (analyzer cache)
   (let ((prefix (climacs-syntax-common-lisp::prefix analyzer))
 	(residue (climacs-syntax-common-lisp::residue analyzer))
