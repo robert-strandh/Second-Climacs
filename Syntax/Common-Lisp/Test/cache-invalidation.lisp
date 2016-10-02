@@ -145,6 +145,16 @@
 			    (children node)
 			    (start-line node))))
 
+;;; Compare a parse result with a relative location to a node.
+(defun equal-relative (parse-result node base)
+  (and (= (climacs-syntax-common-lisp::start-line parse-result)
+	  (- (start-line node) base))
+       (= (climacs-syntax-common-lisp::end-line parse-result)
+	  (- (end-line node) (start-line node)))
+       (equal-relative-list (climacs-syntax-common-lisp::children parse-result)
+			    (children node)
+			    (start-line node))))
+
 (defun compare-caches (analyzer cache)
   (let ((prefix (climacs-syntax-common-lisp::prefix analyzer))
 	(residue (climacs-syntax-common-lisp::residue analyzer))
