@@ -134,6 +134,8 @@
       (loop repeat 4
 	    do (random-operation)))))
 
+;;; Compare a parse result with an absolute location to a node.  The
+;;; children of the parse result have relative locations as usual.
 (defun equal-absolute (parse-result node)
   (and (= (climacs-syntax-common-lisp::start-line parse-result)
 	  (start-line node))
