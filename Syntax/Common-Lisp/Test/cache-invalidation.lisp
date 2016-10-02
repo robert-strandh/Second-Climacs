@@ -212,13 +212,14 @@
 			       repeat prefix-length
 			       collect (make-absolute node)))
 	 (rest (nthcdr prefix-length (nodes cache)))
-	 (suffix-start (start-line (first rest)))
-	 (suffix (cons (make-absolute (first rest))
-		       (make-relative-list (rest rest) suffix-start)))
 	 (analyzer (make-instance 'climacs-syntax-common-lisp::analyzer)))
     (setf (climacs-syntax-common-lisp::prefix analyzer)
 	  (reverse reverse-prefix))
-    (setf (climacs-syntax-common-lisp::suffix analyzer) suffix)
+    (unless (null rest)
+      (let* ((suffix-start (start-line (first rest)))
+	     (suffix (cons (make-absolute (first rest))
+			   (make-relative-list (rest rest) suffix-start))))
+	(setf (climacs-syntax-common-lisp::suffix analyzer) suffix)))
     analyzer))
 
 (defun test-translation-and-comparison (n)
