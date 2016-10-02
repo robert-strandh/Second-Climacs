@@ -195,28 +195,16 @@
 	    (make-relative-list (rest nodes) (start-line (first nodes))))))
 
 (defun analyzer-from-cache (cache prefix-length)
-  (let* ((class-name 'climacs-syntax-common-lisp::parse-result)
-	 (prefix (loop for node in (nodes cache)
-		       for start-line = (start-line node)
-		       for end-line = (end-line node)
-		       repeat prefix-length
-		       collect (make-instance class-name
-				 :start-line start-line
-				 :end-line (- end-line start-line))))
+  (let* ((reverse-prefix (loop for node in (nodes cache)
+			       repeat prefix-length
+			       collect (make-absolute node)))
 	 (rest (nthcdr prefix-length (nodes cache)))
-	 (suffix (cons (make-instance class-name
-			 :start-line (start-line (first rest))
-			 :end-line (- (end-line (first rest))
-				      (start-line (first rest))))
-		       (loop for (prev node) on rest
-			     until (null node)
-			     collect (make-instance class-name
-				       :start-line (- (start-line node)
-						      (start-line prev))
-				       :end-line (- (end-line node)
-						    (start-line node))))))
+	 (suffix-start (start-line (first rest)))
+	 (suffix (cons (make-absolute (first rest))
+		       (make-relative-list (rest rest) suffix-start)))
 	 (analyzer (make-instance 'climacs-syntax-common-lisp::analyzer)))
-    (setf (climacs-syntax-common-lisp::prefix analyzer) prefix)
+    (setf (climacs-syntax-common-lisp::prefix analyzer)
+	  (reverse reverse-prefix))
     (setf (climacs-syntax-common-lisp::suffix analyzer) suffix)
     analyzer))
 
