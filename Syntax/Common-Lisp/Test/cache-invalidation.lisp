@@ -177,6 +177,13 @@
     :end-line (- (end-line node) (start-line node))
     :children (make-relative-list (children node) (start-line node))))
 
+;;; Given a node, create a parse-result with a relative location.
+(defun make-relative (node base)
+  (make-instance 'climacs-syntax-common-lisp::parse-result
+    :start-line (- (start-line node) base)
+    :end-line (- (end-line node) (start-line node))
+    :children (make-relative-list (children node) (start-line node))))
+
 (defun analyzer-from-cache (cache prefix-length)
   (let* ((class-name 'climacs-syntax-common-lisp::parse-result)
 	 (prefix (loop for node in (nodes cache)
