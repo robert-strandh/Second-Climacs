@@ -130,7 +130,7 @@
     (or (and (null worklist)
 	     (or (null suffix)
 		 (> (start-line (first suffix)) line-number)))
-	(> (start-line (first (first worklist))) line-number))))
+	(> (start-line (first worklist)) line-number))))
 
 ;;; Return true if and only if LINE-NUMBER is one of the lines of
 ;;; PARSE-RESULT.  The START-LINE of PARSE-RESULT is an absolute line
@@ -140,12 +140,11 @@
       line-number
       (+ (start-line parse-result) (end-line parse-result))))
 
-;;; Add INCREMENT to the absolute line number of every parse result
-;;; that is first on ever list in the worklist, and of the first parse
-;;; result of the suffix, if any.
+;;; Add INCREMENT to the absolute line number of every parse result on
+;;; the worklist, and of the first parse result of the suffix, if any.
 (defun adjust-worklist-and-suffix (analyzer increment)
-  (loop for parse-results in (worklist analyzer)
-	do (incf (start-line (first parse-results)) increment))
+  (loop for parse-result in (worklist analyzer)
+	do (incf (start-line parse-result) increment))
   (unless (null (suffix analyzer))
     (incf (start-line (first (suffix analyzer))) increment)))
 
@@ -155,7 +154,7 @@
 (defun ensure-worklist-not-empty (analyzer)
   (with-accessors ((worklist worklist)) analyzer
     (when (null worklist)
-      (push (list (pop-from-suffix analyzer))
+      (push (pop-from-suffix analyzer)
 	    worklist))))
 
 (defun process-next-parse-result (analyzer line-number)
@@ -163,10 +162,8 @@
   (let ((parse-result (pop (worklist analyzer))))
     (if (line-is-inside-parse-result-p parse-result line-number)
 	(let ((children (children parse-result)))
-	  (unless (null children)
-	    (incf (start-line (first children))
-		  (start-line parse-result))
-	    (push children (worklist analyzer))))
+	  (make-absolute children (start-line parse-result))
+	  (setf worklist (append children worklist)))
 	(push parse-result (residue analyzer)))))
 
 (defun handle-modified-line (analyzer line-number)
