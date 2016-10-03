@@ -404,6 +404,16 @@ modification:
   Then pop the first element off the suffix.
 \end{itemize}
 
+Modifications potentially apply to elements of the suffix.  When such
+an element needs to be taken apart, we try to salvage as many as
+possible of its descendants.  We do this by moving the element to a
+\emph{worklist} organized as a stack represented as an ordinary
+\commonlisp{} list.  The top of the stack is taken apart by popping it
+from the stack and pushing its children.  This process goes on until
+either the top element has no children, or it is no longer affected by
+a modification to the buffer, in which case it is moved to the list of
+residual parse results.
+
 Let us see how we process the modifications in our running example.
 
 Line 37 has been altered, so our first task is to adjust the prefix
