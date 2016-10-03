@@ -426,7 +426,7 @@ suffix
 The first parse result of the suffix is affected by the fact that line
 37 has been modified.  We must move the children of that parse result
 to the worklist.  In doing so, we make the \texttt{start-line} of the
-first child reflect the absolute line number, and we also make the
+children reflect the absolute line number, and we also make the
 \texttt{start-line} of the next parse result of the suffix also
 reflect the absolute line number.  We obtain the following situation:
 
@@ -437,17 +437,16 @@ prefix
 residue
 worklist
 36 01 ((x 1) (y 2))
-02 02 (g (h x) (i y) (j x y))
+38 02 (g (h x) (i y) (j x y))
 suffix
 42 00 (f 20)
 ...
 \end{verbatim}
 
 The first element of the worklist is affected by the modification of
-line 37.  We therefore remove it from the worklist, and push the list
-of its children as a new level on the worklist.  In doing so, we make
-the \texttt{start-line} of the remaining element of the worklist and
-that of the first child to be pushed reflect absolute line numbers.
+line 37.  We therefore remove it from the worklist, and add its
+children to the top of the worklist.  In doing so, we make the
+\texttt{start-line} of those children reflect absolute line numbers.
 We obtain the following situation:
 
 \begin{verbatim}
@@ -457,8 +456,7 @@ prefix
 residue
 worklist
 36 00 (x 1)
-01 00 (y 2)
---
+37 00 (y 2)
 38 02 (g (h x) (i y) (j x y))
 suffix
 42 00 (f 20)
@@ -467,9 +465,7 @@ suffix
 
 The first element of the worklist is unaffected by the modification,
 because it precedes the modified line entirely.  We therefore move it
-to the residue list.  In doing so, we make the \texttt{start-line}
-slot of the next element on the top of the worklist reflect the
-absolute line number.  We now have the following situation:
+to the residue list.  We now have the following situation:
 
 \begin{verbatim}
 prefix
@@ -479,7 +475,6 @@ residue
 36 00 (x 1)
 worklist
 37 00 (y 2)
---
 38 02 (g (h x) (i y) (j x y))
 suffix
 42 00 (f 20)
@@ -488,8 +483,6 @@ suffix
 
 The first parse result of the top of the worklist is affected by the
 modification.  It has no children, so we pop it off the worklist.
-Furthermore, there are no more parse result left on the top of the
-worklist, so we remove the entire top of the worklist.
 
 \begin{verbatim}
 prefix
@@ -510,7 +503,7 @@ modified line in the buffer.  We therefore start processing the line
 inserted between the existing lines 39 and 40.  The first item on the
 worklist is affected by this insertion.  We therefore remove it from
 the worklist and push its children instead.  In doing so, we make the
-\texttt{start-line} slot of the first child reflect the absolute line
+\texttt{start-line} slot those children reflect the absolute line
 number.  We obtain the following result:
 
 \begin{verbatim}
@@ -521,8 +514,8 @@ residue
 36 00 (x 1)
 worklist
 38 00 (h x)
-01 00 (i y)
-02 00 (j x y)
+39 00 (i y)
+40 00 (j x y)
 suffix
 42 00 (f 20)
 ...
@@ -530,9 +523,7 @@ suffix
 
 The first element of the worklist is unaffected by the insertion
 because it precedes the inserted line entirely.  We therefore move it
-to the residue list.  In doing so, we make the \texttt{start-line}
-slot of the next element on the top of the worklist reflect the
-absolute line number.  We now have the following situation:
+to the residue list.  We now have the following situation:
 
 \begin{verbatim}
 prefix
@@ -543,7 +534,7 @@ residue
 38 00 (h x)
 worklist
 39 00 (i y)
-02 00 (j x y)
+40 00 (j x y)
 suffix
 42 00 (f 20)
 ...
@@ -551,9 +542,7 @@ suffix
 
 Once again, the first element of the worklist is unaffected by the
 insertion because it precedes the inserted line entirely.  We
-therefore move it to the residue list.  In doing so, we make the
-\texttt{start-line} slot of the next element on the top of the
-worklist reflect the absolute line number.  We now have the following
+therefore move it to the residue list.  We now have the following
 situation:
 
 \begin{verbatim}
@@ -572,11 +561,10 @@ suffix
 \end{verbatim}
 
 The first element of the worklist is affected by the insertion, in
-that it must have its line number incremented.  In fact, the first
-element of each level of the worklist and also the first element of
-the suffix must have their line numbers incremented.  Furthermore,
-this update finishes the processing of the inserted line.  We
-now have the following situation:
+that it must have its line number incremented.  In fact, every element
+of the worklist and also the first element of the suffix must have
+their line numbers incremented.  Furthermore, this update finishes the
+processing of the inserted line.  We now have the following situation:
 
 \begin{verbatim}
 prefix
@@ -595,9 +583,7 @@ suffix
 
 With no more buffer modifications to process, we terminate the
 procedure by moving remaining parse results from the worklist to the
-residue list.  Every time a parse result is moved, we make the
-\texttt{start-line} slot of the next element reflect the absolute line
-number as before.  The final situation is shown here:
+residue list.  The final situation is shown here:
 
 \begin{verbatim}
 prefix
