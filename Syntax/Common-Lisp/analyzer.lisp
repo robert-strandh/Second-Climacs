@@ -70,16 +70,6 @@
       (setf (rest first-cons-cell) suffix)
       (setf suffix first-cons-cell))))
 
-(defun pop-from-worklist (analyzer)
-  (with-accessors ((worklist worklist)) analyzer
-    (assert (not (null worklist)))
-    (let ((result (pop (first worklist))))
-      (if (null (first worklist))
-	  (pop worklist)
-	  (incf (start-line (first (first worklist)))
-		(start-line result)))
-      result)))
-
 ;;; Take a list of parse results with a relative position, and turn
 ;;; each parse result in the list into one with an absolution position
 ;;; according to the value of BASE.
@@ -91,7 +81,7 @@
 	   (setf (start-line (first rest)) offset)))
 
 (defun move-to-residue (analyzer)
-  (push (pop-from-worklist analyzer)
+  (push (pop (worklist analyzer))
 	(residue analyzer)))
 
 (defun finish-analysis (analyzer)
@@ -170,7 +160,7 @@
 
 (defun process-next-parse-result (analyzer line-number)
   (ensure-worklist-not-empty analyzer)
-  (let ((parse-result (pop-from-worklist analyzer)))
+  (let ((parse-result (pop (worklist analyzer))))
     (if (line-is-inside-parse-result-p parse-result line-number)
 	(let ((children (children parse-result)))
 	  (unless (null children)
