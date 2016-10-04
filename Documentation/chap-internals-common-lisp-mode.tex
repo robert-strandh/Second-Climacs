@@ -609,3 +609,16 @@ suffix
 43 00 (f 20)
 ...
 \end{verbatim}
+
+\subsubsection{Recreating the cache}
+
+Once the cache has been processed so that only parse results that are
+known to be valid remain, the new buffer contents must be fully parsed
+so that its complete structure is reflected in the cache.
+
+Conceptually, we obtain a complete cache by applying \texttt{read}
+repeatedly from the beginning of the buffer, until all top-level parse
+results have been found.  But doing it this way essentially for every
+keystroke would be too slow.  In this section we explain how the
+partially invalidated cache is used to make this process sufficiently
+fast.
