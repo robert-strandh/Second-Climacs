@@ -27,5 +27,5 @@
 					   (current-line analyzer-stream))
 					(> (start-column (first (suffix analyzer)))
 					   (current-column analyzer-stream))))
-			 do (pop-from-suffix analyzer)))))))
-		   
+			 do (pop-from-suffix analyzer)))
+		 (push next (prefix analyzer))))))
