@@ -15,5 +15,6 @@
    (:file "analyzer")
    (:file "more-variables")
    (:file "additional-conditions")
-   (:file "read-forms")
-   (:file "analyzer-stream")))
+   (:file "analyzer-stream")
+   (:file "parse")
+   (:file "read-forms")))
