@@ -2,11 +2,7 @@
 
 (defun read-forms (analyzer-stream)
   (loop with analyzer = (analyzer analyzer-stream)
-	do ;; Skip whitespace.
-	   (loop for char = (read-char analyzer-stream nil nil)
-		 while (eq (syntax-type char) :whitespace)
-		 finally (unread-char char analyzer-stream))
-	   (if (or (null (suffix analyzer))
+	do (if (or (null (suffix analyzer))
 		   (and (= (current-line analyzer-stream)
 			   (start-line (first (suffix analyzer))))
 			(= (current-column analyzer-stream)
