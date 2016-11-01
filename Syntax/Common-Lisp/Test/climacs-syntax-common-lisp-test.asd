@@ -5,4 +5,5 @@
   ((:file "packages")
    (:file "vector-folio")
    (:file "folio")
-   (:file "cache-invalidation")))
+   (:file "cache-invalidation")
+   (:file "random-form")))
