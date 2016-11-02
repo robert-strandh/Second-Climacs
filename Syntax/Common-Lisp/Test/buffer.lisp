@@ -26,3 +26,15 @@
       (funcall sync (nth (1+ modified-line-number) (lines buffer))))
     (unless (= modified-line-number (- line-count 2))
       (funcall skip (- line-count modified-line-number 2)))))
+
+(defun analyzer-from-buffer (buffer)
+  (let* ((analyzer (make-instance 'climacs-syntax-common-lisp::analyzer
+		     :buffer buffer))
+	 (chain (climacs-syntax-common-lisp::lines analyzer)))
+    (loop for position from 0
+	  for test-line in (lines buffer)
+	  for analyzer-line = (make-instance 'climacs-syntax-common-lisp::line
+				:contents (items test-line)
+				:cluffer-line test-line)
+	  do (flexichain:insert* chain position analyzer-line))
+    analyzer))
