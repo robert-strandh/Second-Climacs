@@ -27,3 +27,7 @@
 	(cons (random-symbol)
 	      (loop repeat (1- length)
 		    collect (random-form (1+ level)))))))
+
+(defun random-forms ()
+  (loop repeat (1+ (random 20))
+	collect (random-form 0)))
