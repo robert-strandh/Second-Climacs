@@ -8,3 +8,10 @@
 
 (defmethod cluffer:items ((line line) &key &allow-other-keys)
   (items line))
+
+(defun buffer-from-string (string)
+  (make-instance 'buffer
+    :lines (loop with lines = (split-sequence:split-sequence #\Newline string)
+		 for items in lines
+		 collect (make-instance 'line
+			   :items items))))
