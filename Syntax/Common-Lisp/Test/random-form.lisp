@@ -37,3 +37,10 @@
     (loop for form in forms
 	  do (pprint form var)
 	     (write-char #\Newline var))))
+
+(defun forms-from-buffer-contents (string)
+  (with-input-from-string (var string)
+    (loop with eof-value = (gensym)
+	  for form = (read var nil eof-value)
+	  until (eq form eof-value)
+	  collect form)))
