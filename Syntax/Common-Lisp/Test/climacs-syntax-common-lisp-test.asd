@@ -7,4 +7,5 @@
    (:file "vector-folio")
    (:file "folio")
    (:file "cache-invalidation")
-   (:file "random-form")))
+   (:file "random-form")
+   (:file "buffer")))
