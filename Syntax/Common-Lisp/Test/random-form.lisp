@@ -31,3 +31,9 @@
 (defun random-forms ()
   (loop repeat (1+ (random 20))
 	collect (random-form 0)))
+
+(defun random-buffer-contents (forms)
+  (with-output-to-string (var)
+    (loop for form in forms
+	  do (pprint form var)
+	     (write-char #\Newline var))))
