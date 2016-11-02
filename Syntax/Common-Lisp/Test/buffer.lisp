@@ -10,11 +10,20 @@
   (items line))
 
 (defun buffer-from-string (string)
-  (make-instance 'buffer
-    :lines (loop with lines = (split-sequence:split-sequence #\Newline string)
-		 for items in lines
-		 collect (make-instance 'line
-			   :items items))))
+  (let* ((line (make-instance 'cluffer-standard-line:open-line))
+	 (buffer (make-instance 'cluffer-standard-buffer:buffer
+		   :initial-line line)))
+    (loop with line-number = 0
+	  with item-number = 0
+	  for char across string
+	  for line = (cluffer:find-line buffer line-number)
+	  do (if (eql char #\Newline)
+		 (progn (cluffer:split-line-at-position line item-number)
+			(setf item-number 0)
+			(incf line-number))
+		 (progn (cluffer:insert-item-at-position line char item-number)
+			(incf item-number))))
+    buffer))
 
 (defmethod cluffer:update ((buffer buffer) time sync skip modify create)
   (let* ((line-count (length (lines buffer)))
