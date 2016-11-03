@@ -1,7 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defclass analyzer-stream (folio-stream)
-  ((%analyzer :initarg :analyzer :reader analyzer)))
+(defclass analyzer-stream (folio-stream) ())
 
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
