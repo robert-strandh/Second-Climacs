@@ -55,7 +55,7 @@
 	   (end-line parse-result)))
   (setf (current-item-number analyzer-stream)
 	(end-column parse-result))
-  (read-char input-stream nil nil))
+  (read-char analyzer-stream nil nil))
 
 (defmethod sicl-reader:read-common
     ((input-stream analyzer-stream) eof-error-p eof-value)
