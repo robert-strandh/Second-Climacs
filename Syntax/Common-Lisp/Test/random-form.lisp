@@ -4,7 +4,7 @@
   (random 1000000))
 
 (defun random-character ()
-  (code-char (+ 32 (random 96))))
+  (code-char (+ 32 (random 95))))
 
 (defun random-symbol ()
   (loop for sym being each external-symbol in '#:common-lisp
