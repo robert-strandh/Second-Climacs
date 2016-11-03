@@ -5,3 +5,7 @@
     (sicl-reader:read analyzer-stream)
     (first (first *stack*))))
 
+(defun parse-and-cache (analyzer-stream)
+  (push (parse analyzer-stream)
+	(prefix (folio analyzer-stream))))
+
