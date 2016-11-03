@@ -61,9 +61,7 @@
   (skip-whitespace input-stream)
   (let ((parse-result (cached-parse-result input-stream)))
     (if (null parse-result)
-	(prog1 (call-next-method)
-	  (advance-stream-to-beyond-parse-result
-	   input-stream (first (first *stack*))))
+	(call-next-method)
 	(progn (push parse-result (first *stack*))
 	       (advance-stream-to-beyond-parse-result input-stream parse-result)
 	       (if (typep parse-result 'expression-parse-result)
