@@ -56,7 +56,7 @@
 	(end-column parse-result))
   (read-char analyzer-stream nil nil))
 
-(defmethod sicl-reader:read-common
+(defmethod sicl-reader:read-common :around
     ((input-stream analyzer-stream) eof-error-p eof-value)
   (skip-whitespace input-stream)
   (let ((parse-result (cached-parse-result input-stream)))
