@@ -1,7 +1,7 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
 (defun read-forms (analyzer-stream)
-  (loop with analyzer = (analyzer analyzer-stream)
+  (loop with analyzer = (folio analyzer-stream)
 	do (if (or (null (suffix analyzer))
 		   (and (= (current-line-number analyzer-stream)
 			   (start-line (first (suffix analyzer))))
