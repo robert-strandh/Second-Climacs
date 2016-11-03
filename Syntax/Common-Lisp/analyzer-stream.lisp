@@ -50,8 +50,7 @@
 
 (defun advance-stream-to-beyond-parse-result (analyzer-stream parse-result)
   (setf (current-line-number analyzer-stream)
-	(+ (start-line parse-result)
-	   (end-line parse-result)))
+	(end-line parse-result))
   (setf (current-item-number analyzer-stream)
 	(end-column parse-result))
   (read-char analyzer-stream nil nil))
