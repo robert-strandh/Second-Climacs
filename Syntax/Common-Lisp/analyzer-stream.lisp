@@ -9,7 +9,7 @@
 ;;; places are considered for recycling, namely the list of residual
 ;;; parse results and the suffix.
 (defun pop-to-stream-position (analyzer-stream)
-  (let ((analyzer (analyzer analyzer-stream)))
+  (let ((analyzer (folio analyzer-stream)))
     (loop until (or (null (residue analyzer))
 		    (> (start-line (first (residue analyzer)))
 		       (current-line-number analyzer-stream))
@@ -29,7 +29,7 @@
 	    do (pop-from-suffix analyzer)))))
 
 (defun cached-parse-result (analyzer-stream)
-  (let* ((analyzer (analyzer analyzer-stream))
+  (let* ((analyzer (folio analyzer-stream))
 	 (residue (residue analyzer))
 	 (suffix (suffix analyzer)))
     (cond ((not (null residue))
