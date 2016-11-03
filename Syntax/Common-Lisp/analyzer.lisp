@@ -158,13 +158,14 @@
 	    worklist))))
 
 (defun process-next-parse-result (analyzer line-number)
-  (ensure-worklist-not-empty analyzer)
-  (let ((parse-result (pop (worklist analyzer))))
-    (if (line-is-inside-parse-result-p parse-result line-number)
-	(let ((children (children parse-result)))
-	  (make-absolute children (start-line parse-result))
-	  (setf worklist (append children worklist)))
-	(push parse-result (residue analyzer)))))
+  (with-accessors ((worklist worklist)) analyzer
+    (ensure-worklist-not-empty analyzer)
+    (let ((parse-result (pop worklist)))
+      (if (line-is-inside-parse-result-p parse-result line-number)
+	  (let ((children (children parse-result)))
+	    (make-absolute children (start-line parse-result))
+	    (setf worklist (append children worklist)))
+	  (push parse-result (residue analyzer))))))
 
 (defun handle-modified-line (analyzer line-number)
   (loop until (next-parse-result-is-beyond-line-p analyzer line-number)
