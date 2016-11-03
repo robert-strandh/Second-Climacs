@@ -19,3 +19,7 @@
 (defun analyzer-from-buffer (buffer)
   (make-instance 'climacs-syntax-common-lisp::analyzer
     :buffer buffer))
+
+(defun analyzer-stream-from-analyzer (analyzer)
+  (make-instance 'climacs-syntax-common-lisp::analyzer-stream
+    :folio analyzer))
