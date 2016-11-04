@@ -9,6 +9,14 @@
       (and (= line-number-a line-number-b)
 	   (< item-number-a item-number-b))))
 
+;;; Return true if and only if the start position of PARSE-RESULT is
+;;; strictly less than the position indicated by LINE-NUMBER and
+;;; ITEM-NUMBER.
+(defun parse-result-starts-before-position-p
+    (parse-result line-number item-number)
+  (position-less (start-line parse-result) (start-column parse-result)
+		 line-number item-number))
+
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
 ;;; that start before the current stream position are either no longer
