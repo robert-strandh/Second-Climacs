@@ -2,6 +2,13 @@
 
 (defclass analyzer-stream (folio-stream) ())
 
+;;; Return true if and only if position A occurs strictly before
+;;; position B in some buffer.
+(defun position-less (line-number-a item-number-a line-number-b item-number-b)
+  (or (< line-number-a line-number-b)
+      (and (= line-number-a line-number-b)
+	   (< item-number-a item-number-b))))
+
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
 ;;; that start before the current stream position are either no longer
