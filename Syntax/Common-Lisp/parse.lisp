@@ -2,7 +2,8 @@
 
 (defun parse (analyzer-stream)
   (let ((*stack* (list '())))
-    (sicl-reader:read analyzer-stream)
+    (handler-case (sicl-reader:read analyzer-stream)
+      (end-of-file () nil))
     (first (first *stack*))))
 
 (defun parse-and-cache (analyzer-stream)
