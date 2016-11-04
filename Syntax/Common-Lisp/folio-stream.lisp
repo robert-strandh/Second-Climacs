@@ -99,7 +99,7 @@
 			:end-line (current-line-number input-stream)
 			:end-column (current-item-number input-stream))
 		      (second *stack*))
-		(return-from sicl-reader:read-common nil)))))
+		(error 'end-of-file :stream input-stream)))))
       (push (make-instance 'expression-parse-result
 	      :expression result
 	      :children (nreverse (first *stack*))
@@ -124,7 +124,7 @@
 			:end-line (current-line-number input-stream)
 			:end-column (current-item-number input-stream))
 		      (second *stack*))
-		(return-from sicl-reader:call-reader-macro nil)))))
+		(error 'end-of-file :stream input-stream)))))
       (when (null result)
 	(push (make-instance 'no-expression-parse-result
 		:children (nreverse (first *stack*))
