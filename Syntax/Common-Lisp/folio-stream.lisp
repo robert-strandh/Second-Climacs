@@ -93,7 +93,6 @@
 	    (handler-case (call-next-method)
 	      (end-of-file ()
 		(push (make-instance 'eof-parse-result
-			:expression nil
 			:children (nreverse (first *stack*))
 			:start-line start-line
 			:start-column start-column
@@ -119,7 +118,6 @@
 	    (handler-case (multiple-value-list (call-next-method))
 	      (end-of-file ()
 		(push (make-instance 'eof-parse-result
-			:expression nil
 			:children (nreverse (first *stack*))
 			:start-line start-line
 			:start-column start-column
