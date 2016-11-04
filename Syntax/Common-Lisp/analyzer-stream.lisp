@@ -28,15 +28,13 @@
 	(line-number (current-line-number analyzer-stream))
 	(item-number (current-item-number analyzer-stream)))
     (loop while (and (not (null (residue analyzer)))
-		     (let ((entry (first (residue analyzer))))
-		       (position-less (start-line entry) (start-column entry)
-				      line-number item-number)))
+		     (parse-result-starts-before-position-p
+		      (first (residue analyzer)) line-number item-number))
 	  do (pop (residue analyzer)))
     (when (null (residue analyzer))
       (loop while (and (not (null (suffix analyzer)))
-		       (let ((entry (first (suffix analyzer))))
-			 (position-less (start-line entry) (start-column entry)
-					line-number item-number)))
+		       (parse-result-starts-before-position-p
+			(first (suffix analyzer)) line-number item-number))
 	    do (pop-from-suffix analyzer)))))
 
 (defun cached-parse-result (analyzer-stream)
