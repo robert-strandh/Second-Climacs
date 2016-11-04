@@ -85,7 +85,6 @@
 (defmethod sicl-reader:read-common :around
     ((input-stream folio-stream) eof-error-p eof-value)
   (declare (ignore eof-error-p eof-value))
-  (skip-whitespace input-stream)
   (let ((*stack* (cons '() *stack*))
 	(start-line (current-line-number input-stream))
 	(start-column (current-item-number input-stream)))
