@@ -15,3 +15,6 @@
 
 (defclass error-parse-result (parse-result)
   ())
+
+(defclass eof-parse-result (parse-result)
+  ())
