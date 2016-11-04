@@ -115,7 +115,18 @@
     (function (input-stream folio-stream) char)
   (let ((start-line (current-line-number input-stream))
 	(start-column (current-item-number input-stream)))
-    (let ((result (multiple-value-list (call-next-method))))
+    (let ((result 
+	    (handler-case (multiple-value-list (call-next-method))
+	      (end-of-file ()
+		(push (make-instance 'eof-parse-result
+			:expression nil
+			:children (nreverse (first *stack*))
+			:start-line start-line
+			:start-column start-column
+			:end-line (current-line-number input-stream)
+			:end-column (current-item-number input-stream))
+		      (second *stack*))
+		(return-from sicl-reader:call-reader-macro nil)))))
       (when (null result)
 	(push (make-instance 'no-expression-parse-result
 		:children (nreverse (first *stack*))
