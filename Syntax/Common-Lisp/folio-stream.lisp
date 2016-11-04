@@ -89,7 +89,18 @@
   (let ((*stack* (cons '() *stack*))
 	(start-line (current-line-number input-stream))
 	(start-column (current-item-number input-stream)))
-    (let ((result (call-next-method)))
+    (let ((result
+	    (handler-case (call-next-method)
+	      (end-of-file ()
+		(push (make-instance 'eof-parse-result
+			:expression nil
+			:children (nreverse (first *stack*))
+			:start-line start-line
+			:start-column start-column
+			:end-line (current-line-number input-stream)
+			:end-column (current-item-number input-stream))
+		      (second *stack*))
+		(return-from sicl-reader:read-common nil)))))
       (push (make-instance 'expression-parse-result
 	      :expression result
 	      :children (nreverse (first *stack*))
