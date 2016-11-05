@@ -36,3 +36,9 @@
 (defun mark-buffer-line-as-modified (buffer-line)
   (cluffer:insert-item-at-position buffer-line #\Space 0)
   (cluffer:delete-item-at-position buffer-line 0))
+
+;;; Given a buffer, return a random line in that buffer.
+(defun random-buffer-line (buffer)
+  (let* ((line-count (cluffer:line-count buffer))
+	 (line-number (random line-count)))
+    (cluffer:find-line buffer line-number)))
