@@ -23,3 +23,9 @@
 (defun analyzer-stream-from-analyzer (analyzer)
   (make-instance 'climacs-syntax-common-lisp::analyzer-stream
     :folio analyzer))
+
+(defun forms-from-cache (analyzer)
+  (append (reverse (mapcar #'climacs-syntax-common-lisp::expression
+			   (climacs-syntax-common-lisp::prefix analyzer)))
+	  (mapcar #'climacs-syntax-common-lisp::expression
+		  (climacs-syntax-common-lisp::suffix analyzer))))
