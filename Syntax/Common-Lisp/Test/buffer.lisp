@@ -29,3 +29,10 @@
 			   (climacs-syntax-common-lisp::prefix analyzer)))
 	  (mapcar #'climacs-syntax-common-lisp::expression
 		  (climacs-syntax-common-lisp::suffix analyzer))))
+
+;;; Mark a buffer line as modified without really modifying it by
+;;; inserting an item in the first position and then immediately
+;;; deleting that item again.
+(defun mark-buffer-line-as-modified (buffer-line)
+  (cluffer:insert-item-at-position buffer-line #\Space 0)
+  (cluffer:delete-item-at-position buffer-line 0))
