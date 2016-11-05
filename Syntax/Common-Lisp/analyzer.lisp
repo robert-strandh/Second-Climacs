@@ -211,9 +211,10 @@
 	     (sync (line)
 	       (remove-deleted-lines line)
 	       (incf line-counter)))
-	(cluffer:update (buffer analyzer)
-			(time-stamp analyzer)
-			#'sync #'skip #'modify #'create)))))
+	(setf (time-stamp analyzer)
+	      (cluffer:update (buffer analyzer)
+			      (time-stamp analyzer)
+			      #'sync #'skip #'modify #'create))))))
 
 ;;; Methods that make an instance of ANALYZER behave like an instance
 ;;; of FOLIO.
