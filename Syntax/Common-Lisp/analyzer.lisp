@@ -181,7 +181,10 @@
 	do (process-next-parse-result analyzer line-number))
   (adjust-worklist-and-suffix analyzer -1))
 
-(defun update (analyzer)
+;;; Take into account modifications to the buffer by destroying the
+;;; parts of the cache that are no longer valid, while keeping parse
+;;; results that are not affected by such modifications.
+(defun scavenge (analyzer)
   (with-accessors ((lines lines)
 		   (line-count line-count))
       analyzer
