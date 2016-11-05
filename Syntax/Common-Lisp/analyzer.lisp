@@ -188,6 +188,7 @@
   (with-accessors ((lines lines)
 		   (line-counter line-counter))
       analyzer
+    (setf line-counter 0)
     (flet ((remove-deleted-lines (line)
 	     (loop for analyzer-line = (flexichain:element* lines line-counter)
 		   for cluffer-line = (cluffer-line analyzer-line)
