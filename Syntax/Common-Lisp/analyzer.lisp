@@ -28,7 +28,7 @@
    (%time-stamp :initform nil :accessor time-stamp)
    ;; This slot contains the counter that is maintained during the
    ;; execution of the update function.
-   (%line-count :initform 0 :accessor line-count)
+   (%line-counter :initform 0 :accessor line-counter)
    ;; This slot is set to TRUE as soon as the first modification,
    ;; insertion, or deletion is encountered during the execution of
    ;; the update function.
@@ -112,14 +112,14 @@
     ;; the suffix.
     (loop while (and (not (null (prefix analyzer)))
 		     (>= (start-line (first (prefix analyzer)))
-			 (line-count analyzer)))
+			 (line-counter analyzer)))
 	  do (prefix-to-suffix analyzer))
     ;; As long as there are parse results on the suffix that do not
     ;; completely succeed the number of skipped lines, move them to
     ;; the prefix.
     (loop while (and (not (null (suffix analyzer)))
 		     (< (start-line (first (suffix analyzer)))
-			(line-count analyzer)))
+			(line-counter analyzer)))
 	  do (suffix-to-prefix analyzer))))
 
 ;;; Return true if and only if either there are no more parse results,
@@ -186,30 +186,30 @@
 ;;; results that are not affected by such modifications.
 (defun scavenge (analyzer)
   (with-accessors ((lines lines)
-		   (line-count line-count))
+		   (line-counter line-counter))
       analyzer
     (flet ((remove-deleted-lines (line)
-	     (loop for analyzer-line = (flexichain:element* lines line-count)
+	     (loop for analyzer-line = (flexichain:element* lines line-counter)
 		   for cluffer-line = (cluffer-line analyzer-line)
 		   until (eq line cluffer-line)
-		   do (flexichain:delete* lines line-count)
-		      (handle-deleted-line analyzer line-count))))
+		   do (flexichain:delete* lines line-counter)
+		      (handle-deleted-line analyzer line-counter))))
       (flet ((skip (count)
-	       (incf line-count count))
+	       (incf line-counter count))
 	     (modify (line)
 	       (remove-deleted-lines line)
-	       (handle-modified-line analyzer line-count)
-	       (incf line-count))
+	       (handle-modified-line analyzer line-counter)
+	       (incf line-counter))
 	     (create (line)
 	       (let ((temp (make-instance 'line
 			     :cluffer-line line
 			     :contents (cluffer:items line))))
-		 (flexichain:insert* lines line-count temp))
-	       (handle-inserted-line analyzer line-count)
-	       (incf line-count))
+		 (flexichain:insert* lines line-counter temp))
+	       (handle-inserted-line analyzer line-counter)
+	       (incf line-counter))
 	     (sync (line)
 	       (remove-deleted-lines line)
-	       (incf line-count)))
+	       (incf line-counter)))
 	(cluffer:update (buffer analyzer)
 			(time-stamp analyzer)
 			#'sync #'skip #'modify #'create)))))
