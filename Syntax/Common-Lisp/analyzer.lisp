@@ -119,9 +119,9 @@
 ;;; greater than LINE-NUMBER.
 (defun next-parse-result-is-beyond-line-p (analyzer line-number)
   (with-accessors ((suffix suffix) (worklist worklist)) analyzer
-    (or (and (null worklist)
-	     (or (null suffix)
-		 (> (start-line (first suffix)) line-number)))
+    (if (null worklist)
+	(or (null suffix)
+	    (> (start-line (first suffix)) line-number))
 	(> (start-line (first worklist)) line-number))))
 
 ;;; Return true if and only if LINE-NUMBER is one of the lines of
