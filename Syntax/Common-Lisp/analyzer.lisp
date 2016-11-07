@@ -28,11 +28,7 @@
    (%time-stamp :initform nil :accessor time-stamp)
    ;; This slot contains the counter that is maintained during the
    ;; execution of the update function.
-   (%line-counter :initform 0 :accessor line-counter)
-   ;; This slot is set to TRUE as soon as the first modification,
-   ;; insertion, or deletion is encountered during the execution of
-   ;; the update function.
-   (%update-p :initform nil :accessor update-p)))
+   (%line-counter :initform 0 :accessor line-counter)))
 
 (defun suffix-to-prefix (analyzer)
   (with-accessors ((prefix prefix)
@@ -88,8 +84,7 @@
   (loop until (null (worklist analyzer))
 	do (move-to-residue analyzer))
   (setf (residue analyzer)
-	(nreverse (residue analyzer)))
-  (setf (update-p analyzer) nil))
+	(nreverse (residue analyzer))))
 
 (defun pop-from-suffix (analyzer)
   (with-accessors ((suffix suffix)) analyzer
