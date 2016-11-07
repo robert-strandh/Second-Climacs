@@ -161,18 +161,15 @@
 	  (push parse-result (residue analyzer))))))
 
 (defun handle-modified-line (analyzer line-number)
-  (ensure-update-initialized analyzer)
   (loop until (next-parse-result-is-beyond-line-p analyzer line-number)
 	do (process-next-parse-result analyzer line-number)))
 
 (defun handle-inserted-line (analyzer line-number)
-  (ensure-update-initialized analyzer)
   (loop until (next-parse-result-is-beyond-line-p analyzer (1- line-number))
 	do (process-next-parse-result analyzer line-number))
   (adjust-worklist-and-suffix analyzer 1))
 
 (defun handle-deleted-line (analyzer line-number)
-  (ensure-update-initialized analyzer)
   (loop until (next-parse-result-is-beyond-line-p analyzer line-number)
 	do (process-next-parse-result analyzer line-number))
   (adjust-worklist-and-suffix analyzer -1))
@@ -212,7 +209,6 @@
 		 (handle-inserted-line analyzer line-counter)
 		 (incf line-counter))
 	       (sync (line)
-		 (ensure-analyzer-initialized)
 		 (remove-deleted-lines line)
 		 (incf line-counter)))
 	  (setf (time-stamp analyzer)
