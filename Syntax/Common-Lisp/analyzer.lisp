@@ -100,18 +100,17 @@
 ;;; position the prefix and the suffix according to the number of
 ;;; lines initially skipped.
 (defun ensure-update-initialized (analyzer)
-  ;; As long as there are parse results on the prefix that
-  ;; completely succeed the number of skipped lines, move them to
-  ;; the suffix.
+  ;; As long as there are parse results on the prefix that do not
+  ;; completely precede the number of skipped lines, move them to the
+  ;; suffix.
   (loop while (and (not (null (prefix analyzer)))
-		   (>= (start-line (first (prefix analyzer)))
+		   (>= (end-line (first (prefix analyzer)))
 		       (line-counter analyzer)))
 	do (prefix-to-suffix analyzer))
-  ;; As long as there are parse results on the suffix that do not
-  ;; completely succeed the number of skipped lines, move them to
-  ;; the prefix.
+  ;; As long as there are parse results on the suffix that completely
+  ;; precede the number of skipped lines, move them to the prefix.
   (loop while (and (not (null (suffix analyzer)))
-		   (< (start-line (first (suffix analyzer)))
+		   (< (end-line (first (suffix analyzer)))
 		      (line-counter analyzer)))
 	do (suffix-to-prefix analyzer)))
 
