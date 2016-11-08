@@ -98,7 +98,8 @@
 			:start-column start-column
 			:end-line (- (current-line-number input-stream)
 				     start-line)
-			:end-column (current-item-number input-stream))
+			:end-column (current-item-number input-stream)
+			:relative-p nil)
 		      (second *stack*))
 		(error 'end-of-file :stream input-stream)))))
       (push (make-instance 'expression-parse-result
@@ -108,7 +109,8 @@
 	      :start-column start-column
 	      :end-line (- (current-line-number input-stream)
 			   start-line)
-	      :end-column (current-item-number input-stream))
+	      :end-column (current-item-number input-stream)
+	      :relative-p nil)
 	    (second *stack*))
       result)))
 
@@ -125,7 +127,8 @@
 			:start-column start-column
 			:end-line (- (current-line-number input-stream)
 				     start-line)
-			:end-column (current-item-number input-stream))
+			:end-column (current-item-number input-stream)
+			:relative-p nil)
 		      (second *stack*))
 		(error 'end-of-file :stream input-stream)))))
       (when (null result)
@@ -135,6 +138,7 @@
 		:start-column start-column
 		:end-line (- (current-line-number input-stream)
 			     start-line)
-		:end-column (current-item-number input-stream))
+		:end-column (current-item-number input-stream)
+		:relative-p nil)
 	      (second *stack*)))
       (apply #'values result))))
