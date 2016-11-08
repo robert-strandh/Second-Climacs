@@ -5,6 +5,9 @@
    (%end-line :initarg :end-line :accessor end-line)
    (%start-column :initarg :start-column :accessor start-column)
    (%end-column :initarg :end-column :accessor end-column)
+   ;; This slot contains TRUE if and only if the START-LINE slot is
+   ;; relative to some other line.
+   (%relative-p :initarg :relative-p :accessor relative-p)
    (%children :initarg :children :accessor children)))
 
 (defclass expression-parse-result (parse-result)
