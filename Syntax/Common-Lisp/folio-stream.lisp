@@ -96,7 +96,8 @@
 			:children (nreverse (first *stack*))
 			:start-line start-line
 			:start-column start-column
-			:end-line (current-line-number input-stream)
+			:end-line (- (current-line-number input-stream)
+				     start-line)
 			:end-column (current-item-number input-stream))
 		      (second *stack*))
 		(error 'end-of-file :stream input-stream)))))
@@ -105,7 +106,8 @@
 	      :children (nreverse (first *stack*))
 	      :start-line start-line
 	      :start-column start-column
-	      :end-line (current-line-number input-stream)
+	      :end-line (- (current-line-number input-stream)
+			   start-line)
 	      :end-column (current-item-number input-stream))
 	    (second *stack*))
       result)))
@@ -121,7 +123,8 @@
 			:children (nreverse (first *stack*))
 			:start-line start-line
 			:start-column start-column
-			:end-line (current-line-number input-stream)
+			:end-line (- (current-line-number input-stream)
+				     start-line)
 			:end-column (current-item-number input-stream))
 		      (second *stack*))
 		(error 'end-of-file :stream input-stream)))))
@@ -130,7 +133,8 @@
 		:children (nreverse (first *stack*))
 		:start-line start-line
 		:start-column start-column
-		:end-line (current-line-number input-stream)
+		:end-line (- (current-line-number input-stream)
+			     start-line)
 		:end-column (current-item-number input-stream))
 	      (second *stack*)))
       (apply #'values result))))
