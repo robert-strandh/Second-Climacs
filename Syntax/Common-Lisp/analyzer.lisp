@@ -50,19 +50,8 @@
   (push (pop-from-suffix analyzer) (prefix analyzer)))
 
 (defun prefix-to-suffix (analyzer)
-  (with-accessors ((prefix prefix)
-		   (suffix suffix))
-      analyzer
-    (assert (not (null prefix)))
-    (let* ((first-cons-cell prefix)
-	   (first-parse-result (first first-cons-cell)))
-      (setf prefix (rest prefix))
-      (unless (null suffix)
-	;; Make sure the first parse result on the suffix is relative.
-	(absolute-to-relative (first suffix) (start-line first-parse-result)))
-      ;; Reuse the CONS cell rather than allocating a new one.
-      (setf (rest first-cons-cell) suffix)
-      (setf suffix first-cons-cell))))
+  (assert (not (null (prefix analyzer))))
+  (push-to-suffix analyzer (pop (prefix analyzer))))
 
 ;;; Take a list of parse results with a relative position, and turn
 ;;; each parse result in the list into one with an absolution position
