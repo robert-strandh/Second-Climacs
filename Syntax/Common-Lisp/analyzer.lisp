@@ -38,6 +38,14 @@
 	(relative-to-absolute (first suffix) (start-line result)))
       result)))
 
+(defun push-to-suffix (analyzer parse-result)
+  (assert (not (relative-p parse-result)))
+  (with-accessors ((suffix suffix))
+      analyzer
+    (unless (null suffix)
+      (absolute-to-relative (first suffix) (start-line parse-result)))
+    (push parse-result suffix)))
+
 (defun suffix-to-prefix (analyzer)
   (push (pop-from-suffix analyzer) (prefix analyzer)))
 
