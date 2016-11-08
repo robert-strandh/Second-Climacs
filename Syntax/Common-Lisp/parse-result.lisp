@@ -21,3 +21,9 @@
 
 (defclass eof-parse-result (parse-result)
   ())
+
+(defgeneric relative-to-absolute (parse-result offset)
+  (:method ((p parse-result) offset)
+    (assert (relative-p p))
+    (incf (start-line p) offset)
+    (setf (relative-p p) nil)))
