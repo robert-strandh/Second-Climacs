@@ -39,20 +39,7 @@
       result)))
 
 (defun suffix-to-prefix (analyzer)
-  (with-accessors ((prefix prefix)
-		   (suffix suffix))
-      analyzer
-    (assert (not (null suffix)))
-    (let* ((first-cons-cell suffix)
-	   (first-parse-result (first first-cons-cell)))
-      (setf suffix (rest suffix))
-      (unless (null suffix)
-	;; Make sures the first parse result on the suffix is
-	;; absolute.
-	(relative-to-absolute (first suffix) (start-line first-parse-result)))
-      ;; Reuse the CONS cell rather than allocating a new one.
-      (setf (rest first-cons-cell) prefix)
-      (setf prefix first-cons-cell))))
+  (push (pop-from-suffix analyzer) (prefix analyzer)))
 
 (defun prefix-to-suffix (analyzer)
   (with-accessors ((prefix prefix)
