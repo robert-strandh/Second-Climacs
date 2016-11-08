@@ -39,11 +39,9 @@
 	   (first-parse-result (first first-cons-cell)))
       (setf suffix (rest suffix))
       (unless (null suffix)
-	;; Convert start-line of new first element of suffix
-	;; to absolute line number by adding the absolute line
-	;; number of the element we are removing.
-	(incf (start-line (first suffix))
-	      (start-line first-parse-result)))
+	;; Make sures the first parse result on the suffix is
+	;; absolute.
+	(relative-to-absolute (first suffix) (start-line first-parse-result)))
       ;; Reuse the CONS cell rather than allocating a new one.
       (setf (rest first-cons-cell) prefix)
       (setf prefix first-cons-cell))))
@@ -57,11 +55,8 @@
 	   (first-parse-result (first first-cons-cell)))
       (setf prefix (rest prefix))
       (unless (null suffix)
-	;; Convert start-line of current first element of suffix to
-	;; relative line number by subtracting the absolute line
-	;; number of the element we are adding.
-	(decf (start-line (first suffix))
-	      (start-line first-parse-result)))
+	;; Make sure the first parse result on the suffix is relative.
+	(absolute-to-relative (first suffix) (start-line first-parse-result)))
       ;; Reuse the CONS cell rather than allocating a new one.
       (setf (rest first-cons-cell) suffix)
       (setf suffix first-cons-cell))))
