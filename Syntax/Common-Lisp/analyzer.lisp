@@ -30,6 +30,14 @@
    ;; execution of the update function.
    (%line-counter :initform 0 :accessor line-counter)))
 
+(defun pop-from-suffix (analyzer)
+  (with-accessors ((suffix suffix)) analyzer
+    (assert (not (null suffix)))
+    (let ((result (pop suffix)))
+      (unless (null suffix)
+	(relative-to-absolute (first suffix) (start-line result)))
+      result)))
+
 (defun suffix-to-prefix (analyzer)
   (with-accessors ((prefix prefix)
 		   (suffix suffix))
@@ -80,14 +88,6 @@
 	do (move-to-residue analyzer))
   (setf (residue analyzer)
 	(nreverse (residue analyzer))))
-
-(defun pop-from-suffix (analyzer)
-  (with-accessors ((suffix suffix)) analyzer
-    (assert (not (null suffix)))
-    (let ((result (pop suffix)))
-      (unless (null suffix)
-	(relative-to-absolute (first suffix) (start-line result)))
-      result)))
 
 ;;; This function is called by the three operations that handle
 ;;; modifications.  The first time this function is called, we must
