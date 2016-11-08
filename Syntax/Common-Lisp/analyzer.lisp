@@ -86,8 +86,7 @@
     (assert (not (null suffix)))
     (let ((result (pop suffix)))
       (unless (null suffix)
-	(incf (start-line (first suffix))
-	      (start-line result)))
+	(relative-to-absolute (first suffix) (start-line result)))
       result)))
 
 ;;; This function is called by the three operations that handle
