@@ -27,3 +27,9 @@
     (assert (relative-p p))
     (incf (start-line p) offset)
     (setf (relative-p p) nil)))
+
+(defgeneric absolute-to-relative (parse-result offset)
+  (:method ((p parse-result) offset)
+    (assert (not (relative-p p)))
+    (decf (start-line p) offset)
+    (setf (relative-p p) t)))
