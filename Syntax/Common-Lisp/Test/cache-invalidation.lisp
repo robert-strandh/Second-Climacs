@@ -140,7 +140,7 @@
   (and (= (climacs-syntax-common-lisp::start-line parse-result)
 	  (start-line node))
        (= (climacs-syntax-common-lisp::end-line parse-result)
-	  (- (end-line node) (start-line node)))
+	  (end-line node))
        (equal-relative-list (climacs-syntax-common-lisp::children parse-result)
 			    (children node)
 			    (start-line node))))
