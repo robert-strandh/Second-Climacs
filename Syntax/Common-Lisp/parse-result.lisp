@@ -5,7 +5,7 @@
    ;; This slot contains the difference between the start line and the
    ;; end line.  A value of 0 indicates that the parse result starts
    ;; and ends in the same line.
-   (%height :initarg :height :accessor height)
+   (%height :initarg :height :reader height)
    (%start-column :initarg :start-column :accessor start-column)
    (%end-column :initarg :end-column :accessor end-column)
    ;; This slot contains TRUE if and only if the START-LINE slot is
