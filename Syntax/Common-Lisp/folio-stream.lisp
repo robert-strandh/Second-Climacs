@@ -93,7 +93,8 @@
 	    (handler-case (call-next-method)
 	      (end-of-file ()
 		(push (make-instance 'eof-parse-result
-			:children (nreverse (first *stack*))
+			:children (make-relative (nreverse (first *stack*))
+				                 start-line)
 			:start-line start-line
 			:start-column start-column
 			:height (- (current-line-number input-stream)
@@ -104,7 +105,7 @@
 		(error 'end-of-file :stream input-stream)))))
       (push (make-instance 'expression-parse-result
 	      :expression result
-	      :children (nreverse (first *stack*))
+	      :children (make-relative (nreverse (first *stack*)) start-line)
 	      :start-line start-line
 	      :start-column start-column
 	      :height (- (current-line-number input-stream)
@@ -122,7 +123,8 @@
 	    (handler-case (multiple-value-list (call-next-method))
 	      (end-of-file ()
 		(push (make-instance 'eof-parse-result
-			:children (nreverse (first *stack*))
+			:children (make-relative (nreverse (first *stack*))
+				                 start-line)
 			:start-line start-line
 			:start-column start-column
 			:height (- (current-line-number input-stream)
@@ -133,7 +135,7 @@
 		(error 'end-of-file :stream input-stream)))))
       (when (null result)
 	(push (make-instance 'no-expression-parse-result
-		:children (nreverse (first *stack*))
+		:children (make-relative (nreverse (first *stack*)) start-line)
 		:start-line start-line
 		:start-column start-column
 		:height (- (current-line-number input-stream)
