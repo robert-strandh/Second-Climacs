@@ -37,6 +37,17 @@
     (decf (start-line p) offset)
     (setf (relative-p p) t)))
 
+;;; RELATIVE-PARSE-RESULTS is a list of parse results where the start
+;;; line of the first element is relative to OFFSET, and the start
+;;; line of each of the other elements is relative to the start line
+;;; of the preceding element.  Return a list of absolute parse
+;;; results.
+(defun make-absolute (relative-parse-results offset)
+  (loop with base = offset
+	for parse-result in relative-parse-results
+	do (relative-to-absolute parse-result base)
+	   (setf base (start-line parse-result))))
+
 (defgeneric end-line (parse-result)
   (:method ((p parse-result))
     (assert (not (relative-p p)))

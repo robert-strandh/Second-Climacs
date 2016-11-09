@@ -53,16 +53,6 @@
   (assert (not (null (prefix analyzer))))
   (push-to-suffix analyzer (pop (prefix analyzer))))
 
-;;; Take a list of parse results with a relative position, and turn
-;;; each parse result in the list into one with an absolution position
-;;; according to the value of BASE.
-(defun make-absolute (relative-parse-results base)
-  (loop with offset = base
-	for rest on relative-parse-results
-	for relative-start = (start-line (first rest))
-	do (setf offset (+ offset relative-start))
-	   (setf (start-line (first rest)) offset)))
-
 (defun move-to-residue (analyzer)
   (push (pop (worklist analyzer))
 	(residue analyzer)))
