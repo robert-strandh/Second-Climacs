@@ -40,8 +40,8 @@
 ;;; RELATIVE-PARSE-RESULTS is a list of parse results where the start
 ;;; line of the first element is relative to OFFSET, and the start
 ;;; line of each of the other elements is relative to the start line
-;;; of the preceding element.  Return a list of absolute parse
-;;; results.
+;;; of the preceding element.  Modify the parse results in the list so
+;;; that they are absolute.
 (defun make-absolute (relative-parse-results offset)
   (loop with base = offset
 	for parse-result in relative-parse-results
@@ -49,9 +49,9 @@
 	   (setf base (start-line parse-result))))
 
 ;;; ABSOLUTE-PARSE-RESULTS is a list of absolute parse results.
-;;; Return a list of parse results where the start line of the first
-;;; element is absolute to OFFSET, and the start line of each of the
-;;; other elements is relative to the start line of the preceding
+;;; Modify the parse results in the list so that the start line of the
+;;; first element is absolute to OFFSET, and the start line of each of
+;;; the other elements is relative to the start line of the preceding
 ;;; element.
 (defun make-relative (absolute-parse-results offset)
   (loop with base = offset
