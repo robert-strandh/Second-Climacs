@@ -108,7 +108,7 @@
 (defun line-is-inside-parse-result-p (parse-result line-number)
   (<= (start-line parse-result)
       line-number
-      (+ (start-line parse-result) (end-line parse-result))))
+      (+ (start-line parse-result) (height parse-result))))
 
 ;;; Add INCREMENT to the absolute line number of every parse result on
 ;;; the worklist, and of the first parse result of the suffix, if any.

@@ -96,8 +96,8 @@
 			:children (nreverse (first *stack*))
 			:start-line start-line
 			:start-column start-column
-			:end-line (- (current-line-number input-stream)
-				     start-line)
+			:height (- (current-line-number input-stream)
+				   start-line)
 			:end-column (current-item-number input-stream)
 			:relative-p nil)
 		      (second *stack*))
@@ -107,8 +107,8 @@
 	      :children (nreverse (first *stack*))
 	      :start-line start-line
 	      :start-column start-column
-	      :end-line (- (current-line-number input-stream)
-			   start-line)
+	      :height (- (current-line-number input-stream)
+		         start-line)
 	      :end-column (current-item-number input-stream)
 	      :relative-p nil)
 	    (second *stack*))
@@ -125,8 +125,8 @@
 			:children (nreverse (first *stack*))
 			:start-line start-line
 			:start-column start-column
-			:end-line (- (current-line-number input-stream)
-				     start-line)
+			:height (- (current-line-number input-stream)
+				   start-line)
 			:end-column (current-item-number input-stream)
 			:relative-p nil)
 		      (second *stack*))
@@ -136,8 +136,8 @@
 		:children (nreverse (first *stack*))
 		:start-line start-line
 		:start-column start-column
-		:end-line (- (current-line-number input-stream)
-			     start-line)
+		:height (- (current-line-number input-stream)
+			   start-line)
 		:end-column (current-item-number input-stream)
 		:relative-p nil)
 	      (second *stack*)))
