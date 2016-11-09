@@ -36,3 +36,8 @@
     (assert (not (relative-p p)))
     (decf (start-line p) offset)
     (setf (relative-p p) t)))
+
+(defgeneric end-line (parse-result)
+  (:method ((p parse-result))
+    (assert (not (relative-p p)))
+    (+ (start-line p) (height p))))
