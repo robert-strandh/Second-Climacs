@@ -41,24 +41,28 @@
 ;;; line of the first element is relative to OFFSET, and the start
 ;;; line of each of the other elements is relative to the start line
 ;;; of the preceding element.  Modify the parse results in the list so
-;;; that they are absolute.
+;;; that they are absolute.  Return the original list, now containing
+;;; the modified parse results.
 (defun make-absolute (relative-parse-results offset)
   (loop with base = offset
 	for parse-result in relative-parse-results
 	do (relative-to-absolute parse-result base)
-	   (setf base (start-line parse-result))))
+	   (setf base (start-line parse-result)))
+  relative-parse-results)
 
 ;;; ABSOLUTE-PARSE-RESULTS is a list of absolute parse results.
 ;;; Modify the parse results in the list so that the start line of the
 ;;; first element is absolute to OFFSET, and the start line of each of
 ;;; the other elements is relative to the start line of the preceding
-;;; element.
+;;; element.  Return the original list, now containing the modified
+;;; parse results.
 (defun make-relative (absolute-parse-results offset)
   (loop with base = offset
 	for parse-result in absolute-parse-results
 	for start-line = (start-line parse-result)
 	do (absolute-to-relative parse-result base)
-	   (setf base start-line)))
+	   (setf base start-line))
+  absolute-parse-results)
 
 (defgeneric end-line (parse-result)
   (:method ((p parse-result))
