@@ -117,6 +117,11 @@
       (push (pop-from-suffix analyzer)
 	    worklist))))
 
+;;; When this function is called, there is at least one parse result,
+;;; either on the work list or on the suffix that must be processed,
+;;; i.e., that parse result either entirely precedes LINE-NUMBER (so
+;;; that it should be moved to the residue), or it straddles the line
+;;; with that line number, so that it must be taken apart.
 (defun process-next-parse-result (analyzer line-number)
   (with-accessors ((worklist worklist)) analyzer
     (ensure-worklist-not-empty analyzer)
