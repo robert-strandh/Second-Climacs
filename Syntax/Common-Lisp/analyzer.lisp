@@ -11,7 +11,7 @@
   ((%cluffer-line :initarg :cluffer-line :reader cluffer-line)
    (%contents :initarg :contents :accessor contents)))
 
-(defclass analyzer (folio)
+(defclass analyzer (flexichain-folio)
   ((%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
