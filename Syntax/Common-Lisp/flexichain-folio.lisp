@@ -3,7 +3,9 @@
 ;;; The CONTENTS slot contains a flexichain of lines, where each line
 ;;; is a vector of items.
 (defclass flexichain-folio (folio)
-  ((%contents :initarg :contents :reader contents)))
+  ((%contents :initform (make-instance 'flexichain:standard-flexichain)
+	      :initarg :contents
+	      :reader contents)))
 
 (defmethod line-count ((folio flexichain-folio))
   (flexichain:nb-elements (contents folio)))
