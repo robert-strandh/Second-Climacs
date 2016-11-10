@@ -151,7 +151,7 @@
 ;;; results that are not affected by such modifications.
 (defun scavenge (analyzer)
   (let ((analyzer-initialized-p nil))
-    (with-accessors ((lines lines)
+    (with-accessors ((lines contents)
 		     (line-counter line-counter))
 	analyzer
       (setf line-counter 0)
