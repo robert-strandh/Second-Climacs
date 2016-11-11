@@ -192,8 +192,8 @@
 ;;; of FOLIO.
 
 (defmethod line-length ((folio analyzer) line-number)
-  (length (contents (flexichain:element* (lines folio) line-number))))
+  (length (contents (flexichain:element* (contents folio) line-number))))
 
 (defmethod item ((folio analyzer) line-number item-number)
-  (aref (contents (flexichain:element* (lines folio) line-number))
+  (aref (contents (flexichain:element* (contents folio) line-number))
 	item-number))
