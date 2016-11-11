@@ -187,3 +187,16 @@
 		(cluffer:update (buffer analyzer)
 				(time-stamp analyzer)
 				#'sync #'skip #'modify #'create)))))))
+
+;;; Methods that make an instance of ANALYZER behave like an instance
+;;; of FOLIO.
+
+(defmethod line-count ((folio analyzer))
+  (flexichain:nb-elements (lines folio)))
+
+(defmethod line-length ((folio analyzer) line-number)
+  (length (contents (flexichain:element* (lines folio) line-number))))
+
+(defmethod item ((folio analyzer) line-number item-number)
+  (aref (contents (flexichain:element* (lines folio) line-number))
+	item-number))
