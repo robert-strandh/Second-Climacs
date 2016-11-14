@@ -4,5 +4,5 @@
   :depends-on (:ducling)
   :serial t
   :components
-  ((:file "packages")))
-
+  ((:file "packages")
+   (:file "command-table")))
