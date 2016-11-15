@@ -1,1 +1,18 @@
 \section{Previous work}
+
+\subsection{Emacs}
+
+Highlighting is based on string matching, and no attempt is made to
+determine the symbols that are present in the current package.
+Even when the current package does not use the \texttt{common-lisp}
+package, strings that match \commonlisp{} symbols are highlighted
+nevertheless.
+
+Indentation is also based on string matching, resulting in the text
+being indented as \commonlisp{} code even when it is not.
+Furthermore, indentation does not take into account the role of a
+symbol in the code.  So, for example, if a lexical variable named
+(say) \texttt{prog1} is introduced in a \texttt{let} binding and
+it is followed by a newline, the following line is indented as if the
+symbol \texttt{prog1} were the name of a \commonlisp{} function as
+opposed to the name of a lexical variable.
