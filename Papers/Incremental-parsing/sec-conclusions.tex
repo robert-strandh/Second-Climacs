@@ -1,1 +1,8 @@
 \section{Conclusions and future work}
+
+Parsing \commonlisp{} source code is only the first step in the
+analysis of its structure.  In order to determine the role of each
+symbol and other information such as indentation, further analysis is
+required.  Such analysis requires a \emph{code walker}, because the
+role of a symbol may depend on the definitions of macros to which it
+is an argument.
