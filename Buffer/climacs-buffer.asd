@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :climacs-buffer
-  :depends-on (:splay-tree)
+  :depends-on (:cluffer)
   :serial t
   :components
   ((:file "packages")
