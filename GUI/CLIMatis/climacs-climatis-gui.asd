@@ -4,7 +4,6 @@
   :depends-on (:climatis
 	       :cluffer
 	       :climacs-view
-	       :climacs-buffer
 	       :climacs-syntax-fundamental
 	       :climacs-show-fundamental
 	       :climacs-commands
