@@ -3,7 +3,7 @@
 (defsystem :climacs-esa-gui
   :depends-on (:esa-mcclim
 	       :climacs-view
-	       :climacs-buffer
+	       :cluffer
 	       :climacs-syntax-fundamental
 	       :climacs-show-fundamental
 	       :climacs-commands
