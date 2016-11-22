@@ -1,7 +1,8 @@
 (cl:in-package #:climacs-esa-gui)
 
 (defclass text-pane (climi::composite-pane
-		     clim:permanent-medium-sheet-output-mixin)
+		     clim:permanent-medium-sheet-output-mixin
+		     esa:esa-pane-mixin)
   ((%lines :initarg :lines :accessor lines))
   (:default-initargs
    :background clim:+white+
