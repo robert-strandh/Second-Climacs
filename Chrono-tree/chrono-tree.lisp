@@ -1,6 +1,6 @@
 (cl:in-package #:chrono-tree)
 
-(defclass node (splay-tree:node)
+(defclass node (clump-binary-tree:node)
   ((%node-count :initform 1 :accessor node-count)
    (%create-time :initarg :create-time :reader create-time)
    (%modify-time :initarg :modify-time
@@ -13,14 +13,14 @@
   (setf (max-modify-time node) (create-time node)))
 
 (defmethod (setf modify-time) :before (new-time (node node))
-  (if (null (splay-tree:parent node))
+  (if (null (clump-binary-tree:parent node))
       (setf (max-modify-time node)
 	    (max (max-modify-time node) new-time))
       (error "attempt to change the modify time of a node other than the root.")))
 
-(defmethod (setf splay-tree:left) :before ((new-left null) (node node))
-  (let ((left (splay-tree:left node))
-	(right (splay-tree:right node)))
+(defmethod (setf clump-binary-tree:left) :before ((new-left null) (node node))
+  (let ((left (clump-binary-tree:left node))
+	(right (clump-binary-tree:right node)))
     (unless (null left)
       (decf (node-count node) (node-count left))
       (setf (max-modify-time node)
@@ -29,15 +29,15 @@
 		     0
 		     (max-modify-time right)))))))
 
-(defmethod (setf splay-tree:left) :before ((new-left node) (node node))
+(defmethod (setf clump-binary-tree:left) :before ((new-left node) (node node))
   (incf (node-count node) (node-count new-left))
   (setf (max-modify-time node)
 	(max (max-modify-time node)
 	     (max-modify-time new-left))))
 
-(defmethod (setf splay-tree:right) :before ((new-right null) (node node))
-  (let ((left (splay-tree:left node))
-	(right (splay-tree:right node)))
+(defmethod (setf clump-binary-tree:right) :before ((new-right null) (node node))
+  (let ((left (clump-binary-tree:left node))
+	(right (clump-binary-tree:right node)))
     (unless (null right)
       (decf (node-count node) (node-count right))
       (setf (max-modify-time node)
@@ -46,7 +46,7 @@
 		     0
 		     (max-modify-time left)))))))
 
-(defmethod (setf splay-tree:right) :before ((new-right node) (node node))
+(defmethod (setf clump-binary-tree:right) :before ((new-right node) (node node))
   (incf (node-count node) (node-count new-right))
   (setf (max-modify-time node)
 	(max (max-modify-time node)
@@ -81,7 +81,7 @@
     (labels ((traverse (node offset)
 	       (if (null node)
 		   nil
-		   (let* ((left (splay-tree:left node))
+		   (let* ((left (clump-binary-tree:left node))
 			  (left-count (if (null left) 0 (node-count left)))
 			  (node-offset (+ offset left-count))
 			  (right-offset (+ node-offset 1)))
@@ -94,7 +94,7 @@
 			     ;; subtree in case some of theme are
 			     ;; located there.
 			     (progn
-			       (traverse (splay-tree:left node) offset)
+			       (traverse (clump-binary-tree:left node) offset)
 			       (if (eq state :skip)
 				   ;; After traversing the left
 				   ;; subtree, we are in the :SKIP
@@ -119,23 +119,23 @@
 					 (if (> (create-time node) time)
 					     (funcall create node)
 					     (funcall modify node))
-					 (traverse (splay-tree:right node) right-offset))
+					 (traverse (clump-binary-tree:right node) right-offset))
 				       ;; We are in the :SKIP state,
 				       ;; and the current node has not
 				       ;; been modified.
-				       (traverse (splay-tree:right node) right-offset))
+				       (traverse (clump-binary-tree:right node) right-offset))
 				   ;; We are in the :UPDATE state. 
 				   (if (> (modify-time node) time)
 				       (progn
 					 (if (> (create-time node) time)
 					     (funcall create node)
 					     (funcall modify node))
-					 (traverse (splay-tree:right node) right-offset))
+					 (traverse (clump-binary-tree:right node) right-offset))
 				       (progn
 					 (funcall sync node)
 					 (setf state :skip)
 					 (setf first-skip right-offset)
-					 (traverse (splay-tree:right node) right-offset)))))
+					 (traverse (clump-binary-tree:right node) right-offset)))))
 			     nil)
 			 ;; We are in the :UPDATE state.
 			 (if (> (max-modify-time node) time)
@@ -143,7 +143,7 @@
 			     ;; nodes in this subtree have been
 			     ;; modified.
 			     (progn
-			       (traverse (splay-tree:left node) offset)
+			       (traverse (clump-binary-tree:left node) offset)
 			       (if (eq state :skip)
 				   ;; In this situation, the traversal
 				   ;; of the left subtree resulted in
@@ -174,14 +174,14 @@
 					 ;; Continue traversing the
 					 ;; remaining nodes in this
 					 ;; subtree.
-					 (traverse (splay-tree:right node) right-offset))
+					 (traverse (clump-binary-tree:right node) right-offset))
 				       ;; We are in the :SKIP state
 				       ;; and the current node has not
 				       ;; been modified.  We just
 				       ;; maintain the skip state and
 				       ;; traverse the remaining nodes
 				       ;; in this subtree.
-				       (traverse (splay-tree:right node) right-offset))
+				       (traverse (clump-binary-tree:right node) right-offset))
 				   ;; After traversing the left
 				   ;; subtree, we are now in the
 				   ;; :UPDATE state, either because
@@ -199,7 +199,7 @@
 					 ;; remaining nodes in this
 					 ;; subtree without changing
 					 ;; the state.
-					 (traverse (splay-tree:right node) right-offset))
+					 (traverse (clump-binary-tree:right node) right-offset))
 				       ;; The current node was not
 				       ;; modified, but we are in the
 				       ;; :UPDATE state, so we need to
@@ -209,7 +209,7 @@
 					 (funcall sync node)
 					 (setf state :skip)
 					 (setf first-skip right-offset)
-					 (traverse (splay-tree:right node) right-offset)))))
+					 (traverse (clump-binary-tree:right node) right-offset)))))
 			     ;; We are in the :UPDATE state, but none
 			     ;; of the nodes in this subtree have been
 			     ;; modified or inserted.  This means that
@@ -227,7 +227,7 @@
 			     ;; we must go left in the subtree.,
 			     ;; maintaining the :SKIP state.
 			     (progn
-			       (traverse (splay-tree:left node) offset)
+			       (traverse (clump-binary-tree:left node) offset)
 			       (if (eq state :skip)
 				   ;; The traversal of the left
 				   ;; subtree resulted in a state flip
