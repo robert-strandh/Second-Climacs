@@ -16,18 +16,18 @@
   (:default-initargs :create-time (incf *time*)))
 
 (defun find-node (node-number tree)
-  (let* ((left (splay-tree:left tree))
+  (let* ((left (clump-binary-tree:left tree))
 	 (left-count (if (null left) 0 (chrono-tree:node-count left))))
     (cond ((< node-number left-count)
 	   (find-node node-number left))
 	  ((= node-number left-count)
 	   tree)
 	  (t
-	   (find-node (- node-number (1+ left-count)) (splay-tree:right tree))))))
+	   (find-node (- node-number (1+ left-count)) (clump-binary-tree:right tree))))))
 
 (defun splay (node)
   (setf (contents (container node))
-	(splay-tree:splay node)))
+	(clump-binary-tree:splay node)))
 
 (defun insert-item (item container position)
   ;; An intrinsic restriction of chrono trees.
@@ -35,13 +35,13 @@
   (let ((new-node (make-instance 'node :container container :item item))
 	(prev (splay (find-node (1- position) (contents container)))))
     (setf (chrono-tree:modify-time prev) (incf *time*))
-    (if (null (splay-tree:right prev))
-	(progn (setf (splay-tree:left new-node) prev)
+    (if (null (clump-binary-tree:right prev))
+	(progn (setf (clump-binary-tree:left new-node) prev)
 	       (setf (contents container) new-node))
 	(let ((next (splay (find-node position (contents container)))))
-	  (setf (splay-tree:left next) nil)
-	  (setf (splay-tree:left new-node) prev)
-	  (setf (splay-tree:right new-node) next)
+	  (setf (clump-binary-tree:left next) nil)
+	  (setf (clump-binary-tree:left new-node) prev)
+	  (setf (clump-binary-tree:right new-node) next)
 	  (setf (contents container) new-node)))))
 
 (defun delete-node (container position)
@@ -49,11 +49,11 @@
   (assert (<= 1 position (1- (node-count container))))
   (let* ((node (splay (find-node position (contents container))))
 	 (prev (splay (find-node (1- position) (contents container))))
-	 (next (splay-tree:right node)))
+	 (next (clump-binary-tree:right node)))
     (setf (chrono-tree:modify-time prev) (incf *time*))
-    (setf (splay-tree:right prev) nil)
-    (setf (splay-tree:right node) nil)
-    (setf (splay-tree:right prev) next)))
+    (setf (clump-binary-tree:right prev) nil)
+    (setf (clump-binary-tree:right node) nil)
+    (setf (clump-binary-tree:right prev) next)))
 
 (defun modify-node (container position new-item)
   (assert (<= 0 position (1- (node-count container))))
@@ -66,9 +66,9 @@
     (labels ((traverse (node)
 	       (if (null node)
 		   nil
-		   (progn (traverse (splay-tree:right node))
+		   (progn (traverse (clump-binary-tree:right node))
 			  (push (item node) result)
-			  (traverse (splay-tree:left node))))))
+			  (traverse (clump-binary-tree:left node))))))
       (traverse tree))
     result))
 
