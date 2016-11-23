@@ -16,8 +16,8 @@
   (:default-initargs
    :height 20 :max-height 20 :min-height 20))
 
-(clim:define-application-frame climacs (clim:standard-application-frame
-					esa:esa-frame-mixin)
+(clim:define-application-frame climacs (esa:esa-frame-mixin
+					clim:standard-application-frame)
   ((%views :initarg :views :reader views)
    (%current-view :initarg :current-view :accessor current-view))
   (:panes
