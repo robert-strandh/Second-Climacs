@@ -18,6 +18,7 @@
    (%current-view :initarg :current-view :accessor current-view))
   (:panes
    (window (let* ((my-pane (clim:make-pane 'text-pane
+					   :lines '()
 					   :width 900 :height 400
 					   :display-function 'display-my-pane
 					   :command-table 'esa:global-esa-table))
