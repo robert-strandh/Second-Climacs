@@ -4,3 +4,7 @@
 		   esa:esa-frame-mixin)
   ((%views :initarg :views :reader views)
    (%current-view :initarg :current-view :accessor current-view)))
+
+(defun climacs ()
+  (clim:run-frame-top-level
+   (clim:make-application-frame 'climacs)))
