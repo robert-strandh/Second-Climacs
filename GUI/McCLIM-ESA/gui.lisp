@@ -7,6 +7,10 @@
    :display-function 'display-info
    :incremental-redisplay t))
 
+(defun display-info (frame pane)
+  (declare (ignore frame))
+  (format pane "Pane name: ~s" (clim:pane-name (esa:master-pane pane))))
+
 (defclass example-minibuffer-pane (esa:minibuffer-pane)
   ()
   (:default-initargs
