@@ -43,3 +43,21 @@ The reader from the \sicl{} project%
 was slightly modified to allow this kind of customization, thereby
 avoid the necessity of maintaining the code for a completely separate
 reader.
+
+The update buffer protocol is typically invoked after each keystroke
+by the end user, and the modifications to the buffer are typically
+very modest, in that usually a single line has been modified.  It
+would be wasteful, and too slow for large buffers, to re-parse the
+entire buffer character by character, each time the update protocol is
+invoked.  For that reason, we keep a \emph{cache} of parse results
+returned by the customized reader.
+
+This cache is organized as a sequence%
+\footnote{Here, we use the word \emph{sequence} in the meaning of a
+  set of items organized consecutively, and not in the more
+  restrictive meaning defined by the \commonlisp{} standard.}
+of top-level parse results.  Each top-level parse result contains the
+parse results returned by nested calls to the reader.  The sequence of
+top-level parse results is split into a \emph{prefix} and a
+\emph{suffix}, typically reflecting the current location in the buffer
+being edited by the end user.
