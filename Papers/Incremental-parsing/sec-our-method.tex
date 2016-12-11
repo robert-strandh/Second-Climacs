@@ -18,3 +18,28 @@ in two different ways:
 For the purpose of this paper, the update protocol is the part of the
 buffer protocol that we are interested in, because we re-parse the
 buffer as a result of the update protocol having been invoked.
+
+In order to parse the buffer contents, we use a custom \texttt{read}
+function.  This version of the \texttt{read} function differs from the
+standard one in the following ways:
+
+\begin{itemize}
+\item Instead of returning S-expressions, it returns a nested
+  structure of instances of a standard class named
+  \texttt{parse-result}.  These instances contain the corresponding
+  S-expression and the start and end position (line, column) in the
+  buffer of the parse result.
+\item The parse results returned by the reader also include entities
+  that would normally not be returned by \texttt{read} such as
+  comments and (more generally), results of applying reader macros
+  that return no values.
+\item Instead of attempting to call \texttt{intern} in order to turn a
+  token into a symbol, the custom reader returns an instance of a
+  standard class named \texttt{token}.
+\end{itemize}
+
+The reader from the \sicl{} project%
+%footnote{See: https://github.com/robert-strandh/SICL.}
+was slightly modified to allow this kind of customization, thereby
+avoid the necessity of maintaining the code for a completely separate
+reader.
