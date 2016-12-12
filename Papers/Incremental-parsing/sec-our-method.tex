@@ -61,3 +61,16 @@ parse results returned by nested calls to the reader.  The sequence of
 top-level parse results is split into a \emph{prefix} and a
 \emph{suffix}, typically reflecting the current position in the buffer
 being edited by the end user.
+
+Depending on the location of the parse result in the cache data
+structure, its position may be \emph{absolute} or \emph{relative}.
+Parse results in the prefix have absolute positions, whereas parse
+results in the suffix have relative positions.  When a parse result is
+moved from the prefix to the suffix, or from the suffix to the prefix,
+the positions concerned are updated to maintain this invariant.
+Similarly, the position of the first child of some parse result $P$
+has a position relative to that of $P$, and the children, other than
+the first, of some parse result $P$, have positions relative to the
+previous child in the list.  This way, we avoid having to update the
+position of all the parse results in the buffer whenever a line is
+inserted or deleted as a result of some editing operations.
