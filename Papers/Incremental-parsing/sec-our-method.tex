@@ -55,9 +55,9 @@ returned by the customized reader.
 This cache is organized as a sequence%
 \footnote{Here, we use the word \emph{sequence} in the meaning of a
   set of items organized consecutively, and not in the more
-  restrictive meaning defined by the \commonlisp{} standard.}
-of top-level parse results.  Each top-level parse result contains the
+  restrictive meaning defined by the \commonlisp{} standard.}  of
+top-level parse results.  Each top-level parse result contains the
 parse results returned by nested calls to the reader.  The sequence of
 top-level parse results is split into a \emph{prefix} and a
-\emph{suffix}, typically reflecting the current location in the buffer
+\emph{suffix}, typically reflecting the current position in the buffer
 being edited by the end user.
