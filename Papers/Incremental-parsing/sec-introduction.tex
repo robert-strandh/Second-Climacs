@@ -1,1 +1,34 @@
 \section{Introduction}
+
+Whether autonomous or part of an integrated development environment,
+an editor that caters to \commonlisp{} programmers must analyze the
+buffer contents in order to help the programmer understand how this
+contents would be analyzed when submitted to the \commonlisp{}
+compiler.  Furthermore, the editor analysis must be \emph{fast} so
+that it is up to date shortly after each keystroke by the programmer.
+
+In order to obtain such speed for the analysis, it must be
+\emph{incremental}.  A complete analysis of the entire buffer for each
+keystroke is generally not feasible, especially for buffers with a
+significant amount of code.
+
+Furthermore, the analysis is necessarily \emph{approximate}.  The
+existence of the construct \texttt{eval-when} allows for arbitrary
+computations at compile time, and these computations may influence the
+environment in arbitrary ways that may invalidate subsequent, or even
+preceding analyses, making an analysis that is both precise and
+incremental impossible in general.
+
+The question, then, is how approximate the analysis has to be, and how
+much of it we can allow ourselves to recompute, given the performance
+of modern hardware and modern \commonlisp{} implementations.
+
+In this paper, we describe an analysis technique that represents an
+improvement compared the ones used by the most widespread editors for
+\commonlisp{} code used today.  The technique is more precise that
+existing ones, because it uses the \commonlisp{} \texttt{read}
+function, which is a better approximation than the regular-expression
+techniques mostly frequently used.  We show that or analysis is
+sufficiently fast because it is done incrementally, and requiring very
+little incremental work for most simple editing operations.
+
