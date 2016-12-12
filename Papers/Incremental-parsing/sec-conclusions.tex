@@ -5,4 +5,25 @@ analysis of its structure.  In order to determine the role of each
 symbol and other information such as indentation, further analysis is
 required.  Such analysis requires a \emph{code walker}, because the
 role of a symbol may depend on the definitions of macros to which it
-is an argument.
+is an argument.  Similarly, in order to compute standard
+\emph{indentation}, also requires further analysis.  To implement this
+code walker, we consider using the first phase of the \cleavir{}
+compiler framework%
+\footnote{\cleavir{} is currently part of \sicl{}.  See
+  https://github.com/robert-strandh/SICL/tree/master/Code/Cleavir.}
+
+We plan to investigate the use of a new implementation of
+\emph{first-class global environments}
+\cite{Strandh:2015:ELS:Environments}.  This new implementation of the
+existing \clos{} protocol would use \emph{incremental differences} to
+the \emph{startup environment}%
+\footnote{Recall that the startup environment is the environment in
+  which the compiler was invoked.}
+so as to define a \emph{compilation environment}%
+\footnote{Recall that the compilation environment is the environment
+  used the compiler for definitions and side effects of the
+  compilation process.}
+that is different for each top-level form in the editor buffer.  This
+technique wold allow us to restart the compiler in an appropriate
+environment without having to process the entire buffer from the
+beginning.
