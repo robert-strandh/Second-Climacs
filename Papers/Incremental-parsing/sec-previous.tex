@@ -1,6 +1,7 @@
 \section{Previous work}
 
 \subsection{\emacs{}}
+\label{sec-previous-emacs}
 
 In GNU Emacs
 \cite{GNUEmacsLispReferenceManual,CraftOfTextEditiing,Finseth:1980:TPTa}
@@ -33,3 +34,15 @@ Unlike \emacs{}, the \climacs{} parser is more accurate when it comes
 to the role of symbols in the program code.  In many cases, it is able
 to distinguish between a symbol used as the name of a function and the
 same symbol used as a lexical variable.
+
+\subsection{Lem}
+
+Lem%
+\footnote{See https://github.com/cxxxr/lem.}
+is a relatively recent addition to the family of \emacs{} clones.  It
+is written in \commonlisp{} and it uses \texttt{curses} to display
+buffer contents.
+
+Like \emacs{} \seesec{sec-previous-emacs}, it uses regular expressions
+for analyzing \commonlisp{} code, with the same disadvantages in terms
+of precision of the analysis.
