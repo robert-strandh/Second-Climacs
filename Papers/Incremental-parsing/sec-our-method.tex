@@ -64,13 +64,21 @@ being edited by the end user.
 
 Depending on the location of the parse result in the cache data
 structure, its position may be \emph{absolute} or \emph{relative}.
-Parse results in the prefix have absolute positions, whereas parse
-results in the suffix have relative positions.  When a parse result is
-moved from the prefix to the suffix, or from the suffix to the prefix,
-the positions concerned are updated to maintain this invariant.
-Similarly, the position of the first child of some parse result $P$
-has a position relative to that of $P$, and the children, other than
+The prefix contains parse results that precede updates to the buffer.
+For that reason, these parse results have absolute positions.  Parse
+results in the suffix, on the other hand, follow updates to the
+buffer.  In particular, if a line is inserted or deleted, the parse
+results in the suffix will have their positions changed.  For that
+reason, only the first parse result of the suffix has an absolute
+position.  Each of the others has a position relative to its
+predecessor.  When a line is inserted or deleted, only the first parse
+result of the suffix has to have its position updated.  When a parse
+result is moved from the prefix to the suffix, or from the suffix to
+the prefix, the positions concerned are updated to maintain this
+invariant.
+
+To avoid having to traverse all the descendants of a parse result when
+its position changes, we make the position of the first child of some
+parse result $P$ relative to that of $P$, and the children, other than
 the first, of some parse result $P$, have positions relative to the
-previous child in the list.  This way, we avoid having to update the
-position of all the parse results in the buffer whenever a line is
-inserted or deleted as a result of some editing operations.
+previous child in the list.
