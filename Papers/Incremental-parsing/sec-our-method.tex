@@ -272,6 +272,21 @@ children reflect the absolute line number, and we also make the
 \texttt{start-line} of the next parse result of the suffix also
 reflect the absolute line number.  We obtain the following situation:
 
+\vspace{-5mm}
+{\small\begin{verbatim}
+    prefix
+    ...
+    34 00 (f 10)
+    residue
+    worklist
+    36 01 ((x 1) (y 2))
+    38 02 (g (h x) (i y) (j x y))
+    suffix
+    42 00 (f 20)
+    ...
+\end{verbatim}}
+\vspace{-5mm}
+
 The first element of the worklist is affected by the modification of
 line 37.  We therefore remove it from the worklist, and add its
 children to the top of the worklist.  In doing so, we make the
