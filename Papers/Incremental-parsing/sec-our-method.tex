@@ -82,3 +82,34 @@ its position changes, we make the position of the first child of some
 parse result $P$ relative to that of $P$, and the children, other than
 the first, of some parse result $P$, have positions relative to the
 previous child in the list.
+
+When the buffer is updated, we try to maintain as many parse results
+as possible in the cache.  We can think of a buffer update as
+resulting in a sequence of operations, sorted by lines in increasing
+order.  There can be three different update operations:
+
+\begin{itemize}
+\item Modify.  The line has been modified.
+\item Insert.  A new line has been inserted.
+\item Delete.  An existing line has been deleted.
+\end{itemize}
+
+Updating the cache according to a particular sequence of update
+operations consists of two distinct phases:
+
+\begin{enumerate}
+\item Invalidation of parse results that span a line that has been
+  modified, inserted, or deleted.
+\item Rehabilitation of the cache according to the updated buffer
+  contents.
+\end{enumerate}
+
+During the invalidation phase, two additional lists of parse results
+are maintained, called the \emph{worklist} and the \emph{residue}.  At
+the beginning of this phase, these lists are both empty.  At the end
+of this phase, the worklist is empty.
+
+At the beginning of the invalidation phase, parse results are moved
+between the prefix and the suffix so that the last parse result of the
+prefix entirely precedes the first update operation, and the first
+parse result of the suffix does not.
