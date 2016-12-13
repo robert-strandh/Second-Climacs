@@ -110,9 +110,48 @@ operations consists of two distinct phases:
 During the invalidation phase, two additional lists of parse results
 are maintained, called the \emph{worklist} and the \emph{residue}.  At
 the beginning of this phase, these lists are both empty.  At the end
-of this phase, the worklist is empty.
+of this phase, any remaining parse results on the worklist are moved
+to the residue, resulting in the worklist being empty.  During the
+execution of this phase, the residue contains the parse results in
+reverse order.  Only at the end of the phase is it reversed so that
+the parse results are then in the same order as they appear in the
+buffer.
 
 At the beginning of the invalidation phase, parse results are moved
 between the prefix and the suffix so that the last parse result of the
 prefix entirely precedes the first update operation, and the first
 parse result of the suffix does not.
+
+The invalidation phase consists of an \emph{outer} loop and an
+\emph{inner} loop.  In the outer loop, each update operation is
+processed in increasing order of the line of the operation.  The
+invalidation phase terminates when every update operations has been
+processes.  The inner loop is executed until one of the following
+conditions are met:
+
+\begin{iterate}
+\item Both the worklist and the suffix are empty.
+\item The worklist is non-empty, and the position of first parse
+  result on the worklist is beyond the line of the update operation
+  being processed.
+\item The worklist is empty, the suffix is non-empty, and the position
+  of first parse result in the suffix is beyond the line of the update
+  operation being processed.
+\end{iterate}
+
+In each iteration of the inner loop of the invalidation phase a single
+parse result is processed, namely the first parse result on the
+worklist.  If the worklist is empty, the first parse result of the
+suffix is moved to the worklist before processing begins.
+
+In each iteration of the inner loop of the invalidation phase, there
+are two possible cases:
+
+\begin{enumerate}
+\item The parse result to be processed entirely precedes the line of
+  the update operation being processed.  In this case, the parse
+  result is moved to the residue.
+\item The parse result spans the line of the update operation.  Then
+  the parse result is removed from the worklist, and its children (if
+  any) are pushed on the worklist, preserving their order.
+\end{enumerate}
