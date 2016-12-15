@@ -24,11 +24,11 @@ much of it we can allow ourselves to recompute, given the performance
 of modern hardware and modern \commonlisp{} implementations.
 
 In this paper, we describe an analysis technique that represents an
-improvement compared the ones used by the most widespread editors for
-\commonlisp{} code used today.  The technique is more precise that
+improvement compared with the ones used by the most widespread editors
+for \commonlisp{} code used today.  The technique is more precise than
 existing ones, because it uses the \commonlisp{} \texttt{read}
 function, which is a better approximation than the regular-expression
-techniques mostly frequently used.  We show that or analysis is
+techniques mostly frequently used.  We show that our analysis is
 sufficiently fast because it is done incrementally, and requiring very
 little incremental work for most simple editing operations.
 

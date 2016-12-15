@@ -9,7 +9,7 @@ in two different ways:
 
 \begin{enumerate}
 \item The editing operations specified by the protocol define a
-  \emph{line} abstraction, in contrast to a buffer of GHU Emacs
+  \emph{line} abstraction, in contrast to a buffer of GNU Emacs
   \cite{Finseth:1980:TPTa} which exposes a single sequence containing
   newline characters to indicate line separation.
 \item The update protocol works on the granularity of a line.  An
@@ -41,12 +41,11 @@ standard one in the following ways:
 \end{itemize}
 
 The reader from the \sicl{} project%
-\footnote{See: https://github.com/robert-strandh/SICL.}
-was slightly modified to allow this kind of customization, thereby
-avoid the necessity of maintaining the code for a completely separate
-reader.
+\footnote{See: https://github.com/robert-strandh/SICL.}  was slightly
+modified to allow this kind of customization, thereby avoiding the
+necessity of maintaining the code for a completely separate reader.
 
-The update buffer protocol is typically invoked after each keystroke
+The buffer update protocol is typically invoked after each keystroke
 by the end user, and the modifications to the buffer are typically
 very modest, in that usually a single line has been modified.  It
 would be wasteful, and too slow for large buffers, to re-parse the
