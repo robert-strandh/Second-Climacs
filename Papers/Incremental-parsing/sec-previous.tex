@@ -3,11 +3,15 @@
 \subsection{\emacs{}}
 \label{sec-previous-emacs}
 
-In GNU Emacs
-\cite{GNUEmacsLispReferenceManual,CraftOfTextEditiing,Finseth:1980:TPTa}
-Highlighting is based on string matching, and no attempt is made to
-determine the symbols that are present in the current package.
-Even when the current package does not use the \texttt{common-lisp}
+GNU Emacs \cite{CraftOfTextEditiing,Finseth:1980:TPTa} is a
+general-purpose text editor written partly in \clanguage{} but mostly
+in a special-purpose dialect of \lisp{}
+\cite{GNUEmacsLispReferenceManual}.
+
+In the editing mode used for writing \commonlisp{} source code,
+highlighting is based on string matching, and no attempt is made to
+determine the symbols that are present in the current package.  Even
+when the current package does not use the \texttt{common-lisp}
 package, strings that match \commonlisp{} symbols are highlighted
 nevertheless.
 
