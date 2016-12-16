@@ -22,9 +22,15 @@ opposed to the name of a lexical variable.
 
 \subsection{\climacs{}}
 
-Like \emacs{}, \climacs{}%
+\climacs%
 \footnote{See: https://common-lisp.net/project/climacs/}
-does not take the current package into
+is an \emacs{}-like editor written entirely in \commonlisp{}.  It uses
+McCLIM%
+\footnote{See: https://github.com/robert-strandh/McCLIM}
+for its user interface, and specifically, an additional library called
+ESA \cite{Strandh:2007:ECL:1622123.1622150}.
+
+Like \emacs{}, \climacs{} does not take the current package into
 account.  The parser is based on table-driven parsing techniques
 such as LALR parsing, except that the parsing table was derived
 manually.  The parser is incremental in that the state of the parser
