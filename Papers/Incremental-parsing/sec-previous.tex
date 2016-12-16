@@ -33,13 +33,15 @@ McCLIM \cite{Strandh:2002:ILC:McCLIM}
 for its user interface, and specifically, an additional library called
 ESA \cite{Strandh:2007:ECL:1622123.1622150}.
 
-Like \emacs{}, \climacs{} does not take the current package into
-account.  The parser is based on table-driven parsing techniques
-such as LALR parsing, except that the parsing table was derived
-manually.  The parser is incremental in that the state of the parser
-is saved for certain points in the buffer, so that parsing can be
-restarted from such a point without requiring the entire buffer to be
-parsed from the beginning.
+The framework for syntax analysis in \climacs{}
+\cite{Rhodes.etal:2005} is very general.  The parser for \commonlisp{}
+syntax is based on table-driven parsing techniques such as LALR
+parsing, except that the parsing table was derived manually.  Like
+\emacs{}, \climacs{} does not take the current package into account.
+The parser is incremental in that the state of the parser is saved for
+certain points in the buffer, so that parsing can be restarted from
+such a point without requiring the entire buffer to be parsed from the
+beginning.
 
 Unlike \emacs{}, the \climacs{} parser is more accurate when it comes
 to the role of symbols in the program code.  In many cases, it is able
