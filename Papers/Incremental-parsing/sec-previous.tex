@@ -15,6 +15,12 @@ when the current package does not use the \texttt{common-lisp}
 package, strings that match \commonlisp{} symbols are highlighted
 nevertheless.
 
+In addition, no attempt is made to distinguish between the role of
+different occurrences of a symbol.  In \commonlisp{} where a symbol
+can simultaneously be used to name a function, a variable, etc., it
+would be desirable to present occurrences with different roles in a
+different way.
+
 Indentation is also based on string matching, resulting in the text
 being indented as \commonlisp{} code even when it is not.
 Furthermore, indentation does not take into account the role of a
