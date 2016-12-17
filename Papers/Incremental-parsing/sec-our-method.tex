@@ -432,3 +432,25 @@ residue list.  The final situation is shown here:
 \end{verbatim}}
 
 \subsection{Rehabilitation phase}
+
+Once the cache has been partially invalidated according to
+modifications to the buffer, the buffer must be parsed again so that a
+complete valid cache is again obtained.  To avoid having to parse the
+entire buffer from beginning to end, we use two crucial ways to speed
+up the process:
+
+\begin{enumerate}
+\item We do not have to take into account the buffer contents that
+  corresponds to the parse results in the prefix of the cache.
+  Because of the way the prefix and the suffix were positioned prior
+  to the invalidation phase, the parse results in the prefix all
+  precede the first modified line of the buffer, so these parse
+  results are still valid.
+\item When a call to \texttt{read} is made at a particular position in
+  the buffer, we first consult the cache.  If the cache contains a
+  parse result that was obtained from a previous call to \texttt{read}
+  at this position, the entire invocation of the reader is
+  short-circuited, so that the existing parse result is returned
+  instead, and the stream position is advanced to be positioned at the
+  end of that existing parse result.
+\end{enumerate}
