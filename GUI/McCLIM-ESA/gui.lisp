@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-esa-gui)
 
-(defclass example-info-pane (esa:info-pane)
+(defclass info-pane (esa:info-pane)
   ()
   (:default-initargs
    :height 20 :max-height 20 :min-height 20
@@ -11,7 +11,7 @@
   (declare (ignore frame))
   (format pane "Pane name: ~s" (clim:pane-name (esa:master-pane pane))))
 
-(defclass example-minibuffer-pane (esa:minibuffer-pane)
+(defclass minibuffer-pane (esa:minibuffer-pane)
   ()
   (:default-initargs
    :height 20 :max-height 20 :min-height 20))
@@ -32,7 +32,7 @@
 					   :width 900 :height 400
 					   :display-function 'display-my-pane
 					   :command-table 'global-climacs-table))
-		  (my-info-pane (clim:make-pane 'example-info-pane
+		  (my-info-pane (clim:make-pane 'info-pane
 						:master-pane my-pane
 						:width 900)))
 	     (setf (esa:windows clim:*application-frame*) (list my-pane))
@@ -40,7 +40,7 @@
 	       (clim:scrolling ()
 		 my-pane)
 	       my-info-pane)))
-   (minibuffer (clim:make-pane 'example-minibuffer-pane :width 900)))
+   (minibuffer (clim:make-pane 'minibuffer-pane :width 900)))
   (:layouts
    (default (clim:vertically (:scroll-bars nil)
 	      window
