@@ -106,6 +106,3 @@
 	  do (insert-item cursor char))
     (cluffer:detach-cursor cursor)
     buffer))
-
-    
-  
