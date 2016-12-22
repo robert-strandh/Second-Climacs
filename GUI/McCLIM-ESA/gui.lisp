@@ -24,6 +24,7 @@
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
   ((%views :initarg :views :reader views)
+   (%buffers :initarg :buffers :reader esa:buffers)
    (%current-view :initarg :current-view :accessor current-view))
   (:panes
    (window (let* ((my-pane (clim:make-pane 'text-pane
@@ -52,4 +53,7 @@
 
 (defun climacs ()
   (clim:run-frame-top-level
-   (clim:make-application-frame 'climacs)))
+   (clim:make-application-frame
+    'climacs
+    :views '()
+    :buffers '())))
