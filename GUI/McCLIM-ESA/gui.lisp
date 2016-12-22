@@ -16,6 +16,11 @@
   (:default-initargs
    :height 20 :max-height 20 :min-height 20))
 
+(clim:define-command-table global-climacs-table
+  :inherit-from
+  (esa:global-esa-table
+   esa-io:esa-io-table))
+
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
   ((%views :initarg :views :reader views)
@@ -25,7 +30,7 @@
 					   :lines '()
 					   :width 900 :height 400
 					   :display-function 'display-my-pane
-					   :command-table 'esa:global-esa-table))
+					   :command-table 'global-climacs-table))
 		  (my-info-pane (clim:make-pane 'example-info-pane
 						:master-pane my-pane
 						:width 900)))
