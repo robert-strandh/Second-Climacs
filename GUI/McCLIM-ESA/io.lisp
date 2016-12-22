@@ -1,7 +1,10 @@
 (cl:in-package #:climacs-esa-gui)
 
-(defclass buffer (cluffer-standard-buffer:buffer)
-  ((%filepath
+(defclass buffer ()
+  ((%cluffer-buffer
+    :initarg :cluffer-buffer
+    :reader cluffer-buffer)
+   (%filepath
     :initform nil
     :initarg filepath
     :accessor esa-buffer:filepath)
@@ -15,7 +18,5 @@
     :accessor esa-buffer:needs-saving)))
 
 (defmethod esa-buffer:frame-make-buffer-from-stream ((frame climacs) stream)
-  (let ((initial-line (make-instance 'cluffer-standard-line:closed-line)))
-    (make-instance 'buffer
-      :initial-line initial-line)))
-
+  (make-instance 'buffer
+    :cluffer-buffer (climacs-basic-emacs:buffer-from-stream stream)))
