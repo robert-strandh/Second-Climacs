@@ -4,6 +4,7 @@
   :depends-on (:mcclim
 	       :cluffer
 	       :climacs-basic-emacs
+	       :climacs-flexichain-output-history
 	       :clouseau)
   :serial t
   :components
