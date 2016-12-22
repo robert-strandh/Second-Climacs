@@ -3,7 +3,8 @@
 (defsystem :climacs-esa-gui
   :depends-on (:mcclim
 	       :cluffer
-	       :climacs-basic-emacs)
+	       :climacs-basic-emacs
+	       :clouseau)
   :serial t
   :components
   ((:file "packages")
