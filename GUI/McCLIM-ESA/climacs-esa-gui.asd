@@ -7,4 +7,5 @@
   :components
   ((:file "packages")
    (:file "text-pane")
-   (:file "gui")))
+   (:file "gui")
+   (:file "io")))
