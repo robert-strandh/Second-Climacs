@@ -30,7 +30,7 @@
    (window (let* ((my-pane (clim:make-pane 'text-pane
 					   :lines '()
 					   :width 900 :height 400
-					   :display-function 'display-my-pane
+					   :display-time nil
 					   :command-table 'global-climacs-table))
 		  (my-info-pane (clim:make-pane 'info-pane
 						:master-pane my-pane
@@ -46,10 +46,6 @@
 	      window
 	      minibuffer)))
   (:top-level (esa:esa-top-level)))
-
-(defun display-my-pane (frame pane)
-  (declare (ignore frame pane))
-  nil)
 
 (defun climacs ()
   (clim:run-frame-top-level
