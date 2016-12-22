@@ -53,3 +53,6 @@
     'climacs
     :views '()
     :buffers '())))
+
+(clim:define-command (com-inspect :name t :command-table global-climacs-table) ()
+  (clouseau:inspector clim:*application-frame*))
