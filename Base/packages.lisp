@@ -8,4 +8,5 @@
 	   #:analyzer
 	   #:update-analyzer-from-buffer
 	   #:update-analyzer
+	   #:null-analyzer
 	   #:view))
