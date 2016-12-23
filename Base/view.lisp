@@ -61,3 +61,13 @@
 
 (defun update-view (view)
   (update-view-from-analyzer view (analyzer view)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on UPDATE-VIEW-FROM-ANALYZER specialized to NULL-ANALYZER.
+;;;
+;;; This method calls UPDATE-VIEW-FROM-ANALYZER recursively with the
+;;; buffer of the analyzer in place of the analyzer itself.
+
+(defmethod update-view-from-analyzer (view (analyzer null-analyzer))
+  (update-view-from-analyzer view (buffer analyzer)))
