@@ -8,4 +8,5 @@
    (:file "buffer")
    (:file "standard-buffer")
    (:file "analyzer")
+   (:file "null-analyzer")
    (:file "view")))
