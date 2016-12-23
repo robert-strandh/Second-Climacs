@@ -9,6 +9,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "climacs-clim-view")
    (:file "text-pane")
    (:file "gui")
    (:file "io")))
