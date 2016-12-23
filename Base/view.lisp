@@ -28,3 +28,19 @@
 
 (defclass view ()
   ((%analyzer :initarg :analyzer :reader analyzer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function UPDATE-VIEW-FROM-ANALYZER.
+;;;
+;;; This generic function is called by the ordinary function
+;;; UPDATE-VIEW, passing the view and the analyzer of the view as
+;;; arguments.  Client code may define primary or auxiliary methods on
+;;; this generic function, subject to the usual restrictions about
+;;; subclassing.
+;;;
+;;; When this function is called, it is assumed that the analyzer has
+;;; already been updated.  Primary and auxiliary methods on this
+;;; generic function may assume that this is the case.
+
+(defgeneric update-view-from-analyzer (view analyzer))
