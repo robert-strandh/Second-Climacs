@@ -42,6 +42,11 @@
 ;;; When this function is called, it is assumed that the analyzer has
 ;;; already been updated.  Primary and auxiliary methods on this
 ;;; generic function may assume that this is the case.
+;;;
+;;; A buffer can play the role of the analyzer.  This situation occurs
+;;; when the analyzer is a NULL-ANALYZER, in which case, this generic
+;;; function is called recursively with the buffer of the analyzer in
+;;; place of the analyzer.
 
 (defgeneric update-view-from-analyzer (view analyzer))
 
