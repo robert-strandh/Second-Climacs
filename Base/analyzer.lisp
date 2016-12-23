@@ -25,10 +25,10 @@
 ;;; Generic function UPDATE-ANALYZER-FROM-BUFFER.
 ;;;
 ;;; This generic function is called by the ordinary function
-;;; UPDATE-ANALYZER, passing the analyzer and the buffer analyzer as
-;;; arguments.  Client code may define primary or auxiliary methods on
-;;; this generic function, subject to the usual restrictions about
-;;; subclassing.
+;;; UPDATE-ANALYZER, passing the analyzer and the buffer of the
+;;; analyzer as arguments.  Client code may define primary or
+;;; auxiliary methods on this generic function, subject to the usual
+;;; restrictions about subclassing.
 
 (defgeneric update-analyzer-from-buffer (analyzer buffer))
 
