@@ -5,5 +5,7 @@
   (:use #:common-lisp)
   (:export #:buffer
 	   #:standard-buffer
-	   #:view
-	   #:analyzer))
+	   #:analyzer
+	   #:update-analyzer-from-buffer
+	   #:update-analyzer
+	   #:view))
