@@ -44,3 +44,15 @@
 ;;; generic function may assume that this is the case.
 
 (defgeneric update-view-from-analyzer (view analyzer))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function UPDATE-VIEW.
+;;;
+;;; This function is called in order to update the view passed as an
+;;; argument.  All it does is to trampoline to
+;;; UPDATE-VIEW-FROM-ANALYZER, passing it the view and the analyzer of
+;;; the view.
+
+(defun update-view (view)
+  (update-view-from-analyzer view (analyzer view)))
