@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "buffer")
-   (:file "analyzer")))
+   (:file "analyzer")
+   (:file "view")))
