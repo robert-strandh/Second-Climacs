@@ -9,4 +9,6 @@
 	   #:update-analyzer-from-buffer
 	   #:update-analyzer
 	   #:null-analyzer
-	   #:view))
+	   #:view
+	   #:update-view-from-analyzer
+	   #:update-view))
