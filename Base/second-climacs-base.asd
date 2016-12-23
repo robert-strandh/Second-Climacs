@@ -6,5 +6,6 @@
   :components
   ((:file "packages")
    (:file "buffer")
+   (:file "standard-buffer")
    (:file "analyzer")
    (:file "view")))
