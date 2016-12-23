@@ -31,3 +31,15 @@
 ;;; subclassing.
 
 (defgeneric update-analyzer-from-buffer (analyzer buffer))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function UPDATE-ANALYZER.
+;;;
+;;; This function is called in order to update the analyzer passed as
+;;; an argument.  All it does is to trampoline to
+;;; UPDATE-ANALYZER-FROM-BUFFER, passing it the analyzer and the
+;;; buffer of the analyzer.
+
+(defun update-analyzer (analyzer)
+  (update-analyzer-from-buffer analyzer (buffer analyzer)))
