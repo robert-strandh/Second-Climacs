@@ -11,4 +11,6 @@
 	   #:null-analyzer
 	   #:view
 	   #:update-view-from-analyzer
-	   #:update-view))
+	   #:update-view
+	   #:update-window-from-view
+	   #:update-window))
