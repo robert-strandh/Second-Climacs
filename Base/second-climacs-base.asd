@@ -9,4 +9,5 @@
    (:file "standard-buffer")
    (:file "analyzer")
    (:file "null-analyzer")
-   (:file "view")))
+   (:file "view")
+   (:file "window")))
