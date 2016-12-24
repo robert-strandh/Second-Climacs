@@ -21,6 +21,10 @@
 
 (defgeneric update-window (application window))
 
+(defmethod update-window :before (application window)
+  (update-analyzer (analyzer (view window)))
+  (update-view (view window)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function VIEW.
