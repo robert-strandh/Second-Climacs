@@ -28,6 +28,10 @@
 
 (defgeneric update-window (application window))
 
+(defmethod update-window (application window)
+  (declare (ignore application))
+  (update-window-from-view window (view window)))
+
 (defmethod update-window :before (application window)
   (update-analyzer (analyzer (view window)))
   (update-view (view window)))
