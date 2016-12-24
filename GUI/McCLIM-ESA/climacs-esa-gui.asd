@@ -11,5 +11,6 @@
   ((:file "packages")
    (:file "climacs-clim-view")
    (:file "text-pane")
+   (:file "fundamental-view")
    (:file "gui")
    (:file "io")))
