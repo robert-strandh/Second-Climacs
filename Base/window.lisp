@@ -12,6 +12,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function UPDATE-WINDOW-FROM-VIEW.
+;;;
+;;; Client code will define a primary method on this generic function,
+;;; specialized to the class of the window used by the interface
+;;; manager for displaying the buffer contents according to the view.
 
 (defgeneric update-window-from-view (window view))
 
