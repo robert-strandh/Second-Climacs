@@ -18,6 +18,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function UPDATE-WINDOW.
+;;;
+;;; This function is called from the main application command loop or
+;;; event loop in order to update a visible window.  A :BEFORE method
+;;; makes sure that the analyzer and the view of the window are
+;;; updated.  The default method on this function ignores the
+;;; application object and calls UPDATE-WINDOW-FROM-VIEW with the
+;;; window and the view of the window.
 
 (defgeneric update-window (application window))
 
