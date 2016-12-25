@@ -18,3 +18,11 @@
 ;;; Take a cursor and an iten, and insert the item at cursor.
 
 (defgeneric insert-item (cursor item))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function DELETE-ITEM-.
+;;;
+;;; Delete the item immediately after the cursor.
+
+(defgeneric delete-item (cursor))
