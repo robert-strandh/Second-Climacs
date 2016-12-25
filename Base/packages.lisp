@@ -4,6 +4,7 @@
   (:nicknames #:climacs2-base)
   (:use #:common-lisp)
   (:export #:buffer
+	   #:insert-item
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:analyzer
