@@ -5,6 +5,7 @@
   (:use #:common-lisp)
   (:export #:buffer
 	   #:insert-item
+	   #:delete-item
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:analyzer
