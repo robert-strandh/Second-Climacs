@@ -26,6 +26,10 @@
 ;;; commands are forwarded to the buffer of the analyzer.  Commands
 ;;; for inserting and deleting text are examples of such commands.
 
+(defgeneric analyzer (view))
+
+(defgeneric cursor (view))
+
 (defclass view ()
   ((%analyzer :initarg :analyzer :reader analyzer)
    (%cursor :initarg :cursor :reader cursor)))
