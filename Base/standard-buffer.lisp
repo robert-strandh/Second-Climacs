@@ -12,3 +12,10 @@
 
 (defmethod insert-item ((cursor cluffer:cursor) item)
   (cluffer:insert-item cursor item))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on DELETE-ITEM.
+
+(defmethod delete-item ((cursor cluffer:cursor))
+  (cluffer:delete-item cursor))
