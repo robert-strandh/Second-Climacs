@@ -5,3 +5,10 @@
 
 (defclass standard-buffer (buffer)
   ((%cluffer-buffer :initarg :cluffer-buffer :reader cluffer-buffer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on INSERT-ITEM.
+
+(defmethod insert-item ((cursor cluffer:cursor) item)
+  (cluffer:insert-item cursor item))
