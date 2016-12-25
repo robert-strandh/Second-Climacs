@@ -27,7 +27,8 @@
 ;;; for inserting and deleting text are examples of such commands.
 
 (defclass view ()
-  ((%analyzer :initarg :analyzer :reader analyzer)))
+  ((%analyzer :initarg :analyzer :reader analyzer)
+   (%cursor :initarg :cursor :reader cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
