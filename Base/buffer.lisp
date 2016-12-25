@@ -26,3 +26,11 @@
 ;;; Delete the item immediately after the cursor.
 
 (defgeneric delete-item (cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function ERASE-ITEM-.
+;;;
+;;; Delete the item immediately before the cursor.
+
+(defgeneric erase-item (cursor))
