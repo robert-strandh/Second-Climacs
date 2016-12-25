@@ -12,6 +12,7 @@
 	   #:update-analyzer
 	   #:null-analyzer
 	   #:view
+	   #:cursor
 	   #:update-view-from-analyzer
 	   #:update-view
 	   #:update-window-from-view
