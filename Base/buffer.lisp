@@ -10,3 +10,11 @@
 
 (defclass buffer ()
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function INSERT-ITEM.
+;;;
+;;; Take a cursor and an iten, and insert the item at cursor.
+
+(defgeneric insert-item (cursor item))
