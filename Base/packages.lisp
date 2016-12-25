@@ -6,6 +6,7 @@
   (:export #:buffer
 	   #:insert-item
 	   #:delete-item
+	   #:erase-item
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:analyzer
