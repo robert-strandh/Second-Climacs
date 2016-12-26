@@ -16,3 +16,8 @@
 	   :accessor lines)
    ;; This slot contains a flexichain-output-history object.
    (%history :initarg :history :accessor history)))
+
+(defmethod climacs2-base:hide-view :after ((view view))
+  (setf (timestamp view) nil
+	(lines view) (make-instance 'flexichain:standard-flexichain)
+	(history view) nil))
