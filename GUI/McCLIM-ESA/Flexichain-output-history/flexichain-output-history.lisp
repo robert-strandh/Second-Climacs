@@ -110,7 +110,11 @@
 
 (defmethod clim:clear-output-record ((history flexichain-output-history))
   (let ((chain (lines history)))
-    (flexichain:delete-elements* chain 0 (flexichain:nb-elements chain))))
+    (flexichain:delete-elements* chain 0 (flexichain:nb-elements chain)))
+  (setf (prefix-end history) 0
+	(prefix-height history) 0
+	(width history) 0
+	(height history 0)))
 
 (defmethod clim:add-output-record
     ((record clim:standard-updating-output-record)
