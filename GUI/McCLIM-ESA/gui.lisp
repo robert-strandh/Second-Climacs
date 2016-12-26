@@ -19,7 +19,8 @@
 (clim:define-command-table global-climacs-table
   :inherit-from
   (esa:global-esa-table
-   esa-io:esa-io-table))
+   esa-io:esa-io-table
+   ascii-insert-table))
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
