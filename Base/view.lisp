@@ -76,3 +76,18 @@
 
 (defmethod update-view-from-analyzer (view (analyzer null-analyzer))
   (update-view-from-analyzer view (buffer analyzer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function HIDE-VIEW.
+;;;
+;;; This generic function is called when a view is no longer
+;;; associated with a window.  The default primary method does
+;;; nothing.  Client code may define auxiliary methods on subclasses
+;;; of VIEW.
+
+(defgeneric hide-view (view))
+
+(defmethod hide-view ((view view))
+  (declare (ignorable view))
+  nil)
