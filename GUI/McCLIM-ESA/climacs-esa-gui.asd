@@ -12,6 +12,6 @@
    (:file "climacs-clim-view")
    (:file "text-pane")
    (:file "fundamental-view")
+   (:file "insert-table")
    (:file "gui")
-   (:file "io")
-   (:file "insert-table")))
+   (:file "io")))
