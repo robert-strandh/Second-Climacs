@@ -28,6 +28,7 @@
    (%current-view :initarg :current-view :accessor current-view))
   (:panes
    (window (let* ((my-pane (clim:make-pane 'text-pane
+					   :name 'stuff
 					   :lines '()
 					   :width 900 :height 400
 					   :display-time nil
@@ -35,6 +36,12 @@
 		  (my-info-pane (clim:make-pane 'info-pane
 						:master-pane my-pane
 						:width 900)))
+	     (setf (clim:stream-recording-p my-pane) nil)
+	     (setf (clim:stream-end-of-line-action my-pane) :allow)
+	     (change-class
+	      (clim:stream-output-history my-pane)
+	      'climacs-flexichain-output-history:flexichain-output-history
+	      :parent my-pane)
 	     (setf (esa:windows clim:*application-frame*) (list my-pane))
 	     (clim:vertically ()
 	       (clim:scrolling ()
