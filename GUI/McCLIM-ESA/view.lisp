@@ -14,4 +14,4 @@
    ;; contents was asked for.
    (%lines :initform (make-instance 'flexichain:standard-flexichain))
    ;; This slot contains a flexichain-output-history object.
-   (%history :initarg :history :reader history)))
+   (%history :initarg :history :accessor history)))
