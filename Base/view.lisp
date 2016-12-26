@@ -91,3 +91,18 @@
 (defmethod hide-view ((view view))
   (declare (ignorable view))
   nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function EXPOSE-VIEW.
+;;;
+;;; This generic function is called when a previously hidden view is
+;;; about to be associated with a window.  The default primary method
+;;; does nothing.  Client code may define auxiliary methods on
+;;; subclasses of VIEW.
+
+(defgeneric expose-view (view &key))
+
+(defmethod expose-view ((view view) &key)
+  (declare (ignorable view))
+  nil)
