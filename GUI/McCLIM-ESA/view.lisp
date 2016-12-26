@@ -21,3 +21,8 @@
   (setf (timestamp view) nil
 	(lines view) (make-instance 'flexichain:standard-flexichain)
 	(history view) nil))
+
+(defmethod climacs2-base:expose-view :after ((view view) &key history)
+  (setf (history view) history))
+
+	
