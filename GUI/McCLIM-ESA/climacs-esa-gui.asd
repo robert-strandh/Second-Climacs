@@ -11,6 +11,7 @@
   ((:file "packages")
    (:file "climacs-clim-view")
    (:file "text-pane")
+   (:file "view")
    (:file "fundamental-view")
    (:file "insert-table")
    (:file "gui")
