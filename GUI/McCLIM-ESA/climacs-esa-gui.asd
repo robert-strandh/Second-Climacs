@@ -13,4 +13,5 @@
    (:file "text-pane")
    (:file "fundamental-view")
    (:file "gui")
-   (:file "io")))
+   (:file "io")
+   (:file "insert-table")))
