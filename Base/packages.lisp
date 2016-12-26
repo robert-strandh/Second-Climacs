@@ -17,5 +17,7 @@
 	   #:cursor
 	   #:update-view-from-analyzer
 	   #:update-view
+	   #:hide-view
+	   #:expose-view
 	   #:update-window-from-view
 	   #:update-window))
