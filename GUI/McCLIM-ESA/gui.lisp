@@ -22,18 +22,21 @@
    esa-io:esa-io-table
    ascii-insert-table))
 
+(defun make-climacs-pane ()
+  (clim:make-pane 'text-pane
+		  :name 'stuff
+		  :lines '()
+		  :width 900 :height 400
+		  :display-time nil
+		  :command-table 'global-climacs-table))
+
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
   ((%views :initarg :views :reader views)
    (%buffers :initarg :buffers :reader esa:buffers)
    (%current-view :initarg :current-view :accessor current-view))
   (:panes
-   (window (let* ((my-pane (clim:make-pane 'text-pane
-					   :name 'stuff
-					   :lines '()
-					   :width 900 :height 400
-					   :display-time nil
-					   :command-table 'global-climacs-table))
+   (window (let* ((my-pane (make-climacs-pane))
 		  (my-info-pane (clim:make-pane 'info-pane
 						:master-pane my-pane
 						:width 900)))
