@@ -114,7 +114,7 @@
   (setf (prefix-end history) 0
 	(prefix-height history) 0
 	(width history) 0
-	(height history 0)))
+	(height history) 0))
 
 (defmethod clim:add-output-record
     ((record clim:standard-updating-output-record)
