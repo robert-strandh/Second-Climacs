@@ -12,6 +12,7 @@
    ;; cell is a Cluffer line object.  The CDR is a vector containing
    ;; the contents of the Cluffer line object as it was when the
    ;; contents was asked for.
-   (%lines :initform (make-instance 'flexichain:standard-flexichain))
+   (%lines :initform (make-instance 'flexichain:standard-flexichain)
+	   :accessor lines)
    ;; This slot contains a flexichain-output-history object.
    (%history :initarg :history :accessor history)))
