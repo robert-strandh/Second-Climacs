@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-gui)
+(cl:in-package #:climacs-climatis-gui)
 
 (defun status-line ()
   (let* ((background-color
