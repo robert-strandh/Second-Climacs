@@ -39,6 +39,11 @@
   (climacs2-base:hide-view (climacs-view (clim:stream-default-view pane)))
   (setf (climacs-view (clim:stream-default-view pane)) nil))
 
+(defun attach-view (pane view)
+  (assert (not (pane-has-attached-view-p pane)))
+  (climacs2-base:expose-view view :history (clim:stream-output-history pane))
+  (setf (climacs-view (clim:stream-default-view pane)) view))
+
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
   ((%views :initarg :views :reader views)
