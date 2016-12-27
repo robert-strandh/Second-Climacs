@@ -53,7 +53,8 @@
    (window (let* ((my-pane (make-climacs-pane))
 		  (my-info-pane (clim:make-pane 'info-pane
 						:master-pane my-pane
-						:width 900)))
+						:width 900))
+		  (view (make-empty-fundamental-view)))
 	     (setf (clim:stream-recording-p my-pane) nil)
 	     (setf (clim:stream-end-of-line-action my-pane) :allow)
 	     (change-class
@@ -61,6 +62,7 @@
 	      'climacs-flexichain-output-history:flexichain-output-history
 	      :parent my-pane)
 	     (setf (esa:windows clim:*application-frame*) (list my-pane))
+	     (attach-view my-pane view)
 	     (clim:vertically ()
 	       (clim:scrolling ()
 		 my-pane)
