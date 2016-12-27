@@ -31,6 +31,9 @@
 		    :display-time nil
 		    :command-table 'global-climacs-table)))
 
+(defun pane-has-attached-view-p (pane)
+  (not (null (climacs-view (clim:stream-default-view pane)))))
+
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
   ((%views :initarg :views :reader views)
