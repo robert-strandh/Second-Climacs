@@ -35,6 +35,7 @@
   (not (null (climacs-view (clim:stream-default-view pane)))))
 
 (defun detach-view (pane)
+  (assert (pane-has-attached-view-p pane))
   (climacs2-base:hide-view (climacs-view (clim:stream-default-view pane)))
   (setf (climacs-view (clim:stream-default-view pane)) nil))
 
