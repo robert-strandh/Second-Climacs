@@ -15,3 +15,7 @@
       do (esa:set-key `(com-insert-item ,char)
 		      'ascii-insert-table
 		      `((,char))))
+
+(esa:set-key `(com-insert-item #\Newline)
+	     'ascii-insert-table
+	     '((#\Newline)))
