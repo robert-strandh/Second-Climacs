@@ -23,12 +23,14 @@
    ascii-insert-table))
 
 (defun make-climacs-pane ()
-  (clim:make-pane 'text-pane
-		  :name 'stuff
-		  :lines '()
-		  :width 900 :height 400
-		  :display-time nil
-		  :command-table 'global-climacs-table))
+  (let ((view (make-instance 'climacs-clim-view :climacs-view nil)))
+    (clim:make-pane 'text-pane
+		    :name 'stuff
+		    :default-view view
+		    :lines '()
+		    :width 900 :height 400
+		    :display-time nil
+		    :command-table 'global-climacs-table)))
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
