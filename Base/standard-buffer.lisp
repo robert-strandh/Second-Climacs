@@ -26,3 +26,20 @@
 
 (defmethod erase-item ((cursor cluffer:cursor))
   (cluffer:erase-item cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function MAKE-EMPTY-STANDARD-BUFFER.
+
+(defun make-empty-standard-buffer ()
+  (let* ((line (make-instance 'cluffer-standard-line:closed-line))
+	 (buffer (make-instance 'cluffer-standard-buffer:buffer
+		   :initial-line line))
+	 (cursor (make-instance
+		     'cluffer-standard-line:right-sticky-cursor)))
+    (cluffer:attach-cursor cursor line)
+    (loop for char = (read-char stream nil nil)
+	  until (null char)
+	  do (insert-item cursor char))
+    (cluffer:detach-cursor cursor)
+    (make-instance 'standard-buffer :cluffer-buffer buffer)))
