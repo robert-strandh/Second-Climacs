@@ -9,6 +9,7 @@
 	   #:erase-item
 	   #:standard-buffer
 	   #:cluffer-buffer
+	   #:make-empty-standard-buffer-and-cursor
 	   #:analyzer
 	   #:update-analyzer-from-buffer
 	   #:update-analyzer
