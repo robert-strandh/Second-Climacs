@@ -27,7 +27,6 @@
     (clim:make-pane 'text-pane
 		    :name 'stuff
 		    :default-view view
-		    :lines '()
 		    :width 900 :height 400
 		    :display-time nil
 		    :command-table 'global-climacs-table)))
