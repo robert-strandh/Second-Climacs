@@ -3,6 +3,7 @@
 (defsystem :climacs-esa-gui
   :depends-on (:mcclim
 	       :cluffer
+	       :second-climacs-base
 	       :climacs-basic-emacs
 	       :climacs-flexichain-output-history
 	       :clouseau)
