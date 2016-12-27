@@ -31,7 +31,7 @@
 		   (climacs-flexichain-output-history:replace
 		    (history view)
 		    (clim:with-output-to-output-record (pane)
-		      (format pane "~a" (cdr entry)))
+		      (format pane "~a" (coerce (cdr entry) 'string)))
 		    index))
 		 (incf index))
 	       (sync (line)
@@ -43,7 +43,7 @@
 		   (climacs-flexichain-output-history:insert
 		    (history view)
 		    (clim:with-output-to-output-record (pane)
-		      (format pane "~a" (cdr entry)))
+		      (format pane "~a" (coerce (cdr entry) 'string)))
 		    index))
 		 (incf index)))
 	  (setf (timestamp view)
