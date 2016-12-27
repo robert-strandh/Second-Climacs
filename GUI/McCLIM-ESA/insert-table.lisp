@@ -5,9 +5,10 @@
 (clim:define-command
     (com-insert-item :name t :command-table ascii-insert-table)
     ((item t))
-  (climacs2-base:insert-item
-   (climacs2-base:cursor (climacs2-base:view (esa:current-window)))
-   item))
+  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
+	 (climacs-view (climacs-view clim-view))
+	 (cursor (climacs2-base:cursor climacs-view)))
+    (climacs2-base:insert-item cursor item)))
 
 (loop for i from 32 to 126
       for char = (code-char i)
