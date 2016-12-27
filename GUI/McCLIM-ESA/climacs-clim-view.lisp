@@ -12,4 +12,4 @@
 ;;; instance of the Climacs view.
 
 (defclass climacs-clim-view (clim:view)
-  ((%climacs-view :initarg :climacs-view :reader climacs-view)))
+  ((%climacs-view :initarg :climacs-view :accessor climacs-view)))
