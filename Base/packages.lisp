@@ -23,4 +23,6 @@
 	   #:expose-view
 	   #:fundamental-view
 	   #:update-window-from-view
-	   #:update-window))
+	   #:update-window
+	   #:application
+	   #:views))
