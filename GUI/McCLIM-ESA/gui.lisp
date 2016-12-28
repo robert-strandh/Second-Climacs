@@ -81,6 +81,12 @@
     (push (climacs-view clim-view)
 	  (climacs2-base:views frame))))
 
+(defmethod esa:windows ((esa climacs))
+  (loop for view in (climacs2-base:views esa)
+	for window = (climacs2-base:window view)
+	unless (null window)
+	  collect window))
+
 (defun climacs ()
   (let ((frame (clim:make-application-frame
 		'climacs
