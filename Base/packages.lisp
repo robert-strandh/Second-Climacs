@@ -21,5 +21,6 @@
 	   #:update-view
 	   #:hide-view
 	   #:expose-view
+	   #:fundamental-view
 	   #:update-window-from-view
 	   #:update-window))
