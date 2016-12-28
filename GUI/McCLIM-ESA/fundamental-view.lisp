@@ -16,11 +16,12 @@
 ;;; the STANDARD-BUFFER, and not to a subclass of ANALYZER.
 
 (defmethod climacs2-base:update-view-from-analyzer
-    ((view fundamental-view) (buffer climacs2-base:standard-buffer))
+    ((view climacs2-base:fundamental-view)
+     (pane text-pane)
+     (buffer climacs2-base:standard-buffer))
   (let* ((index 0)
-	 (lines (lines view))
-	 (climacs-view (climacs-view view))
-	 (pane (climacs2-base:window climacs-view))
+	 (climacs-clim-view (clim:stream-default-view pane))
+	 (lines (lines climacs-clim-view))
 	 (history (clim:stream-output-history pane)))
     (flet ((delete-line (index)
 	     (flexichain:delete* lines index)
@@ -54,7 +55,7 @@
 		      (format pane "~a" (coerce (cdr entry) 'string)))
 		    index))
 		 (incf index)))
-	  (setf (timestamp view)
+	  (setf (timestamp climacs-clim-view)
 		(cluffer:update (climacs2-base:cluffer-buffer buffer)
-				(timestamp view)
+				(timestamp climacs-clim-view)
 				#'sync #'skip #'modify #'create)))))))
