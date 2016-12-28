@@ -75,6 +75,13 @@
 	      minibuffer)))
   (:top-level (esa:esa-top-level)))
 
+(defmethod clim:adopt-frame :after (frame-manager (frame climacs))
+  (declare (ignore frame-manager))
+  (let* ((pane (clim:find-pane-named frame 'stuff))
+	 (clim-view (clim:stream-default-view pane)))
+    (push (climacs-view clim-view)
+	  (climacs2-base:views frame))))
+
 (defun climacs ()
   (let ((frame (clim:make-application-frame
 		'climacs
