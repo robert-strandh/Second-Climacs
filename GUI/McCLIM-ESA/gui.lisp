@@ -91,6 +91,12 @@
 	unless (null window)
 	  collect window))
 
+(defmethod esa:buffers ((esa climacs))
+  (remove-duplicates (loop for view in (climacs2-base:views esa)
+			   for analyzer = (climacs2-base:analyzer view)
+			   collect (climacs2-base:buffer analyzer))
+		     :test #'eq))
+
 (defun climacs ()
   (let ((frame (clim:make-application-frame
 		'climacs
