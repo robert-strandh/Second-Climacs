@@ -30,6 +30,10 @@
 
 (defgeneric cursor (view))
 
+(defgeneric window (view))
+
+(defgeneric (setf window) (new-window view))
+
 (defclass view ()
   ((%analyzer :initarg :analyzer :reader analyzer)
    (%cursor :initarg :cursor :reader cursor)
