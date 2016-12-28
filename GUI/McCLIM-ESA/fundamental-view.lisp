@@ -1,8 +1,13 @@
 (cl:in-package #:climacs-esa-gui)
 
-;;; A FUNDAMENTAL-VIEW contains a NULL-ANALYZER.
+;;; This class is is a subclass of CLIMACS-CLIM-VIEW.  An instance of
+;;; this class is created in order to display a Climacs view that is
+;;; an instance of CLIMACS2-BASE:FUNDAMENTAL-VIEW.
 
-(defclass fundamental-view (view) ())
+(defclass fundamental-view (climacs-clim-view) ())
+
+(defmethod climacs-clim-view-class ((view climacs2-base:fundamental-view))
+  (find-class 'fundamental-view))
 
 ;;; Since the FUNDAMENTAL-VIEW contains a NULL-ANALYZER, the method on
 ;;; UPDATE-VIEW-FROM-ANALYZER specialized to the NULL-ANALYZER calls
