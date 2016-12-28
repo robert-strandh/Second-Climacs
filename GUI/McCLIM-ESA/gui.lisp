@@ -32,17 +32,18 @@
 		    :command-table 'global-climacs-table)))
 
 (defun pane-has-attached-view-p (pane)
-  (not (null (climacs-view (clim:stream-default-view pane)))))
+  (typep (clim:stream-default-view pane) 'climacs-clim-view))
 
 (defun detach-view (pane)
   (assert (pane-has-attached-view-p pane))
   (climacs2-base:hide-view (climacs-view (clim:stream-default-view pane)))
-  (setf (climacs-view (clim:stream-default-view pane)) nil))
+  (setf (clim:stream-default-view pane) clim:+textual-view+))
 
 (defun attach-view (pane view)
   (assert (not (pane-has-attached-view-p pane)))
   (climacs2-base:expose-view view pane)
-  (setf (climacs-view (clim:stream-default-view pane)) view))
+  (setf (clim:stream-default-view pane)
+	(make-climacs-clim-view view)))
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame)
