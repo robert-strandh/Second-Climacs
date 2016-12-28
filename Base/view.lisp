@@ -32,7 +32,11 @@
 
 (defclass view ()
   ((%analyzer :initarg :analyzer :reader analyzer)
-   (%cursor :initarg :cursor :reader cursor)))
+   (%cursor :initarg :cursor :reader cursor)
+   ;; This slot contains either NIL or some object determined by the
+   ;; interface manager.  If it contains NIL, this means that the view
+   ;; is not currently visible.
+   (%window :initform nil :accessor window)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
