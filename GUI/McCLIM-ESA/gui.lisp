@@ -45,7 +45,8 @@
 	(make-climacs-clim-view view)))
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
-					clim:standard-application-frame)
+					clim:standard-application-frame
+					climacs2-base:application)
   ((%views :initarg :views :reader views)
    (%buffers :initarg :buffers :reader esa:buffers)
    (%current-view :initarg :current-view :accessor current-view))
