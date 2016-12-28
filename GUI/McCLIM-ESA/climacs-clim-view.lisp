@@ -28,3 +28,9 @@
    ;; contents was asked for.
    (%lines :initform (make-instance 'flexichain:standard-flexichain)
 	   :accessor lines)))
+
+;;; This generic function takes an instance of a Climacs view, and
+;;; returns a class object to be used with MAKE-INSTANCE to create a
+;;; corresponding subclass of the class CLIMACS-CLIM-VIEW.
+
+(defgeneric climacs-clim-view-class (climacs-view))
