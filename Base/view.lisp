@@ -61,7 +61,7 @@
 ;;; function is called recursively with the buffer of the analyzer in
 ;;; place of the analyzer.
 
-(defgeneric update-view-from-analyzer (view analyzer))
+(defgeneric update-view-from-analyzer (view window analyzer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -69,11 +69,11 @@
 ;;;
 ;;; This function is called in order to update the view passed as an
 ;;; argument.  All it does is to trampoline to
-;;; UPDATE-VIEW-FROM-ANALYZER, passing it the view and the analyzer of
-;;; the view.
+;;; UPDATE-VIEW-FROM-ANALYZER, passing it the view, the window of the
+;;; view, and the analyzer of the view.
 
 (defun update-view (view)
-  (update-view-from-analyzer view (analyzer view)))
+  (update-view-from-analyzer view (window view) (analyzer view)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -82,8 +82,8 @@
 ;;; This method calls UPDATE-VIEW-FROM-ANALYZER recursively with the
 ;;; buffer of the analyzer in place of the analyzer itself.
 
-(defmethod update-view-from-analyzer (view (analyzer null-analyzer))
-  (update-view-from-analyzer view (buffer analyzer)))
+(defmethod update-view-from-analyzer (view window (analyzer null-analyzer))
+  (update-view-from-analyzer view window (buffer analyzer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
