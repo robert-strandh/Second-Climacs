@@ -75,11 +75,11 @@
   (:top-level (esa:esa-top-level)))
 
 (defun climacs ()
-  (clim:run-frame-top-level
-   (clim:make-application-frame
-    'climacs
-    :views '()
-    :buffers '())))
+  (let ((frame (clim:make-application-frame
+		'climacs
+		:views '()
+		:buffers '())))
+    (clim:run-frame-top-level frame)))
 
 (clim:define-command (com-inspect :name t :command-table global-climacs-table) ()
   (clouseau:inspector clim:*application-frame*))
