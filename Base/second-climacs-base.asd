@@ -11,4 +11,5 @@
    (:file "null-analyzer")
    (:file "view")
    (:file "fundamental-view")
-   (:file "window")))
+   (:file "window")
+   (:file "application")))
