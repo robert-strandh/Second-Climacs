@@ -54,7 +54,7 @@
 		  (my-info-pane (clim:make-pane 'info-pane
 						:master-pane my-pane
 						:width 900))
-		  (view (make-empty-fundamental-view)))
+		  (view (make-instance 'climacs2-base:fundamental-view)))
 	     (setf (clim:stream-recording-p my-pane) nil)
 	     (setf (clim:stream-end-of-line-action my-pane) :allow)
 	     (change-class
