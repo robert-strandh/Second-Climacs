@@ -102,12 +102,9 @@
 ;;; Generic function EXPOSE-VIEW.
 ;;;
 ;;; This generic function is called when a previously hidden view is
-;;; about to be associated with a window.  The default primary method
-;;; does nothing.  Client code may define auxiliary methods on
-;;; subclasses of VIEW.
+;;; about to be associated with a window.
 
-(defgeneric expose-view (view &key))
+(defgeneric expose-view (view window))
 
-(defmethod expose-view ((view view) &key)
-  (declare (ignorable view))
-  nil)
+(defmethod expose-view ((view view) window)
+  (setf (window view) window))
