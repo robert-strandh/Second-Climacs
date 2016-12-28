@@ -47,7 +47,7 @@
 (clim:define-application-frame climacs (esa:esa-frame-mixin
 					clim:standard-application-frame
 					climacs2-base:application)
-  ((%current-view :initarg :current-view :accessor current-view))
+  ()
   (:panes
    (window (let* ((my-pane (make-climacs-pane))
 		  (my-info-pane (clim:make-pane 'info-pane
