@@ -23,13 +23,12 @@
    ascii-insert-table))
 
 (defun make-climacs-pane ()
-  (let ((view (make-instance 'climacs-clim-view :climacs-view nil)))
-    (clim:make-pane 'text-pane
-		    :name 'stuff
-		    :default-view view
-		    :width 900 :height 400
-		    :display-time nil
-		    :command-table 'global-climacs-table)))
+  (clim:make-pane 'text-pane
+		  :name 'stuff
+		  :default-view clim:+textual-view+
+		  :width 900 :height 400
+		  :display-time nil
+		  :command-table 'global-climacs-table))
 
 (defun pane-has-attached-view-p (pane)
   (typep (clim:stream-default-view pane) 'climacs-clim-view))
