@@ -16,6 +16,7 @@
 	   #:null-analyzer
 	   #:view
 	   #:cursor
+	   #:window
 	   #:update-view-from-analyzer
 	   #:update-view
 	   #:hide-view
