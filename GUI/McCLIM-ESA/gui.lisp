@@ -61,6 +61,10 @@
 	      (clim:stream-output-history my-pane)
 	      'climacs-flexichain-output-history:flexichain-output-history
 	      :parent my-pane)
+	     ;; Unfortunately, the ESA top-level accesses the slot
+	     ;; named WINDOWS directly (using WITH-SLOTS) rather than
+	     ;; using the accessor, so we must initialize this slot
+	     ;; by using the slot writer provided by ESA.
 	     (setf (esa:windows clim:*application-frame*) (list my-pane))
 	     (attach-view my-pane view)
 	     (clim:vertically ()
