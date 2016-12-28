@@ -41,7 +41,7 @@
 
 (defun attach-view (pane view)
   (assert (not (pane-has-attached-view-p pane)))
-  (climacs2-base:expose-view view :history (clim:stream-output-history pane))
+  (climacs2-base:expose-view view pane)
   (setf (climacs-view (clim:stream-default-view pane)) view))
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
