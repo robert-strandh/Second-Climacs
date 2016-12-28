@@ -58,19 +58,3 @@
 		(cluffer:update (climacs2-base:cluffer-buffer buffer)
 				(timestamp view)
 				#'sync #'skip #'modify #'create)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function MAKE-EMPTY-FUNDAMENTAL-VIEW.
-;;;
-;;; This function creates an empty, hidden, fundamental view.
-
-(defun make-empty-fundamental-view ()
-  (multiple-value-bind (buffer cursor)
-      (climacs2-base:make-empty-standard-buffer-and-cursor)
-    (let ((analyzer (make-instance 'climacs2-base:null-analyzer
-		      :buffer buffer)))
-      (make-instance 'fundamental-view
-	:history nil
-	:cursor cursor
-	:analyzer analyzer))))
