@@ -34,3 +34,10 @@
 ;;; corresponding subclass of the class CLIMACS-CLIM-VIEW.
 
 (defgeneric climacs-clim-view-class (climacs-view))
+
+;;; This function takes an instance of a Climacs view and returns an
+;;; instance of the corresponding subclass of CLIMACS-CLIM-VIEW.
+
+(defun make-climacs-clim-view (climacs-view)
+  (make-instance (climacs-clim-view-class climacs-view)
+    :climacs-view climacs-view))
