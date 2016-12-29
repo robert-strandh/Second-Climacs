@@ -31,6 +31,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Method on FORWARD-ITEM.
+
+(defmethod forward-item ((cursor cluffer:cursor))
+  (cluffer:forward-item cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function MAKE-EMPTY-STANDARD-BUFFER.
 
 (defun make-empty-standard-buffer-and-cursor ()
