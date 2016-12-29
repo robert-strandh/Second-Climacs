@@ -9,6 +9,7 @@
 	   #:erase-item
 	   #:forward-item
 	   #:backward-item
+	   #:beginning-of-line
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:make-empty-standard-buffer-and-cursor
