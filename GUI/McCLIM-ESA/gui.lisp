@@ -118,3 +118,8 @@
     (climacs2-base:update-view (climacs-view clim-view))
     (climacs-flexichain-output-history:change-space-requirements history)
     (clim:replay history pane)))
+
+(defmethod clim:execute-frame-command :around ((frame climacs) command)
+  (handler-case (call-next-method)
+    (cluffer:cluffer-error (condition)
+      (esa:display-message "~a" condition))))
