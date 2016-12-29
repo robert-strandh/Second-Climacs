@@ -66,3 +66,11 @@
 ;;; Move the cursor to the end of the current line.
 
 (defgeneric end-of-line (cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function ITEM-BEFORE-CURSOR.
+;;;
+;;; Return the item immediately preceding the cursor.
+
+(defgeneric item-before-cursor (cursor))
