@@ -50,3 +50,11 @@
 ;;; Move the cursor backward one item.
 
 (defgeneric backward-item (cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function BEGINNING-OF-LINE.
+;;;
+;;; Move the cursor to the beginning of the current line.
+
+(defgeneric beginning-of-line (cursor))
