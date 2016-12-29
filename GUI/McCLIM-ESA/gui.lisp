@@ -20,7 +20,8 @@
   :inherit-from
   (esa:global-esa-table
    esa-io:esa-io-table
-   ascii-insert-table))
+   ascii-insert-table
+   motion-table))
 
 (defun make-climacs-pane ()
   (clim:make-pane 'text-pane
