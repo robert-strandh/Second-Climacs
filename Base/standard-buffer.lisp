@@ -72,6 +72,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Method on ITEM-BEFORE-CURSOR.
+
+(defmethod item-before-cursor ((cursor cluffer:cursor))
+  (if (cluffer:beginning-of-line-p cursor)
+      #\Newline
+      (cluffer:item-before-cursor cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function MAKE-EMPTY-STANDARD-BUFFER.
 
 (defun make-empty-standard-buffer-and-cursor ()
