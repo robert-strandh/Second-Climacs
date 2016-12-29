@@ -58,6 +58,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Method on BEGINNING-OF-LINE.
+
+(defmethod beginning-of-line ((cursor cluffer:cursor))
+  (cluffer:beginning-of-line cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function MAKE-EMPTY-STANDARD-BUFFER.
 
 (defun make-empty-standard-buffer-and-cursor ()
