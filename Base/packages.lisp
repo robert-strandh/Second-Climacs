@@ -11,6 +11,7 @@
 	   #:backward-item
 	   #:beginning-of-line
 	   #:end-of-line
+	   #:item-before-cursor
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:make-empty-standard-buffer-and-cursor
