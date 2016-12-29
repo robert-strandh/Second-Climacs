@@ -50,9 +50,10 @@
   (if (cluffer:beginning-of-line-p cursor)
       (let* ((line-number (cluffer:line-number cursor))
 	     (buffer (cluffer:buffer cursor))
-	     (previous-line (cluffer:find-line buffer (1- line-number))))
+	     (previous-line (cluffer:find-line buffer (1- line-number)))
+	     (item-count (cluffer:item-count previous-line)))
 	(cluffer:detach-cursor cursor)
-	(cluffer:attach-cursor cursor previous-line 0))
+	(cluffer:attach-cursor cursor previous-line item-count))
       (cluffer:backward-item cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
