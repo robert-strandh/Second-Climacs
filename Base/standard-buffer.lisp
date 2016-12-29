@@ -65,6 +65,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Method on END-OF-LINE.
+
+(defmethod end-of-line ((cursor cluffer:cursor))
+  (cluffer:end-of-line cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function MAKE-EMPTY-STANDARD-BUFFER.
 
 (defun make-empty-standard-buffer-and-cursor ()
