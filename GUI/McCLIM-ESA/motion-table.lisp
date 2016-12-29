@@ -13,3 +13,15 @@
 (esa:set-key `(com-forward-item)
 	     'motion-table
 	     '((#\f :control)))
+
+(clim:define-command
+    (com-backward-item :name t :command-table motion-table)
+    ()
+  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
+	 (climacs-view (climacs-view clim-view))
+	 (cursor (climacs2-base:cursor climacs-view)))
+    (climacs2-base:backward-item cursor)))
+
+(esa:set-key `(com-backward-item)
+	     'motion-table
+	     '((#\b :control)))
