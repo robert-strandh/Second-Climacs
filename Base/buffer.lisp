@@ -58,3 +58,11 @@
 ;;; Move the cursor to the beginning of the current line.
 
 (defgeneric beginning-of-line (cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function END-OF-LINE.
+;;;
+;;; Move the cursor to the end of the current line.
+
+(defgeneric end-of-line (cursor))
