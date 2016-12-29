@@ -39,7 +39,7 @@
 	     (buffer (cluffer:buffer cursor))
 	     (next-line (cluffer:find-line buffer (1+ line-number))))
 	(cluffer:detach-cursor cursor)
-	(cluffer:attach-cursor next-line 0))
+	(cluffer:attach-cursor cursor next-line 0))
       (cluffer:forward-item cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -52,7 +52,7 @@
 	     (buffer (cluffer:buffer cursor))
 	     (previous-line (cluffer:find-line buffer (1- line-number))))
 	(cluffer:detach-cursor cursor)
-	(cluffer:attach-cursor previous-line 0))
+	(cluffer:attach-cursor cursor previous-line 0))
       (cluffer:backward-item cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
