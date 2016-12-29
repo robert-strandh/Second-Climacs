@@ -42,3 +42,11 @@
 ;;; Move the cursor forward one item.
 
 (defgeneric forward-item (cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function BACKWARD-ITEM-.
+;;;
+;;; Move the cursor backward one item.
+
+(defgeneric backward-item (cursor))
