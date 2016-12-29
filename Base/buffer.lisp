@@ -34,3 +34,11 @@
 ;;; Delete the item immediately before the cursor.
 
 (defgeneric erase-item (cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FORWARD-ITEM-.
+;;;
+;;; Move the cursor forward one item.
+
+(defgeneric forward-item (cursor))
