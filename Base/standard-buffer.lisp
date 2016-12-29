@@ -38,6 +38,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Method on BACKWARD-ITEM.
+
+(defmethod backward-item ((cursor cluffer:cursor))
+  (cluffer:backward-item cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function MAKE-EMPTY-STANDARD-BUFFER.
 
 (defun make-empty-standard-buffer-and-cursor ()
