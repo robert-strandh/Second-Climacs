@@ -8,6 +8,7 @@
 	   #:delete-item
 	   #:erase-item
 	   #:forward-item
+	   #:backward-item
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:make-empty-standard-buffer-and-cursor
