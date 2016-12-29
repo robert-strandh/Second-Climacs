@@ -37,3 +37,15 @@
 (esa:set-key `(com-beginning-of-line)
 	     'motion-table
 	     '((#\a :control)))
+
+(clim:define-command
+    (com-end-of-line :name t :command-table motion-table)
+    ()
+  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
+	 (climacs-view (climacs-view clim-view))
+	 (cursor (climacs2-base:cursor climacs-view)))
+    (climacs2-base:end-of-line cursor)))
+
+(esa:set-key `(com-end-of-line)
+	     'motion-table
+	     '((#\e :control)))
