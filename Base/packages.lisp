@@ -12,6 +12,7 @@
 	   #:beginning-of-line
 	   #:end-of-line
 	   #:item-before-cursor
+	   #:item-after-cursor
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:make-empty-standard-buffer-and-cursor
