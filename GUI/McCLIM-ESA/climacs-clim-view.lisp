@@ -43,7 +43,6 @@
     :climacs-view climacs-view))
 
 ;;; This generic function takes an instance of a Climacs view, and
-;;; returns a command table to be stored in the corresponding instance
-;;; of climacs-clim-view.
+;;; returns a command table to be used for this particular view.
 
 (defgeneric command-table (climacs-view))
