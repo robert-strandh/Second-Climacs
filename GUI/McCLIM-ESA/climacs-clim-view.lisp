@@ -41,3 +41,9 @@
 (defun make-climacs-clim-view (climacs-view)
   (make-instance (climacs-clim-view-class climacs-view)
     :climacs-view climacs-view))
+
+;;; This generic function takes an instance of a Climacs view, and
+;;; returns a command table to be stored in the corresponding instance
+;;; of climacs-clim-view.
+
+(defgeneric command-table (climacs-view))
