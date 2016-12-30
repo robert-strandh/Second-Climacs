@@ -9,6 +9,9 @@
 (defmethod climacs-clim-view-class ((view climacs2-base:fundamental-view))
   (find-class 'fundamental-view))
 
+(defmethod command-table ((view  climacs2-base:fundamental-view))
+  'global-climacs-table)
+
 ;;; Since the FUNDAMENTAL-VIEW contains a NULL-ANALYZER, the method on
 ;;; UPDATE-VIEW-FROM-ANALYZER specialized to the NULL-ANALYZER calls
 ;;; UPDATE-VIEW-FROM-ANALYZER recursively with the buffer replacing
