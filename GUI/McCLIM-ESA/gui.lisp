@@ -123,3 +123,9 @@
   (handler-case (call-next-method)
     (cluffer:cluffer-error (condition)
       (esa:display-message "~a" condition))))
+
+(defmethod esa:find-applicable-command-table ((frame climacs))
+  (let* ((pane (esa:esa-current-window frame))
+	 (climacs-clim-view (clim:stream-default-view pane))
+	 (climacs-view (climacs-view climacs-clim-view)))
+    (command-table climacs-view)))
