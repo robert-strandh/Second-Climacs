@@ -28,8 +28,7 @@
 		  :name 'stuff
 		  :default-view clim:+textual-view+
 		  :width 900 :height 400
-		  :display-time nil
-		  :command-table 'global-climacs-table))
+		  :display-time nil))
 
 (defun pane-has-attached-view-p (pane)
   (typep (clim:stream-default-view pane) 'climacs-clim-view))
