@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :second-climacs-base
-  :depends-on (:cluffer)
+  :depends-on (:cluffer
+	       :cluffer-emacs-compatibility)
   :serial t
   :components
   ((:file "packages")
