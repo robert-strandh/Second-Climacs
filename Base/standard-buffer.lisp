@@ -82,3 +82,12 @@
     (cluffer:attach-cursor cursor line)
     (values (make-instance 'standard-buffer :cluffer-buffer buffer)
 	    cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on FILL-BUFFER-FROM-STREAM.
+
+(defmethod fill-buffer-from-stream ((cursor cluffer:cursor) stream)
+  (loop for char = (read-char stream nil nil)
+	until (null char)
+	do (insert-item cursor char)))
