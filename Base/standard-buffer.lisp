@@ -18,7 +18,7 @@
 ;;; Method on DELETE-ITEM.
 
 (defmethod delete-item ((cursor cluffer:cursor))
-  (cluffer:delete-item cursor))
+  (cluffer-emacs:delete-item cursor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
