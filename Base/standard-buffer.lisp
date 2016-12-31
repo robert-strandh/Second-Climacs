@@ -11,9 +11,7 @@
 ;;; Method on INSERT-ITEM.
 
 (defmethod insert-item ((cursor cluffer:cursor) item)
-  (if (eql item #\Newline)
-      (cluffer:split-line cursor)
-      (cluffer:insert-item cursor item)))
+  (cluffer-emacs:insert-item cursor item))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
