@@ -25,7 +25,7 @@
 ;;; Method on ERASE-ITEM.
 
 (defmethod erase-item ((cursor cluffer:cursor))
-  (cluffer:erase-item cursor))
+  (cluffer-emacs:erase-item cursor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
