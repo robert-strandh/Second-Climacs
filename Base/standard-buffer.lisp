@@ -41,14 +41,7 @@
 ;;; Method on BACKWARD-ITEM.
 
 (defmethod backward-item ((cursor cluffer:cursor))
-  (if (cluffer:beginning-of-line-p cursor)
-      (let* ((line-number (cluffer:line-number cursor))
-	     (buffer (cluffer:buffer cursor))
-	     (previous-line (cluffer:find-line buffer (1- line-number)))
-	     (item-count (cluffer:item-count previous-line)))
-	(cluffer:detach-cursor cursor)
-	(cluffer:attach-cursor cursor previous-line item-count))
-      (cluffer:backward-item cursor)))
+  (cluffer-emacs:backward-item cursor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
