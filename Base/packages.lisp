@@ -16,6 +16,7 @@
 	   #:standard-buffer
 	   #:cluffer-buffer
 	   #:make-empty-standard-buffer-and-cursor
+	   #:fill-buffer-from-stream
 	   #:analyzer
 	   #:update-analyzer-from-buffer
 	   #:update-analyzer
