@@ -82,3 +82,12 @@
 ;;; Return the item immediately preceding the cursor.
 
 (defgeneric item-after-cursor (cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FILL-BUFFER-FROM-STREAM.
+;;;
+;;; This function takes a cursor, and inserts the contents of the
+;;; character stream STREAM at the position of the cursor.
+
+(defgeneric fill-buffer-from-stream (cursor stream))
