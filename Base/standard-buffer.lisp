@@ -69,9 +69,7 @@
 ;;; Method on ITEM-AFTER-CURSOR.
 
 (defmethod item-after-cursor ((cursor cluffer:cursor))
-  (if (cluffer:end-of-line-p cursor)
-      #\Newline
-      (cluffer:item-after-cursor cursor)))
+  (cluffer-emacs:item-after-cursor cursor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
