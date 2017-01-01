@@ -11,5 +11,3 @@
       (reinitialize-instance instance
 			     :cursor cursor
 			     :analyzer analyzer))))
-
-  
