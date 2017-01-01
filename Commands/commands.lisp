@@ -96,24 +96,25 @@
   (message "No match for keystrokes: ~s" keystrokes))
 
 (clim3:define-command forward-item (&optional (count 1))
-  (handler-case (climacs-basic-emacs:forward-item (point) count)
-    (cluffer:end-of-buffer ()
-      (message "End of buffer"))))
+  (loop repeat count
+	do (cluffer-emacs:forward-item (point))))
 
 (clim3:define-command backward-item (&optional (count 1))
-  (handler-case (climacs-basic-emacs:backward-item (point) count)
-    (cluffer:beginning-of-buffer ()
-      (message "Beginning of buffer"))))
+  (loop repeat count
+	do (cluffer-emacs:backward-item (point))))
 
 (clim3:define-command insert-character
     ((character character) &optional (count 1))
-  (climacs-basic-emacs:insert-item (point) character count))
+  (loop repeat count
+	do (cluffer-emacs:insert-item (point) character)))
 
 (clim3:define-command delete-item (&optional (count 1))
-  (climacs-basic-emacs:delete-item (point) count))
+  (loop repeat count
+	do (cluffer-emacs:delete-item (point))))
 
 (clim3:define-command erase-item (&optional (count 1))
-  (climacs-basic-emacs:erase-item (point) count))
+  (loop repeat count
+	do (cluffer-emacs:erase-item (point))))
 
 (clim3:define-command quit ()
   (throw :quit nil))
@@ -177,7 +178,7 @@
 
 (clim3:define-command newline (&optional (count 1))
   (loop repeat count
-	do (climacs-basic-emacs:insert-item (point) #\Newline count)))
+	do (cluffer-emacs:insert-item (point) #\Newline)))
 
 ;;; FIXME: make several groups
 (defparameter *command-mappings*
