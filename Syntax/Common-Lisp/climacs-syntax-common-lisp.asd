@@ -18,4 +18,5 @@
    (:file "analyzer-stream")
    (:file "parse")
    (:file "read-forms")
-   (:file "view")))
+   (:file "view")
+   (:file "set-mode")))
