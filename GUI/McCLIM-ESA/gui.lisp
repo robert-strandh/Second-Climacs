@@ -16,10 +16,6 @@
   (:default-initargs
    :height 20 :max-height 20 :min-height 20))
 
-(clim:define-command-table global-climacs-table
-  :inherit-from
-  (fundamental-table))
-
 (defun make-climacs-pane ()
   (clim:make-pane 'text-pane
 		  :name 'stuff
