@@ -7,9 +7,11 @@
    :display-function 'display-info
    :incremental-redisplay t))
 
-(defun display-info (frame pane)
-  (declare (ignore frame))
-  (format pane "Pane name: ~s" (clim:pane-name (esa:master-pane pane))))
+(defun display-info (frame info-pane)
+  (let* ((pane (esa:esa-current-window frame))
+	 (clim-view (clim:stream-default-view pane))
+	 (climacs-view (climacs-view clim-view)))
+    (format info-pane "(~a)" (view-name climacs-view))))
 
 (defclass minibuffer-pane (esa:minibuffer-pane)
   ()
