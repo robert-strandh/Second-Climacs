@@ -96,7 +96,7 @@
 		:buffers '())))
     (clim:run-frame-top-level frame)))
 
-(clim:define-command (com-inspect :name t :command-table global-climacs-table) ()
+(clim:define-command (com-inspect :name t :command-table global-table) ()
   (clouseau:inspector clim:*application-frame*))
 
 (defmethod clim:frame-standard-input ((frame climacs))
