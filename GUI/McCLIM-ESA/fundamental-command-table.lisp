@@ -2,7 +2,6 @@
 
 (clim:define-command-table fundamental-table
   :inherit-from
-  (esa:global-esa-table
-   esa-io:esa-io-table
+  (global-table
    ascii-insert-table
    motion-table))
