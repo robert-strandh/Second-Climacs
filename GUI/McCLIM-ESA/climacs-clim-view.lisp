@@ -17,6 +17,18 @@
 ;;; a Climacs view to be displayed in some pane, we allocate a new
 ;;; instance of this class.
 
+(defgeneric climacs-view (clim-view))
+
+(defgeneric (setf climacs-view) (climacs-view clim-view))
+
+(defgeneric timestamp (clim-view))
+
+(defgeneric (setf timestamp) (time-stamp clim-view))
+
+(defgeneric lines (clim-view))
+
+(defgeneric (setf lines) (lines clim-view))
+
 (defclass climacs-clim-view (clim:view)
   ((%climacs-view :initarg :climacs-view :accessor climacs-view)
    ;; This slot contains the timestamp corresponding to the
