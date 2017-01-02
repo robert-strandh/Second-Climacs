@@ -15,6 +15,7 @@
    (:file "fundamental-view")
    (:file "insert-table")
    (:file "motion-table")
+   (:file "global-command-table")
    (:file "fundamental-command-table")
    (:file "gui")
    (:file "io")))
