@@ -10,7 +10,7 @@
   (find-class 'fundamental-view))
 
 (defmethod command-table ((view  climacs2-base:fundamental-view))
-  (clim:find-command-table 'global-climacs-table))
+  (clim:find-command-table 'fundamental-table))
 
 ;;; Since the FUNDAMENTAL-VIEW contains a NULL-ANALYZER, the method on
 ;;; UPDATE-VIEW-FROM-ANALYZER specialized to the NULL-ANALYZER calls
