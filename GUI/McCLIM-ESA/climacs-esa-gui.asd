@@ -5,6 +5,7 @@
 	       :cluffer
 	       :second-climacs-base
 	       :climacs-flexichain-output-history
+	       :climacs-syntax-common-lisp
 	       :clouseau)
   :serial t
   :components
