@@ -27,10 +27,10 @@
 		(suffix (subseq string cursor-column-number)))
 	    (format pane "~a" prefix)
 	    (clim:with-room-for-graphics (pane :move-cursor nil)
-	      (clim:draw-rectangle* pane 0 0 5 10
+	      (clim:draw-rectangle* pane 0 -5 3 10
 				    :filled t
 				    :ink clim:+blue+))
-	    (clim:stream-increment-cursor-position pane 5 0)
+	    (clim:stream-increment-cursor-position pane 3 0)
 	    (format pane "~a" suffix)	      )))))
 
 ;;; Since the FUNDAMENTAL-VIEW contains a NULL-ANALYZER, the method on
