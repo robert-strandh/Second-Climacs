@@ -126,23 +126,29 @@
 		 (incf index n))
 	       (modify (line)
 		 (delete-lines-until-line line)
-		 (let ((entry (flexichain:element* lines index)))
+		 (let ((entry (flexichain:element* lines index))
+		       (column (if (= index cursor-line-number)
+				   cursor-column-number
+				   nil)))
 		   (setf (cdr entry)
 			 (cluffer:items (car entry)))
 		   (climacs-flexichain-output-history:replace
 		    history
-		    (make-output-record (cdr entry) pane nil)
+		    (make-output-record (cdr entry) pane column)
 		    index))
 		 (incf index))
 	       (sync (line)
 		 (delete-lines-until-line line)
 		 (incf index))
 	       (create (line)
-		 (let ((entry (cons line (cluffer:items line))))
+		 (let ((entry (cons line (cluffer:items line)))
+		       (column (if (= index cursor-line-number)
+				   cursor-column-number
+				   nil)))
 		   (flexichain:insert* lines index entry)
 		   (climacs-flexichain-output-history:insert
 		    history
-		    (make-output-record (cdr entry) pane nil)
+		    (make-output-record (cdr entry) pane column)
 		    index))
 		 (unless (< previous-cursor-line-number index)
 		   (incf previous-cursor-line-number))
