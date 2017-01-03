@@ -131,8 +131,7 @@
 			 (cluffer:items (car entry)))
 		   (climacs-flexichain-output-history:replace
 		    history
-		    (clim:with-output-to-output-record (pane)
-		      (format pane "~a" (coerce (cdr entry) 'string)))
+		    (make-output-record (cdr entry) pane nil)
 		    index))
 		 (incf index))
 	       (sync (line)
@@ -143,8 +142,7 @@
 		   (flexichain:insert* lines index entry)
 		   (climacs-flexichain-output-history:insert
 		    history
-		    (clim:with-output-to-output-record (pane)
-		      (format pane "~a" (coerce (cdr entry) 'string)))
+		    (make-output-record (cdr entry) pane nil)
 		    index))
 		 (incf index)))
 	  (setf (timestamp climacs-clim-view)
