@@ -150,4 +150,6 @@
 	  (setf (timestamp climacs-clim-view)
 		(cluffer:update (climacs2-base:cluffer-buffer buffer)
 				(timestamp climacs-clim-view)
-				#'sync #'skip #'modify #'create)))))))
+				#'sync #'skip #'modify #'create))
+	  (setf (previous-cursor-line-number view) cursor-line-number)
+	  (setf (previous-cursor-column-number view) cursor-column-number))))))
