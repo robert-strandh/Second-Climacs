@@ -34,6 +34,9 @@
      (buffer climacs2-base:standard-buffer))
   (let* ((index 0)
 	 (climacs-clim-view (clim:stream-default-view pane))
+	 (cursor (climacs2-base:cursor view))
+	 (cursor-line-number (cluffer:line-number cursor))
+	 (cursor-column-number (cluffer:cursor-position cursor))
 	 (lines (lines climacs-clim-view))
 	 (history (clim:stream-output-history pane))
 	 (previous-cursor-line-number (previous-cursor-line-number view))
@@ -50,6 +53,76 @@
 		     until (eq line (car entry))
 		     do (delete-line index))))
 	(flet ((skip (n)
+		 (cond  ((or (null previous-cursor-line-number)
+			     (>= previous-cursor-line-number (+ index n)))
+			 ;; We do not have to process the line in which
+			 ;; the cursor was previously located, but we may
+			 ;; have to process the line in which the cursor
+			 ;; is now located.
+			 (unless (>= cursor-line-number (+ index n))
+			   ;; We must re-create the output record of
+			   ;; the line in which the cursor is now
+			   ;; located.
+			   (let ((entry (flexichain:element*
+					 history
+					 cursor-line-number)))
+			     (climacs-flexichain-output-history:replace
+			      history
+			      (make-output-record (cdr entry)
+						  pane
+						  cursor-column-number)
+			       cursor-line-number))))
+			;; We may have to process the line in which
+			;; the cursor was previously located.
+			((>= cursor-line-number (+ index n))
+			 ;; The cursor is now in a line beyond the
+			 ;; block we are skipping, so we only have to
+			 ;; process the line in which the cursor was
+			 ;; previously located.
+			 (let ((entry (flexichain:element*
+				       history
+				       previous-cursor-line-number)))
+			   (climacs-flexichain-output-history:replace
+			    history
+			    (make-output-record (cdr entry) pane nil)
+			    previous-cursor-line-number)))
+			;; Both the line in which the cursor was
+			;; previously located, and the line in which
+			;; the cursor is now located are inside the
+			;; block we are skipping.  So we may have to
+			;; process both those lines.
+			((= cursor-line-number previous-cursor-line-number)
+			 ;; We have to process at most one line.
+			 (unless (= cursor-column-number
+				    previous-cursor-column-number)
+			   ;; We have to process the line.
+			   (let ((entry (flexichain:element*
+					 history
+					 cursor-line-number)))
+			     (climacs-flexichain-output-history:replace
+			      history
+			      (make-output-record (cdr entry)
+						  pane
+						  cursor-column-number)
+			       cursor-line-number))))
+			(t ;; The cursor is in a different line from
+			   ;; before.
+			 (let ((entry (flexichain:element*
+				       history
+				       previous-cursor-line-number)))
+			   (climacs-flexichain-output-history:replace
+			    history
+			    (make-output-record (cdr entry) pane nil)
+			    previous-cursor-line-number)
+			   (let ((entry (flexichain:element*
+					 history
+					 cursor-line-number)))
+			     (climacs-flexichain-output-history:replace
+			      history
+			      (make-output-record (cdr entry)
+						  pane
+						  cursor-column-number)
+			      cursor-line-number)))))
 		 (incf index n))
 	       (modify (line)
 		 (delete-lines-until-line line)
