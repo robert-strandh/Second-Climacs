@@ -18,6 +18,10 @@
 (defmethod command-table ((view  climacs2-base:fundamental-view))
   (clim:find-command-table 'fundamental-table))
 
+(defun make-output-record (items pane cursor-column)
+  (clim:with-output-to-output-record (pane)
+    (format pane "~a" (coerce items 'string))))
+
 ;;; Since the FUNDAMENTAL-VIEW contains a NULL-ANALYZER, the method on
 ;;; UPDATE-VIEW-FROM-ANALYZER specialized to the NULL-ANALYZER calls
 ;;; UPDATE-VIEW-FROM-ANALYZER recursively with the buffer replacing
