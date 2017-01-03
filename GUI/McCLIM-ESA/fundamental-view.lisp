@@ -4,7 +4,9 @@
 ;;; this class is created in order to display a Climacs view that is
 ;;; an instance of CLIMACS2-BASE:FUNDAMENTAL-VIEW.
 
-(defclass fundamental-view (climacs-clim-view) ())
+(defclass fundamental-view (climacs-clim-view)
+  ((%previous-cursor-line :initform nil :accessor previous-cursor-line)
+   (%previous-cursor-column :initform nil :accessor previous-cursor-column)))
 
 (defmethod climacs-clim-view-class ((view climacs2-base:fundamental-view))
   (find-class 'fundamental-view))
