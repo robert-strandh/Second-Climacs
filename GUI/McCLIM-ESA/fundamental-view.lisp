@@ -18,9 +18,20 @@
 (defmethod command-table ((view  climacs2-base:fundamental-view))
   (clim:find-command-table 'fundamental-table))
 
-(defun make-output-record (items pane cursor-column)
-  (clim:with-output-to-output-record (pane)
-    (format pane "~a" (coerce items 'string))))
+(defun make-output-record (items pane cursor-column-number)
+  (let ((string (coerce items 'string)))
+    (clim:with-output-to-output-record (pane)
+      (if (null cursor-column-number)
+	  (format pane "~a" string)
+	  (let ((prefix (subseq string 0 cursor-column-number))
+		(suffix (subseq string cursor-column-number)))
+	    (format pane "~a" prefix)
+	    (clim:with-room-for-graphics (pane :move-cursor nil)
+	      (clim:draw-rectangle* pane 0 0 5 10
+				    :filled t
+				    :ink clim:+blue+))
+	    (clim:stream-increment-cursor-position pane 5 0)
+	    (format pane "~a" suffix)	      )))))
 
 ;;; Since the FUNDAMENTAL-VIEW contains a NULL-ANALYZER, the method on
 ;;; UPDATE-VIEW-FROM-ANALYZER specialized to the NULL-ANALYZER calls
