@@ -5,8 +5,12 @@
 ;;; an instance of CLIMACS2-BASE:FUNDAMENTAL-VIEW.
 
 (defclass fundamental-view (climacs-clim-view)
-  ((%previous-cursor-line :initform nil :accessor previous-cursor-line)
-   (%previous-cursor-column :initform nil :accessor previous-cursor-column)))
+  ((%previous-cursor-line-number
+    :initform nil
+    :accessor previous-cursor-line-number)
+   (%previous-cursor-column-number
+    :initform nil
+    :accessor previous-cursor-column-number)))
 
 (defmethod climacs-clim-view-class ((view climacs2-base:fundamental-view))
   (find-class 'fundamental-view))
