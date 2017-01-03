@@ -50,8 +50,10 @@
 	 (cursor-column-number (cluffer:cursor-position cursor))
 	 (lines (lines climacs-clim-view))
 	 (history (clim:stream-output-history pane))
-	 (previous-cursor-line-number (previous-cursor-line-number view))
-	 (previous-cursor-column-number (previous-cursor-column-number view)))
+	 (previous-cursor-line-number (previous-cursor-line-number
+				       climacs-clim-view))
+	 (previous-cursor-column-number (previous-cursor-column-number
+					 climacs-clim-view)))
     (flet ((delete-line (index)
 	     (unless (null previous-cursor-line-number)
 	       (if (= previous-cursor-line-number index)
@@ -75,7 +77,7 @@
 			   ;; the line in which the cursor is now
 			   ;; located.
 			   (let ((entry (flexichain:element*
-					 history
+					 lines
 					 cursor-line-number)))
 			     (climacs-flexichain-output-history:replace
 			      history
@@ -91,7 +93,7 @@
 			 ;; process the line in which the cursor was
 			 ;; previously located.
 			 (let ((entry (flexichain:element*
-				       history
+				       lines
 				       previous-cursor-line-number)))
 			   (climacs-flexichain-output-history:replace
 			    history
@@ -108,7 +110,7 @@
 				    previous-cursor-column-number)
 			   ;; We have to process the line.
 			   (let ((entry (flexichain:element*
-					 history
+					 lines
 					 cursor-line-number)))
 			     (climacs-flexichain-output-history:replace
 			      history
@@ -119,14 +121,14 @@
 			(t ;; The cursor is in a different line from
 			   ;; before.
 			 (let ((entry (flexichain:element*
-				       history
+				       lines
 				       previous-cursor-line-number)))
 			   (climacs-flexichain-output-history:replace
 			    history
 			    (make-output-record (cdr entry) pane nil)
 			    previous-cursor-line-number)
 			   (let ((entry (flexichain:element*
-					 history
+					 lines
 					 cursor-line-number)))
 			     (climacs-flexichain-output-history:replace
 			      history
@@ -168,5 +170,7 @@
 		(cluffer:update (climacs2-base:cluffer-buffer buffer)
 				(timestamp climacs-clim-view)
 				#'sync #'skip #'modify #'create))
-	  (setf (previous-cursor-line-number view) cursor-line-number)
-	  (setf (previous-cursor-column-number view) cursor-column-number))))))
+	  (setf (previous-cursor-line-number climacs-clim-view)
+		cursor-line-number)
+	  (setf (previous-cursor-column-number climacs-clim-view)
+		cursor-column-number))))))
