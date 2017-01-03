@@ -6,10 +6,10 @@
 
 (defclass fundamental-view (climacs-clim-view)
   ((%previous-cursor-line-number
-    :initform nil
+    :initform -1
     :accessor previous-cursor-line-number)
    (%previous-cursor-column-number
-    :initform nil
+    :initform 0
     :accessor previous-cursor-column-number)))
 
 (defmethod climacs-clim-view-class ((view climacs2-base:fundamental-view))
@@ -53,7 +53,7 @@
 		     until (eq line (car entry))
 		     do (delete-line index))))
 	(flet ((skip (n)
-		 (cond  ((or (null previous-cursor-line-number)
+		 (cond  ((or (< previous-cursor-line-number index)
 			     (>= previous-cursor-line-number (+ index n)))
 			 ;; We do not have to process the line in which
 			 ;; the cursor was previously located, but we may
@@ -144,6 +144,8 @@
 		    history
 		    (make-output-record (cdr entry) pane nil)
 		    index))
+		 (unless (< previous-cursor-line-number index)
+		   (incf previous-cursor-line-number))
 		 (incf index)))
 	  (setf (timestamp climacs-clim-view)
 		(cluffer:update (climacs2-base:cluffer-buffer buffer)
