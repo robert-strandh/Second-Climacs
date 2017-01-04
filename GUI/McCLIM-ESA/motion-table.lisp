@@ -64,8 +64,6 @@
 	(error 'cluffer:end-of-buffer)
 	(let* ((next-line (cluffer:find-line buffer (1+ line-number)))
 	       (item-count (cluffer:item-count next-line)))
-	  (format *trace-output* "~s"
-		  (esa:previous-command (esa:current-window)))
 	  (unless (member (car (esa:previous-command (esa:current-window)))
 			  '(com-next-line com-previous-line))
 	    (setf *target-column* (cluffer:cursor-position cursor)))
@@ -77,3 +75,27 @@
 (esa:set-key '(com-next-line)
 	     'motion-table
 	     '((#\n :control)))
+
+(clim:define-command
+    (com-previous-line :name t :command-table motion-table)
+    ()
+  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
+	 (climacs-view (climacs-view clim-view))
+	 (cursor (climacs2-base:cursor climacs-view))
+	 (buffer (cluffer:buffer cursor))
+	 (line-number (cluffer:line-number (cluffer:line cursor))))
+    (if (zerop line-number)
+	(error 'cluffer:beginning-of-buffer)
+	(let* ((previous-line (cluffer:find-line buffer (1- line-number)))
+	       (item-count (cluffer:item-count previous-line)))
+	  (unless (member (car (esa:previous-command (esa:current-window)))
+			  '(com-next-line com-previous-line))
+	    (setf *target-column* (cluffer:cursor-position cursor)))
+	  (cluffer:detach-cursor cursor)
+	  (cluffer:attach-cursor cursor
+				 previous-line
+				 (min item-count *target-column*))))))
+
+(esa:set-key '(com-previous-line)
+	     'motion-table
+	     '((#\p :control)))
