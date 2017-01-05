@@ -14,6 +14,7 @@
    (:file "text-pane")
    (:file "fundamental-view")
    (:file "insert-table")
+   (:file "delete-table")
    (:file "motion-table")
    (:file "global-command-table")
    (:file "fundamental-command-table")
