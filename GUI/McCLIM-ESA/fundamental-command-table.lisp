@@ -4,4 +4,5 @@
   :inherit-from
   (global-table
    ascii-insert-table
+   delete-table
    motion-table))
