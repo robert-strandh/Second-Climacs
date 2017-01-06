@@ -170,6 +170,8 @@
                 (cluffer:update (climacs2-base:cluffer-buffer buffer)
                                 (timestamp climacs-clim-view)
                                 #'sync #'skip #'modify #'create))
+	  (loop until (= (flexichain:nb-elements lines) index)
+		do (delete-line index))
           (setf (previous-cursor-line-number climacs-clim-view)
                 cursor-line-number)
           (setf (previous-cursor-column-number climacs-clim-view)
