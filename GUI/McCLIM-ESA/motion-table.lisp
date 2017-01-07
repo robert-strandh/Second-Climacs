@@ -149,3 +149,21 @@
 (esa:set-key `(com-forward-word)
 	     'motion-table
 	     '((#\f :meta)))
+
+(clim:define-command
+    (com-backward-word :name t :command-table motion-table)
+    ()
+  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
+	 (climacs-view (climacs-view clim-view))
+	 (cursor (climacs2-base:cursor climacs-view)))
+    (loop until (or (cluffer:beginning-of-buffer-p cursor)
+		    (alphanumericp (climacs2-base:item-before-cursor cursor)))
+	  do (climacs2-base:backward-item cursor))
+    (loop until (or (cluffer:beginning-of-line-p cursor)
+		    (not (characterp (climacs2-base:item-before-cursor cursor)))
+		    (not (alphanumericp (climacs2-base:item-before-cursor cursor))))
+	  do (climacs2-base:backward-item cursor))))
+
+(esa:set-key `(com-backward-word)
+	     'motion-table
+	     '((#\b :meta)))
