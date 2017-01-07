@@ -139,13 +139,12 @@
 	 (climacs-view (climacs-view clim-view))
 	 (cursor (climacs2-base:cursor climacs-view)))
     (loop until (or (cluffer:end-of-buffer-p cursor)
-		    (and (not (cluffer:end-of-line-p cursor))
-			 (alphanumericp (cluffer:item-after-cursor cursor))))
-	  do (cluffer:forward-item cursor))
+		    (alphanumericp (climacs2-base:item-after-cursor cursor)))
+	  do (climacs2-base:forward-item cursor))
     (loop until (or (cluffer:end-of-line-p cursor)
-		    (not (characterp (cluffer:item-after-cursor cursor)))
-		    (not (alphanumericp (cluffer:item-after-cursor cursor))))
-	  do (cluffer:forward-item cursor))))
+		    (not (characterp (climacs2-base:item-after-cursor cursor)))
+		    (not (alphanumericp (climacs2-base:item-after-cursor cursor))))
+	  do (climacs2-base:forward-item cursor))))
 
 (esa:set-key `(com-forward-word)
 	     'motion-table
