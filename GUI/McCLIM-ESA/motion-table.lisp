@@ -5,9 +5,7 @@
 (clim:define-command
     (com-forward-item :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (climacs2-base:forward-item cursor)))
 
 (esa:set-key `(com-forward-item)
@@ -17,9 +15,7 @@
 (clim:define-command
     (com-backward-item :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (climacs2-base:backward-item cursor)))
 
 (esa:set-key `(com-backward-item)
@@ -29,9 +25,7 @@
 (clim:define-command
     (com-beginning-of-line :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (climacs2-base:beginning-of-line cursor)))
 
 (esa:set-key `(com-beginning-of-line)
@@ -41,9 +35,7 @@
 (clim:define-command
     (com-end-of-line :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (climacs2-base:end-of-line cursor)))
 
 (esa:set-key `(com-end-of-line)
@@ -135,9 +127,7 @@
 (clim:define-command
     (com-forward-word :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (loop until (or (cluffer:end-of-buffer-p cursor)
 		    (alphanumericp (climacs2-base:item-after-cursor cursor)))
 	  do (climacs2-base:forward-item cursor))
@@ -153,9 +143,7 @@
 (clim:define-command
     (com-backward-word :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (loop until (or (cluffer:beginning-of-buffer-p cursor)
 		    (alphanumericp (climacs2-base:item-before-cursor cursor)))
 	  do (climacs2-base:backward-item cursor))
@@ -171,9 +159,7 @@
 (clim:define-command
     (com-back-to-indentation :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (cluffer:beginning-of-line cursor)
     (loop until (or (cluffer:end-of-line-p cursor)
 		    (not (member (cluffer:item-after-cursor cursor)
