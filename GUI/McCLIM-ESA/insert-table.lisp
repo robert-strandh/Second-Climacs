@@ -5,9 +5,7 @@
 (clim:define-command
     (com-insert-item :name t :command-table ascii-insert-table)
     ((item t))
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (climacs2-base:insert-item cursor item)))
 
 (loop for i from 32 to 126
@@ -29,10 +27,7 @@
                :default-type 'clim:pathname
 ;;               :insert-default t))
 	       ))
-  (let* ((window (esa:current-window))
-	 (clim-view (clim:stream-default-view window))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view)))
+  (with-current-cursor (cursor)
     (with-open-file (stream filepath :direction :input)
       (climacs2-base:fill-buffer-from-stream cursor stream))))
 
