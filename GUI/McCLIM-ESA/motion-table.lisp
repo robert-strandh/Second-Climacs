@@ -95,13 +95,11 @@
 (clim:define-command
     (com-beginning-of-buffer :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view))
-	 (buffer (cluffer:buffer cursor))
-	 (first-line (cluffer:find-line buffer 0)))
-    (cluffer:detach-cursor cursor)
-    (cluffer:attach-cursor cursor first-line)))
+  (with-current-cursor (cursor)
+    (let* ((buffer (cluffer:buffer cursor))
+	   (first-line (cluffer:find-line buffer 0)))
+      (cluffer:detach-cursor cursor)
+      (cluffer:attach-cursor cursor first-line))))
 
 (esa:set-key '(com-beginning-of-buffer)
 	     'motion-table
@@ -110,15 +108,13 @@
 (clim:define-command
     (com-end-of-buffer :name t :command-table motion-table)
     ()
-  (let* ((clim-view (clim:stream-default-view (esa:current-window)))
-	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view))
-	 (buffer (cluffer:buffer cursor))
-	 (line-count (cluffer:line-count buffer))
-	 (last-line (cluffer:find-line buffer (1- line-count)))
-	 (item-count (cluffer:item-count last-line)))
-    (cluffer:detach-cursor cursor)
-    (cluffer:attach-cursor cursor last-line item-count)))
+  (with-current-cursor (cursor)
+    (let* ((buffer (cluffer:buffer cursor))
+	   (line-count (cluffer:line-count buffer))
+	   (last-line (cluffer:find-line buffer (1- line-count)))
+	   (item-count (cluffer:item-count last-line)))
+      (cluffer:detach-cursor cursor)
+      (cluffer:attach-cursor cursor last-line item-count))))
 
 (esa:set-key '(com-end-of-buffer)
 	     'motion-table
