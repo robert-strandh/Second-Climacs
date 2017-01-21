@@ -10,6 +10,7 @@
   ((:file "packages")
    (:file "parse-result")
    (:file "folio")
+   (:file "token")
    (:file "folio-stream")
    (:file "flexichain-folio")
    (:file "analyzer")
