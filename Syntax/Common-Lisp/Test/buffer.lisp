@@ -16,13 +16,11 @@
 			(incf item-number))))
     buffer))
 
-(defun analyzer-from-buffer (buffer)
-  (make-instance 'climacs-syntax-common-lisp::analyzer
-    :buffer buffer))
-
-(defun analyzer-stream-from-analyzer (analyzer)
-  (make-instance 'climacs-syntax-common-lisp::analyzer-stream
-    :folio analyzer))
+(defun analyzer-stream-from-buffer (buffer)
+  (let ((analyzer (make-instance 'climacs-syntax-common-lisp::analyzer)))
+    (make-instance 'climacs-syntax-common-lisp::analyzer-stream
+      :buffer buffer)))
+      :folio analyzer))
 
 (defun forms-from-cache (analyzer)
   (append (reverse (mapcar #'climacs-syntax-common-lisp::expression
