@@ -13,6 +13,7 @@
    (:file "climacs-clim-view")
    (:file "text-pane")
    (:file "fundamental-view")
+   (:file "common-lisp-view")
    (:file "with-current-cursor")
    (:file "insert-table")
    (:file "delete-table")
