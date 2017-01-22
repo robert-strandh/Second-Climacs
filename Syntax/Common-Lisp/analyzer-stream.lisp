@@ -37,6 +37,10 @@
 			(first (suffix analyzer)) line-number item-number))
 	    do (pop-from-suffix analyzer)))))
 
+;;; Check whether there is a cached parse result with a start position
+;;; that corresponds to the current stream position of
+;;; ANALYZER-STREAM, and if so, return that parse result.  If there is
+;;; no such parse result, then return NIL.
 (defun cached-parse-result (analyzer-stream)
   (let* ((analyzer (folio analyzer-stream))
 	 (residue (residue analyzer))
