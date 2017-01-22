@@ -13,7 +13,7 @@
    (:file "token")
    (:file "folio-stream")
    (:file "flexichain-folio")
-   (:file "analyzer")
+   (:file "cache")
    (:file "more-variables")
    (:file "additional-conditions")
    (:file "analyzer-stream")
