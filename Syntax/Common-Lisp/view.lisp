@@ -5,7 +5,10 @@
 (defmethod initialize-instance :after ((instance common-lisp-view) &key)
   (multiple-value-bind (buffer cursor)
       (climacs2-base:make-empty-standard-buffer-and-cursor)
-    (let ((cache (make-instance 'cache :buffer buffer)))
+    (let* ((cache (make-instance 'cache))
+           (analyzer (make-instance 'analyzer
+                       :folio cache
+                       :buffer buffer)))
       (reinitialize-instance instance
-			     :cursor cursor
-			     :analyzer cache))))
+                             :cursor cursor
+			     :analyzer analyzer))))
