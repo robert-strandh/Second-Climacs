@@ -16,7 +16,7 @@
    (:file "cache")
    (:file "more-variables")
    (:file "additional-conditions")
-   (:file "analyzer-stream")
+   (:file "analyzer")
    (:file "parse")
    (:file "read-forms")
    (:file "view")
