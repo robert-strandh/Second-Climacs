@@ -10,7 +10,7 @@
    (%end-line :initarg :end-line :accessor end-line)
    (%children :initarg :children :accessor children)))
 
-(defclass cache ()
+(defclass test-cache ()
   ((%nodes :initarg :nodes :accessor nodes)))
 
 (defun random-child-count ()
@@ -55,10 +55,10 @@
 		       (make-random-children
 			(- child-count half) start2 end-line)))))))
 
-(defun make-random-cache ()
+(defun make-random-test-cache ()
   (let* ((start-line (random 10))
 	 (end-line (+ start-line (random 20))))
-    (make-instance 'cache
+    (make-instance 'test-cache
       :nodes (make-random-children (random 10) start-line end-line))))
 
 ;;; Return a list of residual nodes that are not affected by the
@@ -100,35 +100,35 @@
 	 (loop for child in (children node)
 	       append (handle-deleted-line child line-number)))))
 
-(defun handle-modify (cache line-number)
-  (setf (children cache)
-	(loop for child in (children cache)
+(defun handle-modify (test-cache line-number)
+  (setf (children test-cache)
+	(loop for child in (children test-cache)
 	      append (handle-modified-line child line-number))))
 
-(defun handle-insert (cache line-number)
-  (setf (children cache)
-	(loop for child in (children cache)
+(defun handle-insert (test-cache line-number)
+  (setf (children test-cache)
+	(loop for child in (children test-cache)
 	      append (handle-inserted-line child line-number))))
 
-(defun handle-delete (cache line-number)
-  (setf (children cache)
-	(loop for child in (children cache)
+(defun handle-delete (test-cache line-number)
+  (setf (children test-cache)
+	(loop for child in (children test-cache)
 	      append (handle-deleted-line child line-number))))
 
-(defun random-update (cache)
+(defun random-update (test-cache)
   (let ((current-line-number 0))
     (flet ((random-operation ()
 	     (case (random 4)
 	       (0 ;; Skip operation.
 		(incf current-line-number (random 3)))
 	       (1 ;; The current line has been modified.
-		(handle-modify cache current-line-number)
+		(handle-modify test-cache current-line-number)
 		(incf current-line-number))
 	       (2 ;; A line has been inserted before the current line.
-		(handle-insert cache current-line-number)
+		(handle-insert test-cache current-line-number)
 		(incf current-line-number))
 	       (3 ;; The current line has been deleted.
-		(handle-delete cache current-line-number)
+		(handle-delete test-cache current-line-number)
 		;; Do not increment the current line number
 		))))
       (loop repeat 4
@@ -162,11 +162,11 @@
 			   (rest nodes)
 			   (+ base (start-line (first nodes))))))
 
-(defun compare-caches (analyzer cache)
+(defun compare-caches (analyzer test-cache)
   (let ((prefix (climacs-syntax-common-lisp::prefix analyzer))
 	(residue (climacs-syntax-common-lisp::residue analyzer))
 	(suffix (climacs-syntax-common-lisp::suffix analyzer))
-	(nodes (nodes cache)))
+	(nodes (nodes test-cache)))
     (assert (= (length nodes)
 	       (+ (length prefix)
 		  (length residue)
@@ -209,11 +209,11 @@
       (cons (make-relative (first nodes) base)
 	    (make-relative-list (rest nodes) (start-line (first nodes))))))
 
-(defun analyzer-from-cache (cache prefix-length)
-  (let* ((reverse-prefix (loop for node in (nodes cache)
+(defun analyzer-from-test-cache (test-cache prefix-length)
+  (let* ((reverse-prefix (loop for node in (nodes test-cache)
 			       repeat prefix-length
 			       collect (make-absolute node)))
-	 (rest (nthcdr prefix-length (nodes cache)))
+	 (rest (nthcdr prefix-length (nodes test-cache)))
 	 (analyzer (make-instance 'climacs-syntax-common-lisp::analyzer)))
     (setf (climacs-syntax-common-lisp::prefix analyzer)
 	  (reverse reverse-prefix))
@@ -226,7 +226,7 @@
 
 (defun test-translation-and-comparison (n)
   (loop repeat n
-	for cache = (make-random-cache)
-	for prefix-length = (random (1+ (length (nodes cache))))
-	for analyzer = (analyzer-from-cache cache prefix-length)
-	do (compare-caches analyzer cache)))
+	for test-cache = (make-random-test-cache)
+	for prefix-length = (random (1+ (length (nodes test-cache))))
+	for analyzer = (analyzer-from-test-cache test-cache prefix-length)
+	do (compare-caches analyzer test-cache)))
