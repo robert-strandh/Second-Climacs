@@ -16,9 +16,9 @@
 			(incf item-number))))
     buffer))
 
-(defun analyzer-stream-from-buffer (buffer)
+(defun analyzer-from-buffer (buffer)
   (let ((analyzer (make-instance 'climacs-syntax-common-lisp::analyzer)))
-    (make-instance 'climacs-syntax-common-lisp::analyzer-stream
+    (make-instance 'climacs-syntax-common-lisp::analyzer
       :buffer buffer)))
       :folio analyzer))
 

@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defclass analyzer-stream (folio-stream climacs2-base:analyzer)
+(defclass analyzer (folio-stream climacs2-base:analyzer)
   ())
 
 ;;; Return true if and only if position A occurs strictly before
@@ -24,10 +24,10 @@
 ;;; valid, or have been recycled already, so we remove them.  Two
 ;;; places are considered for recycling, namely the list of residual
 ;;; parse results and the suffix.
-(defun pop-to-stream-position (analyzer-stream)
-  (let ((cache (folio analyzer-stream))
-	(line-number (current-line-number analyzer-stream))
-	(item-number (current-item-number analyzer-stream)))
+(defun pop-to-stream-position (analyzer)
+  (let ((cache (folio analyzer))
+	(line-number (current-line-number analyzer))
+	(item-number (current-item-number analyzer)))
     (loop while (and (not (null (residue cache)))
 		     (parse-result-starts-before-position-p
 		      (first (residue cache)) line-number item-number))
@@ -40,37 +40,37 @@
 
 ;;; Check whether there is a cached parse result with a start position
 ;;; that corresponds to the current stream position of
-;;; ANALYZER-STREAM, and if so, return that parse result.  If there is
+;;; ANALYZER, and if so, return that parse result.  If there is
 ;;; no such parse result, then return NIL.
-(defun cached-parse-result (analyzer-stream)
-  (let* ((cache (folio analyzer-stream))
+(defun cached-parse-result (analyzer)
+  (let* ((cache (folio analyzer))
 	 (residue (residue cache))
 	 (suffix (suffix cache)))
     (cond ((not (null residue))
 	   (if (and (= (start-line (first residue))
-		       (current-line-number analyzer-stream))
+		       (current-line-number analyzer))
 		    (= (start-column (first residue))
-		       (current-item-number analyzer-stream)))
+		       (current-item-number analyzer)))
 	       (first residue)
 	       nil))
 	  ((not (null suffix))
 	   (if (and (= (start-line (first suffix))
-		       (current-line-number analyzer-stream))
+		       (current-line-number analyzer))
 		    (= (start-column (first suffix))
-		       (current-item-number analyzer-stream)))
+		       (current-item-number analyzer)))
 	       (first suffix)
 	       nil))
 	  (t nil))))
 
-(defun advance-stream-to-beyond-parse-result (analyzer-stream parse-result)
-  (setf (current-line-number analyzer-stream)
+(defun advance-stream-to-beyond-parse-result (analyzer parse-result)
+  (setf (current-line-number analyzer)
 	(end-line parse-result))
-  (setf (current-item-number analyzer-stream)
+  (setf (current-item-number analyzer)
 	(end-column parse-result))
-  (read-char analyzer-stream nil nil))
+  (read-char analyzer nil nil))
 
 (defmethod sicl-reader:read-common :around
-    ((input-stream analyzer-stream) eof-error-p eof-value)
+    ((input-stream analyzer) eof-error-p eof-value)
   (skip-whitespace input-stream)
   (let ((parse-result (cached-parse-result input-stream)))
     (if (null parse-result)
