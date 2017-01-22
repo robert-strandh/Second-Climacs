@@ -1,6 +1,7 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defclass analyzer-stream (folio-stream) ())
+(defclass analyzer-stream (folio-stream climacs2-base:analyzer)
+  ())
 
 ;;; Return true if and only if position A occurs strictly before
 ;;; position B in some buffer.
