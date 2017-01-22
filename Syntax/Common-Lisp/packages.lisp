@@ -10,4 +10,5 @@
    #:folio-stream
    #:synchronize
    #:common-lisp-view
-   #:set-common-lisp-mode))
+   #:set-common-lisp-mode
+   #:view))
