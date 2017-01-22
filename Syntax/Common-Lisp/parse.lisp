@@ -13,9 +13,9 @@
 (defun parse-buffer (analyzer-stream)
   (with-accessors ((current-line-number current-line-number)
 		   (current-item-number current-item-number)
-		   (analyzer folio))
+		   (cache folio))
       analyzer-stream
-    (let ((prefix (prefix analyzer)))
+    (let ((prefix (prefix cache)))
       (if (null prefix)
 	  (setf current-line-number 0
 		current-item-number 0)
@@ -24,8 +24,8 @@
     (loop until (progn
 		  (skip-whitespace analyzer-stream)
 		  (or (eof-p analyzer-stream)
-		      (and (not (null (suffix analyzer)))
-			   (let* ((pr (first (suffix analyzer)))
+		      (and (not (null (suffix cache)))
+			   (let* ((pr (first (suffix cache)))
 				  (l (start-line pr))
 				  (c (start-column pr)))
 			     (and (= l current-line-number)
