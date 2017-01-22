@@ -11,4 +11,5 @@
    #:synchronize
    #:common-lisp-view
    #:set-common-lisp-mode
-   #:view))
+   #:view
+   #:analyzer))
