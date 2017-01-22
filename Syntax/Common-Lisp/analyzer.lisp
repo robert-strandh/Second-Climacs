@@ -142,7 +142,7 @@
 ;;; Take into account modifications to the buffer by destroying the
 ;;; parts of the cache that are no longer valid, while keeping parse
 ;;; results that are not affected by such modifications.
-(defun scavenge (analyzer)
+(defun scavenge (analyzer buffer)
   (let ((analyzer-initialized-p nil))
     (with-accessors ((lines contents)
 		     (line-counter line-counter))
@@ -177,7 +177,7 @@
 		 (remove-deleted-lines line)
 		 (incf line-counter)))
 	  (setf (time-stamp analyzer)
-		(cluffer:update (climacs2-base:buffer analyzer)
+		(cluffer:update buffer
 				(time-stamp analyzer)
 				#'sync #'skip #'modify #'create)))))))
 
