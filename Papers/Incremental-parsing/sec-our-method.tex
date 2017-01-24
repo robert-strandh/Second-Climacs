@@ -497,3 +497,14 @@ one of the following situations occur:
   therefore stop, knowing that the prefix and the suffix together
   contain every valid top-level parse result of the buffer.
 \end{enumerate}
+
+After a top-level invocation of the reader, the current stream
+position may have advanced to a point beyond some or all of the parse
+results of the residue and possibly also of the suffix.  This
+situation occurs when a character that requires nested calls to the
+reader is encountered.  These nested calls can then return some of the
+cached parse results of the residue and the suffix so that they become
+part of a bigger top-level parse result.  For that reason, after each
+top-level invocation of the reader, we must discard cached parse
+results in the residue and the suffix that precede the end of the
+top-level parse result that was returned.
