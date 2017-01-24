@@ -13,11 +13,11 @@ keystroke is generally not feasible, especially for buffers with a
 significant amount of code.
 
 Furthermore, the analysis is necessarily \emph{approximate}.  The
-existence of the construct \texttt{eval-when} allows for arbitrary
-computations at compile time, and these computations may influence the
-environment in arbitrary ways that may invalidate subsequent, or even
-preceding analyses, making an analysis that is both precise and
-incremental impossible in general.
+reader macro \#. (hash dot) and the macro \texttt{eval-when} allow for
+arbitrary computations at read time and at compile time, and these
+computations may influence the environment in arbitrary ways that may
+invalidate subsequent, or even preceding analyses, making an analysis
+that is both precise and incremental impossible in general.
 
 The question, then, is how approximate the analysis has to be, and how
 much of it we can allow ourselves to recompute, given the performance
