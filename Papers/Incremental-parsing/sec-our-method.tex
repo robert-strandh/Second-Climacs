@@ -274,9 +274,7 @@ The first parse result of the worklist is affected by the fact that
 line 37 has been modified.  We must remove that parse result from the
 worklist, and push its children to the worklist.  In doing so, we make
 the \texttt{start-line} of the children reflect the absolute line
-number, and we also make the \texttt{start-line} of the next parse
-result of the suffix also reflect the absolute line number.  We obtain
-the following situation:
+number.  We obtain the following situation:
 
 {\small\begin{verbatim}
     prefix
