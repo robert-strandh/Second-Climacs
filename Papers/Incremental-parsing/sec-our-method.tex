@@ -254,12 +254,29 @@ following situation:
     ...
 \end{verbatim}}
 
-The first parse result of the suffix is affected by the fact that line
-37 has been modified.  We must move the children of that parse result
-to the worklist.  In doing so, we make the \texttt{start-line} of the
-children reflect the absolute line number, and we also make the
-\texttt{start-line} of the next parse result of the suffix also
-reflect the absolute line number.  We obtain the following situation:
+We now start processing the modification of line 37.  The worklist is
+empty, so the first action consists of moving the first parse result
+from the suffix to the worklist, resulting in the following situation:
+
+{\small\begin{verbatim}
+    prefix
+    ...
+    34 00 (f 10)
+    residue
+    worklist
+    36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+    suffix
+    42 00 (f 20)
+    ...
+\end{verbatim}}
+
+The first parse result of the worklist is affected by the fact that
+line 37 has been modified.  We must remove that parse result from the
+worklist, and push its children to the worklist.  In doing so, we make
+the \texttt{start-line} of the children reflect the absolute line
+number, and we also make the \texttt{start-line} of the next parse
+result of the suffix also reflect the absolute line number.  We obtain
+the following situation:
 
 {\small\begin{verbatim}
     prefix
