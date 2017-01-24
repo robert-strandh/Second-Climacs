@@ -328,7 +328,8 @@ to the residue list.  We now have the following situation:
 \end{verbatim}}
 
 The first parse result of the top of the worklist is affected by the
-modification.  It has no children, so we pop it off the worklist.
+modification.  It has no children, so we pop it off the worklist.  We
+obtain the following situation:
 
 {\small\begin{verbatim}
     prefix
@@ -349,7 +350,7 @@ modified line in the buffer.  We therefore start processing the line
 inserted between the existing lines 39 and 40.  The first item on the
 worklist is affected by this insertion.  We therefore remove it from
 the worklist and push its children instead.  In doing so, we make the
-\texttt{start-line} slot those children reflect the absolute line
+\texttt{start-line} of those children reflect the absolute line
 number.  We obtain the following result:
 
 {\small\begin{verbatim}
