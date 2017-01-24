@@ -508,3 +508,40 @@ part of a bigger top-level parse result.  For that reason, after each
 top-level invocation of the reader, we must discard cached parse
 results in the residue and the suffix that precede the end of the
 top-level parse result that was returned.
+
+\subsubsection{Example}
+
+To illustrate the rehabilitation phase, let us say that the modified
+line $37$ consisted of replacing the initial value $2$ of the variable
+\texttt{y} by $3$ instead, and that the inserted line is still empty.
+
+The stream position is initially positioned at the end of the last
+parse result of the prefix, so that the first left parenthesis of the
+line starting the \texttt{let} binding is the next character to be
+read.  The reader calls itself recursively to read the \texttt{let}
+form.  During this process, individual characters are read until the
+reader is invoked recursively with the start position of binding of
+the variable \texttt{x}.  At this point, the cached parse result is
+returned instead, and the position of the stream is advanced so that
+it is located after this binding.
+
+This process continues in that the reader alternately proceeds
+character by character, and alternately by leaps according to the
+contents of the cache.  When the top-level call to the reader returns,
+the original top-level parse result representing the \texttt{let} form
+has been created, with the exception of the modified initial value and
+the line-number information modified by the inserted line.
+
+Once the top-level invocation of read is terminated, the position of
+the input stream will be located after the \texttt{let} form.  Cached
+parse results in the residue and the suffix preceding this position
+are then discarded.  In this case, every parse result in the residue
+is discarded, because these parse results are now children of the
+newly returned top-level parse result.  Finally, the new parse result
+is pushed onto the prefix.
+
+The position of the next top-level invocation of the reader
+corresponds to the first position of the first cached parse result of
+the suffix.  We therefore know that subsequent invocations of
+top-level reads will just return successive parse results of the
+suffix, so we can stop, having terminated the rehabilitation phase.
