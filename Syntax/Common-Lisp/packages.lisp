@@ -12,4 +12,6 @@
    #:common-lisp-view
    #:set-common-lisp-mode
    #:view
-   #:analyzer))
+   #:analyzer
+   #:scavenge
+   #:read-forms))
