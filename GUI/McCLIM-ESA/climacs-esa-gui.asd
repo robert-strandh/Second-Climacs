@@ -20,6 +20,7 @@
    (:file "motion-table")
    (:file "global-command-table")
    (:file "fundamental-command-table")
+   (:file "common-lisp-command-table")
    (:file "view-names")
    (:file "gui")
    (:file "io")))
