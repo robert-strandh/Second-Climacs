@@ -36,10 +36,19 @@
             (clim:stream-increment-cursor-position pane 3 0)
             (format pane "~a" suffix))))))
 
+(defun update-cache (view pane analyzer)
+  (declare (ignore view pane))
+  (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
+	 (climacs-buffer (climacs2-base:buffer analyzer))
+	 (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
+    (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
+    (climacs-syntax-common-lisp:read-forms analyzer)))
+
 (defmethod climacs2-base:update-view-from-analyzer
     ((view climacs-syntax-common-lisp:view)
      (pane text-pane)
      (analyzer climacs-syntax-common-lisp:analyzer))
+  (update-cache view pane analyzer)
   (let* ((buffer (climacs2-base:buffer analyzer))
 	 (index 0)
          (climacs-clim-view (clim:stream-default-view pane))
