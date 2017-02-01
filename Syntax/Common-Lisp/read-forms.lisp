@@ -7,6 +7,11 @@
       analyzer
     (with-accessors ((prefix prefix) (suffix suffix) (residue residue))
         cache
+      (if (null prefix)
+          (setf current-line-number 0
+                current-item-number 0)
+          (setf current-line-number (end-line (first prefix))
+                current-item-number (end-column (first prefix))))
       (loop do (skip-whitespace analyzer)
                (if (or (eof-p analyzer)
                        (and (not (null suffix))
