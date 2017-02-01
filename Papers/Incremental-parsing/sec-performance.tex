@@ -1,1 +1,35 @@
 \section{Performance of our technique}
+
+It is hard to give complete performance results for our technique,
+simply because performance depends on many factors such as the exact
+structure of the buffer contents and the way the user interacts with
+that contents.
+
+Despite these difficulties, we can give some indications for certain
+important special cases.
+
+\subsection{Parsing with an empty cache}
+
+When a buffer is first created, the cache is empty.  The buffer
+contents must then be read, character by character, and the cache must
+be created from the contents.
+
+We timed this situation with a buffer containing $10000$ lines of
+\commonlisp{} code.  The total time to parse was around $2$ seconds.
+This result deserves some clarifications:
+
+\begin{itemize}
+\item It is very unusual to have a file of \commonlisp{} code with
+  this many lines.  Most files contain less than $2000$ lines, or
+  $1/5$ of the one in our test case.
+\item This result was obtained from a very preliminary version of our
+  parser.  In particular, to read a character, several generic
+  functions where called, including the \texttt{stream-read-char}
+  function of the Gray streams library, and then several others in
+  order to access the character in the buffer.
+\item This situation will happen only when a buffer is initially read
+  into the editor.  Even very significant subsequent changes to the
+  contents will still preserve large portions of the cache, so that
+  the number of characters actually read will only be a tiny fraction
+  of the total number of characters in the buffer.
+\end{itemize}
