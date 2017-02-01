@@ -126,6 +126,9 @@
 	  (push parse-result (residue cache))))))
 
 (defun handle-modified-line (cache line-number)
+  (let ((line (flexichain:element* (contents cache) line-number)))
+    (setf (contents line)
+          (cluffer:items (cluffer-line line))))
   (loop until (next-parse-result-is-beyond-line-p cache line-number)
 	do (process-next-parse-result cache line-number)))
 
