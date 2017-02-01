@@ -2,13 +2,17 @@
 
 (defun read-forms (analyzer)
   (loop with cache = (folio analyzer)
-	do (if (or (null (suffix cache))
-		   (and (= (current-line-number analyzer)
+	do (skip-whitespace analyzer)
+           (if (or (eof-p analyzer)
+                   (and (not (null (suffix cache)))
+                        (= (current-line-number analyzer)
 			   (start-line (first (suffix cache))))
 			(= (current-item-number analyzer)
 			   (start-column (first (suffix cache))))))
-	       ;; The suffix is either empty or consists of a list of
-	       ;; top-level parse results.
+               ;; If we reach EOF while reading whitespace, then the
+               ;; residue and the suffix must be empty.  If we do not
+               ;; reach EOF, then we stop only if the current position
+               ;; is that of the first parse result on the suffix.
 	       (return-from read-forms nil)
 	       (let ((next (parse analyzer)))
 		 (loop until (or (null (residue cache))
