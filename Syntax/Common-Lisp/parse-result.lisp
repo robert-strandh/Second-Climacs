@@ -13,6 +13,15 @@
    (%relative-p :initarg :relative-p :accessor relative-p)
    (%children :initarg :children :accessor children)))
 
+(defmethod print-object ((object parse-result) stream)
+  (print-unreadable-object (object stream :type t)
+    (format stream "(~d,~d -> ~d,~d) rel: ~s"
+            (start-line object)
+            (start-column object)
+            (end-line object)
+            (end-column object)
+            (relative-p object))))
+
 (defclass expression-parse-result (parse-result)
   ((%expression :initarg :expression :accessor expression)))
 
