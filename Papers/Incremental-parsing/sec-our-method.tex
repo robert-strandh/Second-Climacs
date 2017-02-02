@@ -188,7 +188,7 @@ contents:
     34 (f 10)
     35
     36 (let ((x 1)
-    37       (y 2))
+    37       y)
     38   (g (h x)
     39      (i y)
     40      (j x y)))
@@ -202,10 +202,10 @@ result starting at line 36 is a member of the prefix or if it is the
 first element of the suffix, it would be represented like this:
 
 {\small\begin{verbatim}
-    36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
-       00 01 ((x 1) (y 2))
+    36 04 (let ((x 1) y) (g (h x) (i y) (j x y)))
+       00 01 ((x 1) y)
           00 00 (x 1)
-          01 00 (y 2)
+          01 00 y
        02 02 (g (h x) (i y) (j x y))
           00 00 (h x)
           01 00 (i y)
@@ -264,7 +264,7 @@ following situation:
     residue
     worklist
     suffix
-    36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+    36 04 (let ((x 1) y) (g (h x) (i y) (j x y)))
     06 00 (f 20)
     ...
 \end{verbatim}}
@@ -279,7 +279,7 @@ from the suffix to the worklist, resulting in the following situation:
     34 00 (f 10)
     residue
     worklist
-    36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+    36 04 (let ((x 1) y) (g (h x) (i y) (j x y)))
     suffix
     42 00 (f 20)
     ...
@@ -297,7 +297,7 @@ number.  We obtain the following situation:
     34 00 (f 10)
     residue
     worklist
-    36 01 ((x 1) (y 2))
+    36 01 ((x 1) y)
     38 02 (g (h x) (i y) (j x y))
     suffix
     42 00 (f 20)
@@ -317,7 +317,7 @@ We obtain the following situation:
     residue
     worklist
     36 00 (x 1)
-    37 00 (y 2)
+    37 00 y
     38 02 (g (h x) (i y) (j x y))
     suffix
     42 00 (f 20)
@@ -335,7 +335,7 @@ to the residue list.  We now have the following situation:
     residue
     36 00 (x 1)
     worklist
-    37 00 (y 2)
+    37 00 y
     38 02 (g (h x) (i y) (j x y))
     suffix
     42 00 (f 20)
