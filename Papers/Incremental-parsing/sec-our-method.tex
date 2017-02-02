@@ -2,10 +2,28 @@
 
 \subsection{Buffer update protocol}
 
-Our incremental parser parses the contents of a line-oriented buffer,
-specified in the form of a \clos{} protocol
-\cite{Strandh:2016:CPE:3005729.3005732}.  The buffer is line-oriented
-in two different ways:
+Our incremental parser parses the contents of a buffer, specified in
+the form of a \clos{} protocol
+\cite{Strandh:2016:CPE:3005729.3005732}.  The protocol contains two
+sub-protocols:
+
+\begin{enumerate}
+\item The \emph{edit protocol} is used whenever items are inserted or
+  deleted from the buffer, and when client code needs to determine
+  what item is currently in a particular location in the buffer.
+  An edit operation is typically invoked as a result of a keystroke,
+  but an arbitrary number of edit operations can happen as a result of
+  a keystroke, for example when a region is inserted or deleted, or
+  when a keyboard macro is executed.
+\item The \emph{update protocol} is used when the result of an
+  arbitrary number of edit operations must be displayed to the user.
+  This protocol is typically invoked for each keystroke, but it can be
+  invoked less frequently if some view of the buffer is temporarily
+  hidden.  Only when the view becomes visible is the update protocol
+  invoked.
+\end{enumerate}
+
+The buffer protocol is \emph{line-oriented} in two different ways:
 
 \begin{enumerate}
 \item The editing operations specified by the protocol define a
@@ -17,9 +35,17 @@ in two different ways:
   deleted.
 \end{enumerate}
 
-For the purpose of this paper, the update protocol is the part of the
-buffer protocol that we are interested in, because we re-parse the
-buffer as a result of the update protocol having been invoked.
+For the purpose of this paper, we are only interested in the update
+protocol, because we re-parse the buffer as a result of the update
+protocol having been invoked.  We can think of such an invocation as
+resulting in a sequence of operations, sorted by lines in increasing
+order.  There can be three different update operations:
+
+\begin{itemize}
+\item Modify.  The line has been modified.
+\item Insert.  A new line has been inserted.
+\item Delete.  An existing line has been deleted.
+\end{itemize}
 
 In order to parse the buffer contents, we use a custom \texttt{read}
 function.  This version of the \texttt{read} function differs from the
@@ -90,15 +116,7 @@ the first, of some parse result $P$, have positions relative to the
 previous child in the list.
 
 When the buffer is updated, we try to maintain as many parse results
-as possible in the cache.  We can think of a buffer update as
-resulting in a sequence of operations, sorted by lines in increasing
-order.  There can be three different update operations:
-
-\begin{itemize}
-\item Modify.  The line has been modified.
-\item Insert.  A new line has been inserted.
-\item Delete.  An existing line has been deleted.
-\end{itemize}
+as possible in the cache.
 
 Updating the cache according to a particular sequence of update
 operations consists of two distinct phases:
