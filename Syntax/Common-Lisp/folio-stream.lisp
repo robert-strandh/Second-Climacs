@@ -147,4 +147,4 @@
 
 (defmethod sicl-reader:interpret-token
     (token token-escapes (input-stream folio-stream))
-  (make-instance 'token))
+  (make-instance 'token :characters token))
