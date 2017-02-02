@@ -20,8 +20,8 @@ This result deserves some clarifications:
 
 \begin{itemize}
 \item It is very unusual to have a file of \commonlisp{} code with
-  this many lines.  Most files contain less than $2000$ lines, or
-  $1/5$ of the one in our test case.
+  this many lines.  Most files contain less than $2000$ lines, which
+  is only $1/5$ of the one in our test case.
 \item This result was obtained from a very preliminary version of our
   parser.  In particular, to read a character, several generic
   functions where called, including the \texttt{stream-read-char}
@@ -32,6 +32,9 @@ This result deserves some clarifications:
   contents will still preserve large portions of the cache, so that
   the number of characters actually read will only be a tiny fraction
   of the total number of characters in the buffer.
+\item All the code was compiled with a value $3$ of the \texttt{debug}
+  optimize quality, and with a value of $0$ of the \texttt{speed}
+  optimize quality.
 \end{itemize}
 
 \subsection{Parsing after small modifications}
