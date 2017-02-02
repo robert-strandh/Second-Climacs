@@ -31,7 +31,7 @@
     (loop while (and (not (null (residue cache)))
 		     (parse-result-starts-before-position-p
 		      (first (residue cache)) line-number item-number))
-	  do (pop (residue cache)))
+	  do (pop-from-residue cache))
     (when (null (residue cache))
       (loop while (and (not (null (suffix cache)))
 		       (parse-result-starts-before-position-p
