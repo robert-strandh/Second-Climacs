@@ -79,7 +79,7 @@ returned by the customized reader.
 
 \subsection{Cache organization}
 
-This cache is organized as a sequence%
+The cache is organized as a sequence%
 \footnote{Here, we use the word \emph{sequence} in the meaning of a
   set of items organized consecutively, and not in the more
   restrictive meaning defined by the \commonlisp{} standard.}  of
@@ -114,10 +114,9 @@ the first, of some parse result $P$, have positions relative to the
 previous child in the list.
 
 When the buffer is updated, we try to maintain as many parse results
-as possible in the cache.
-
-Updating the cache according to a particular sequence of update
-operations consists of two distinct phases:
+as possible in the cache.  Updating the cache according to a
+particular sequence of update operations consists of two distinct
+phases:
 
 \begin{enumerate}
 \item Invalidation of parse results that span a line that has been
