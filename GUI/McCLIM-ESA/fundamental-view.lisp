@@ -22,7 +22,12 @@
   (let ((string (coerce items 'string)))
     (clim:with-output-to-output-record (pane)
       (if (null cursor-column-number)
-          (format pane "~a" string)
+	  (if (zerop (length string))
+	      ;; In order to get the right dimensions on the output
+	      ;; record when the line is empty, we output a space
+	      ;; character.
+	      (format pane " ")
+	      (format pane "~a" string))
           (let ((prefix (subseq string 0 cursor-column-number))
                 (suffix (subseq string cursor-column-number)))
             (format pane "~a" prefix)
