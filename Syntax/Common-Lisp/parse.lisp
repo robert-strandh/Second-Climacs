@@ -8,8 +8,7 @@
     (first (first *stack*))))
 
 (defun parse-and-cache (analyzer)
-  (push (parse analyzer)
-	(prefix (folio analyzer))))
+  (push-to-prefix (folio analyzer) (parse analyzer)))
 
 (defun parse-buffer (analyzer)
   (with-accessors ((current-line-number current-line-number)
