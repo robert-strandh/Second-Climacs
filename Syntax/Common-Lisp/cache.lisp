@@ -39,16 +39,33 @@
       (absolute-to-relative (first suffix) (start-line parse-result)))
     (push parse-result suffix)))
 
+(defun pop-from-prefix (cache)
+  (pop (prefix cache)))
+
+(defun push-to-prefix (cache parse-result)
+  (push parse-result (prefix cache)))
+
+(defun pop-from-worklist (cache)
+  (pop (worklist cache)))
+
+(defun push-to-worklist (cache parse-result)
+  (push parse-result (worklist cache)))
+
+(defun pop-from-residue (cache)
+  (pop (residue cache)))
+
+(defun push-to-residue (cache parse-result)
+  (push parse-result (residue cache)))
+
 (defun suffix-to-prefix (cache)
-  (push (pop-from-suffix cache) (prefix cache)))
+  (push-to-prefix cache (pop-from-suffix cache)))
 
 (defun prefix-to-suffix (cache)
   (assert (not (null (prefix cache))))
-  (push-to-suffix cache (pop (prefix cache))))
+  (push-to-suffix cache (pop-from-prefix cache)))
 
 (defun move-to-residue (cache)
-  (push (pop (worklist cache))
-	(residue cache)))
+  (push-to-residue cache (pop-from-worklist cache)))
 
 (defun finish-analysis (cache)
   (loop until (null (worklist cache))
@@ -107,8 +124,7 @@
 (defun ensure-worklist-not-empty (cache)
   (with-accessors ((worklist worklist)) cache
     (when (null worklist)
-      (push (pop-from-suffix cache)
-	    worklist))))
+      (push-to-worklist cache (pop-from-suffix cache)))))
 
 ;;; When this function is called, there is at least one parse result,
 ;;; either on the work list or on the suffix that must be processed,
@@ -118,12 +134,12 @@
 (defun process-next-parse-result (cache line-number)
   (with-accessors ((worklist worklist)) cache
     (ensure-worklist-not-empty cache)
-    (let ((parse-result (pop worklist)))
+    (let ((parse-result (pop-from-worklist cache)))
       (if (line-is-inside-parse-result-p parse-result line-number)
 	  (let ((children (children parse-result)))
 	    (make-absolute children (start-line parse-result))
 	    (setf worklist (append children worklist)))
-	  (push parse-result (residue cache))))))
+	  (push-to-residue cache parse-result)))))
 
 (defun handle-modified-line (cache line-number)
   (let ((line (flexichain:element* (contents cache) line-number)))
