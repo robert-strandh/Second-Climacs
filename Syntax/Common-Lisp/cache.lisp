@@ -67,7 +67,7 @@
 (defun move-to-residue (cache)
   (push-to-residue cache (pop-from-worklist cache)))
 
-(defun finish-analysis (cache)
+(defun finish-scavenge (cache)
   (loop until (null (worklist cache))
 	do (move-to-residue cache))
   (setf (residue cache)
