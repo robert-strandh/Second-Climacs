@@ -9,12 +9,10 @@ sub-protocols:
 
 \begin{enumerate}
 \item The \emph{edit protocol} is used whenever items are inserted or
-  deleted from the buffer, and when client code needs to determine
-  what item is currently in a particular location in the buffer.
-  An edit operation is typically invoked as a result of a keystroke,
-  but an arbitrary number of edit operations can happen as a result of
-  a keystroke, for example when a region is inserted or deleted, or
-  when a keyboard macro is executed.
+  deleted from the buffer.  An edit operation is typically invoked as
+  a result of a keystroke, but an arbitrary number of edit operations
+  can happen as a result of a keystroke, for example when a region is
+  inserted or deleted, or when a keyboard macro is executed.
 \item The \emph{update protocol} is used when the result of an
   arbitrary number of edit operations must be displayed to the user.
   This protocol is typically invoked for each keystroke, but it can be
