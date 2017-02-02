@@ -1,7 +1,8 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
 (defun parse (analyzer)
-  (let ((*stack* (list '())))
+  (let ((*stack* (list '()))
+        (sicl-reader:*preserve-whitespace* t))
     (handler-case (sicl-reader:read analyzer)
       (end-of-file () nil))
     (first (first *stack*))))
