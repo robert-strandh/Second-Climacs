@@ -115,7 +115,7 @@ previous child in the list.
 
 When the buffer is updated, we try to maintain as many parse results
 as possible in the cache.  Updating the cache according to a
-particular sequence of update operations consists of two distinct
+particular succession of update operations consists of two distinct
 phases:
 
 \begin{enumerate}
@@ -148,8 +148,8 @@ The invalidation phase consists of an \emph{outer} loop and an
 \emph{inner} loop.  In the outer loop, each update operation is
 processed in increasing order of the line of the operation.  The
 invalidation phase terminates when every update operation has been
-processes.  The inner loop is executed until one of the following
-conditions are met:
+processed.  The inner loop is executed until one of the following
+conditions is met:
 
 \begin{enumerate}
 \item Both the worklist and the suffix are empty.
@@ -161,8 +161,8 @@ conditions are met:
   operation being processed.
 \end{enumerate}
 
-In each iteration of the inner loop of the invalidation phase a single
-parse result is processed, namely the first parse result on the
+In each iteration of the inner loop of the invalidation phase, a
+single parse result is processed, namely the first parse result on the
 worklist.  If the worklist is empty, the first parse result of the
 suffix is moved to the worklist before processing begins.
 
