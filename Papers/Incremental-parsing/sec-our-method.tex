@@ -236,9 +236,9 @@ need to represent the following parse results:
     ...
     34 (f 10)
     35
-    36       (x 1)
+    36  let  (x 1)
     37
-    38      (h x)
+    38    g (h x)
     39      (i y)
     40
     41      (j x y)
@@ -256,9 +256,11 @@ In other words, we need to obtain the following representation:
        00 00 f
        00 00 10
     residue
+    36 00 let
     36 00 (x 1)
        00 00 x
        00 00 1
+    38 00 g
     38 00 (h x)
        00 00 h
        00 00 x
@@ -276,7 +278,7 @@ In other words, we need to obtain the following representation:
     ...
 \end{verbatim}}
 
-For simplicity or presentation, we will omit the children of parse
+For simplicity of presentation, we will omit the children of parse
 results in the cache, and only show the top-level contents of the
 prefix, the suffix, the worklist, and the residue.  When simplified,
 the cache contents above is illustrated like this:
@@ -286,7 +288,9 @@ the cache contents above is illustrated like this:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
+    38 00 g
     38 00 (h x)
     39 00 (i y)
     41 00 (j x y)
@@ -295,10 +299,11 @@ the cache contents above is illustrated like this:
     ...
 \end{verbatim}}
 
-Line 37 has been altered, so our first task is to adjust the prefix
-and the suffix so that the prefix contains the last parse result that
-is unaffected by the modifications.  This adjustment results in the
-following situation:
+The first operation to process as part of the invalidation phase is
+the reported modification of line 37.  Therefore our first task is to
+adjust the prefix and the suffix so that the prefix contains the last
+parse result that is unaffected by the modifications.  This adjustment
+results in the following situation:
 
 {\small\begin{verbatim}
     prefix
@@ -340,6 +345,26 @@ number.  We obtain the following situation:
     34 00 (f 10)
     residue
     worklist
+    36 00 let
+    36 01 ((x 1) y)
+    38 02 (g (h x) (i y) (j x y))
+    suffix
+    42 00 (f 20)
+    ...
+\end{verbatim}}
+
+The first parse result of the worklist is unaffected by the fact that
+line 37 has been modified, because it precedes the modified line
+entirely.  We therefore move it to the residue, thereby obtaining the
+following situation:
+
+{\small\begin{verbatim}
+    prefix
+    ...
+    34 00 (f 10)
+    residue
+    36 00 let
+    worklist
     36 01 ((x 1) y)
     38 02 (g (h x) (i y) (j x y))
     suffix
@@ -348,9 +373,9 @@ number.  We obtain the following situation:
 \end{verbatim}}
 
 The first element of the worklist is affected by the modification of
-line 37.  We therefore remove it from the worklist, and add its
-children to the top of the worklist.  In doing so, we make the
-\texttt{start-line} of those children reflect absolute line numbers.
+line 37.  We therefore remove it from the worklist, and push its
+children onto the worklist.  In doing so, we make the
+\texttt{start-line} of the children reflect the absolute line number.
 We obtain the following situation:
 
 {\small\begin{verbatim}
@@ -358,6 +383,7 @@ We obtain the following situation:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     worklist
     36 00 (x 1)
     37 00 y
@@ -367,15 +393,17 @@ We obtain the following situation:
     ...
 \end{verbatim}}
 
-The first element of the worklist is unaffected by the modification,
-because it precedes the modified line entirely.  We therefore move it
-to the residue list.  We now have the following situation:
+The first parse result of the worklist is unaffected by the fact that
+line 37 has been modified, because it precedes the modified line
+entirely.  We therefore move it to the residue, thereby obtaining the
+following situation:
 
 {\small\begin{verbatim}
     prefix
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
     worklist
     37 00 y
@@ -394,6 +422,7 @@ obtain the following situation:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
     worklist
     38 02 (g (h x) (i y) (j x y))
@@ -416,7 +445,30 @@ number.  We obtain the following result:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
+    worklist
+    38 00 g
+    38 00 (h x)
+    39 00 (i y)
+    40 00 (j x y)
+    suffix
+    42 00 (f 20)
+    ...
+\end{verbatim}}
+
+The first element of the worklist is unaffected by the insertion
+because it precedes the inserted line entirely.  We therefore move it
+to the residue list.  We now have the following situation:
+
+{\small\begin{verbatim}
+    prefix
+    ...
+    34 00 (f 10)
+    residue
+    36 00 let
+    36 00 (x 1)
+    38 00 g
     worklist
     38 00 (h x)
     39 00 (i y)
@@ -435,7 +487,9 @@ to the residue list.  We now have the following situation:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
+    38 00 g
     38 00 (h x)
     worklist
     39 00 (i y)
@@ -455,7 +509,9 @@ situation:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
+    38 00 g
     38 00 (h x)
     39 00 (i y)
     worklist
@@ -476,7 +532,9 @@ processing of the inserted line.  We now have the following situation:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
+    38 00 g
     38 00 (h x)
     39 00 (i y)
     worklist
@@ -495,7 +553,9 @@ residue list.  The final situation is shown here:
     ...
     34 00 (f 10)
     residue
+    36 00 let
     36 00 (x 1)
+    38 00 g
     38 00 (h x)
     39 00 (i y)
     41 00 (j x y)
