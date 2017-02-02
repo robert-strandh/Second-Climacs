@@ -9,8 +9,8 @@
 
 (defun display-info (frame info-pane)
   (let* ((pane (esa:esa-current-window frame))
-	 (clim-view (clim:stream-default-view pane))
-	 (climacs-view (climacs-view clim-view)))
+         (clim-view (clim:stream-default-view pane))
+         (climacs-view (climacs-view clim-view)))
     (format info-pane "(~a)" (view-name climacs-view))))
 
 (defclass minibuffer-pane (esa:minibuffer-pane)
@@ -20,10 +20,10 @@
 
 (defun make-climacs-pane ()
   (clim:make-pane 'text-pane
-		  :name 'stuff
-		  :default-view clim:+textual-view+
-		  :width 900 :height 400
-		  :display-time nil))
+                  :name 'stuff
+                  :default-view clim:+textual-view+
+                  :width 900 :height 400
+                  :display-time nil))
 
 (defun pane-has-attached-view-p (pane)
   (typep (clim:stream-default-view pane) 'climacs-clim-view))
@@ -37,65 +37,66 @@
   (assert (not (pane-has-attached-view-p pane)))
   (climacs2-base:expose-view view pane)
   (setf (clim:stream-default-view pane)
-	(make-climacs-clim-view view)))
+        (make-climacs-clim-view view)))
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
-					clim:standard-application-frame
-					climacs2-base:application)
+                                        clim:standard-application-frame
+                                        climacs2-base:application)
   ()
   (:panes
    (window (let* ((my-pane (make-climacs-pane))
-		  (my-info-pane (clim:make-pane 'info-pane
-						:master-pane my-pane
-						:width 900))
-		  (view (make-instance 'climacs2-base:fundamental-view)))
-	     (setf (clim:stream-recording-p my-pane) nil)
-	     (setf (clim:stream-end-of-line-action my-pane) :allow)
-	     (change-class
-	      (clim:stream-output-history my-pane)
-	      'climacs-flexichain-output-history:flexichain-output-history
-	      :parent my-pane)
-	     ;; Unfortunately, the ESA top-level accesses the slot
-	     ;; named WINDOWS directly (using WITH-SLOTS) rather than
-	     ;; using the accessor, so we must initialize this slot
-	     ;; by using the slot writer provided by ESA.
-	     (setf (esa:windows clim:*application-frame*) (list my-pane))
-	     (attach-view my-pane view)
-	     (clim:vertically ()
-	       (clim:scrolling ()
-		 my-pane)
-	       my-info-pane)))
+                  (my-info-pane (clim:make-pane 'info-pane
+                                                :master-pane my-pane
+                                                :width 900))
+                  (view (make-instance 'climacs-syntax-common-lisp:view)))
+;;                (view (make-instance 'climacs2-base:fundamental-view)))
+             (setf (clim:stream-recording-p my-pane) nil)
+             (setf (clim:stream-end-of-line-action my-pane) :allow)
+             (change-class
+              (clim:stream-output-history my-pane)
+              'climacs-flexichain-output-history:flexichain-output-history
+              :parent my-pane)
+             ;; Unfortunately, the ESA top-level accesses the slot
+             ;; named WINDOWS directly (using WITH-SLOTS) rather than
+             ;; using the accessor, so we must initialize this slot
+             ;; by using the slot writer provided by ESA.
+             (setf (esa:windows clim:*application-frame*) (list my-pane))
+             (attach-view my-pane view)
+             (clim:vertically ()
+               (clim:scrolling ()
+                 my-pane)
+               my-info-pane)))
    (minibuffer (clim:make-pane 'minibuffer-pane :width 900)))
   (:layouts
    (default (clim:vertically (:scroll-bars nil)
-	      window
-	      minibuffer)))
+              window
+              minibuffer)))
   (:top-level (esa:esa-top-level)))
 
 (defmethod clim:adopt-frame :after (frame-manager (frame climacs))
   (declare (ignore frame-manager))
   (let* ((pane (clim:find-pane-named frame 'stuff))
-	 (clim-view (clim:stream-default-view pane)))
+         (clim-view (clim:stream-default-view pane)))
     (push (climacs-view clim-view)
-	  (climacs2-base:views frame))))
+          (climacs2-base:views frame))))
 
 (defmethod esa:windows ((esa climacs))
   (loop for view in (climacs2-base:views esa)
-	for window = (climacs2-base:window view)
-	unless (null window)
-	  collect window))
+        for window = (climacs2-base:window view)
+        unless (null window)
+          collect window))
 
 (defmethod esa:buffers ((esa climacs))
   (remove-duplicates (loop for view in (climacs2-base:views esa)
-			   for analyzer = (climacs2-base:analyzer view)
-			   collect (climacs2-base:buffer analyzer))
-		     :test #'eq))
+                           for analyzer = (climacs2-base:analyzer view)
+                           collect (climacs2-base:buffer analyzer))
+                     :test #'eq))
 
 (defun climacs ()
   (let ((frame (clim:make-application-frame
-		'climacs
-		:views '()
-		:buffers '())))
+                'climacs
+                :views '()
+                :buffers '())))
     (clim:run-frame-top-level frame)))
 
 (defmethod clim:frame-standard-input ((frame climacs))
@@ -104,8 +105,8 @@
 (defmethod clim:redisplay-frame-panes :after ((frame climacs) &key force-p)
   (declare (ignore force-p))
   (let* ((pane (clim:find-pane-named clim:*application-frame* 'stuff))
-	 (clim-view (clim:stream-default-view pane))
-	 (history (clim:stream-output-history pane)))
+         (clim-view (clim:stream-default-view pane))
+         (history (clim:stream-output-history pane)))
     (climacs2-base:update-view (climacs-view clim-view))
     (climacs-flexichain-output-history:change-space-requirements history)
     (clim:replay history pane)))
@@ -117,6 +118,6 @@
 
 (defmethod esa:find-applicable-command-table ((frame climacs))
   (let* ((pane (esa:esa-current-window frame))
-	 (climacs-clim-view (clim:stream-default-view pane))
-	 (climacs-view (climacs-view climacs-clim-view)))
+         (climacs-clim-view (clim:stream-default-view pane))
+         (climacs-view (climacs-view climacs-clim-view)))
     (command-table climacs-view)))
