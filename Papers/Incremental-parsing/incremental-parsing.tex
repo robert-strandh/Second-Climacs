@@ -50,9 +50,10 @@ preferably be analyzed after each keystroke so that the programmer has
 up-to-date information resulting from the analysis.
 
 We describe an incremental parser that can be used as a key component
-of such an analyzer.  The parser uses a special-purpose implementation
-of the \commonlisp{} \texttt{read} function in combination with a
-\emph{cache} that stores existing results of calling the reader.
+of such an analyzer.  The parser, itself written in \commonlisp{},
+uses a special-purpose implementation of the \commonlisp{}
+\texttt{read} function in combination with a \emph{cache} that stores
+existing results of calling the reader.
 
 Since the parser uses the standard \commonlisp{} reader, the resulting
 analysis is very accurate.  Furthermore, the cache makes the parser
