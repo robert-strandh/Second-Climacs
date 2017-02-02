@@ -567,6 +567,8 @@ residue list.  The final situation is shown here:
 
 \subsection{Rehabilitation phase}
 
+\subsubsection{Description}
+
 Once the cache has been partially invalidated according to
 modifications to the buffer, the buffer must be parsed again so that a
 complete valid cache is again obtained.  To avoid having to parse the
@@ -603,7 +605,7 @@ input stream, using the proposal%
 
 Our custom stream uses the \emph{residue} and the \emph{suffix} lists
 to guide the reading process.  The reader is invoked repeatedly until
-one of the following situations occur:
+one of the following situations occurs:
 
 \begin{enumerate}
 \item The residue and the suffix are both empty.  The prefix then
@@ -630,25 +632,33 @@ top-level parse result that was returned.
 \subsubsection{Example}
 
 To illustrate the rehabilitation phase, let us say that the modified
-line $37$ consisted of replacing the initial value $2$ of the variable
-\texttt{y} by $3$ instead, and that the inserted line is still empty.
+line $37$ consisted of replacing the variable \texttt{y} by the
+binding \texttt{(y 2)}, and that the inserted line is still empty.
 
 The stream position is initially positioned at the end of the last
 parse result of the prefix, so that the first left parenthesis of the
-line starting the \texttt{let} binding is the next character to be
-read.  The reader calls itself recursively to read the \texttt{let}
-form.  During this process, individual characters are read until the
-reader is invoked recursively with the start position of binding of
-the variable \texttt{x}.  At this point, the cached parse result is
-returned instead, and the position of the stream is advanced so that
-it is located after this binding.
+line starting the \texttt{let} form is the next character to be read.
+The reader calls itself recursively to read the children of the
+\texttt{let} form.  When the reader is recursively invoked to read the
+first child of the \texttt{let} form, we notice that the symbol
+\texttt{let} is in the cache.  Therefore, the cached result is
+returned and the stream position is advanced so that it is located
+immediately after the symbol \texttt{let}.
+
+When the stream position is located on the left parenthesis of the
+binding of the variable \texttt{y}, there is no parse result in the
+cache associated with that position.  The reader therefore processes
+the input character by character, as it does in its usual mode of
+operation.  It is not until the symbol \texttt{g} is processed, that a
+cached parse result is again found.
 
 This process continues in that the reader alternately proceeds
 character by character, and alternately by leaps according to the
 contents of the cache.  When the top-level call to the reader returns,
 the original top-level parse result representing the \texttt{let} form
-has been created, with the exception of the modified initial value and
-the line-number information modified by the inserted line.
+has been created, with the exception of the modified binding of the
+variable \texttt{y} and the line-number information modified by the
+inserted line.
 
 Once the top-level invocation of read is terminated, the position of
 the input stream will be located after the \texttt{let} form.  Cached
