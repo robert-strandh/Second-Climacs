@@ -21,21 +21,6 @@
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
 
-(defun make-output-record (items pane cursor-column-number)
-  (let ((string (coerce items 'string)))
-    (clim:with-output-to-output-record (pane)
-      (if (null cursor-column-number)
-          (format pane "~a" string)
-          (let ((prefix (subseq string 0 cursor-column-number))
-                (suffix (subseq string cursor-column-number)))
-            (format pane "~a" prefix)
-            (clim:with-room-for-graphics (pane :move-cursor nil)
-              (clim:draw-rectangle* pane 0 -5 3 10
-                                    :filled t
-                                    :ink clim:+blue+))
-            (clim:stream-increment-cursor-position pane 3 0)
-            (format pane "~a" suffix))))))
-
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
