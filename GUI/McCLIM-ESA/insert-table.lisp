@@ -11,12 +11,12 @@
 (loop for i from 32 to 126
       for char = (code-char i)
       do (esa:set-key `(com-insert-item ,char)
-		      'ascii-insert-table
-		      `((,char))))
+                      'ascii-insert-table
+                      `((,char))))
 
 (esa:set-key `(com-insert-item #\Newline)
-	     'ascii-insert-table
-	     '((#\Newline)))
+             'ascii-insert-table
+             '((#\Newline)))
 
 (clim:define-command
     (com-insert-file :name t :command-table ascii-insert-table)
@@ -26,10 +26,10 @@
 ;;               :default (esa-io::directory-of-current-buffer)
                :default-type 'clim:pathname
 ;;               :insert-default t))
-	       ))
+               ))
   (with-current-cursor (cursor)
     (with-open-file (stream filepath :direction :input)
       (climacs2-base:fill-buffer-from-stream cursor stream))))
 
 (esa:set-key `(com-insert-file ,clim:*unsupplied-argument-marker*)
-	     'ascii-insert-table '((#\x :control) (#\i)))
+             'ascii-insert-table '((#\x :control) (#\i)))
