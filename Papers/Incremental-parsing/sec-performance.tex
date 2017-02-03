@@ -35,6 +35,10 @@ This result deserves some clarifications:
 \item All the code was compiled with a value $3$ of the \texttt{debug}
   optimize quality, and with a value of $0$ of the \texttt{speed}
   optimize quality.
+\item This particular case can be handled by giving the parser the
+  original stream from which the buffer contents was created, rather
+  than giving it the buffer protocol wrapped in a stream protocol
+  after the buffer has been filled.
 \end{itemize}
 
 \subsection{Parsing after small modifications}
