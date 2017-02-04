@@ -198,7 +198,8 @@
 	  (setf (time-stamp cache)
 		(cluffer:update buffer
 				(time-stamp cache)
-				#'sync #'skip #'modify #'create)))))))
+				#'sync #'skip #'modify #'create))))))
+  (finish-scavenge cache))
 
 ;;; Methods that make an instance of CACHE behave like an instance
 ;;; of FOLIO.
