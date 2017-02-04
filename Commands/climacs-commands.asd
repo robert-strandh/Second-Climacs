@@ -2,8 +2,7 @@
 
 (asdf:defsystem :climacs-commands
   :depends-on (:climatis
-	       :clueless
-	       :climacs-basic-emacs)
+	       :clueless)
   :components
   ((:file "packages")
    (:file "commands" :depends-on ("packages"))))
