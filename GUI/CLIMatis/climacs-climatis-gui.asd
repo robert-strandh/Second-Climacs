@@ -6,8 +6,7 @@
 	       :climacs-view
 	       :climacs-syntax-fundamental
 	       :climacs-show-fundamental
-	       :climacs-commands
-	       :climacs-basic-emacs)
+	       :climacs-commands)
   :serial t
   :components
   ((:file "packages")
