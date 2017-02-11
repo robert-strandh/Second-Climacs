@@ -6,5 +6,5 @@
 (defmethod view-name ((view climacs2-base:fundamental-view))
   "Fundamental")
 
-(defmethod view-name ((view climacs-syntax-common-lisp:common-lisp-view))
+(defmethod view-name ((view common-lisp-view))
   "Common Lisp")
