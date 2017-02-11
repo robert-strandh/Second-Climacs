@@ -25,6 +25,40 @@
 	 (x (* start-column text-width)))
     (clim:draw-text* pane contents x y :start start-column :end end-column)))
 
+(defun draw-area (pane
+		  lines
+		  start-line-number
+		  start-column-number
+		  end-line-number
+		  end-column-number)
+  (if (= start-line-number end-line-number)
+      (let ((contents (cdr (flexichain:element* lines start-line-number))))
+	(draw-interval pane
+		       start-line-number
+		       contents
+		       start-column-number
+		       end-column-number))
+      (progn (let ((first (cdr (flexichain:element* lines start-line-number))))
+	       (draw-interval pane
+			      start-line-number
+			      first
+			      start-column-number
+			      (length first)))
+	     (let ((last (cdr (flexichain:element* lines end-line-number))))
+	       (draw-interval pane
+			      end-line-number
+			      last
+			      0
+			      end-column-number))
+	     (loop for line-number from (1+ start-line-number)
+		     to (1- end-line-number)
+		   for contents = (cdr (flexichain:element* lines line-number))
+		   do (draw-interval pane
+				     line-number
+				     contents
+				     0
+				     (length contents))))))
+
 (defmethod command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
