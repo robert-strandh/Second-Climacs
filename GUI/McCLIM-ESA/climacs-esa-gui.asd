@@ -6,6 +6,7 @@
 	       :second-climacs-base
 	       :climacs-flexichain-output-history
 	       :climacs-syntax-common-lisp
+	       :stealth-mixin
 	       :clouseau)
   :serial t
   :components
