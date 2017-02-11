@@ -17,6 +17,14 @@
     ((view climacs-syntax-common-lisp:view))
   (find-class 'common-lisp-view))
 
+(defun draw-interval (pane line-number contents start-column end-column)
+  (let* ((text-style (clim:medium-text-style pane))
+	 (text-height (clim:text-style-height text-style pane))
+	 (text-width (clim:text-style-width text-style pane))
+	 (y (* line-number text-height))
+	 (x (* start-column text-width)))
+    (clim:draw-text* pane contents x y :start start-column :end end-column)))
+
 (defmethod command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
