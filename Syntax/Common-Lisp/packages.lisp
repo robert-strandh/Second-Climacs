@@ -14,4 +14,5 @@
    #:view
    #:analyzer
    #:scavenge
-   #:read-forms))
+   #:read-forms
+   #:parse-result))
