@@ -24,6 +24,19 @@
    (%relative-p :initarg :relative-p :accessor relative-p)
    (%children :initarg :children :accessor children)))
 
+(defmethod initialize-instance :after ((object parse-result) &key)
+  (let ((min-column-number (min (start-column object)
+                                (end-column object)
+                                (reduce #'min (children object)
+                                        :key #'min-column-number)))
+        (max-column-number (max (start-column object)
+                                (end-column object)
+                                (reduce #'max (children object)
+                                        :key #'max-column-number))))
+    (reinitialize-instance object
+                           :min-column-number min-column-number
+                           :max-column-number max-column-number)))
+
 (defmethod print-object ((object parse-result) stream)
   (print-unreadable-object (object stream :type t)
     (format stream "(~d,~d -> ~d,~d) rel: ~s"
