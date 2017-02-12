@@ -66,7 +66,7 @@
 (stealth-mixin:define-stealth-mixin
     presentation
     (clim:standard-presentation)
-  climacs-syntax-common-lisp::parse-result
+  climacs-syntax-common-lisp:parse-result
   ()
   (:default-initargs :single-box t))
 
