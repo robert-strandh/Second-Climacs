@@ -63,6 +63,13 @@
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
 
+(stealth-mixin:define-stealth-mixin
+    presentation
+    (clim:standard-presentation)
+  climacs-syntax-common-lisp::parse-result
+  ()
+  (:default-initargs :single-box t))
+
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
