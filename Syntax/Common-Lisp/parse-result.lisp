@@ -19,6 +19,9 @@
    ;; non-whitespace character of the parse result.  It may not be
    ;; entirely correct for the same reason as the preceding slot.
    (%max-column-number :initarg :max-column-number :reader max-column-number)
+   ;; This slot contains the maximum line width of any line that is
+   ;; part of the parse result.
+   (%max-line-width :initarg :max-line-width :reader max-line-width)
    ;; This slot contains TRUE if and only if the START-LINE slot is
    ;; relative to some other line.
    (%relative-p :initarg :relative-p :accessor relative-p)
