@@ -14,11 +14,11 @@
    ;; and such characters happen to be outside the part that is
    ;; returned by a call to READ.  But we only use this information
    ;; for highlighting, and selection.  Not for drawing.
-   (%min-column-number :reader min-column-number)
+   (%min-column-number :initarg :min-column-number :reader min-column-number)
    ;; This slot contains the column number of the leftmost known
    ;; non-whitespace character of the parse result.  It may not be
    ;; entirely correct for the same reason as the preceding slot.
-   (%max-column-number :reader max-column-number)
+   (%max-column-number :initarg :max-column-number :reader max-column-number)
    ;; This slot contains TRUE if and only if the START-LINE slot is
    ;; relative to some other line.
    (%relative-p :initarg :relative-p :accessor relative-p)
