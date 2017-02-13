@@ -82,6 +82,18 @@
 	     (unread-char char stream)
 	     (loop-finish))))
 
+(defun compute-max-line-width (folio-stream start-line end-line children)
+  (let ((folio (folio folio-stream)))
+    (loop with rest = children
+          for line-number = start-line then (1+ line-number)
+          while (<= line-number end-line)
+          if (and (not (null rest)) (= line-number (start-line (first rest))))
+            maximize (max-line-width (first rest))
+            and do (setf line-number (end-line (first rest)))
+                   (pop rest)
+          else
+            maximize (line-length folio line-number))))
+
 (defmethod sicl-reader:read-common :around
     ((input-stream folio-stream) eof-error-p eof-value)
   (declare (ignore eof-error-p eof-value))
