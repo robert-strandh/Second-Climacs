@@ -38,10 +38,12 @@
   (let ((min-column-number (min (start-column object)
                                 (end-column object)
                                 (reduce #'min (children object)
+                                        :initial-value 0
                                         :key #'min-column-number)))
         (max-column-number (max (start-column object)
                                 (end-column object)
                                 (reduce #'max (children object)
+                                        :initial-value 0
                                         :key #'max-column-number))))
     (reinitialize-instance object
                            :min-column-number min-column-number
