@@ -141,7 +141,7 @@
     (function (input-stream folio-stream) char)
   (let ((start-line (current-line-number input-stream))
         (start-column (current-item-number input-stream)))
-    (let ((result 
+    (let ((result
             (handler-case (multiple-value-list (call-next-method))
               (end-of-file ()
                 (push (make-instance 'eof-parse-result
