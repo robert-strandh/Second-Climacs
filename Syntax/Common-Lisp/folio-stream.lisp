@@ -25,20 +25,20 @@
 
 (defmethod eof-p ((stream folio-stream))
   (let* ((folio (folio stream))
-	 (last-line-number (1- (line-count (folio stream))))
-	 (last-line-length (line-length folio last-line-number)))
+         (last-line-number (1- (line-count (folio stream))))
+         (last-line-length (line-length folio last-line-number)))
     (and (= (current-line-number stream) last-line-number)
-	 (= (current-item-number stream) last-line-length))))
+         (= (current-item-number stream) last-line-length))))
 
 (defgeneric forward (folio-stream))
 
 (defmethod forward ((stream folio-stream))
   (with-accessors ((folio folio)
-		   (current-line-number current-line-number)
-		   (current-item-number current-item-number))
+                   (current-line-number current-line-number)
+                   (current-item-number current-item-number))
       stream
     (multiple-value-bind (l c)
-	(next-position folio current-line-number current-item-number)
+        (next-position folio current-line-number current-item-number)
       (setf current-line-number l)
       (setf current-item-number c))))
 
@@ -46,11 +46,11 @@
 
 (defmethod backward ((stream folio-stream))
   (with-accessors ((folio folio)
-		   (current-line-number current-line-number)
-		   (current-item-number current-item-number))
+                   (current-line-number current-line-number)
+                   (current-item-number current-item-number))
       stream
     (multiple-value-bind (l c)
-	(previous-position folio current-line-number current-item-number)
+        (previous-position folio current-line-number current-item-number)
       (setf current-line-number l)
       (setf current-item-number c))))
 
@@ -58,14 +58,14 @@
   (if (eof-p stream)
       :eof
       (with-accessors ((folio folio)
-		       (current-line-number current-line-number)
-		       (current-item-number current-item-number))
-	  stream
-	(prog1 (if (= (line-length folio current-line-number)
-		      current-item-number)
-		   #\Newline
-		   (item folio current-line-number current-item-number))
-	  (forward stream)))))
+                       (current-line-number current-line-number)
+                       (current-item-number current-item-number))
+          stream
+        (prog1 (if (= (line-length folio current-line-number)
+                      current-item-number)
+                   #\Newline
+                   (item folio current-line-number current-item-number))
+          (forward stream)))))
 
 (defmethod trivial-gray-streams:stream-unread-char ((stream folio-stream) char)
   (declare (ignore char))
@@ -77,10 +77,10 @@
 
 (defun skip-whitespace (stream)
   (loop until (eof-p stream)
-	for char = (read-char stream nil nil)
-	do (unless (member char '(#\Space #\Tab #\Newline))
-	     (unread-char char stream)
-	     (loop-finish))))
+        for char = (read-char stream nil nil)
+        do (unless (member char '(#\Space #\Tab #\Newline))
+             (unread-char char stream)
+             (loop-finish))))
 
 (defun compute-max-line-width (folio-stream start-line end-line children)
   (let ((folio (folio folio-stream)))
@@ -99,82 +99,82 @@
   (declare (ignore eof-error-p eof-value))
   (skip-whitespace input-stream)
   (let ((*stack* (cons '() *stack*))
-	(start-line (current-line-number input-stream))
-	(start-column (current-item-number input-stream)))
+        (start-line (current-line-number input-stream))
+        (start-column (current-item-number input-stream)))
     (let ((result
-	    (handler-case (call-next-method)
-	      (end-of-file ()
-		(push (make-instance 'eof-parse-result
+            (handler-case (call-next-method)
+              (end-of-file ()
+                (push (make-instance 'eof-parse-result
                         :max-line-width (compute-max-line-width
                                          input-stream
                                          start-line
                                          (current-line-number input-stream)
                                          (first *stack*))
-			:children (make-relative (nreverse (first *stack*))
-				                 start-line)
-			:start-line start-line
-			:start-column start-column
-			:height (- (current-line-number input-stream)
-				   start-line)
-			:end-column (current-item-number input-stream)
-			:relative-p nil)
-		      (second *stack*))
-		(error 'end-of-file :stream input-stream)))))
+                        :children (make-relative (nreverse (first *stack*))
+                                                 start-line)
+                        :start-line start-line
+                        :start-column start-column
+                        :height (- (current-line-number input-stream)
+                                   start-line)
+                        :end-column (current-item-number input-stream)
+                        :relative-p nil)
+                      (second *stack*))
+                (error 'end-of-file :stream input-stream)))))
       (push (make-instance 'expression-parse-result
-	      :expression result
+              :expression result
               :max-line-width (compute-max-line-width
                                input-stream
                                start-line
                                (current-line-number input-stream)
                                (first *stack*))
-	      :children (make-relative (nreverse (first *stack*)) start-line)
-	      :start-line start-line
-	      :start-column start-column
-	      :height (- (current-line-number input-stream)
-		         start-line)
-	      :end-column (current-item-number input-stream)
-	      :relative-p nil)
-	    (second *stack*))
+              :children (make-relative (nreverse (first *stack*)) start-line)
+              :start-line start-line
+              :start-column start-column
+              :height (- (current-line-number input-stream)
+                         start-line)
+              :end-column (current-item-number input-stream)
+              :relative-p nil)
+            (second *stack*))
       result)))
 
 (defmethod sicl-reader:call-reader-macro :around
     (function (input-stream folio-stream) char)
   (let ((start-line (current-line-number input-stream))
-	(start-column (current-item-number input-stream)))
+        (start-column (current-item-number input-stream)))
     (let ((result 
-	    (handler-case (multiple-value-list (call-next-method))
-	      (end-of-file ()
-		(push (make-instance 'eof-parse-result
+            (handler-case (multiple-value-list (call-next-method))
+              (end-of-file ()
+                (push (make-instance 'eof-parse-result
                         :max-line-width (compute-max-line-width
                                          input-stream
                                          start-line
                                          (current-line-number input-stream)
                                          (first *stack*))
-			:children (make-relative (nreverse (first *stack*))
-				                 start-line)
-			:start-line start-line
-			:start-column start-column
-			:height (- (current-line-number input-stream)
-				   start-line)
-			:end-column (current-item-number input-stream)
-			:relative-p nil)
-		      (second *stack*))
-		(error 'end-of-file :stream input-stream)))))
+                        :children (make-relative (nreverse (first *stack*))
+                                                 start-line)
+                        :start-line start-line
+                        :start-column start-column
+                        :height (- (current-line-number input-stream)
+                                   start-line)
+                        :end-column (current-item-number input-stream)
+                        :relative-p nil)
+                      (second *stack*))
+                (error 'end-of-file :stream input-stream)))))
       (when (null result)
-	(push (make-instance 'no-expression-parse-result
+        (push (make-instance 'no-expression-parse-result
                 :max-line-width (compute-max-line-width
                                  input-stream
                                  start-line
                                  (current-line-number input-stream)
                                  (first *stack*))
-		:children (make-relative (nreverse (first *stack*)) start-line)
-		:start-line start-line
-		:start-column start-column
-		:height (- (current-line-number input-stream)
-			   start-line)
-		:end-column (current-item-number input-stream)
-		:relative-p nil)
-	      (second *stack*)))
+                :children (make-relative (nreverse (first *stack*)) start-line)
+                :start-line start-line
+                :start-column start-column
+                :height (- (current-line-number input-stream)
+                           start-line)
+                :end-column (current-item-number input-stream)
+                :relative-p nil)
+              (second *stack*)))
       (apply #'values result))))
 
 (defmethod sicl-reader:interpret-token
