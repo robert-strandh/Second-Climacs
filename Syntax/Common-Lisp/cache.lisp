@@ -215,8 +215,9 @@
   (finish-scavenge cache))
 
 (defmethod max-line-width ((cache cache))
-  (max (max-line-width-list (prefix cache))
-       (max-line-width-list (suffix cache))))
+  (with-accessors ((prefix prefix) (suffix suffix)) cache
+    (max (if (null prefix) 0 (max-line-width-list (first prefix)))
+         (if (null suffix) 0 (max-line-width-list (first suffix))))))
 
 ;;; Methods that make an instance of CACHE behave like an instance
 ;;; of FOLIO.
