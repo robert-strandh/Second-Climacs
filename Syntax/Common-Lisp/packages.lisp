@@ -16,6 +16,13 @@
    #:scavenge
    #:read-forms
    #:parse-result
+   #:start-line
+   #:height
+   #:start-column
+   #:end-column
+   #:min-column-number
+   #:max-column-number
+   #:children
    #:prefix
    #:suffix
    #:min-column-number
