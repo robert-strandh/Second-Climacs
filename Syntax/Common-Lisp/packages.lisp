@@ -15,4 +15,9 @@
    #:analyzer
    #:scavenge
    #:read-forms
-   #:parse-result))
+   #:parse-result
+   #:prefix
+   #:suffix
+   #:min-column-number
+   #:max-column-number
+   #:max-line-width-list))
