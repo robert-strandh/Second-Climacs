@@ -214,6 +214,10 @@
 				#'sync #'skip #'modify #'create))))))
   (finish-scavenge cache))
 
+(defmethod max-line-width ((cache cache))
+  (max (max-line-width-list (prefix cache))
+       (max-line-width-list (suffix cache))))
+
 ;;; Methods that make an instance of CACHE behave like an instance
 ;;; of FOLIO.
 
