@@ -20,4 +20,4 @@
    #:suffix
    #:min-column-number
    #:max-column-number
-   #:max-line-width-list))
+   #:max-line-width))
