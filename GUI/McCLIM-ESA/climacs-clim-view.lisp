@@ -39,7 +39,7 @@
    ;; the contents of the Cluffer line object as it was when the
    ;; contents was asked for.
    (%lines :initform (make-instance 'flexichain:standard-flexichain)
-	   :accessor lines)))
+           :accessor lines)))
 
 ;;; This generic function takes an instance of a Climacs view, and
 ;;; returns a class object to be used with MAKE-INSTANCE to create a
