@@ -115,4 +115,19 @@
     (+ (start-line p) (height p))))
 
 (defgeneric map-over-relative-parse-results-overlapping-interval
-    (function relative-parse-result start end offset-line))
+    (function relative-parse-result start end absolute-start-line))
+
+(defmethod map-over-relative-parse-results-overlapping-interval
+    (function
+     (relative-parse-result parse-result)
+     start end absolute-start-line)
+  (assert (relative-p relative-parse-result))
+  (let ((absolute-end-line (+ absolute-start-line (height relative-parse-result))))
+    (when (and (< absolute-start-line end)
+               (>= absolute-end-line start))
+      (funcall function relative-parse-result absolute-start-line)
+      (loop for child in (children relative-parse-result)
+            for offset = absolute-start-line
+              then (+ offset (start-line child))
+            do (map-over-relative-parse-results-overlapping-interval
+                function child start end (+ offset (start-line child)))))))
