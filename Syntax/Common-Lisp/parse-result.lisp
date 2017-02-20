@@ -114,10 +114,10 @@
     (assert (not (relative-p p)))
     (+ (start-line p) (height p))))
 
-(defgeneric map-over-relative-parse-results-overlapping-interval
+(defgeneric map-over-parse-results-overlapping-interval
     (function relative-parse-result start end absolute-start-line))
 
-(defmethod map-over-relative-parse-results-overlapping-interval
+(defmethod map-over-parse-results-overlapping-interval
     (function
      (relative-parse-result parse-result)
      start end absolute-start-line)
@@ -129,5 +129,5 @@
       (loop for child in (children relative-parse-result)
             for offset = absolute-start-line
               then (+ offset (start-line child))
-            do (map-over-relative-parse-results-overlapping-interval
+            do (map-over-parse-results-overlapping-interval
                 function child start end (+ offset (start-line child)))))))
