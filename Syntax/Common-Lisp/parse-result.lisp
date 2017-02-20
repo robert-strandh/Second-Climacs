@@ -113,3 +113,6 @@
   (:method ((p parse-result))
     (assert (not (relative-p p)))
     (+ (start-line p) (height p))))
+
+(defgeneric map-over-relative-parse-results-overlapping-interval
+    (function relative-parse-result start end offset-line))
