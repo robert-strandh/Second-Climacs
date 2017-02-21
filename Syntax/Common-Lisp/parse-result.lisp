@@ -90,9 +90,9 @@
 ;;; the modified parse results.
 (defun make-absolute (relative-parse-results offset)
   (loop with base = offset
-	for parse-result in relative-parse-results
-	do (relative-to-absolute parse-result base)
-	   (setf base (start-line parse-result)))
+        for parse-result in relative-parse-results
+        do (relative-to-absolute parse-result base)
+           (setf base (start-line parse-result)))
   relative-parse-results)
 
 ;;; ABSOLUTE-PARSE-RESULTS is a list of absolute parse results.
@@ -103,10 +103,10 @@
 ;;; parse results.
 (defun make-relative (absolute-parse-results offset)
   (loop with base = offset
-	for parse-result in absolute-parse-results
-	for start-line = (start-line parse-result)
-	do (absolute-to-relative parse-result base)
-	   (setf base start-line))
+        for parse-result in absolute-parse-results
+        for start-line = (start-line parse-result)
+        do (absolute-to-relative parse-result base)
+           (setf base start-line))
   absolute-parse-results)
 
 (defgeneric end-line (parse-result)
