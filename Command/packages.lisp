@@ -3,5 +3,3 @@
 (defpackage #:climacs-command
   (:use #:common-lisp)
   (:export))
-
-  
