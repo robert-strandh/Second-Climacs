@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-commands)
+K(cl:in-package #:climacs-commands)
 
 (defclass emacs-style-command-processor
     (clim3:command-table)
@@ -140,7 +140,7 @@
 ;;;
 ;;; Furthermore, the equivalent Emacs command "remembers" the original
 ;;; column so that if this command is repeated, it tries to position
-;;; itself in the original colum.  We don't do that yet. 
+;;; itself in the original colum.  We don't do that yet.
 (clim3:define-command next-line (&optional (count 1))
   (if (minusp count)
       (previous-line count)
@@ -218,7 +218,7 @@
   (loop for code from #xa0 to #xff
 	for char = (code-char code)
 	collect `(((,char)) (insert-character ,char :opt-num))))
-  
+
 (clim3:define-command inspect-application ()
   (clueless:inspect clim3:*application*))
 
