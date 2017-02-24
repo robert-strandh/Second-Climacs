@@ -75,13 +75,13 @@
 
 (defun make-empty-standard-buffer-and-cursor ()
   (let* ((line (make-instance 'cluffer-standard-line:closed-line))
-	 (buffer (make-instance 'cluffer-standard-buffer:buffer
-		   :initial-line line))
-	 (cursor (make-instance
-		     'cluffer-standard-line:right-sticky-cursor)))
+         (buffer (make-instance 'cluffer-standard-buffer:buffer
+                   :initial-line line))
+         (cursor (make-instance
+                     'cluffer-standard-line:right-sticky-cursor)))
     (cluffer:attach-cursor cursor line)
     (values (make-instance 'standard-buffer :cluffer-buffer buffer)
-	    cursor)))
+            cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -89,5 +89,5 @@
 
 (defmethod fill-buffer-from-stream ((cursor cluffer:cursor) stream)
   (loop for char = (read-char stream nil nil)
-	until (null char)
-	do (insert-item cursor char)))
+        until (null char)
+        do (insert-item cursor char)))
