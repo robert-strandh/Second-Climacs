@@ -8,7 +8,6 @@
 ;;; that contains some windows, and for the same reasons, we do not
 ;;; define a class for applications.
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function UPDATE-WINDOW-FROM-VIEW.
@@ -47,4 +46,3 @@
 ;;; Given a window, return the Climacs view for that window.
 
 (defgeneric view (window))
-
