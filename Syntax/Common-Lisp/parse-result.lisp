@@ -130,6 +130,7 @@
             for offset = absolute-start-line
               then (+ offset (start-line child))
             do (map-over-parse-results-overlapping-interval
-                function child start end (+ offset (start-line child))))
+                function child start end
+                (+ offset (start-line child)) prefix-order-p))
       (unless prefix-order-p
         (funcall function parse-result absolute-start-line)))))
