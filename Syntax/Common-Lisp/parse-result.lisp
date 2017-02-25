@@ -121,11 +121,11 @@
     (function
      (parse-result parse-result)
      start end absolute-start-line)
-  (let ((absolute-end-line (+ absolute-start-line (height relative-parse-result))))
+  (let ((absolute-end-line (+ absolute-start-line (height parse-result))))
     (when (and (< absolute-start-line end)
                (>= absolute-end-line start))
-      (funcall function relative-parse-result absolute-start-line)
-      (loop for child in (children relative-parse-result)
+      (funcall function parse-result absolute-start-line)
+      (loop for child in (children parse-result)
             for offset = absolute-start-line
               then (+ offset (start-line child))
             do (map-over-parse-results-overlapping-interval
