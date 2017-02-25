@@ -115,13 +115,12 @@
     (+ (start-line p) (height p))))
 
 (defgeneric map-over-parse-results-overlapping-interval
-    (function relative-parse-result start end absolute-start-line))
+    (function parse-result start end absolute-start-line))
 
 (defmethod map-over-parse-results-overlapping-interval
     (function
-     (relative-parse-result parse-result)
+     (parse-result parse-result)
      start end absolute-start-line)
-  (assert (relative-p relative-parse-result))
   (let ((absolute-end-line (+ absolute-start-line (height relative-parse-result))))
     (when (and (< absolute-start-line end)
                (>= absolute-end-line start))
