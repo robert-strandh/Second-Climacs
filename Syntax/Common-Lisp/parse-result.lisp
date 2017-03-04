@@ -113,24 +113,3 @@
   (:method ((p parse-result))
     (assert (not (relative-p p)))
     (+ (start-line p) (height p))))
-
-(defgeneric map-over-parse-results-overlapping-interval
-    (function parse-result start end absolute-start-line prefix-order-p))
-
-(defmethod map-over-parse-results-overlapping-interval
-    (function
-     (parse-result parse-result)
-     start end absolute-start-line prefix-order-p)
-  (let ((absolute-end-line (+ absolute-start-line (height parse-result))))
-    (when (and (< absolute-start-line end)
-               (>= absolute-end-line start))
-      (when prefix-order-p
-        (funcall function parse-result absolute-start-line))
-      (loop for child in (children parse-result)
-            for offset = absolute-start-line
-              then (+ offset (start-line child))
-            do (map-over-parse-results-overlapping-interval
-                function child start end
-                (+ offset (start-line child)) prefix-order-p))
-      (unless prefix-order-p
-        (funcall function parse-result absolute-start-line)))))
