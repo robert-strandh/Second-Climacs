@@ -25,6 +25,7 @@
    #:children
    #:prefix
    #:suffix
+   #:push-to-prefix
    #:min-column-number
    #:max-column-number
    #:max-line-width))
