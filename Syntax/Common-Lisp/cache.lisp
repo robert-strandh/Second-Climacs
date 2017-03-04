@@ -48,7 +48,9 @@
 (defun pop-from-prefix (cache)
   (pop (prefix cache)))
 
-(defun push-to-prefix (cache parse-result)
+(defgeneric push-to-prefix (cache parse-result))
+
+(defmethod push-to-prefix ((cache cache) (parse-result parse-result))
   (with-accessors ((prefix prefix))
       cache
     (setf (max-line-width-list parse-result)
