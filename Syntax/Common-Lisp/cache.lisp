@@ -45,8 +45,9 @@
           (absolute-to-relative (first suffix) (start-line parse-result))))
     (push parse-result suffix)))
 
-(defun pop-from-prefix (cache)
-  (pop (prefix cache)))
+(defgeneric pop-from-prefix (cache)
+  (:method ((cache cache))
+    (pop (prefix cache))))
 
 (defgeneric push-to-prefix (cache parse-result)
   (:method ((cache cache) (parse-result parse-result))
