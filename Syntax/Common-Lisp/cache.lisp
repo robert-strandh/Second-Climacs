@@ -74,12 +74,14 @@
 (defun push-to-residue (cache parse-result)
   (push parse-result (residue cache)))
 
-(defun suffix-to-prefix (cache)
-  (push-to-prefix cache (pop-from-suffix cache)))
+(defgeneric suffix-to-prefix (cache)
+  (:method ((cache cache))
+    (push-to-prefix cache (pop-from-suffix cache))))
 
-(defun prefix-to-suffix (cache)
-  (assert (not (null (prefix cache))))
-  (push-to-suffix cache (pop-from-prefix cache)))
+(defgeneric prefix-to-suffix (cache)
+  (:method ((cache cache))
+    (assert (not (null (prefix cache))))
+    (push-to-suffix cache (pop-from-prefix cache))))
 
 (defun move-to-residue (cache)
   (push-to-residue cache (pop-from-worklist cache)))
