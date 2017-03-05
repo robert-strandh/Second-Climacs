@@ -32,19 +32,20 @@
           (relative-to-absolute (first suffix) (start-line result)))
         result))))
 
-(defun push-to-suffix (cache parse-result)
-  (assert (not (relative-p parse-result)))
-  (with-accessors ((suffix suffix))
-      cache
-    (if (null suffix)
-        (setf (max-line-width-list parse-result)
-              (max-line-width parse-result))
-        (progn
+(defgeneric push-to-suffix (cache parse-result)
+  (:method ((cache cache) (parse-result parse-result))
+    (assert (not (relative-p parse-result)))
+    (with-accessors ((suffix suffix))
+        cache
+      (if (null suffix)
           (setf (max-line-width-list parse-result)
-                (max (max-line-width-list (first suffix))
-                     (max-line-width parse-result)))
-          (absolute-to-relative (first suffix) (start-line parse-result))))
-    (push parse-result suffix)))
+                (max-line-width parse-result))
+          (progn
+            (setf (max-line-width-list parse-result)
+                  (max (max-line-width-list (first suffix))
+                       (max-line-width parse-result)))
+            (absolute-to-relative (first suffix) (start-line parse-result))))
+      (push parse-result suffix))))
 
 (defgeneric pop-from-prefix (cache)
   (:method ((cache cache))
