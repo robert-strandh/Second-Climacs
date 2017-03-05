@@ -48,17 +48,16 @@
 (defun pop-from-prefix (cache)
   (pop (prefix cache)))
 
-(defgeneric push-to-prefix (cache parse-result))
-
-(defmethod push-to-prefix ((cache cache) (parse-result parse-result))
-  (with-accessors ((prefix prefix))
-      cache
-    (setf (max-line-width-list parse-result)
-          (if (null prefix)
-              (max-line-width parse-result)
-              (max (max-line-width-list (first prefix))
-                   (max-line-width parse-result))))
-    (push parse-result prefix)))
+(defgeneric push-to-prefix (cache parse-result)
+  (:method ((cache cache) (parse-result parse-result))
+    (with-accessors ((prefix prefix))
+        cache
+      (setf (max-line-width-list parse-result)
+            (if (null prefix)
+                (max-line-width parse-result)
+                (max (max-line-width-list (first prefix))
+                     (max-line-width parse-result))))
+      (push parse-result prefix))))
 
 (defun pop-from-worklist (cache)
   (pop (worklist cache)))
