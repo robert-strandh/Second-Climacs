@@ -23,13 +23,14 @@
    ;; execution of the update function.
    (%line-counter :initform 0 :accessor line-counter)))
 
-(defun pop-from-suffix (cache)
-  (with-accessors ((suffix suffix)) cache
-    (assert (not (null suffix)))
-    (let ((result (pop suffix)))
-      (unless (null suffix)
-	(relative-to-absolute (first suffix) (start-line result)))
-      result)))
+(defgeneric pop-from-suffix (cache)
+  (:method ((cache cache))
+    (with-accessors ((suffix suffix)) cache
+      (assert (not (null suffix)))
+      (let ((result (pop suffix)))
+        (unless (null suffix)
+          (relative-to-absolute (first suffix) (start-line result)))
+        result))))
 
 (defun push-to-suffix (cache parse-result)
   (assert (not (relative-p parse-result)))
