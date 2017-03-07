@@ -104,6 +104,32 @@
    (%top :initform 0 :accessor top))
   (:default-initargs :single-box t))
 
+(defmethod climacs-syntax-common-lisp:push-to-prefix :before
+    (cache (parse-result presentation))
+  (with-accessors ((width1 width)
+                   (max-width1 max-width)
+                   (height1 height)
+                   (total-height1 total-height)
+                   (top1 top))
+      parse-result
+    (with-accessors ((prefix climacs-syntax-common-lisp:prefix)) cache
+      (if (null prefix)
+          (setf max-width1 width1
+                total-height1 height1
+                top1 0)
+          (with-accessors ((width2 width)
+                           (max-width2 max-width)
+                           (height2 height)
+                           (total-height2 total-height)
+                           (top2 top))
+              (first prefix)
+            (setf max-width1 (max width1 max-width2)
+                  ;; FIXME: This calculation is incorrect when
+                  ;; the new parse result starts and the same line
+                  ;; as the previous one ends.
+                  top1 (+ top2 height2)
+                  total-height1 (+ top1 height1)))))))
+
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
