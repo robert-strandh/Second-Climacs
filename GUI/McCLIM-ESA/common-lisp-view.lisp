@@ -87,7 +87,15 @@
    ;; This slot contains the height of the parse result.  The value of
    ;; this slot is used to determine the total height of the pane that
    ;; displays the buffer contents.
-   (%height :initform 0 :accessor height))
+   (%height :initform 0 :accessor height)
+   ;; This slot contains the maximum of all the values of all the
+   ;; WIDTH slots in the parse results on either the prefix or the
+   ;; suffix.  It is recomputed whenever a parse result is pushed to
+   ;; one of those lists.
+   (%max-width :initform 0 :accessor max-width)
+   ;; This slot contains the total height of all the parse results on
+   ;; either the prefix or the suffix.
+   (%total-height :initform 0 :accessor total-height))
   (:default-initargs :single-box t))
 
 (defun update-cache (view pane analyzer)
