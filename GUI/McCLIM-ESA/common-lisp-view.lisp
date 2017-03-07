@@ -95,7 +95,13 @@
    (%max-width :initform 0 :accessor max-width)
    ;; This slot contains the total height of all the parse results on
    ;; either the prefix or the suffix.
-   (%total-height :initform 0 :accessor total-height))
+   (%total-height :initform 0 :accessor total-height)
+   ;; This slot contains the y-coordinate of the beginning of this
+   ;; parse result.  It is computed when the parse result is pushed
+   ;; onto the prefix, and it is only valid when the parse result is
+   ;; an element of the prefix.  Thus, the output records that are
+   ;; replayed, must all be on the prefix.
+   (%top :initform 0 :accessor top))
   (:default-initargs :single-box t))
 
 (defun update-cache (view pane analyzer)
