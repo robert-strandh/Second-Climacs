@@ -167,6 +167,17 @@
 (defmethod clim:clear-output-record ((history output-history))
   nil)
 
+(defmethod update-view (pane (view common-lisp-view))
+  (let ((history (clim:stream-output-history pane)))
+    (climacs2-base:update-view (climacs-view view))
+    (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
+      (declare (ignore x1 y1))
+      (clim:change-space-requirements
+       (clim:output-record-parent history)
+       :width x2
+       :height y2))
+    (clim:replay history pane)))
+
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
