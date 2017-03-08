@@ -1,10 +1,5 @@
 (cl:in-package #:climacs-esa-gui)
 
-;;; At the moment, this file contains code that is very similar to
-;;; that of the fundamental view.  The reason is that we have not yet
-;;; figured out how to use the parse results as a basis for the
-;;; rendering.
-
 (defclass common-lisp-view (climacs-clim-view)
   ((%previous-cursor-line-number
     :initform -1
