@@ -31,6 +31,9 @@
 
 (defclass climacs-clim-view (clim:view)
   ((%climacs-view :initarg :climacs-view :accessor climacs-view)
+   ;; This slot contains the output history to be used to
+   ;; display the pane that this view is the default-view of.
+   (%output-history :initarg :output-history :accessor output-history)
    ;; This slot contains the timestamp corresponding to the
    ;; last time this view was updated from the Cluffer buffer.
    (%timestamp :initform nil :accessor timestamp)
