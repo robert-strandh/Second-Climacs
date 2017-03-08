@@ -184,3 +184,9 @@
                 cursor-line-number)
           (setf (previous-cursor-column-number climacs-clim-view)
                 cursor-column-number))))))
+
+(defmethod update-view (pane (view fundamental-view))
+  (let ((history (clim:stream-output-history pane)))
+    (climacs2-base:update-view (climacs-view view))
+    (climacs-flexichain-output-history:change-space-requirements history)
+    (clim:replay history pane)))
