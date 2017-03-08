@@ -134,6 +134,27 @@
                   top1 (+ top2 height2)
                   total-height1 (+ top1 height1)))))))
 
+(defmethod clim:replay-output-record
+    ((cache output-history) stream &optional region x-offset y-offset)
+  (declare (ignore x-offset y-offset region))
+  (multiple-value-bind (left top right bottom)
+      (clim:bounding-rectangle* (clim:pane-viewport-region stream))
+    (clim:medium-clear-area (clim:sheet-medium stream)
+			    left top right bottom)
+    (let* ((text-style (clim:medium-text-style stream))
+           (text-style-height (clim:text-style-height text-style stream))
+           (text-style-ascent (clim:text-style-ascent text-style stream))
+           (first-line-number (floor top text-style-height))
+           (last-line-number (ceiling bottom text-style-height))
+           (line-count (climacs-syntax-common-lisp:line-count cache)))
+      (loop with last = (min last-line-number (1- line-count))
+            for line-number from first-line-number to last
+            for contents = (climacs-syntax-common-lisp:line-contents
+                            cache line-number)
+            for string = (coerce contents 'string)
+            for y = (+ text-style-ascent (* text-style-height line-number))
+            do (clim:draw-text* stream string 0 y)))))
+
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
