@@ -163,6 +163,10 @@
          (line-count (climacs-syntax-common-lisp:line-count history)))
     (values 0 0 500 (* text-style-height line-count))))
 
+;;; I don't know why this one is called at all
+(defmethod clim:clear-output-record ((history output-history))
+  nil)
+
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
