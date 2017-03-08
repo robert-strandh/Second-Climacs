@@ -36,8 +36,10 @@
 (defun attach-view (pane view)
   (assert (not (pane-has-attached-view-p pane)))
   (climacs2-base:expose-view view pane)
-  (setf (clim:stream-default-view pane)
-        (make-climacs-clim-view view)))
+  (let ((climacs-clim-view (make-climacs-clim-view view)))
+    (setf (clim:output-record-parent (output-history climacs-clim-view))
+          pane)
+    (setf (clim:stream-default-view pane) climacs-clim-view)))
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
                                         clim:standard-application-frame
@@ -48,14 +50,10 @@
                   (my-info-pane (clim:make-pane 'info-pane
                                                 :master-pane my-pane
                                                 :width 900))
-                  (view (make-instance 'climacs-syntax-common-lisp:view)))
-;;                (view (make-instance 'climacs2-base:fundamental-view)))
+;;                  (view (make-instance 'climacs-syntax-common-lisp:view)))
+                (view (make-instance 'climacs2-base:fundamental-view)))
              (setf (clim:stream-recording-p my-pane) nil)
              (setf (clim:stream-end-of-line-action my-pane) :allow)
-             (change-class
-              (clim:stream-output-history my-pane)
-              'climacs-flexichain-output-history:flexichain-output-history
-              :parent my-pane)
              ;; Unfortunately, the ESA top-level accesses the slot
              ;; named WINDOWS directly (using WITH-SLOTS) rather than
              ;; using the accessor, so we must initialize this slot
