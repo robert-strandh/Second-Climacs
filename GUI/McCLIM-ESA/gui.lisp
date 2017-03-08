@@ -103,11 +103,8 @@
 (defmethod clim:redisplay-frame-panes :after ((frame climacs) &key force-p)
   (declare (ignore force-p))
   (let* ((pane (clim:find-pane-named clim:*application-frame* 'stuff))
-         (clim-view (clim:stream-default-view pane))
-         (history (clim:stream-output-history pane)))
-    (climacs2-base:update-view (climacs-view clim-view))
-    (climacs-flexichain-output-history:change-space-requirements history)
-    (clim:replay history pane)))
+         (clim-view (clim:stream-default-view pane)))
+    (update-view pane clim-view)))
 
 (defmethod clim:execute-frame-command :around ((frame climacs) command)
   (handler-case (call-next-method)
