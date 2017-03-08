@@ -1,5 +1,11 @@
 (cl:in-package #:climacs-esa-gui)
 
+(stealth-mixin:define-stealth-mixin
+    output-history
+    (clim:output-record clim:stream-output-history-mixin)
+  climacs-syntax-common-lisp:cache
+  ((%parent :initarg :parent :accessor clim:output-record-parent)))
+
 (defclass common-lisp-view (climacs-clim-view)
   ((%previous-cursor-line-number
     :initform -1
