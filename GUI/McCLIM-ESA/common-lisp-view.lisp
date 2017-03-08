@@ -155,6 +155,14 @@
             for y = (+ text-style-ascent (* text-style-height line-number))
             do (clim:draw-text* stream string 0 y)))))
 
+(defmethod clim:bounding-rectangle* ((history output-history))
+  (let* ((stream (clim:output-record-parent history))
+         (text-style (clim:medium-text-style stream))
+         (text-style-height (clim:text-style-height text-style stream))
+         ;; (text-style-width (clim:text-style-width text-style stream))
+         (line-count (climacs-syntax-common-lisp:line-count history)))
+    (values 0 0 500 (* text-style-height line-count))))
+
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
