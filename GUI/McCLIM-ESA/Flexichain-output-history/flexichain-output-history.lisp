@@ -2,7 +2,7 @@
 
 (defclass flexichain-output-history
     (clim:output-record clim:stream-output-history-mixin)
-  ((%parent :initarg :parent :reader clim:output-record-parent)
+  ((%parent :initarg :parent :accessor clim:output-record-parent)
    (%lines :initform (make-instance 'flexichain:standard-flexichain)
 	   :reader lines)
    (%prefix-end :initform 0 :accessor prefix-end)
