@@ -13,7 +13,7 @@
 ;;;
 ;;; When a Climacs view is no longer on display in a pane, we simply
 ;;; discard the instance of this class referred to by the pane by
-;;; setting the STREAM-DEFAULT-VIEW to +TEXTURAL-VIEW+.  In order for
+;;; setting the STREAM-DEFAULT-VIEW to +TEXTUAL-VIEW+.  In order for
 ;;; a Climacs view to be displayed in some pane, we allocate a new
 ;;; instance of this class.
 
