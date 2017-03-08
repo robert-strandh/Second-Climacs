@@ -15,8 +15,11 @@
     :accessor previous-cursor-column-number)))
 
 (defmethod make-climacs-clim-view ((view climacs-syntax-common-lisp:view))
-  (make-instance 'common-lisp-view
-    :climacs-view view))
+  (let* ((analyzer (climacs2-base:analyzer view))
+         (cache (climacs-syntax-common-lisp:folio analyzer)))
+    (make-instance 'common-lisp-view
+      :output-history cache
+      :climacs-view view)))
 
 (defun draw-interval (pane line-number contents start-column end-column)
   (let* ((text-style (clim:medium-text-style pane))
