@@ -23,6 +23,7 @@
    #:min-column-number
    #:max-column-number
    #:children
+   #:cache
    #:prefix
    #:suffix
    #:push-to-prefix
