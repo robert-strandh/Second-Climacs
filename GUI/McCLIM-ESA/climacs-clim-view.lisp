@@ -53,3 +53,5 @@
 ;;; returns a command table to be used for this particular view.
 
 (defgeneric command-table (climacs-view))
+
+(defgeneric update-view (pane clim-view))
