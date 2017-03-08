@@ -1,12 +1,25 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
 (defclass parse-result ()
-  ((%start-line :initarg :start-line :accessor start-line)
+  (;; When this parse result is absolute, this slot contains the
+   ;; absolute start line of this parse result.  The first line in the
+   ;; buffer has the number 0.  When this parse line is relative, this
+   ;; slot contains the difference between the start line of this
+   ;; parse result, and the start line of the parse result that this
+   ;; parse result is relative to.
+   (%start-line :initarg :start-line :accessor start-line)
    ;; This slot contains the difference between the start line and the
    ;; end line.  A value of 0 indicates that the parse result starts
    ;; and ends in the same line.
    (%height :initarg :height :reader height)
+   ;; This slot contains the absolute column of the first character in
+   ;; this parse result.  A value of 0 indicates that this parse
+   ;; result starts in the leftmost position in the buffer.
    (%start-column :initarg :start-column :accessor start-column)
+   ;; This slot contains the absolute column of the last character of
+   ;; the parse result.  The value of this slot can never be 0.  If
+   ;; the last character of the parse result is the leftmost character
+   ;; in a line, then this slot contains the value 1.
    (%end-column :initarg :end-column :accessor end-column)
    ;; This slot contains the column number of the leftmost known
    ;; non-whitespace character of the parse result.  It may not be
