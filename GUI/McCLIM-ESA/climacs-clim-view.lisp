@@ -25,10 +25,6 @@
 
 (defgeneric (setf timestamp) (time-stamp clim-view))
 
-(defgeneric lines (clim-view))
-
-(defgeneric (setf lines) (lines clim-view))
-
 (defclass climacs-clim-view (clim:view)
   ((%climacs-view :initarg :climacs-view :accessor climacs-view)
    ;; This slot contains the output history to be used to
@@ -36,13 +32,7 @@
    (%output-history :initarg :output-history :accessor output-history)
    ;; This slot contains the timestamp corresponding to the
    ;; last time this view was updated from the Cluffer buffer.
-   (%timestamp :initform nil :accessor timestamp)
-   ;; This slot contains a flexichain of CONS cells.  The CAR of each
-   ;; cell is a Cluffer line object.  The CDR is a vector containing
-   ;; the contents of the Cluffer line object as it was when the
-   ;; contents was asked for.
-   (%lines :initform (make-instance 'flexichain:standard-flexichain)
-           :accessor lines)))
+   (%timestamp :initform nil :accessor timestamp)))
 
 ;;; This function takes an instance of a Climacs view and returns an
 ;;; instance of the corresponding subclass of CLIMACS-CLIM-VIEW.

@@ -5,7 +5,14 @@
 ;;; an instance of CLIMACS2-BASE:FUNDAMENTAL-VIEW.
 
 (defclass fundamental-view (climacs-clim-view)
-  ((%previous-cursor-line-number
+  (
+   ;; This slot contains a flexichain of CONS cells.  The CAR of each
+   ;; cell is a Cluffer line object.  The CDR is a vector containing
+   ;; the contents of the Cluffer line object as it was when the
+   ;; contents was asked for.
+   (%lines :initform (make-instance 'flexichain:standard-flexichain)
+           :accessor lines)
+   (%previous-cursor-line-number
     :initform -1
     :accessor previous-cursor-line-number)
    (%previous-cursor-column-number
