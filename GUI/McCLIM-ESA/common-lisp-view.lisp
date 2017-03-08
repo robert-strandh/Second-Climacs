@@ -13,9 +13,9 @@
     :initform 0
     :accessor previous-cursor-column-number)))
 
-(defmethod climacs-clim-view-class
-    ((view climacs-syntax-common-lisp:view))
-  (find-class 'common-lisp-view))
+(defmethod make-climacs-clim-view ((view climacs-syntax-common-lisp:view))
+  (make-instance 'common-lisp-view
+    :climacs-view view))
 
 (defun draw-interval (pane line-number contents start-column end-column)
   (let* ((text-style (clim:medium-text-style pane))

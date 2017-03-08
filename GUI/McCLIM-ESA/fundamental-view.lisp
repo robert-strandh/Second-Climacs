@@ -12,8 +12,11 @@
     :initform 0
     :accessor previous-cursor-column-number)))
 
-(defmethod climacs-clim-view-class ((view climacs2-base:fundamental-view))
-  (find-class 'fundamental-view))
+(defmethod make-climacs-clim-view ((view climacs2-base:fundamental-view))
+  (let ((name 'climacs-flexichain-output-history:flexichain-output-history))
+    (make-instance 'fundamental-view
+      :climacs-view view
+      :output-history (make-instance name))))
 
 (defmethod command-table ((view  climacs2-base:fundamental-view))
   (clim:find-command-table 'fundamental-table))
