@@ -234,3 +234,6 @@
 (defmethod item ((folio cache) line-number item-number)
   (aref (contents (flexichain:element* (contents folio) line-number))
 	item-number))
+
+(defmethod line-contents ((folio cache) line-number)
+  (contents (flexichain:element* (contents folio) line-number)))
