@@ -32,36 +32,44 @@
       (clim:draw-text* pane contents x y :start start-column :end end-column))))
 
 (defun draw-area (pane
-		  lines
+		  cache
 		  start-line-number
 		  start-column-number
 		  end-line-number
 		  end-column-number)
   (if (= start-line-number end-line-number)
-      (let ((contents (cdr (flexichain:element* lines start-line-number))))
+      (let* ((contents (climacs-syntax-common-lisp:line-contents
+                        cache start-line-number))
+             (string (coerce contents 'string)))
 	(draw-interval pane
 		       start-line-number
-		       contents
+		       string
 		       start-column-number
 		       end-column-number))
-      (progn (let ((first (cdr (flexichain:element* lines start-line-number))))
+      (progn (let* ((first (climacs-syntax-common-lisp:line-contents
+                            cache start-line-number))
+                    (string (coerce first 'string)))
 	       (draw-interval pane
 			      start-line-number
-			      first
+			      string
 			      start-column-number
 			      (length first)))
-	     (let ((last (cdr (flexichain:element* lines end-line-number))))
+	     (let* ((last (climacs-syntax-common-lisp:line-contents
+                           cache end-line-number))
+                    (string (coerce last 'string)))
 	       (draw-interval pane
 			      end-line-number
-			      last
+			      string
 			      0
 			      end-column-number))
 	     (loop for line-number from (1+ start-line-number)
 		     to (1- end-line-number)
-		   for contents = (cdr (flexichain:element* lines line-number))
+		   for contents = (climacs-syntax-common-lisp:line-contents
+                                   cache line-number)
+                   for string = (coerce contents 'string)
 		   do (draw-interval pane
 				     line-number
-				     contents
+				     string
 				     0
 				     (length contents))))))
 
