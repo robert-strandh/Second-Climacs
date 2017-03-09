@@ -25,7 +25,8 @@
   (let* ((text-style (clim:medium-text-style pane))
 	 (text-height (clim:text-style-height text-style pane))
 	 (text-width (clim:text-style-width text-style pane))
-	 (y (* line-number text-height))
+	 (text-ascent (clim:text-style-ascent text-style pane))
+	 (y (+ text-ascent (* line-number text-height)))
 	 (x (* start-column text-width)))
     (clim:draw-text* pane contents x y :start start-column :end end-column)))
 
