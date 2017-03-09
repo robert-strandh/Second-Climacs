@@ -153,18 +153,20 @@
 			    left top right bottom)
     (let* ((text-style (clim:medium-text-style stream))
            (text-style-height (clim:text-style-height text-style stream))
-           (text-style-ascent (clim:text-style-ascent text-style stream))
            (first-line-number (floor top text-style-height))
-           (last-line-number (ceiling bottom text-style-height))
-           (line-count (climacs-syntax-common-lisp:line-count cache)))
-      (loop with last = (min last-line-number (1- line-count))
-            for line-number from first-line-number to last
-            for contents = (climacs-syntax-common-lisp:line-contents
-                            cache line-number)
-            for string = (coerce contents 'string)
-            for y = (+ text-style-ascent (* text-style-height line-number))
-            do (unless (zerop (length string))
-                 (clim:draw-text* stream string 0 y))))))
+           (line-count (climacs-syntax-common-lisp:line-count cache))
+           (last-line-number (min (ceiling bottom text-style-height)
+                                  (1- line-count))))
+      (unless (minusp last-line-number)
+        (let* ((last-line-contents (climacs-syntax-common-lisp:line-contents
+                                    cache last-line-number))
+               (last-line-length (length last-line-contents)))
+          (draw-area stream
+                     cache
+                     first-line-number
+                     0
+                     last-line-number
+                     last-line-length))))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let* ((stream (clim:output-record-parent history))
