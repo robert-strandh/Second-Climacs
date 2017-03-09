@@ -153,7 +153,8 @@
                             cache line-number)
             for string = (coerce contents 'string)
             for y = (+ text-style-ascent (* text-style-height line-number))
-            do (clim:draw-text* stream string 0 y)))))
+            do (unless (zerop (length string))
+                 (clim:draw-text* stream string 0 y))))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let* ((stream (clim:output-record-parent history))
