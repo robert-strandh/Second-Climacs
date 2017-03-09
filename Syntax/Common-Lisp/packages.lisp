@@ -6,6 +6,7 @@
    #:folio
    #:line-count
    #:line-length
+   #:line-contents
    #:item
    #:folio-stream
    #:synchronize
