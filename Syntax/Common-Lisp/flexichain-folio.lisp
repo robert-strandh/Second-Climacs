@@ -13,5 +13,8 @@
 (defmethod line-length ((folio flexichain-folio) line-number)
   (length (flexichain:element* (contents folio) line-number)))
 
+(defmethod line-contents ((folio flexichain-folio) line-number)
+  (flexichain:element* (contents folio) line-number))
+
 (defmethod item ((folio flexichain-folio) line-number item-number)
   (aref (flexichain:element* (contents folio) line-number) item-number))
