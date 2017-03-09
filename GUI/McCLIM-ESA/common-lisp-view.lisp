@@ -179,6 +179,18 @@
        :height y2))
     (clim:replay history pane)))
 
+(defmethod clim:map-over-output-records-containing-position
+    (function
+     (history output-history)
+     x y
+     &optional
+       x-offset
+       y-offset
+     &rest function-args)
+  (declare (ignore x-offset y-offset))
+  ;; For now, do nothing.
+  nil)
+
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
