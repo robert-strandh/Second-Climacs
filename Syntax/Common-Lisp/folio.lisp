@@ -16,6 +16,10 @@
 ;;; line with that line number.
 (defgeneric line-length (folio line-number))
 
+;;; Given a folio and a line number, return the contents of that line
+;;; as a vector if items.
+(defgeneric line-contents (folio line-number))
+
 ;;; Given a folio, a line number an item number within that line,
 ;;; return the item at that position in that line.
 (defgeneric item (folio line-number item-number))
