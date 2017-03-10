@@ -23,55 +23,55 @@
 
 (defun draw-interval (pane line-number contents start-column end-column)
   (let* ((text-style (clim:medium-text-style pane))
-	 (text-height (clim:text-style-height text-style pane))
-	 (text-width (clim:text-style-width text-style pane))
-	 (text-ascent (clim:text-style-ascent text-style pane))
-	 (y (+ text-ascent (* line-number text-height)))
-	 (x (* start-column text-width)))
+         (text-height (clim:text-style-height text-style pane))
+         (text-width (clim:text-style-width text-style pane))
+         (text-ascent (clim:text-style-ascent text-style pane))
+         (y (+ text-ascent (* line-number text-height)))
+         (x (* start-column text-width)))
     (unless (= start-column end-column)
       (clim:draw-text* pane contents x y :start start-column :end end-column))))
 
 (defun draw-area (pane
-		  cache
-		  start-line-number
-		  start-column-number
-		  end-line-number
-		  end-column-number)
+                  cache
+                  start-line-number
+                  start-column-number
+                  end-line-number
+                  end-column-number)
   (if (= start-line-number end-line-number)
       (let* ((contents (climacs-syntax-common-lisp:line-contents
                         cache start-line-number))
              (string (coerce contents 'string)))
-	(draw-interval pane
-		       start-line-number
-		       string
-		       start-column-number
-		       end-column-number))
+        (draw-interval pane
+                       start-line-number
+                       string
+                       start-column-number
+                       end-column-number))
       (progn (let* ((first (climacs-syntax-common-lisp:line-contents
                             cache start-line-number))
                     (string (coerce first 'string)))
-	       (draw-interval pane
-			      start-line-number
-			      string
-			      start-column-number
-			      (length first)))
-	     (let* ((last (climacs-syntax-common-lisp:line-contents
+               (draw-interval pane
+                              start-line-number
+                              string
+                              start-column-number
+                              (length first)))
+             (let* ((last (climacs-syntax-common-lisp:line-contents
                            cache end-line-number))
                     (string (coerce last 'string)))
-	       (draw-interval pane
-			      end-line-number
-			      string
-			      0
-			      end-column-number))
-	     (loop for line-number from (1+ start-line-number)
-		     to (1- end-line-number)
-		   for contents = (climacs-syntax-common-lisp:line-contents
+               (draw-interval pane
+                              end-line-number
+                              string
+                              0
+                              end-column-number))
+             (loop for line-number from (1+ start-line-number)
+                     to (1- end-line-number)
+                   for contents = (climacs-syntax-common-lisp:line-contents
                                    cache line-number)
                    for string = (coerce contents 'string)
-		   do (draw-interval pane
-				     line-number
-				     string
-				     0
-				     (length contents))))))
+                   do (draw-interval pane
+                                     line-number
+                                     string
+                                     0
+                                     (length contents))))))
 
 (defmethod command-table
     ((view  climacs-syntax-common-lisp:view))
@@ -150,7 +150,7 @@
   (multiple-value-bind (left top right bottom)
       (clim:bounding-rectangle* (clim:pane-viewport-region stream))
     (clim:medium-clear-area (clim:sheet-medium stream)
-			    left top right bottom)
+                            left top right bottom)
     (let* ((text-style (clim:medium-text-style stream))
            (text-style-height (clim:text-style-height text-style stream))
            (first-line-number (floor top text-style-height))
@@ -206,8 +206,8 @@
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
-	 (climacs-buffer (climacs2-base:buffer analyzer))
-	 (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
+         (climacs-buffer (climacs2-base:buffer analyzer))
+         (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
     (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
     (climacs-syntax-common-lisp:read-forms analyzer)))
 
