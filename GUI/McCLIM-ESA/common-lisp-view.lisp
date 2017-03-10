@@ -81,41 +81,7 @@
     presentation
     (clim:standard-presentation)
   climacs-syntax-common-lisp:parse-result
-  (;; This slot contains the x-coordinate of the left border of the
-   ;; presentation.  There might be buffer objects to the left of this
-   ;; border, for instance if characters that are read are not part of
-   ;; the output from the reader.  It typically won't happen, but it
-   ;; might.  Either way, we only use the value of this slot for
-   ;; highlighting, not for replaying.
-   (%x-min :initform 0 :accessor x-min)
-   ;; Similarly, this slot contains the x-coordinate of the right
-   ;; border of the presentation.  There might be buffer objects to
-   ;; the right of this border, but the value of this slot is only
-   ;; used for highlighting.
-   (%x-max :initform 0 :accessor x-max)
-   ;; This slot contains the x-coordinate of the right edge of the
-   ;; rightmost buffer object between the start and the end of the
-   ;; parse result.  The value of this slot is used to determine the
-   ;; total width of the pane that displays the buffer contents.
-   (%width :initform 0 :accessor width)
-   ;; This slot contains the height of the parse result.  The value of
-   ;; this slot is used to determine the total height of the pane that
-   ;; displays the buffer contents.
-   (%height :initform 0 :accessor height)
-   ;; This slot contains the maximum of all the values of all the
-   ;; WIDTH slots in the parse results on either the prefix or the
-   ;; suffix.  It is recomputed whenever a parse result is pushed to
-   ;; one of those lists.
-   (%max-width :initform 0 :accessor max-width)
-   ;; This slot contains the total height of all the parse results on
-   ;; either the prefix or the suffix.
-   (%total-height :initform 0 :accessor total-height)
-   ;; This slot contains the y-coordinate of the beginning of this
-   ;; parse result.  It is computed when the parse result is pushed
-   ;; onto the prefix, and it is only valid when the parse result is
-   ;; an element of the prefix.  Thus, the output records that are
-   ;; replayed, must all be on the prefix.
-   (%top :initform 0 :accessor top))
+  ()
   (:default-initargs :single-box t))
 
 (defmethod clim:replay-output-record
