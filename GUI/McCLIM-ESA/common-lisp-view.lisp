@@ -4,20 +4,7 @@
     output-history
     (clim:output-record clim:stream-output-history-mixin)
   climacs-syntax-common-lisp:cache
-  ((%parent :initarg :parent :accessor clim:output-record-parent)
-   ;; When this parse result is an element of the PREFIX, this slot
-   ;; contains the the length of the longest line of all the lines
-   ;; from the beginning of the buffer and up to and including the
-   ;; last line of this parse result.  When this parse result is an
-   ;; element of the SUFFIX, this slot contains the the length of the
-   ;; longest line of all the lines from the first line of this parse
-   ;; result to the end of the buffer.  We can determine the width of
-   ;; the entire buffer by taking the MAX of the values of these lots
-   ;; for the first element of the prefix, the first element of the
-   ;; suffix, and all the lines in the buffer in between the last line
-   ;; of the first element of the prefix and the first line of the
-   ;; first element of the suffix.
-   (%max-line-width-list :accessor max-line-width-list)))
+  ((%parent :initarg :parent :accessor clim:output-record-parent)))
 
 ;;; Given a folio and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
@@ -139,7 +126,19 @@
     presentation
     (clim:standard-presentation)
   climacs-syntax-common-lisp:parse-result
-  ()
+  (;; When this parse result is an element of the PREFIX, this slot
+   ;; contains the the length of the longest line of all the lines
+   ;; from the beginning of the buffer and up to and including the
+   ;; last line of this parse result.  When this parse result is an
+   ;; element of the SUFFIX, this slot contains the the length of the
+   ;; longest line of all the lines from the first line of this parse
+   ;; result to the end of the buffer.  We can determine the width of
+   ;; the entire buffer by taking the MAX of the values of these lots
+   ;; for the first element of the prefix, the first element of the
+   ;; suffix, and all the lines in the buffer in between the last line
+   ;; of the first element of the prefix and the first line of the
+   ;; first element of the suffix.
+   (%max-line-width-list :accessor max-line-width-list))
   (:default-initargs :single-box t))
 
 (defmethod clim:replay-output-record
@@ -170,9 +169,29 @@
   (let* ((stream (clim:output-record-parent history))
          (text-style (clim:medium-text-style stream))
          (text-style-height (clim:text-style-height text-style stream))
-         ;; (text-style-width (clim:text-style-width text-style stream))
-         (line-count (climacs-syntax-common-lisp:line-count history)))
-    (values 0 0 500 (* text-style-height line-count))))
+         (text-style-width (clim:text-style-width text-style stream))
+         (line-count (climacs-syntax-common-lisp:line-count history))
+         (prefix (climacs-syntax-common-lisp:prefix history))
+         (pfirst (first prefix))
+         (gap-start (if (null prefix)
+                        0
+                        (1+ (climacs-syntax-common-lisp:end-line pfirst))))
+         (suffix (climacs-syntax-common-lisp:suffix history))
+         (sfirst (first suffix))
+         (gap-end (if (null suffix)
+                      (1- line-count)
+                      (1- (climacs-syntax-common-lisp:start-line sfirst))))
+         (width (max (if (null prefix)
+                         0
+                         (max-line-width-list pfirst))
+                     (max-line-length history gap-start gap-end)
+                     (if (null suffix)
+                         0
+                         (max-line-width-list sfirst)))))
+    (values 0
+            0
+            (* text-style-width width)
+            (* text-style-height line-count))))
 
 ;;; I don't know why this one is called at all
 (defmethod clim:clear-output-record ((history output-history))
