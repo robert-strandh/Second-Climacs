@@ -4,7 +4,20 @@
     output-history
     (clim:output-record clim:stream-output-history-mixin)
   climacs-syntax-common-lisp:cache
-  ((%parent :initarg :parent :accessor clim:output-record-parent)))
+  ((%parent :initarg :parent :accessor clim:output-record-parent)
+   ;; When this parse result is an element of the PREFIX, this slot
+   ;; contains the the length of the longest line of all the lines
+   ;; from the beginning of the buffer and up to and including the
+   ;; last line of this parse result.  When this parse result is an
+   ;; element of the SUFFIX, this slot contains the the length of the
+   ;; longest line of all the lines from the first line of this parse
+   ;; result to the end of the buffer.  We can determine the width of
+   ;; the entire buffer by taking the MAX of the values of these lots
+   ;; for the first element of the prefix, the first element of the
+   ;; suffix, and all the lines in the buffer in between the last line
+   ;; of the first element of the prefix and the first line of the
+   ;; first element of the suffix.
+   (%max-line-width-list :accessor max-line-width-list)))
 
 (defclass common-lisp-view (climacs-clim-view)
   ((%previous-cursor-line-number
