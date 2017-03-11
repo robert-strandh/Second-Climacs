@@ -37,14 +37,8 @@
     (assert (not (relative-p parse-result)))
     (with-accessors ((suffix suffix))
         cache
-      (if (null suffix)
-          (setf (max-line-width-list parse-result)
-                (max-line-width parse-result))
-          (progn
-            (setf (max-line-width-list parse-result)
-                  (max (max-line-width-list (first suffix))
-                       (max-line-width parse-result)))
-            (absolute-to-relative (first suffix) (start-line parse-result))))
+      (unless (null suffix)
+        (absolute-to-relative (first suffix) (start-line parse-result)))
       (push parse-result suffix))))
 
 (defgeneric pop-from-prefix (cache)
@@ -55,11 +49,6 @@
   (:method ((cache cache) (parse-result parse-result))
     (with-accessors ((prefix prefix))
         cache
-      (setf (max-line-width-list parse-result)
-            (if (null prefix)
-                (max-line-width parse-result)
-                (max (max-line-width-list (first prefix))
-                     (max-line-width parse-result))))
       (push parse-result prefix))))
 
 (defun pop-from-worklist (cache)
@@ -219,11 +208,6 @@
 				(time-stamp cache)
 				#'sync #'skip #'modify #'create))))))
   (finish-scavenge cache))
-
-(defmethod max-line-width ((cache cache))
-  (with-accessors ((prefix prefix) (suffix suffix)) cache
-    (max (if (null prefix) 0 (max-line-width-list (first prefix)))
-         (if (null suffix) 0 (max-line-width-list (first suffix))))))
 
 ;;; Methods that make an instance of CACHE behave like an instance
 ;;; of FOLIO.
