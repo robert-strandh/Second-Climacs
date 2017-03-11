@@ -19,6 +19,12 @@
    ;; first element of the suffix.
    (%max-line-width-list :accessor max-line-width-list)))
 
+;;; Given a folio and an interval of lines, return the maxium length
+;;; of any lines in the interval.
+(defun max-line-length (folio first-line-number last-line-number)
+  (loop for line-number from first-line-number to last-line-number
+        maximize (climacs-syntax-common-lisp:line-length folio line-number)))
+
 (defclass common-lisp-view (climacs-clim-view)
   ((%previous-cursor-line-number
     :initform -1
