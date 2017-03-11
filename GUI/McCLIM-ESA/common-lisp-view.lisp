@@ -6,51 +6,6 @@
   climacs-syntax-common-lisp:cache
   ((%parent :initarg :parent :accessor clim:output-record-parent)))
 
-;;; Given a folio and an interval of lines, return the maxium length
-;;; of any lines in the interval.
-(defun max-line-length (folio first-line-number last-line-number)
-  (loop for line-number from first-line-number to last-line-number
-        maximize (climacs-syntax-common-lisp:line-length folio line-number)))
-
-(defmethod climacs-syntax-common-lisp:push-to-prefix :before
-    (cache (parse-result output-history))
-  (with-accessors ((max-line-width-list max-line-width-list)
-                   (start-line climacs-syntax-common-lisp:start-line)
-                   (max-line-width climacs-syntax-common-lisp:max-line-width)
-                   (prefix climacs-syntax-common-lisp:prefix))
-      parse-result
-    (setf max-line-width-list
-          (if (null prefix)
-              (max (max-line-length cache 0 (1- start-line))
-                   max-line-width)
-              (let* ((first (first prefix))
-                     (end-line (climacs-syntax-common-lisp:end-line first))
-                     (width (climacs-syntax-common-lisp:max-line-width first)))
-                (max width
-                     (max-line-length cache (1+ end-line) (1- start-line))
-                     max-line-width))))))
-
-(defmethod climacs-syntax-common-lisp:push-to-suffix :before
-    (cache (parse-result output-history))
-  (with-accessors ((max-line-width-list max-line-width-list)
-                   (end-line climacs-syntax-common-lisp:end-line)
-                   (max-line-width climacs-syntax-common-lisp:max-line-width)
-                   (suffix climacs-syntax-common-lisp:suffix))
-      parse-result
-    (setf max-line-width-list
-          (if (null suffix)
-              (max (max-line-length
-                    cache
-                    (1+ end-line)
-                    (1- (climacs-syntax-common-lisp:line-count cache)))
-                   max-line-width)
-              (let* ((first (first suffix))
-                     (start-line (climacs-syntax-common-lisp:start-line first))
-                     (width (climacs-syntax-common-lisp:max-line-width first)))
-                (max width
-                     (max-line-length cache (1+ end-line) (1- start-line))
-                     max-line-width))))))
-
 (defclass common-lisp-view (climacs-clim-view)
   ((%previous-cursor-line-number
     :initform -1
@@ -140,6 +95,49 @@
    ;; first element of the suffix.
    (%max-line-width-list :accessor max-line-width-list))
   (:default-initargs :single-box t))
+
+;;; Given a folio and an interval of lines, return the maxium length
+;;; of any lines in the interval.
+(defun max-line-length (folio first-line-number last-line-number)
+  (loop for line-number from first-line-number to last-line-number
+        maximize (climacs-syntax-common-lisp:line-length folio line-number)))
+
+(defmethod climacs-syntax-common-lisp:push-to-prefix :before
+    (cache (parse-result presentation))
+  (with-accessors ((max-line-width-list max-line-width-list)
+                   (start-line climacs-syntax-common-lisp:start-line)
+                   (max-line-width climacs-syntax-common-lisp:max-line-width))
+      parse-result
+    (with-accessors ((prefix climacs-syntax-common-lisp:prefix)) cache
+      (setf max-line-width-list
+            (if (null prefix)
+                (max (max-line-length cache 0 (1- start-line))
+                     max-line-width)
+                (let* ((first (first prefix))
+                       (end-line (climacs-syntax-common-lisp:end-line first)))
+                  (max (max-line-width-list first)
+                       (max-line-length cache (1+ end-line) (1- start-line))
+                       max-line-width)))))))
+
+(defmethod climacs-syntax-common-lisp:push-to-suffix :before
+    (cache (parse-result presentation))
+  (with-accessors ((max-line-width-list max-line-width-list)
+                   (end-line climacs-syntax-common-lisp:end-line)
+                   (max-line-width climacs-syntax-common-lisp:max-line-width))
+      parse-result
+    (with-accessors ((suffix climacs-syntax-common-lisp:suffix)) cache
+      (setf max-line-width-list
+            (if (null suffix)
+                (max (max-line-length
+                      cache
+                      (1+ end-line)
+                      (1- (climacs-syntax-common-lisp:line-count cache)))
+                     max-line-width)
+                (let* ((first (first suffix))
+                       (start-line (climacs-syntax-common-lisp:start-line first)))
+                  (max (max-line-width-list first)
+                       (max-line-length cache (1+ end-line) (1- start-line))
+                       max-line-width)))))))
 
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
