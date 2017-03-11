@@ -25,6 +25,24 @@
   (loop for line-number from first-line-number to last-line-number
         maximize (climacs-syntax-common-lisp:line-length folio line-number)))
 
+(defmethod climacs-syntax-common-lisp:push-to-prefix :before
+    (cache (parse-result output-history))
+  (with-accessors ((max-line-width-list max-line-width-list)
+                   (start-line climacs-syntax-common-lisp:start-line)
+                   (max-line-width climacs-syntax-common-lisp:max-line-width)
+                   (prefix climacs-syntax-common-lisp:prefix))
+      parse-result
+    (setf max-line-width-list
+          (if (null prefix)
+              (max (max-line-length cache 0 start-line)
+                   max-line-width)
+              (let* ((first (first prefix))
+                     (end-line (climacs-syntax-common-lisp:end-line first))
+                     (width (climacs-syntax-common-lisp:max-line-width first)))
+                (max width
+                     (max-line-length cache end-line start-line)
+                     max-line-width))))))
+
 (defclass common-lisp-view (climacs-clim-view)
   ((%previous-cursor-line-number
     :initform -1
