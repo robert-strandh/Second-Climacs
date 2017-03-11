@@ -19,6 +19,7 @@
    #:parse-result
    #:start-line
    #:height
+   #:end-line
    #:start-column
    #:end-column
    #:min-column-number
