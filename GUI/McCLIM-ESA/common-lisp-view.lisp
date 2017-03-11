@@ -152,7 +152,7 @@
        x-offset
        y-offset
      &rest function-args)
-  (declare (ignore x-offset y-offset))
+  (declare (ignore x-offset y-offset function-args))
   ;; For now, do nothing.
   nil)
 
