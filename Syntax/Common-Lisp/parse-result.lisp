@@ -35,13 +35,6 @@
    ;; This slot contains the maximum line width of any line that is
    ;; part of the parse result.
    (%max-line-width :initarg :max-line-width :reader max-line-width)
-   ;; When this parse result is an element of either the prefix or the
-   ;; suffix, this slot contains the maximum value of the slots named
-   ;; MAX-LINE-WIDTH of any parse result on the list starting with
-   ;; this one.  We can determine the width of the entire buffer by
-   ;; taking the MAX of the values of these lots for the first element
-   ;; of the prefix and the first element of the suffix.
-   (%max-line-width-list :accessor max-line-width-list)
    ;; This slot contains TRUE if and only if the START-LINE slot is
    ;; relative to some other line.
    (%relative-p :initarg :relative-p :accessor relative-p)
