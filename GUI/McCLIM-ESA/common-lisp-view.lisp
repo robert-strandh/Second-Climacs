@@ -21,6 +21,8 @@
       :output-history cache
       :climacs-view view)))
 
+;;; Draw an interval of text from a single line.  Optimize by not
+;;; drawing anything if the defined interval is empty.
 (defun draw-interval (pane line-number contents start-column end-column)
   (let* ((text-style (clim:medium-text-style pane))
          (text-height (clim:text-style-height text-style pane))
