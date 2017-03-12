@@ -73,6 +73,14 @@
                                      0
                                      (length contents))))))
 
+;;; The parameters START-LINE, START-COLUMN, END-LINE, and END-COLUMN
+;;; together define an initial area.  END-COLUMN may be NIL, meaning
+;;; the end of the line indicated by END-LINE.  FIRST-LINE and
+;;; LAST-LINE together define the filter.  Four values are returned:
+;;; the filtered start line, the filtered start column, the filtered
+;;; end line, and the filtered end column.  The last return value may
+;;; be NIL, indicating the end of the line indicated by the third
+;;; return value.
 (defun filter-area
     (start-line start-column end-line end-column first-line last-line)
   (let ((sl start-line)
