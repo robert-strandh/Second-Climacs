@@ -73,6 +73,20 @@
                                      0
                                      (length contents))))))
 
+(defun filter-area
+    (start-line start-column end-line end-column first-line last-line)
+  (let ((sl start-line)
+        (sc start-column)
+        (el end-line)
+        (ec end-column))
+    (when (> first-line start-line)
+      (setf sl first-line
+            sc 0))
+    (when (< last-line end-line)
+      (setf el end-line
+            ec nil))
+    (values sl sc el ec)))
+
 (defmethod command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
