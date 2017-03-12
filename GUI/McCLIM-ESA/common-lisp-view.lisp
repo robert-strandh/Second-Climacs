@@ -139,6 +139,19 @@
                        (max-line-length cache (1+ end-line) (1- start-line))
                        max-line-width)))))))
 
+(defun adjust-for-rendering (cache first-line last-line)
+  (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
+                   (suffix climacs-syntax-common-lisp:suffix))
+      cache
+    (loop until (or (null suffix)
+                    (> (climacs-syntax-common-lisp:start-line (first suffix))
+                       last-line))
+          do (climacs-syntax-common-lisp:suffix-to-prefix cache))
+    (loop until (or (null prefix)
+                    (>= (climacs-syntax-common-lisp:end-line (first prefix))
+                        first-line))
+          do (climacs-syntax-common-lisp:prefix-to-suffix cache))))
+
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
