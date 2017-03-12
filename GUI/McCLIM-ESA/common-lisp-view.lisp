@@ -21,6 +21,14 @@
       :output-history cache
       :climacs-view view)))
 
+;;; Given a vector and a position, if the position NIL, meaning the
+;;; end of the vector, then return the length of the vector.
+;;; Otherwise, return the original position.
+(defun canonicalize-column-number (contents position)
+  (if (null position)
+      (length contents)
+      position))
+
 ;;; Given a line number, return the Y coordinate of the base line of
 ;;; the line with that number.
 (defun base-line-position (text-style pane line-number)
