@@ -21,6 +21,13 @@
       :output-history cache
       :climacs-view view)))
 
+;;; Given a line number, return the Y coordinate of the base line of
+;;; the line with that number.
+(defun base-line-position (text-style pane line-number)
+  (let ((text-height (clim:text-style-height text-style pane))
+        (text-ascent (clim:text-style-ascent text-style pane)))
+    (+ text-ascent (* line-number text-height))))
+
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.
 (defun draw-interval (pane line-number contents start-column end-column)
