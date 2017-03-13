@@ -118,6 +118,12 @@
             ec nil))
     (values sl sc el ec)))
 
+(defgeneric draw-parse-result (parse-result
+                               pane
+                               cache
+                               first-line
+                               last-line))
+
 (defmethod command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
