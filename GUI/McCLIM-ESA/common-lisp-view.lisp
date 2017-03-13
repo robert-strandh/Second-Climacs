@@ -118,6 +118,16 @@
             ec nil))
     (values sl sc el ec)))
 
+(defun draw-filtered-area (pane cache
+                           start-line-number start-column-number
+                           end-line-number end-column-number
+                           first-line last-line)
+  (multiple-value-bind (sl sc el ec)
+      (filter-area start-line-number start-column-number
+                   end-line-number end-column-number
+                   first-line last-line)
+    (draw-area pane cache sl sc el ec)))
+
 (defmethod command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
