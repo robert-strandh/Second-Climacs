@@ -49,6 +49,11 @@
     (unless (= start-column (canonicalize-column-number contents end-column))
       (clim:draw-text* pane contents x y :start start-column :end end-column))))
 
+;;; Draw an area of text defined by START-LINE-NUMBER,
+;;; START-COLUMN-NUMBER, END-LINE-NUMBER, and END-COLUMN-NUMBER.  The
+;;; text is drawn on PANE, using the contents from CACHE.
+;;; END-COLUMN-NUMBER is permitted to be NIL, meaning the end of the
+;;; line designated by END-LINE-NUMBER.
 (defun draw-area (pane
                   cache
                   start-line-number
