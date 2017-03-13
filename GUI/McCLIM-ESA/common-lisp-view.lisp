@@ -262,6 +262,14 @@
 
 (defgeneric render-cache (cache pane first-line last-line))
 
+(defmethod render-cache ((cache output-history) pane first-line last-line)
+  (adjust-for-rendering cache first-line last-line)
+  (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
+        for parse-result in prefix
+        until (< (climacs-syntax-common-lisp:end-line parse-result)
+                 first-line)
+        do (draw-parse-result parse-result pane cache first-line last-line)))
+
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
