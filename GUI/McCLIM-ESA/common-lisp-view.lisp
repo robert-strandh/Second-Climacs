@@ -260,6 +260,8 @@
                         first-line))
           do (climacs-syntax-common-lisp:prefix-to-suffix cache))))
 
+(defgeneric render-cache (cache pane first-line last-line))
+
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
