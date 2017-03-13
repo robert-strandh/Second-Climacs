@@ -157,6 +157,53 @@
                                first-line
                                last-line))
 
+(defmethod draw-parse-result ((parse-result presentation)
+                              pane
+                              (cache output-history)
+                              first-line
+                              last-line)
+  (flet ((start-line (pr) (climacs-syntax-common-lisp:start-line pr))
+         (start-column (pr) (climacs-syntax-common-lisp:start-column pr))
+         (end-line (pr) (climacs-syntax-common-lisp:end-line pr))
+         (end-column (pr) (climacs-syntax-common-lisp:end-column pr)))
+    (let ((children (climacs-syntax-common-lisp:children parse-result))
+          (pr parse-result))
+      (if (null children)
+          (draw-filtered-area pane cache
+                              (start-line pr) (start-column pr)
+                              (end-line pr) (end-column pr)
+                              first-line last-line)
+          (progn
+            ;; Start by drawing the area preceding the first child.
+            (draw-filtered-area pane cache
+                                (start-line pr)
+                                (start-column pr)
+                                (start-line (first children))
+                                (start-column (first children))
+                                first-line last-line)
+            ;; Next, for each child except the first, first draw the
+            ;; area between the end of the preceding sibling and
+            ;; beginning of the child, and then draw the child itself.
+            (loop for sibling in children
+                  for child in (rest children)
+                  do (draw-filtered-area pane cache
+                                         (end-line sibling)
+                                         (end-column sibling)
+                                         (start-line child)
+                                         (start-column child)
+                                         first-line last-line)
+                     (draw-parse-result child pane cache
+                                        first-line last-line))
+            ;; Finally, draw the area between the end of the last child
+            ;; and the end of this parse result.
+            (let ((last-child (first (last children))))
+              (draw-filtered-area pane cache
+                                  (end-line last-child)
+                                  (end-column last-child)
+                                  (end-line pr)
+                                  (end-column pr)
+                                  first-line last-line)))))))
+
 ;;; Given a folio and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
 (defun max-line-length (folio first-line-number last-line-number)
