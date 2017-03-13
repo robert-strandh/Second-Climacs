@@ -118,12 +118,6 @@
             ec nil))
     (values sl sc el ec)))
 
-(defgeneric draw-parse-result (parse-result
-                               pane
-                               cache
-                               first-line
-                               last-line))
-
 (defmethod command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
@@ -146,6 +140,12 @@
    ;; first element of the suffix.
    (%max-line-width-list :accessor max-line-width-list))
   (:default-initargs :single-box t))
+
+(defgeneric draw-parse-result (parse-result
+                               pane
+                               cache
+                               first-line
+                               last-line))
 
 ;;; Given a folio and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
