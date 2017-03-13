@@ -37,7 +37,8 @@
     (+ text-ascent (* line-number text-height))))
 
 ;;; Draw an interval of text from a single line.  Optimize by not
-;;; drawing anything if the defined interval is empty.
+;;; drawing anything if the defined interval is empty.  END-COLUMN can
+;;; be NIL which means the end of CONTENTS.
 (defun draw-interval (pane line-number contents start-column end-column)
   (let* ((text-style (clim:medium-text-style pane))
          (text-height (clim:text-style-height text-style pane))
