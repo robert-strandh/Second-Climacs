@@ -45,7 +45,7 @@
          (text-ascent (clim:text-style-ascent text-style pane))
          (y (+ text-ascent (* line-number text-height)))
          (x (* start-column text-width)))
-    (unless (= start-column end-column)
+    (unless (= start-column (canonicalize-column-number contents end-column))
       (clim:draw-text* pane contents x y :start start-column :end end-column))))
 
 (defun draw-area (pane
