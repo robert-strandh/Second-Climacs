@@ -243,7 +243,7 @@
                        last-line))
           do (climacs-syntax-common-lisp:suffix-to-prefix cache))
     (loop until (or (null prefix)
-                    (<= (climacs-syntax-common-lisp:end-line (first prefix))
+                    (<= (climacs-syntax-common-lisp:start-line (first prefix))
                         last-line))
           do (climacs-syntax-common-lisp:prefix-to-suffix cache))))
 
