@@ -60,7 +60,9 @@
     (format stream "(~d,~d -> ~d,~d) rel: ~s"
             (start-line object)
             (start-column object)
-            (end-line object)
+            (if (relative-p object)
+                (height object)
+                (end-line object))
             (end-column object)
             (relative-p object))))
 
