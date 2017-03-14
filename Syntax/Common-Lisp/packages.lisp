@@ -26,6 +26,7 @@
    #:max-column-number
    #:children
    #:expression
+   #:token
    #:cache
    #:prefix
    #:suffix
