@@ -176,7 +176,3 @@
                 :relative-p nil)
               (second *stack*)))
       (apply #'values result))))
-
-(defmethod sicl-reader:interpret-token
-    (token token-escapes (input-stream folio-stream))
-  (make-instance 'token :characters token))
