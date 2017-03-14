@@ -25,6 +25,7 @@
    #:min-column-number
    #:max-column-number
    #:children
+   #:expression
    #:cache
    #:prefix
    #:suffix
