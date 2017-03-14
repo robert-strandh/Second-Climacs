@@ -2,6 +2,7 @@
 
 (defpackage #:climacs-syntax-common-lisp
   (:use #:common-lisp)
+  (:shadow #:package-name)
   (:export
    #:folio
    #:line-count
@@ -28,6 +29,10 @@
    #:children
    #:expression
    #:token
+   #:symbol-token
+   #:package-name
+   #:package-marker-count
+   #:name
    #:cache
    #:prefix
    #:suffix
