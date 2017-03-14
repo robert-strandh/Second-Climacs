@@ -17,6 +17,7 @@
    #:scavenge
    #:read-forms
    #:parse-result
+   #:expression-parse-result
    #:start-line
    #:height
    #:end-line
