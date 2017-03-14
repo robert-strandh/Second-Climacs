@@ -152,57 +152,44 @@
   (:default-initargs :single-box t))
 
 (defgeneric draw-parse-result (parse-result
+                               start-ref
                                pane
                                cache
                                first-line
                                last-line))
 
 (defmethod draw-parse-result ((parse-result presentation)
+                              start-ref
                               pane
                               (cache output-history)
                               first-line
                               last-line)
   (flet ((start-line (pr) (climacs-syntax-common-lisp:start-line pr))
          (start-column (pr) (climacs-syntax-common-lisp:start-column pr))
-         (end-line (pr) (climacs-syntax-common-lisp:end-line pr))
+         (height (pr) (climacs-syntax-common-lisp:height pr))
          (end-column (pr) (climacs-syntax-common-lisp:end-column pr)))
     (let ((children (climacs-syntax-common-lisp:children parse-result))
-          (pr parse-result))
-      (if (null children)
-          (draw-filtered-area pane cache
-                              (start-line pr) (start-column pr)
-                              (end-line pr) (end-column pr)
-                              first-line last-line)
-          (progn
-            ;; Start by drawing the area preceding the first child.
-            (draw-filtered-area pane cache
-                                (start-line pr)
-                                (start-column pr)
-                                (start-line (first children))
-                                (start-column (first children))
-                                first-line last-line)
-            ;; Next, for each child except the first, first draw the
-            ;; area between the end of the preceding sibling and
-            ;; beginning of the child, and then draw the child itself.
-            (loop for sibling in children
-                  for child in (rest children)
-                  do (draw-filtered-area pane cache
-                                         (end-line sibling)
-                                         (end-column sibling)
-                                         (start-line child)
-                                         (start-column child)
-                                         first-line last-line)
-                     (draw-parse-result child pane cache
-                                        first-line last-line))
-            ;; Finally, draw the area between the end of the last child
-            ;; and the end of this parse result.
-            (let ((last-child (first (last children))))
-              (draw-filtered-area pane cache
-                                  (end-line last-child)
-                                  (end-column last-child)
-                                  (end-line pr)
-                                  (end-column pr)
-                                  first-line last-line)))))))
+          (pr parse-result)
+          (prev-end-line start-ref)
+          (prev-end-column (start-column parse-result)))
+      (let ((ref start-ref))
+        (loop for child in children
+              do (incf ref (start-line child))
+                 (draw-filtered-area pane cache
+                                     prev-end-line
+                                     prev-end-column
+                                     ref
+                                     (start-column child)
+                                     first-line last-line)
+                 (draw-parse-result child ref pane cache first-line last-line)
+                 (setf prev-end-line (+ ref (height child)))
+                 (setf prev-end-column (end-column child)))
+        (draw-filtered-area pane cache
+                            prev-end-line
+                            prev-end-column
+                            (+ start-ref (height pr))
+                            (end-column pr)
+                            first-line last-line)))))
 
 ;;; Given a folio and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
@@ -256,8 +243,8 @@
                        last-line))
           do (climacs-syntax-common-lisp:suffix-to-prefix cache))
     (loop until (or (null prefix)
-                    (>= (climacs-syntax-common-lisp:end-line (first prefix))
-                        first-line))
+                    (<= (climacs-syntax-common-lisp:end-line (first prefix))
+                        last-line))
           do (climacs-syntax-common-lisp:prefix-to-suffix cache))))
 
 (defgeneric render-cache (cache pane first-line last-line))
@@ -268,7 +255,13 @@
         for parse-result in prefix
         until (< (climacs-syntax-common-lisp:end-line parse-result)
                  first-line)
-        do (draw-parse-result parse-result pane cache first-line last-line)))
+        do (draw-parse-result
+            parse-result
+            (climacs-syntax-common-lisp:start-line parse-result)
+            pane
+            cache
+            first-line
+            last-line)))
 
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
@@ -284,15 +277,7 @@
            (last-line-number (min (ceiling bottom text-style-height)
                                   (1- line-count))))
       (unless (minusp last-line-number)
-        (let* ((last-line-contents (climacs-syntax-common-lisp:line-contents
-                                    cache last-line-number))
-               (last-line-length (length last-line-contents)))
-          (draw-area stream
-                     cache
-                     first-line-number
-                     0
-                     last-line-number
-                     last-line-length))))))
+        (render-cache cache stream first-line-number last-line-number)))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let* ((stream (clim:output-record-parent history))
