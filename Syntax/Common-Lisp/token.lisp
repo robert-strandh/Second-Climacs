@@ -121,9 +121,9 @@
      dot
        (incf index)
        (if (= length index)
-	   (if *consing-dot-allowed-p*
+	   (if sicl-reader::*consing-dot-allowed-p*
 	       (return-from sicl-reader:interpret-token
-		 *consing-dot*)
+		 sicl-reader::*consing-dot*)
 	       (error 'invalid-context-for-consing-dot
 		      :stream input-stream))
 	   (if (= length index)
