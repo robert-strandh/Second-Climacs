@@ -161,7 +161,9 @@
                       (second *stack*))
                 (error 'end-of-file :stream input-stream)))))
       (when (null result)
-        (push (make-instance 'no-expression-parse-result
+        (push (make-instance (if (eql char #\;)
+                                 'comment-parse-result
+                                 'no-expression-parse-result)
                 :max-line-width (compute-max-line-width
                                  input-stream
                                  start-line
