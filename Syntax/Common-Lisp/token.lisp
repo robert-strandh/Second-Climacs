@@ -25,64 +25,39 @@
 
 (defmethod sicl-reader:interpret-symbol
     (token position-package-marker-1 position-package-marker-2 input-stream)
-  (cond ((null position-package-marker-1)
-         (multiple-value-bind (symbol status)
-             (find-symbol token *package*)
-           (make-instance 'symbol-token
-             :package-name
-             (if (null status)
-                 (cl:package-name *package*)
-                 (cl:package-name (symbol-package symbol)))
-             :package-marker-count 0
-             :name token)))
-        ((null position-package-marker-2)
-         (let* ((package-name (subseq token 0 position-package-marker-1))
-                (symbol-name (subseq token (1+ position-package-marker-1)))
-                (package (find-package package-name)))
-           (cond ((= position-package-marker-1 (1- (length token)))
-                  (make-instance 'symbol-token
-                    :package-name package-name
-                    :package-marker-count 1
-                    :name ""))
-                 ((= position-package-marker-1 0)
-                  (make-instance 'symbol-token
-                    :package-name "KEYWORD"
-                    :package-marker-count 1
-                    :name (subseq token 1)))
-                 (t
-                  (if (null package)
-                      (make-instance 'symbol-token
-                        :package-name package-name
-                        :package-marker-count 1
-                        :name symbol-name)
-                      (multiple-value-bind (symbol status)
-                          (find-symbol symbol-name package)
-                        (cond ((null symbol)
-                               (make-instance 'symbol-token
-                                 :package-name package-name
-                                 :package-marker-count 2
-                                 :name symbol-name))
-                              ((eq status :internal)
-                               (make-instance 'symbol-token
-                                 :package-name package-name
-                                 :package-marker-count 2
-                                 :name symbol-name))
-                              (t
-                               (make-instance 'symbol-token
-                                 :package-name package-name
-                                 :package-marker-count 2
-                                 :name symbol-name)))))))))
-        (t
-         (if (= position-package-marker-1 (1- (length token)))
-             (make-instance 'symbol-token
-               :package-name
-               (subseq token 0 position-package-marker-1)
-               :package-marker-count 2
-               :name
-               (subseq token (1+ position-package-marker-2)))
-             (make-instance 'symbol-token
-               :package-name
-               (subseq token 0 position-package-marker-1)
-               :package-marker-count 2
-               :name
-               (subseq token (1+ position-package-marker-2)))))))
+  (let ((package-designator nil)
+        (symbol-name nil)
+        (package-marker-count (cond ((null position-package-marker-1) 0)
+                                    ((null position-package-marker-2) 1)
+                                    (t 2))))
+    (ecase package-marker-count
+      (0
+       (setf package-designator *package*)
+       (setf symbol-name token))
+      (1
+       (setf package-designator
+             (if (= position-package-marker-1 0)
+                 "KEYWORD"
+                 (subseq token 0 position-package-marker-1)))
+       (setf symbol-name (subseq token (1+ position-package-marker-1))))
+      (2
+       (when (or (/= position-package-marker-2 (1+ position-package-marker-1))
+                 (= position-package-marker-2 (1- (length token))))
+         (return-from sicl-reader:interpret-symbol
+           (make-instance 'other-token :characters token)))
+       (setf package-designator (subseq token 0 position-package-marker-1))
+       (setf symbol-name (subseq token (1+ position-package-marker-2)))))
+    (let ((package (find-package package-designator)))
+      (if (null package)
+          (make-instance 'symbol-token
+            :package-name package-designator
+            :package-marker-count package-marker-count
+            :name symbol-name)
+          (multiple-value-bind (symbol status)
+              (find-symbol symbol-name package)
+            (if (null status)
+                (make-instance 'symbol-token
+                  :package-name (cl:package-name package)
+                  :package-marker-count package-marker-count
+                  :name symbol-name)
+                symbol))))))
