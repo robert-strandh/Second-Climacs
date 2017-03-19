@@ -19,6 +19,8 @@
    #:read-forms
    #:parse-result
    #:expression-parse-result
+   #:no-expression-parse-result
+   #:comment-parse-result
    #:start-line
    #:height
    #:end-line
