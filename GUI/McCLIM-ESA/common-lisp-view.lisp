@@ -161,16 +161,12 @@
      first-line
      last-line)
   (declare (ignore start-ref pane cache first-line last-line))
-  (if (and (typep (climacs-syntax-common-lisp:expression parse-result)
-                  'climacs-syntax-common-lisp:symbol-token)
-           (let ((token (climacs-syntax-common-lisp:expression parse-result)))
-             (or (equal (climacs-syntax-common-lisp:package-name token)
-                        "COMMON-LISP")
-                 (equal (climacs-syntax-common-lisp:package-name token)
-                        "CL"))))
-      (clim:with-drawing-options (pane :ink clim:+purple+)
-        (call-next-method))
-      (call-next-method)))
+  (let ((expression (climacs-syntax-common-lisp:expression parse-result)))
+    (if (and (symbolp expression)
+             (eq (symbol-package expression) (find-package "COMMON-LISP")))
+        (clim:with-drawing-options (pane :ink clim:+purple+)
+          (call-next-method))
+        (call-next-method))))
 
 (defmethod draw-parse-result ((parse-result presentation)
                               start-ref
