@@ -7,12 +7,7 @@
   ((%parent :initarg :parent :accessor clim:output-record-parent)))
 
 (defclass common-lisp-view (climacs-clim-view)
-  ((%previous-cursor-line-number
-    :initform -1
-    :accessor previous-cursor-line-number)
-   (%previous-cursor-column-number
-    :initform 0
-    :accessor previous-cursor-column-number)))
+  ())
 
 (defmethod make-climacs-clim-view ((view climacs-syntax-common-lisp:view))
   (let* ((analyzer (climacs2-base:analyzer view))
