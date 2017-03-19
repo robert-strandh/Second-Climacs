@@ -72,6 +72,9 @@
 (defclass no-expression-parse-result (parse-result)
   ())
 
+(defclass comment-parse-result (no-expression-parse-result)
+  ())
+
 (defclass error-parse-result (parse-result)
   ())
 
