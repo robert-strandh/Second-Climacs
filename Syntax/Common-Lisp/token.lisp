@@ -36,42 +36,42 @@
              :package-marker-count 0
              :name token)))
         ((null position-package-marker-2)
-         (cond ((= position-package-marker-1 (1- (length token)))
-                (make-instance 'symbol-token
-                  :package-name (subseq token 0 (1- (length token)))
-                  :package-marker-count 1
-                  :name ""))
-               ((= position-package-marker-1 0)
-                (make-instance 'symbol-token
-                  :package-name "KEYWORD"
-                  :package-marker-count 1
-                  :name (subseq token 1)))
-               (t
-                (multiple-value-bind (symbol status)
-                    (find-symbol
-                     (subseq token (1+ position-package-marker-1))
-                     (subseq token 0 position-package-marker-1))
-                  (cond ((null symbol)
-                         (make-instance 'symbol-token
-                           :package-name
-                           (subseq token 0 position-package-marker-1)
-                           :package-marker-count 2
-                           :name
-                           (subseq token (1+ position-package-marker-1))))
-                        ((eq status :internal)
-                         (make-instance 'symbol-token
-                           :package-name
-                           (subseq token 0 position-package-marker-1)
-                           :package-marker-count 2
-                           :name
-                           (subseq token (1+ position-package-marker-1))))
-                        (t
-                         (make-instance 'symbol-token
-                           :package-name
-                           (subseq token 0 position-package-marker-1)
-                           :package-marker-count 2
-                           :name
-                           (subseq token (1+ position-package-marker-1)))))))))
+         (let* ((package-name (subseq token 0 position-package-marker-1))
+                (symbol-name (subseq token (1+ position-package-marker-1)))
+                (package (find-package package-name)))
+           (cond ((= position-package-marker-1 (1- (length token)))
+                  (make-instance 'symbol-token
+                    :package-name package-name
+                    :package-marker-count 1
+                    :name ""))
+                 ((= position-package-marker-1 0)
+                  (make-instance 'symbol-token
+                    :package-name "KEYWORD"
+                    :package-marker-count 1
+                    :name (subseq token 1)))
+                 (t
+                  (if (null package)
+                      (make-instance 'symbol-token
+                        :package-name package-name
+                        :package-marker-count 1
+                        :name symbol-name)
+                      (multiple-value-bind (symbol status)
+                          (find-symbol symbol-name package)
+                        (cond ((null symbol)
+                               (make-instance 'symbol-token
+                                 :package-name package-name
+                                 :package-marker-count 2
+                                 :name symbol-name))
+                              ((eq status :internal)
+                               (make-instance 'symbol-token
+                                 :package-name package-name
+                                 :package-marker-count 2
+                                 :name symbol-name))
+                              (t
+                               (make-instance 'symbol-token
+                                 :package-name package-name
+                                 :package-marker-count 2
+                                 :name symbol-name)))))))))
         (t
          (if (= position-package-marker-1 (1- (length token)))
              (make-instance 'symbol-token
