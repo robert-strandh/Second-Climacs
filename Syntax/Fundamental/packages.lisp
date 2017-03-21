@@ -12,4 +12,6 @@
    #:push-to-suffix
    #:pop-from-suffix
    #:prefix-to-suffix
-   #:suffix-to-prefix))
+   #:suffix-to-prefix
+   #:adjust-prefix-and-suffix
+   #:scavenge))
