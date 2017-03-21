@@ -25,9 +25,7 @@
   (:method ((cache cache) (entry entry))
     (with-accessors ((prefix prefix)) cache
       (setf (list-length entry)
-            (if (null prefix)
-                1
-                (1+ (list-length (first prefix)))))
+            (1+ (list-length prefix)))
       (push entry prefix))))
 
 (defgeneric pop-from-prefix (cache)
@@ -40,9 +38,7 @@
   (:method ((cache cache) (entry entry))
     (with-accessors ((suffix suffix)) cache
       (setf (list-length entry)
-            (if (null suffix)
-                1
-                (1+ (list-length (first suffix)))))
+            (1+ (list-length suffix)))
       (push entry suffix))))
 
 (defgeneric pop-from-suffix (cache)
