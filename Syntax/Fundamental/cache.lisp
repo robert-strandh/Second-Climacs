@@ -58,11 +58,9 @@
 
 (defun adjust-prefix-and-suffix (cache line-number)
   (with-accessors ((prefix prefix) (suffix suffix)) cache
-    (loop until (or (null prefix)
-                    (<= (list-length (first prefix)) line-number))
+    (loop until (<= (list-length prefix) line-number)
           do (prefix-to-suffix cache))
-    (loop until (or (null suffix)
-                    (>= (list-length (first prefix)) line-number))
+    (loop until (>= (list-length prefix) line-number)
           do (suffix-to-prefix cache))))
 
 (defun scavenge (cache buffer)
