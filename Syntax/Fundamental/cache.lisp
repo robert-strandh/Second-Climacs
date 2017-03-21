@@ -67,10 +67,9 @@
   (let ((line-counter 0))
     (with-accessors ((prefix prefix) (suffix suffix)) cache
       (flet ((remove-deleted-lines (line)
-               (loop for first = (first prefix)
+               (loop for first = (first suffix)
                      until (eq line (line first))
-                     do (pop-from-prefix cache)
-                        (suffix-to-prefix cache))))
+                     do (pop-from-suffix cache))))
 	(flet ((skip (count)
 		 (incf line-counter count))
 	       (modify (line)
