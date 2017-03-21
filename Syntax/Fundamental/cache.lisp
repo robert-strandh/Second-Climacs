@@ -1,5 +1,11 @@
 (cl:in-package #:climacs-syntax-fundamental)
 
+(defgeneric list-length (list-or-entry)
+  (:method ((list null))
+    0)
+  (:method ((list cons))
+    (list-length (first list))))
+
 (defclass entry ()
   (;; This slot contains the Cluffer line object so that we can
    ;; find it when we process a SYNC operation.
