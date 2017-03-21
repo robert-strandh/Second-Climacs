@@ -19,7 +19,7 @@
 (defclass numeric-token (other-token)
   ((%value :initarg :value :reader value)))
 
-(defmethod print-object ((object token) stream)
+(defmethod print-object ((object other-token) stream)
   (print-unreadable-object (object stream)
     (format stream "~a" (characters object))))
 
