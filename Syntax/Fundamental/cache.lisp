@@ -19,7 +19,8 @@
 
 (defclass cache ()
   ((%prefix :initform () :accessor prefix)
-   (%suffix :initform () :accessor suffix)))
+   (%suffix :initform () :accessor suffix)
+   (%time-stamp :initform nil :accessor time-stamp)))
 
 (defgeneric push-to-prefix (cache entry)
   (:method ((cache cache) (entry entry))
