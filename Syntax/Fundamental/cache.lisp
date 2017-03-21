@@ -64,3 +64,33 @@
     (loop until (or (null suffix)
                     (>= (list-length (first prefix)) line-number))
           do (suffix-to-prefix cache))))
+
+(defun scavenge (cache buffer)
+  (let ((line-counter 0))
+    (with-accessors ((prefix prefix) (suffix suffix)) cache
+      (flet ((remove-deleted-lines (line)
+               (adjust-prefix-and-suffix cache line-counter)
+               (loop for first = (first prefix)
+                     until (eq line (line first))
+                     do (pop-from-prefix cache)
+                        (suffix-to-prefix cache))))
+	(flet ((skip (count)
+		 (incf line-counter count))
+	       (modify (line)
+		 (remove-deleted-lines line)
+                 (setf (contents (first prefix))
+                       (cluffer:items line))
+		 (incf line-counter))
+	       (create (line)
+		 (let ((temp (make-instance 'entry
+			       :line line
+			       :contents (cluffer:items line))))
+                   (push-to-prefix temp))
+		 (incf line-counter))
+	       (sync (line)
+		 (remove-deleted-lines line)
+		 (incf line-counter)))
+	  (setf (time-stamp cache)
+		(cluffer:update buffer
+				(time-stamp cache)
+				#'sync #'skip #'modify #'create)))))))
