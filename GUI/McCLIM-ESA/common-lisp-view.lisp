@@ -51,7 +51,7 @@
       (if (= (cluffer:line-number cursor) line-number)
           (cond ((<= cursor-column-number start-column)
                  (clim:draw-text* pane contents
-                                  (+ x 3) y
+                                  (+ x 5) y
                                   :start start-column
                                   :end end-column))
                 ((>= cursor-column-number end-column)
@@ -70,15 +70,15 @@
                            :end end-column)))
     (when (= (cluffer:line-number cursor) line-number)
       (cond ((= cursor-column-number start-column)
-             (clim:draw-rectangle* pane x (- y 15) (+ x 3) y
+             (clim:draw-rectangle* pane (1+ x) (- y text-height) (+ x 4) y
                                    :ink clim:+blue+))
             ((= canonicalized-end-column-number
                 cursor-column-number
                 (length contents))
              (let ((cursor-x (* cursor-column-number text-width)))
                (clim:draw-rectangle* pane
-                                     cursor-x (- y 15)
-                                     (+ cursor-x 3) y
+                                     (1+ cursor-x) (- y text-height)
+                                     (+ cursor-x 4) y
                                      :ink clim:+blue+)))))))
 
 ;;; Draw an area of text defined by START-LINE-NUMBER,
