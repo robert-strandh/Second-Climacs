@@ -2,6 +2,7 @@
 
 (defpackage #:climacs-syntax-fundamental
   (:use #:common-lisp)
+  (:shadow #:list-length)
   (:export
    #:cache
    #:prefix
