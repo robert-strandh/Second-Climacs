@@ -69,7 +69,6 @@
   (let ((line-counter 0))
     (with-accessors ((prefix prefix) (suffix suffix)) cache
       (flet ((remove-deleted-lines (line)
-               (adjust-prefix-and-suffix cache line-counter)
                (loop for first = (first prefix)
                      until (eq line (line first))
                      do (pop-from-prefix cache)
@@ -77,17 +76,20 @@
 	(flet ((skip (count)
 		 (incf line-counter count))
 	       (modify (line)
+                 (adjust-prefix-and-suffix cache line-counter)
 		 (remove-deleted-lines line)
                  (setf (contents (first prefix))
                        (cluffer:items line))
 		 (incf line-counter))
 	       (create (line)
+                 (adjust-prefix-and-suffix cache line-counter)
 		 (let ((temp (make-instance 'entry
 			       :line line
 			       :contents (cluffer:items line))))
                    (push-to-prefix temp))
 		 (incf line-counter))
 	       (sync (line)
+                 (adjust-prefix-and-suffix cache line-counter)
 		 (remove-deleted-lines line)
 		 (incf line-counter)))
 	  (setf (time-stamp cache)
