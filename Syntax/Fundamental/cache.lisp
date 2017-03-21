@@ -75,8 +75,9 @@
 	       (modify (line)
                  (adjust-prefix-and-suffix cache line-counter)
 		 (remove-deleted-lines line)
-                 (setf (contents (first prefix))
+                 (setf (contents (first suffix))
                        (cluffer:items line))
+                 (suffix-to-prefix cache)
 		 (incf line-counter))
 	       (create (line)
                  (adjust-prefix-and-suffix cache line-counter)
@@ -88,6 +89,7 @@
 	       (sync (line)
                  (adjust-prefix-and-suffix cache line-counter)
 		 (remove-deleted-lines line)
+                 (suffix-to-prefix cache)
 		 (incf line-counter)))
 	  (setf (time-stamp cache)
 		(cluffer:update buffer
