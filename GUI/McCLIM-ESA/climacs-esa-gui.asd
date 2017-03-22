@@ -13,6 +13,7 @@
   ((:file "packages")
    (:file "io")
    (:file "climacs-clim-view")
+   (:file "view-name")
    (:file "text-pane")
    (:file "with-current-cursor")
    (:file "insert-table")
@@ -23,5 +24,4 @@
    (:file "common-lisp-view")
    (:file "fundamental-command-table")
    (:file "common-lisp-command-table")
-   (:file "view-name")
    (:file "gui")))
