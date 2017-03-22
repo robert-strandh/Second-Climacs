@@ -23,5 +23,5 @@
    (:file "common-lisp-view")
    (:file "fundamental-command-table")
    (:file "common-lisp-command-table")
-   (:file "view-names")
+   (:file "view-name")
    (:file "gui")))
