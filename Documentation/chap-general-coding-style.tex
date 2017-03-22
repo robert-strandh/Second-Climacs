@@ -268,3 +268,104 @@ reserved for other uses of \texttt{cons} cells such as for
 
 It follows that the two families of functions should never be mixed
 for the same argument.
+
+\section{Commenting}
+
+Comments are meant to be read by the maintainers of the code.  One can
+therefore safely assume that the reader is quite familiar with the
+\commonlisp{} language and the main structure of \clim{} and \sysname{}.
+
+Comments should be used to explain aspects of the code that are not
+obvious from reading the code itself.  A comment is the ideal place to
+introduce definitions of concepts that must be understood in order for
+the code to make sense.  If the code is structured in a particular way
+for performance reasons, then a comment is a good place to indicate
+such a fact, so as to avoid that the maintainer be tempted to
+introduce modifications that alter this structure.
+
+\section{Designators for symbol names}
+
+Always use uninterned symbols (such as \texttt{\#:hello}) whenever a
+string designator for a symbol name is called for.  In particular,
+this is useful in \texttt{defpackage} and \texttt{in-package} forms.
+
+Using the upper-case equivalent string makes the code break whenever
+the reader is case-sensitive (and it looks strange that the designator
+has a different case from the way symbol that it designates is then
+used), and using keywords unnecessarily clutters the keyword package.
+
+\section{Docstrings}
+
+We believe that it is a bad idea for an implementation of a Lisp
+system to have docstrings in the same place as the definition of the
+language item that is documented, for several reasons.  First, to the
+person reading the code, the docstring is most often noise, because it
+is known from the standard what the language item is about.  Second,
+it often looks ugly with multiple lines starting in column 1 of the
+source file, and this fact often discourages the programmer from
+providing good docstring.  Third, it makes internationalization
+harder.
+
+For this reason, we will provide language-specific files containing
+all docstrings of Common Lisp in the form of calls to \texttt{(setf
+documentation)}.
+
+\section{Naming and use of slots}
+
+In order to make the code as safe as possible, we typically do not
+want to export the name of a slot, whereas frequently, the reader or
+the accessor of that slot should be exported.  This restriction
+implies that a slot and its corresponding reader or accessor cannot
+have the same name.  Several solutions exist to this problem.  The one
+we are using for \sysname{} is to have slot names start with the
+percent character (`\texttt{\%}').  Traditionally, a percent character
+has been used to indicate some kind of danger, i.e. that the
+programmer should be very careful before directly using such a name.
+Client code that attempts to use such a slot would have to write
+\texttt{package::\%name} which contains two indicators of danger,
+namely the double colon package marker and the percent character.
+
+Code should refer to slot names directly as little as possible.  Even
+code that is private to a package should use an internal protocol in
+the form of readers and accessors, and such protocols should be
+documented and exported whenever reasonable.  It sometimes good
+practice to have multiple accessors for a slot, one for internal
+purposes and one for use by client code.  This practice allows for
+\code{:before}, \code{:after}, and \code{:around} methods on one
+accessor but not the other.
+
+\section{Using other packages}
+
+The \code{:use} option of \code{defpackage} and the \code{use-package}
+function should be restricted to the \code{common-lisp} package as
+much as possible.  The reason for this restriction is that using a
+package this way represents a commitment to accepting all exported
+symbols of that package, current and future, whereas in most cases
+there is no guarantee that future modifications of the package will
+not introduce symbol conflicts.  If it is desired to avoid explicit
+package prefixes in some cases, then it is better to use the
+\code{:import-from} option of \code{defpackage} to import an
+explicitly-supplied list of symbols.
+
+\section{Conditions, restarts, and reporting}
+
+Conditions should not be simple conditions, because we want condition
+reporting to be subject to internationalization.   For the same
+reason, the condition reporter should not be part of the
+\code{define-condition} form, and instead be written separately in a
+file that contains language-specific condition reporters.
+
+Restarts should be provided whenever practical.
+
+\section{Internationalization}
+
+We would like for {\sysname} to have the ability to report messages in
+the local language if desired.
+For this, we use the library named \texttt{acclimation}.%
+\footnote{See https://github.com/robert-strandh/Acclimation}
+
+\section{Threading and thread safety}
+
+Consider the use of locks to be free.  A technique called
+``speculative lock elision'' is already available in some processors,
+and we predict it will soon be available in all main processors.
