@@ -1,0 +1,270 @@
+\chapter{General \commonlisp{} style guide}
+
+\section{Purpose of style restrictions}
+
+The purpose of imposing a particular style is based on a few simple
+facts that hold true for both natural languages and programming
+languages:
+
+\begin{itemize}
+\item The set of all idiomatic phrases is a tiny subset of the set of
+  all grammatical phrases.
+\item The main purpose of these phrases is to serve as communication
+  between people.
+\end{itemize}
+
+To illustrate the first fact, consider a natural language such as
+English.  In English, we say ``tooth brush'', but ``dental floss''.
+The words ``dental brush'' and ``tooth floss'' would be perfectly
+grammatical, but they are not used.  A person trying to communicate
+with other people must use the words that have been widely agreed
+upon, even though some other words are perfectly legitimate.  It might
+seem that such idiosyncrasies would be limited to languages with
+multiple heritage such as English, but that is not the case.  In
+French, we say ``brosse à dents'', ``pâte dentifrice'', and ``fil
+dentaire''.  There are nine reasonable combinations, but only one is
+used.
+
+The same thing is true for programming languages.  The community has
+collectively decided on a particular subset of all the grammatical
+phrases, and a programmer who wishes to communicate with other
+programmers should stick to that subset.
+
+It should also be emphasized that the choice of idioms is different in
+different languages.  An example from natural languages would be that
+in English we say ``I was my hands'', in French ``I wash myself the
+hands'', and in Swedish we say ``I wash the hands [on myself]''.  Just
+as it would be pointless trying to use an idiom form one language in a
+translated version in a different language, it is as pointless to
+translate idioms from one programming language to a different
+programming language.
+
+Finally, the choice of what phrases are idioms and what phrases are
+not is almost totally arbitrary, and based on coincidences of
+history.  Therefore it is rarely productive to ask oneself why a
+particular phrase is an idiom and a different one is not.  There is no
+possible enlightening answer to such a question.
+
+
+\section{Width of a line of code}
+
+Horizontal space is a precious resource that should not be wasted.
+The width of a line should preferably not exceed 80 characters.  This
+limit used to be hard, because some printers or printer drivers would
+truncate longer lines.  Since it is less common to print code these
+days, the limit is now soft.  The purpose of keeping lines somewhat
+short is so that it is possible on a reasonable monitor to display two
+documents side by side.  One document is typically a \commonlisp{}
+source file, and the other document is typically the buffer containing
+interactions with the \commonlisp{} system.
+
+The systematic use of long lines makes the practice of displaying two
+documents side by side impossible, or at least impractical.  If a
+single monitor is used, the programmer then has to flip back and forth
+between the source code and the interaction loop.  When two monitors
+are used, the effect is to waste half a monitor that could otherwise
+be used for displaying documentation or something else.
+
+\section{Blank lines}
+
+A single blank line is common in the following situations:
+
+\begin{itemize}
+\item Between two top-level forms.
+\item Between a file-specific comment and the following top-level
+  form.
+\item Between a comment for several top-level forms and the first
+  of those top-level forms.
+\end{itemize}
+
+A single blank line \emph{may} occur inside a top-level form to
+indicate the separation of two blocks of code concerned with different
+subjects, but it would be more common to put those two blocks of code
+in separate functions.
+
+There should never be any instance of two consecutive blank lines, and
+the last line of the file should not be blank.
+
+\section{\texttt{car}, \texttt{cdr}, \texttt{first}, etc are for
+  \texttt{cons} cells}
+
+The \commonlisp{} standard specifies that the function \texttt{car},
+\texttt{cdr}, \texttt{first}, \texttt{second}, \texttt{rest}, etc
+return \texttt{nil} when \texttt{nil} is passed as an argument.  This
+fact should mostly be considered as a historical artifact and should
+not be systematically exploited.  Take for instance the following
+code:
+
+\begin{verbatim}
+(if (first x) ...)
+\end{verbatim}
+
+To the compiler, it means ``execute the false branch of the \texttt{if}
+when either \texttt{x} is \texttt{nil}, or when \texttt{x} is a list
+whose first element is \texttt{nil}''.
+
+To the person reading the code, it means something different
+altogether, namely ``\texttt{x} holds a non-empty list of Boolean
+values, and the false branch of the \texttt{if} should be executed
+when the first element of that list is
+\emph{false}. See also \refSec{sec-coding-style-meanings-of-nil}.
+
+\section{Different meanings of \texttt{nil}}
+\label{sec-coding-style-meanings-of-nil}
+
+Consider the following local variable bindings:
+
+\begin{verbatim}
+(let ((x '())
+      (y nil)
+      z)
+  ...)
+\end{verbatim}
+
+To the compiler, the three are equivalent.  To a person reading the
+code, they mean different things, however:
+
+\begin{itemize}
+\item The initialization of \texttt{x} means that \texttt{x} holds a
+  \emph{list} that is initially empty.
+\item The initialization of \texttt{y} means that \texttt{y} holds a
+  Boolean value or a default value that may or may not change in the
+  body of the \texttt{let} form.
+\item The absence of initialization of \texttt{y} means that no
+  initial value is given to \texttt{z}.  In the body of the
+  \texttt{let} form, the variable \texttt{z} will be assigned to
+  before it is used.
+\end{itemize}
+
+The following body of the \texttt{let} form corresponds to the
+expectations of the person reading the code:
+
+\begin{verbatim}
+(let ((x '())
+      (y nil)
+      z)
+  ...
+  (push (f y) x)
+  ...
+  (unless y (setf y (g x)))
+  ...
+  (setf z (h x))
+  ...)
+\end{verbatim}
+
+The following body of the \texttt{let} form violates the expectations
+of the person reading the code:
+
+\begin{verbatim}
+(let ((x '())
+      (y nil)
+      z)
+  ...
+  (push (f y) z)     ; z is used before it is assigned.
+  ...
+  (unless x          ; x is treated as a Boolean.
+    (setf y (g x)))
+  ...
+  (push (f x) y)     ; y is treated as a list.
+  ...)
+\end{verbatim}
+
+\section{Tests in conditional expressions}
+
+The \emph{test} of a conditional expression should be a (possibly
+generalized) Boolean expression.  The following expressions correspond
+to the expectations of the person reading the code:
+
+\begin{verbatim}
+(if visited-p ...)
+(when (member ...) ...)
+(cond ((plusp x) ...) ...)
+\end{verbatim}
+
+The following code violates the expectation:
+
+\begin{verbatim}
+(let ((item (find ...)))
+  (when item ...))
+\end{verbatim}
+
+because \texttt{item} is not a (generalized) Boolean value.  It is an
+item returned by \texttt{find}, though there is an \emph{out of band}
+value (\texttt{nil}) indicating that no item was found by
+\texttt{find}.  In this case, the corresponding code that corresponds
+to the expectations would look like this:
+
+\begin{verbatim}
+(let ((item (find ...)))
+  (unless (null item) ...))
+\end{verbatim}
+
+\section{General structure of recursive functions}
+
+When possible, a recursive function should be structured like a
+mathematical proof by induction.  By that we mean that the special
+case should be handled \emph{first} so as to reassure the person
+reading the code that this case can be handled correctly by the
+function.
+
+
+So for instance, assume we have want to write a function that counts
+the number of atoms in a tree, we should not write it like this:
+
+\begin{verbatim}
+(defun count-atoms (tree)
+  (if (consp tree)
+      (+ (count-atoms (car tree))
+         (count-atoms (cdr tree)))
+      1))
+\end{verbatim}
+
+but rather
+
+\begin{verbatim}
+(defun count-atoms (tree)
+  (if (atom tree)
+      1
+      (+ (count-atoms (car tree))
+         (count-atoms (cdr tree)))))
+\end{verbatim}
+
+Even when the base case does not return anything useful, it should be
+handled first.  The following code violates the expectations:
+
+\begin{verbatim}
+(defun map-conses (function tree)
+ (unless (atom node)
+   (funcall function node)
+   (traverse (car node))
+   (traverse (cdr node))))
+\end{verbatim}
+
+and should be written like this instead:
+
+\begin{verbatim}
+(defun map-conses (function tree)
+  (if (atom node)
+      nil ; nothing to do
+      (progn (funcall function node)
+             (traverse (car node))
+             (traverse (cdr node)))))
+\end{verbatim}
+
+though, admittedly, this example is a little too simple to illustrate
+the importance of this rule.
+
+\section{Using \texttt{car} and \texttt{cdr} vs. using \texttt{first}
+  and \texttt{rest}}
+
+While the two functions \texttt{car} and \texttt{first} have the exact
+same definitions, as do \texttt{cdr} and \texttt{rest}, they send very
+different messages to the person reading the code.
+
+The functions \texttt{car}, \texttt{cdr}, etc., should be avoided when
+the argument is to be considered as a \emph{list}, and should be
+reserved for other uses of \texttt{cons} cells such as for
+\emph{trees} or \emph{pairs} of values.
+
+It follows that the two families of functions should never be mixed
+for the same argument.
