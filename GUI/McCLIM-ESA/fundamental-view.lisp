@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-esa-gui)
+(cl:in-package #:second-climacs-clim-base)
 
 ;;; This class is is a subclass of CLIMACS-CLIM-VIEW.  An instance of
 ;;; this class is created in order to display a Climacs view that is

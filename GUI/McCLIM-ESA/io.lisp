@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-esa-gui)
+(cl:in-package #:second-climacs-clim-base)
 
 (defmethod esa-buffer:frame-make-buffer-from-stream ((frame climacs) stream)
   (multiple-value-bind (buffer cursor)

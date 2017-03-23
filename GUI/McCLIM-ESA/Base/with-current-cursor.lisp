@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-esa-gui)
+(cl:in-package #:second-climacs-clim-base)
 
 (defmacro with-current-cursor ((cursor-var) &body body)
   (let ((clim-view-var (gensym))

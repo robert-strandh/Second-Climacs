@@ -2,7 +2,7 @@
 
 (clim:define-command-table common-lisp-table
   :inherit-from
-  (climacs-esa-gui:global-table
-   climacs-esa-gui:ascii-insert-table
-   climacs-esa-gui:delete-table
-   climacs-esa-gui:motion-table))
+  (second-climacs-clim-base:global-table
+   second-climacs-clim-base:ascii-insert-table
+   second-climacs-clim-base:delete-table
+   second-climacs-clim-base:motion-table))

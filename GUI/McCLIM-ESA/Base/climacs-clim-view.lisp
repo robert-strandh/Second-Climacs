@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-esa-gui)
+(cl:in-package #:second-climacs-clim-base)
 
 ;;; When a visible window is updated, we need to know what is on
 ;;; display in that window.  This information can be read and written

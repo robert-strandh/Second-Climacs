@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-esa-gui)
+(cl:in-package #:second-climacs-clim-base)
 
 (clim:define-command-table fundamental-table
   :inherit-from

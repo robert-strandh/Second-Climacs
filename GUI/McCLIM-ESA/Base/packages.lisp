@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:climacs-esa-gui
+(defpackage #:second-climacs-clim-base
   (:use #:common-lisp)
   (:export
    #:climacs
