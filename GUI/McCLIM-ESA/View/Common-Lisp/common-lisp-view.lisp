@@ -161,7 +161,7 @@
                    first-line last-line)
     (draw-area pane cache sl sc el ec)))
 
-(defmethod command-table
+(defmethod climacs-esa-gui:command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
 
