@@ -43,7 +43,7 @@
          (y (+ text-ascent (* line-number text-height)))
          (x (* start-column text-width))
          (clim-view (clim:stream-default-view pane))
-         (climacs-view (climacs-view clim-view))
+         (climacs-view (climacs-esa-gui:climacs-view clim-view))
          (cursor (climacs2-base:cursor climacs-view))
          (cursor-column-number (cluffer:cursor-position cursor))
          (canonicalized-end-column-number
@@ -372,7 +372,7 @@
 
 (defmethod update-view (pane (view common-lisp-view))
   (let ((history (clim:stream-output-history pane)))
-    (climacs2-base:update-view (climacs-view view))
+    (climacs2-base:update-view (climacs-esa-gui:climacs-view view))
     (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
       (declare (ignore x1 y1))
       (clim:change-space-requirements
