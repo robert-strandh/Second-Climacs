@@ -11,87 +11,87 @@
    ;; find it when we process a SYNC operation.
    (%line :initarg :line :reader line)
    ;; This slot contains the contents of the line as it was when we
-   ;; last updated the cache.
+   ;; last updated the analyzer.
    (%contents :initarg :contents :accessor contents)
    ;; This slot contains the number of entries in the list (prefix or
    ;; suffix) that this entry is a member of.
    (%list-length :initarg list-length :accessor list-length)))
 
-(defclass cache ()
+(defclass analyzer ()
   ((%prefix :initform () :accessor prefix)
    (%suffix :initform () :accessor suffix)
    (%time-stamp :initform nil :accessor time-stamp)))
 
-(defgeneric push-to-prefix (cache entry)
-  (:method ((cache cache) (entry entry))
-    (with-accessors ((prefix prefix)) cache
+(defgeneric push-to-prefix (analyzer entry)
+  (:method ((analyzer analyzer) (entry entry))
+    (with-accessors ((prefix prefix)) analyzer
       (setf (list-length entry)
             (1+ (list-length prefix)))
       (push entry prefix))))
 
-(defgeneric pop-from-prefix (cache)
-  (:method ((cache cache))
-    (with-accessors ((prefix prefix)) cache
+(defgeneric pop-from-prefix (analyzer)
+  (:method ((analyzer analyzer))
+    (with-accessors ((prefix prefix)) analyzer
       (assert (not (null prefix)))
       (pop prefix))))
 
-(defgeneric push-to-suffix (cache entry)
-  (:method ((cache cache) (entry entry))
-    (with-accessors ((suffix suffix)) cache
+(defgeneric push-to-suffix (analyzer entry)
+  (:method ((analyzer analyzer) (entry entry))
+    (with-accessors ((suffix suffix)) analyzer
       (setf (list-length entry)
             (1+ (list-length suffix)))
       (push entry suffix))))
 
-(defgeneric pop-from-suffix (cache)
-  (:method ((cache cache))
-    (with-accessors ((suffix suffix)) cache
+(defgeneric pop-from-suffix (analyzer)
+  (:method ((analyzer analyzer))
+    (with-accessors ((suffix suffix)) analyzer
       (assert (not (null suffix)))
       (pop suffix))))
 
-(defgeneric prefix-to-suffix (cache)
-  (:method ((cache cache))
-    (push-to-suffix cache (pop-from-prefix cache))))
+(defgeneric prefix-to-suffix (analyzer)
+  (:method ((analyzer analyzer))
+    (push-to-suffix analyzer (pop-from-prefix analyzer))))
 
-(defgeneric suffix-to-prefix (cache)
-  (:method ((cache cache))
-    (push-to-prefix cache (pop-from-suffix cache))))
+(defgeneric suffix-to-prefix (analyzer)
+  (:method ((analyzer analyzer))
+    (push-to-prefix analyzer (pop-from-suffix analyzer))))
 
-(defun adjust-prefix-and-suffix (cache line-number)
-  (with-accessors ((prefix prefix) (suffix suffix)) cache
+(defun adjust-prefix-and-suffix (analyzer line-number)
+  (with-accessors ((prefix prefix) (suffix suffix)) analyzer
     (loop until (<= (list-length prefix) line-number)
-          do (prefix-to-suffix cache))
+          do (prefix-to-suffix analyzer))
     (loop until (>= (list-length prefix) line-number)
-          do (suffix-to-prefix cache))))
+          do (suffix-to-prefix analyzer))))
 
-(defun scavenge (cache buffer)
+(defun scavenge (analyzer buffer)
   (let ((line-counter 0))
-    (with-accessors ((prefix prefix) (suffix suffix)) cache
+    (with-accessors ((prefix prefix) (suffix suffix)) analyzer
       (flet ((remove-deleted-lines (line)
                (loop for first = (first suffix)
                      until (eq line (line first))
-                     do (pop-from-suffix cache))))
+                     do (pop-from-suffix analyzer))))
 	(flet ((skip (count)
 		 (incf line-counter count))
 	       (modify (line)
-                 (adjust-prefix-and-suffix cache line-counter)
+                 (adjust-prefix-and-suffix analyzer line-counter)
 		 (remove-deleted-lines line)
                  (setf (contents (first suffix))
                        (cluffer:items line))
-                 (suffix-to-prefix cache)
+                 (suffix-to-prefix analyzer)
 		 (incf line-counter))
 	       (create (line)
-                 (adjust-prefix-and-suffix cache line-counter)
+                 (adjust-prefix-and-suffix analyzer line-counter)
 		 (let ((temp (make-instance 'entry
 			       :line line
 			       :contents (cluffer:items line))))
                    (push-to-prefix temp))
 		 (incf line-counter))
 	       (sync (line)
-                 (adjust-prefix-and-suffix cache line-counter)
+                 (adjust-prefix-and-suffix analyzer line-counter)
 		 (remove-deleted-lines line)
-                 (suffix-to-prefix cache)
+                 (suffix-to-prefix analyzer)
 		 (incf line-counter)))
-	  (setf (time-stamp cache)
+	  (setf (time-stamp analyzer)
 		(cluffer:update buffer
-				(time-stamp cache)
+				(time-stamp analyzer)
 				#'sync #'skip #'modify #'create)))))))
