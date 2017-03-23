@@ -370,7 +370,7 @@
 (defmethod clim:clear-output-record ((history output-history))
   nil)
 
-(defmethod update-view (pane (view common-lisp-view))
+(defmethod climacs-esa-gui:update-view (pane (view common-lisp-view))
   (let ((history (clim:stream-output-history pane)))
     (climacs2-base:update-view (climacs-esa-gui:climacs-view view))
     (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
