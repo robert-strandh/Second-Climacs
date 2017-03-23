@@ -6,5 +6,6 @@
                :stealth-mixin)
   :serial t
   :components
-  ((:file "common-lisp-view")
+  ((:file "packages")
+   (:file "common-lisp-view")
    (:file "common-lisp-command-table")))
