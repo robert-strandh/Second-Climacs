@@ -13,4 +13,5 @@
    #:make-climacs-clim-view
    #:climacs-clim-view
    #:climacs-view
-   #:update-view))
+   #:update-view
+   #:command-table))
