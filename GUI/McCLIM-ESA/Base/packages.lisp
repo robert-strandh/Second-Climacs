@@ -11,4 +11,5 @@
    #:insert-table
    #:delete-table
    #:make-climacs-clim-view
+   #:climacs-clim-view
    #:climacs-view))
