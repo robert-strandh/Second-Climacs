@@ -17,7 +17,7 @@
    ;; suffix) that this entry is a member of.
    (%list-length :initarg list-length :accessor list-length)))
 
-(defclass analyzer ()
+(defclass analyzer (climacs2-base:analyzer)
   ((%prefix :initform () :accessor prefix)
    (%suffix :initform () :accessor suffix)
    (%time-stamp :initform nil :accessor time-stamp)))
