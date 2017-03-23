@@ -10,4 +10,5 @@
    #:ascii-insert-table
    #:insert-table
    #:delete-table
-   #:make-climacs-clim-view))
+   #:make-climacs-clim-view
+   #:climacs-view))
