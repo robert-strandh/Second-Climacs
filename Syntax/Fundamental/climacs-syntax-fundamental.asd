@@ -5,5 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "cache")))
+   (:file "analyzer")))
 
