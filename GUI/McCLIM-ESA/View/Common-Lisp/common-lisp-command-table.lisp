@@ -1,8 +1,8 @@
-(cl:in-package #:climacs-esa-gui)
+(cl:in-package #:second-climacs-clim-common-lisp-view)
 
 (clim:define-command-table common-lisp-table
   :inherit-from
-  (global-table
-   ascii-insert-table
-   delete-table
-   motion-table))
+  (climacs-esa-gui:global-table
+   climacs-esa-gui:ascii-insert-table
+   climacs-esa-gui:delete-table
+   climacs-esa-gui:motion-table))

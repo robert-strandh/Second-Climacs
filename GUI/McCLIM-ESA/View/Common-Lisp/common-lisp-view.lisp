@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-esa-gui)
+(cl:in-package #:second-climacs-clim-common-lisp-view)
 
 (stealth-mixin:define-stealth-mixin
     output-history
@@ -9,7 +9,8 @@
 (defclass common-lisp-view (climacs-clim-view)
   ())
 
-(defmethod make-climacs-clim-view ((view climacs-syntax-common-lisp:view))
+(defmethod climacs-esa-gui:make-climacs-clim-view
+    ((view climacs-syntax-common-lisp:view))
   (let* ((analyzer (climacs2-base:analyzer view))
          (cache (climacs-syntax-common-lisp:folio analyzer)))
     (make-instance 'common-lisp-view
@@ -402,6 +403,6 @@
 
 (defmethod climacs2-base:update-view-from-analyzer
     ((view climacs-syntax-common-lisp:view)
-     (pane text-pane)
+     (pane climacs-esa-gui:text-pane)
      (analyzer climacs-syntax-common-lisp:analyzer))
   (update-cache view pane analyzer))
