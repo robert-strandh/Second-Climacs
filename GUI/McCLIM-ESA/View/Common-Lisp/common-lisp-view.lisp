@@ -6,7 +6,7 @@
   climacs-syntax-common-lisp:cache
   ((%parent :initarg :parent :accessor clim:output-record-parent)))
 
-(defclass common-lisp-view (climacs-clim-view)
+(defclass common-lisp-view (climacs-esa-gui:climacs-clim-view)
   ())
 
 (defmethod climacs-esa-gui:make-climacs-clim-view
