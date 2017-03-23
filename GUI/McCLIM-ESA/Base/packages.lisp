@@ -3,4 +3,11 @@
 (defpackage #:climacs-esa-gui
   (:use #:common-lisp)
   (:export
-   #:climacs))
+   #:climacs
+   #:text-pane
+   #:global-table
+   #:motion-table
+   #:ascii-insert-table
+   #:insert-table
+   #:delete-table
+   #:make-climacs-clim-view))
