@@ -1,0 +1,10 @@
+(cl:in-package #:asdf-user)
+
+(defsystem second-climacs-clim-common-lisp-view
+  :depends-on (:second-climacs-clim-base
+               :climacs-syntax-common-lisp
+               :stealth-mixin)
+  :serial t
+  :components
+  ((:file "common-lisp-view")
+   (:file "common-lisp-command-table")))
