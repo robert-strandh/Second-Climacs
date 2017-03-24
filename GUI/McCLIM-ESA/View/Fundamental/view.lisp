@@ -20,6 +20,10 @@
                  (length contents))
             (max-widths-prefix analyzer)))))
 
+(defmethod climacs-syntax-fundamental:pop-from-prefix :after
+    ((analyzer output-history))
+  (pop (max-widths-prefix analyzer)))
+
 (defmethod climacs-syntax-fundamental:push-to-suffix :after
     ((analyzer output-history) entry)
   (with-accessors ((suffix climacs-syntax-fundamental:suffix)) analyzer
