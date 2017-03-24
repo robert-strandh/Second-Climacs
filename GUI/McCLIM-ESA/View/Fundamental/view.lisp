@@ -20,6 +20,18 @@
                  (length contents))
             (max-widths-prefix analyzer)))))
 
+(defmethod climacs-syntax-fundamental:push-to-suffix :after
+    ((analyzer output-history) entry)
+  (with-accessors ((suffix climacs-syntax-fundamental:suffix)) analyzer
+    (with-accessors ((contents climacs-syntax-fundamental:contents)
+                     (list-length climacs-syntax-fundamental:list-length))
+        entry
+      (push (max (if (null (rest suffix))
+                     0
+                     (first (max-widths-suffix analyzer)))
+                 (length contents))
+            (max-widths-suffix analyzer)))))
+
 (defclass fundamental-view (second-climacs-clim-base:climacs-clim-view)
   ())
 
