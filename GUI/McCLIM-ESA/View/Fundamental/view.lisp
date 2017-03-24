@@ -89,6 +89,19 @@
                                   :start cursor-column-number))))
         (clim:draw-text* pane contents 0 y))))
 
+(defun adjust-for-rendering (analyzer last-line)
+  (with-accessors ((prefix climacs-syntax-fundamental:prefix)
+                   (suffix climacs-syntax-fundamental:suffix))
+      analyzer
+    (loop until (or (null suffix)
+                    (>= (climacs-syntax-fundamental:list-length prefix)
+                        last-line))
+          do (climacs-syntax-fundamental:suffix-to-prefix analyzer))
+    (loop until (or (null prefix)
+                    (<= (climacs-syntax-fundamental:list-length prefix)
+                        last-line))
+          do (climacs-syntax-fundamental:prefix-to-suffix analyzer))))
+
 (defmethod clim:bounding-rectangle* ((history output-history))
   (with-accessors ((prefix climacs-syntax-fundamental:prefix)
                    (suffix climacs-syntax-fundamental:suffix))
