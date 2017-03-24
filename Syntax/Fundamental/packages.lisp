@@ -7,6 +7,7 @@
    #:analyzer
    #:view
    #:list-length
+   #:contents
    #:prefix
    #:suffix
    #:push-to-prefix
