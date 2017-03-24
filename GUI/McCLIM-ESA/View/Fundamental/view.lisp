@@ -158,3 +158,7 @@
               0
               (* text-style-width width)
               (* text-style-height (line-count history))))))
+
+;;; I don't know why this one is called at all
+(defmethod clim:clear-output-record ((history output-history))
+  nil)
