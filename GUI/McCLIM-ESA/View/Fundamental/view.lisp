@@ -124,6 +124,22 @@
            0
            (climacs-syntax-fundamental:list-length (first suffix))))))
 
+(defmethod clim:replay-output-record
+    ((analyzer output-history) stream &optional region x-offset y-offset)
+  (declare (ignore x-offset y-offset region))
+  (multiple-value-bind (left top right bottom)
+      (clim:bounding-rectangle* (clim:pane-viewport-region stream))
+    (clim:medium-clear-area (clim:sheet-medium stream)
+                            left top right bottom)
+    (let* ((text-style (clim:medium-text-style stream))
+           (text-style-height (clim:text-style-height text-style stream))
+           (first-line-number (floor top text-style-height))
+           (line-count (line-count analyzer))
+           (last-line-number (min (ceiling bottom text-style-height)
+                                  (1- line-count))))
+      (unless (minusp last-line-number)
+        (render analyzer stream first-line-number last-line-number)))))
+
 (defmethod clim:bounding-rectangle* ((history output-history))
   (with-accessors ((prefix climacs-syntax-fundamental:prefix)
                    (suffix climacs-syntax-fundamental:suffix))
