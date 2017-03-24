@@ -148,15 +148,6 @@
            (text-style (clim:medium-text-style stream))
            (text-style-height (clim:text-style-height text-style stream))
            (text-style-width (clim:text-style-width text-style stream))
-           (prefix-height
-             (if (null prefix)
-                 0
-                 (climacs-syntax-fundamental:list-length (first prefix))))
-           (suffix-height
-             (if (null suffix)
-                 0
-                 (climacs-syntax-fundamental:list-length (first suffix))))
-           (line-count (+ prefix-height suffix-height))
            (width (max (if (null prefix)
                            0
                            (first (max-widths-prefix history)))
@@ -166,4 +157,4 @@
       (values 0
               0
               (* text-style-width width)
-              (* text-style-height line-count)))))
+              (* text-style-height (line-count history))))))
