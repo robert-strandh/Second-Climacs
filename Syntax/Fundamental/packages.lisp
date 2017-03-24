@@ -6,6 +6,7 @@
   (:export
    #:analyzer
    #:view
+   #:list-length
    #:prefix
    #:suffix
    #:push-to-prefix
