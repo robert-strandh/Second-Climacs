@@ -5,6 +5,7 @@
   (:shadow #:list-length)
   (:export
    #:analyzer
+   #:view
    #:prefix
    #:suffix
    #:push-to-prefix
