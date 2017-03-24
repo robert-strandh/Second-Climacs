@@ -88,3 +88,31 @@
                  (clim:draw-text* pane contents (+ cursor-x 5) y
                                   :start cursor-column-number))))
         (clim:draw-text* pane contents 0 y))))
+
+(defmethod clim:bounding-rectangle* ((history output-history))
+  (with-accessors ((prefix climacs-syntax-fundamental:prefix)
+                   (suffix climacs-syntax-fundamental:suffix))
+    history
+    (let* ((stream (clim:output-record-parent history))
+           (text-style (clim:medium-text-style stream))
+           (text-style-height (clim:text-style-height text-style stream))
+           (text-style-width (clim:text-style-width text-style stream))
+           (prefix-height
+             (if (null prefix)
+                 0
+                 (climacs-syntax-fundamental:list-length (first prefix))))
+           (suffix-height
+             (if (null suffix)
+                 0
+                 (climacs-syntax-fundamental:list-length (first suffix))))
+           (line-count (+ prefix-height suffix-height))
+           (width (max (if (null prefix)
+                           0
+                           (first (max-widths-prefix history)))
+                       (if (null suffix)
+                           0
+                           (first (max-widths-suffix history))))))
+      (values 0
+              0
+              (* text-style-width width)
+              (* text-style-height line-count)))))
