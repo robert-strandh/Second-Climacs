@@ -6,4 +6,5 @@
                :stealth-mixin)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "view")))
