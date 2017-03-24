@@ -8,6 +8,18 @@
    (%max-widths-prefix :initform '() :accessor max-widths-prefix)
    (%max-widths-suffix :initform '() :accessor max-widths-suffix)))
 
+(defmethod climacs-syntax-fundamental:push-to-prefix :after
+    ((analyzer output-history) entry)
+  (with-accessors ((prefix climacs-syntax-fundamental:prefix)) analyzer
+    (with-accessors ((contents climacs-syntax-fundamental:contents)
+                     (list-length climacs-syntax-fundamental:list-length))
+        entry
+      (push (max (if (null (rest prefix))
+                     0
+                     (first (max-widths-prefix analyzer)))
+                 (length contents))
+            (max-widths-prefix analyzer)))))
+
 (defclass fundamental-view (second-climacs-clim-base:climacs-clim-view)
   ())
 
