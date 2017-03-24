@@ -4,7 +4,9 @@
     output-history
     (clim:output-record clim:stream-output-history-mixin)
   climacs-syntax-fundamental:analyzer
-  ((%parent :initarg :parent :accessor clim:output-record-parent)))
+  ((%parent :initarg :parent :accessor clim:output-record-parent)
+   (%max-widths-prefix :initform '() :accessor max-widths-prefix)
+   (%max-widths-suffix :initform '() :accessor max-widths-suffix)))
 
 (defclass fundamental-view (second-climacs-clim-base:climacs-clim-view)
   ())
