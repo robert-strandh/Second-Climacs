@@ -102,6 +102,17 @@
                         last-line))
           do (climacs-syntax-fundamental:prefix-to-suffix analyzer))))
 
+(defgeneric render (analyzer pane first-line last-line))
+
+(defmethod render ((analyzer output-history) pane first-line last-line)
+  (adjust-for-rendering analyzer last-line)
+  (loop with prefix = (climacs-syntax-fundamental:prefix analyzer)
+        for entry in prefix
+        for line-number = (climacs-syntax-fundamental:list-length entry)
+        for contents = (climacs-syntax-fundamental:contents entry)
+        until (< line-number first-line)
+        do (draw-line pane analyzer contents line-number)))
+
 (defmethod clim:bounding-rectangle* ((history output-history))
   (with-accessors ((prefix climacs-syntax-fundamental:prefix)
                    (suffix climacs-syntax-fundamental:suffix))
