@@ -113,6 +113,17 @@
         until (< line-number first-line)
         do (draw-line pane analyzer contents line-number)))
 
+(defun line-count (analyzer)
+  (with-accessors ((prefix climacs-syntax-fundamental:prefix)
+                   (suffix climacs-syntax-fundamental:suffix))
+      analyzer
+    (+ (if (null prefix)
+           0
+           (climacs-syntax-fundamental:list-length (first prefix)))
+       (if (null suffix)
+           0
+           (climacs-syntax-fundamental:list-length (first suffix))))))
+
 (defmethod clim:bounding-rectangle* ((history output-history))
   (with-accessors ((prefix climacs-syntax-fundamental:prefix)
                    (suffix climacs-syntax-fundamental:suffix))
