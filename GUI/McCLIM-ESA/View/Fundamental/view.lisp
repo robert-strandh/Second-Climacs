@@ -36,6 +36,10 @@
                  (length contents))
             (max-widths-suffix analyzer)))))
 
+(defmethod climacs-syntax-fundamental:pop-from-suffix :after
+    ((analyzer output-history))
+  (pop (max-widths-suffix analyzer)))
+
 (defclass fundamental-view (second-climacs-clim-base:climacs-clim-view)
   ())
 
