@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:shadow #:list-length)
   (:export
-   #:cache
+   #:analyzer
    #:prefix
    #:suffix
    #:push-to-prefix
