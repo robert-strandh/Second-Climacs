@@ -84,7 +84,7 @@
 		 (let ((temp (make-instance 'entry
 			       :line line
 			       :contents (cluffer:items line))))
-                   (push-to-prefix temp))
+                   (push-to-prefix analyzer temp))
 		 (incf line-counter))
 	       (sync (line)
                  (adjust-prefix-and-suffix analyzer line-counter)
