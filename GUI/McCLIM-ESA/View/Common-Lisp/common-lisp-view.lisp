@@ -293,7 +293,7 @@
                        (max-line-length cache (1+ end-line) (1- start-line))
                        max-line-width)))))))
 
-(defun adjust-for-rendering (cache first-line last-line)
+(defun adjust-for-rendering (cache last-line)
   (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
                    (suffix climacs-syntax-common-lisp:suffix))
       cache
@@ -309,7 +309,7 @@
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
-  (adjust-for-rendering cache first-line last-line)
+  (adjust-for-rendering cache last-line)
   (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
         for parse-result in prefix
         until (< (climacs-syntax-common-lisp:end-line parse-result)
