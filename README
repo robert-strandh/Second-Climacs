@@ -35,6 +35,11 @@ to insert and existing file.  Some basic Emacs commands also work, like
 C-f, C-b, C-p, C-n, M-<, M->, and C-x C-c.  The visible window does not
 automatically follow the cursor yet.
 
+I am not accepting contributions at this time.  I will make an
+exception for someone who is highly motivated and willing to spend
+time understanding the goals of the project, and then only after
+discussing the ideas with me.
+
 Repositories:
 
   Second Climacs: https://github.com/robert-strandh/Second-Climacs
