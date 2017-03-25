@@ -198,3 +198,7 @@
      (pane second-climacs-clim-base:text-pane)
      (analyzer climacs-syntax-fundamental:analyzer))
   (update-analyzer view pane analyzer))
+
+(defmethod second-climacs-clim-base:command-table
+    ((view  climacs-syntax-fundamental:view))
+  (clim:find-command-table 'fundamental-table))
