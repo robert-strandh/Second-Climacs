@@ -26,6 +26,24 @@ Second Climacs:
     different such libraries.  Though, at the moment, the only graphic
     user interface that exists uses McCLIM.
 
+Before you build Second Climacs, you need to install some other
+systems that it depends on and that are not yet available through
+Quicklisp:
+
+  Cluffer:
+  https://github.com/robert-strandh/Cluffer
+
+  Cluffer Emacs Compatibility:
+  https://github.com/robert-strandh/Cluffer-Emacs-compatibility
+
+  Stealth Mixin:
+  https://github.com/robert-strandh/Stealth-mixin
+
+The system for Second Climacs is available here:
+
+  Second Climacs:
+  https://github.com/robert-strandh/Second-Climacs
+
 To build Second Climacs, make sure ASDF can find the top directory,
 and then execute: (asdf:load-system :second-climacs-clim).  To start
 Second Climacs, execute this form: (second-climacs-clim-base:climacs).
@@ -39,20 +57,3 @@ I am not accepting contributions at this time.  I will make an
 exception for someone who is highly motivated and willing to spend
 time understanding the goals of the project, and then only after
 discussing the ideas with me.
-
-Repositories:
-
-  Second Climacs:
-  https://github.com/robert-strandh/Second-Climacs
-
-  Cluffer:
-  https://github.com/robert-strandh/Cluffer
-
-  Cluffer Emacs Compatibility:
-  https://github.com/robert-strandh/Cluffer-Emacs-compatibility
-
-  McCLIM:
-  https://github.com/robert-strandh/McCLIM
-
-  Stealth Mixin:
-  https://github.com/robert-strandh/Stealth-mixin
