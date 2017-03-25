@@ -192,3 +192,9 @@
   (let* ((climacs-buffer (climacs2-base:buffer analyzer))
          (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
     (climacs-syntax-fundamental:scavenge analyzer cluffer-buffer)))
+
+(defmethod climacs2-base:update-view-from-analyzer
+    ((view climacs-syntax-fundamental:view)
+     (pane second-climacs-clim-base:text-pane)
+     (analyzer climacs-syntax-fundamental:analyzer))
+  (update-analyzer view pane analyzer))
