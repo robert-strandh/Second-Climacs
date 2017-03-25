@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :climacs-clim-view-fundamental
+(defsystem :second-climacs-clim-fundamental-view
   :depends-on (:climacs-syntax-fundamental
                :second-climacs-clim-base
                :stealth-mixin)
