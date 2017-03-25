@@ -50,8 +50,7 @@
                   (my-info-pane (clim:make-pane 'info-pane
                                                 :master-pane my-pane
                                                 :width 900))
-                  (view (make-instance 'climacs-syntax-common-lisp:view)))
-;;             (view (make-instance 'climacs2-base:fundamental-view)))
+             (view (make-instance 'climacs-syntax-fundamental:view)))
              (setf (clim:stream-recording-p my-pane) nil)
              (setf (clim:stream-end-of-line-action my-pane) :allow)
              ;; Unfortunately, the ESA top-level accesses the slot
