@@ -186,3 +186,9 @@
   (declare (ignore x-offset y-offset function-args))
   ;; For now, do nothing.
   nil)
+
+(defun update-analyzer (view pane analyzer)
+  (declare (ignore view pane))
+  (let* ((climacs-buffer (climacs2-base:buffer analyzer))
+         (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
+    (climacs-syntax-fundamental:scavenge analyzer cluffer-buffer)))
