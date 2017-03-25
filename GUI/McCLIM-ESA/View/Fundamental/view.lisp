@@ -78,17 +78,20 @@
                                        (+ cursor-x 4) y
                                        :ink clim:+blue+)))
               (t
-               (clim:draw-text* pane string 0 y
-                                :start 0
-                                :end cursor-column-number)
+               (unless (zerop (length string))
+                 (clim:draw-text* pane string 0 y
+                                  :start 0
+                                  :end cursor-column-number))
                (let ((cursor-x (* cursor-column-number text-width)))
                  (clim:draw-rectangle* pane
                                        (1+ cursor-x) (- y text-height)
                                        (+ cursor-x 4) y
                                        :ink clim:+blue+)
+               (unless (zerop (length string))
                  (clim:draw-text* pane string (+ cursor-x 5) y
-                                  :start cursor-column-number))))
-        (clim:draw-text* pane string 0 y))))
+                                  :start cursor-column-number)))))
+        (unless (zerop (length string))
+          (clim:draw-text* pane string 0 y)))))
 
 (defun adjust-for-rendering (analyzer last-line)
   (with-accessors ((prefix climacs-syntax-fundamental:prefix)
@@ -109,7 +112,7 @@
   (adjust-for-rendering analyzer last-line)
   (loop with prefix = (climacs-syntax-fundamental:prefix analyzer)
         for entry in prefix
-        for line-number = (climacs-syntax-fundamental:list-length entry)
+        for line-number = (1- (climacs-syntax-fundamental:list-length entry))
         for contents = (climacs-syntax-fundamental:contents entry)
         until (< line-number first-line)
         do (draw-line pane analyzer contents line-number)))
