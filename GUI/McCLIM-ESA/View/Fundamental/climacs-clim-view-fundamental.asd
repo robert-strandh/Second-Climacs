@@ -7,4 +7,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "view")))
+   (:file "view")
+   (:file "command-table")))
