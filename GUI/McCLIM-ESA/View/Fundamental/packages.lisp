@@ -2,4 +2,4 @@
 
 (defpackage #:climacs-clim-view-fundamental
   (:use #:common-lisp)
-  (:export))
+  (:export #:fundamental-view))
