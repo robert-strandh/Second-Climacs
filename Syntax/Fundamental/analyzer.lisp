@@ -17,6 +17,12 @@
    ;; suffix) that this entry is a member of.
    (%list-length :initarg list-length :accessor list-length)))
 
+(defmethod print-object ((object entry) stream)
+  (print-unreadable-object (object stream)
+    (format stream "list-length ~a contents ~s"
+            (list-length object)
+            (contents object))))
+
 (defclass analyzer (climacs2-base:analyzer)
   ((%prefix :initform () :accessor prefix)
    (%suffix :initform () :accessor suffix)
@@ -91,7 +97,7 @@
 		 (remove-deleted-lines line)
                  (suffix-to-prefix analyzer)
 		 (incf line-counter)))
-	  (setf (time-stamp analyzer)
+          (setf (time-stamp analyzer)
 		(cluffer:update buffer
 				(time-stamp analyzer)
 				#'sync #'skip #'modify #'create)))))))
