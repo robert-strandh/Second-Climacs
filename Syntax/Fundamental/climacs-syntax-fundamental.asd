@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "analyzer")))
+   (:file "analyzer")
+   (:file "view")))
