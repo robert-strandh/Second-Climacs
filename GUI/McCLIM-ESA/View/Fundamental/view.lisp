@@ -98,11 +98,11 @@
                    (suffix climacs-syntax-fundamental:suffix))
       analyzer
     (loop until (or (null suffix)
-                    (>= (climacs-syntax-fundamental:list-length prefix)
+                    (>= (1- (climacs-syntax-fundamental:list-length prefix))
                         last-line))
           do (climacs-syntax-fundamental:suffix-to-prefix analyzer))
     (loop until (or (null prefix)
-                    (<= (climacs-syntax-fundamental:list-length prefix)
+                    (<= (1- (climacs-syntax-fundamental:list-length prefix))
                         last-line))
           do (climacs-syntax-fundamental:prefix-to-suffix analyzer))))
 
