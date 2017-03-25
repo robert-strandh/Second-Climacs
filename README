@@ -23,30 +23,17 @@ Second Climacs:
   * Climacs depends on McCLIM for its graphic user interface.  Second
     Climacs is independent of any particular library for making
     graphic user interfaces, allowing it to be configured with
-    different such libraries.
+    different such libraries.  Though, at the moment, the only graphic
+    user interface that exists uses McCLIM.
 
-Currently, Second Climacs is not in a complete enough state to be
-executed.  We are working on several aspects of it:
+To build Second Climacs, make sure ASDF can find the top directory,
+and then execute: (asdf:load-system :second-climacs-clim).  To start
+Second Climacs, execute this form: (second-climacs-clim-base:climacs).
 
-  * We are writing a special output history class for McCLIM that will
-    be adapted for use with Second Climacs.  We have a working version
-    using the Flexichain library, but we want an implementation that
-    uses Splay trees.
-
-  * We are working on a special version of the Common Lisp READ
-    function that will be adapted so that it can read invalid buffer
-    contents such as unmatched parentheses and symbols with package
-    prefixes naming packages that do not exist.
-
-  * We are designing an structure for representing Common Lisp code
-    that can be incrementally updated as buffer contents changes.
-
-The immediate next step is to make it possible to execute Second
-Climacs with something that resembles "Fundamental mode" in Emacs,
-i.e., with no particular syntax analysis, and only very basic
-commands.  This step requires a design for representing commands.  It
-is not a particularly difficult design, but we might as well give it
-some thought in order to get it right.
+At the moment, all you can do is type some text, and you can use C-x i
+to insert and existing file.  Some basic Emacs commands also work, like
+C-f, C-b, C-p, C-n, M-<, M->, and C-x C-c.  The visible window does not
+automatically follow the cursor yet.
 
 Repositories:
 
