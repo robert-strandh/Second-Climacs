@@ -2,8 +2,8 @@
 
 (defsystem :second-climacs-clim-base
   :depends-on (:mcclim
-	       :second-climacs-base
-	       :clouseau
+               :second-climacs-base
+               :clouseau
                :stealth-mixin)
   :serial t
   :components
