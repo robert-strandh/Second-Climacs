@@ -9,3 +9,6 @@
       (reinitialize-instance instance
                              :cursor cursor
 			     :analyzer analyzer))))
+
+(defmethod second-climacs-clim-base:view-name ((view view))
+  "Fundamental")
