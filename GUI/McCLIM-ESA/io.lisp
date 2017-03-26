@@ -5,3 +5,14 @@
       (climacs2-base:make-empty-standard-buffer-and-cursor)
     (climacs2-base:fill-buffer-from-stream cursor stream)
     buffer))
+
+(defmethod esa-buffer:frame-save-buffer-to-stream
+    ((frame climacs) (buffer climacs2-base:standard-buffer) stream)
+  (let* ((cluffer-buffer (climacs2-base:cluffer-buffer buffer))
+         (class 'cluffer-standard-line:right-sticky-cursor)
+         (cursor (make-instance class))
+         (first-line (cluffer:find-line cluffer-buffer 0)))
+    (cluffer:attach-cursor cursor first-line)
+    (loop until (cluffer:end-of-buffer-p cursor)
+          do (write-char (cluffer-emacs:item-after-cursor cursor) stream)
+             (cluffer-emacs:forward-item cursor))))
