@@ -23,10 +23,9 @@
     ((filepath 'pathname
                :prompt "Insert File: "
                :prompt-mode :raw
-;;               :default (esa-io::directory-of-current-buffer)
+               :default (esa-io::directory-of-current-buffer)
                :default-type 'clim:pathname
-;;               :insert-default t))
-               ))
+               :insert-default t))
   (with-current-cursor (cursor)
     (with-open-file (stream filepath :direction :input)
       (climacs2-base:fill-buffer-from-stream cursor stream))))
