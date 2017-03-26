@@ -3,11 +3,13 @@
 (defsystem :second-climacs-clim-base
   :depends-on (:mcclim
 	       :second-climacs-base
-	       :clouseau)
+	       :clouseau
+               :stealth-mixin)
   :serial t
   :components
   ((:file "packages")
    (:file "climacs-clim-view")
+   (:file "esa-buffer")
    (:file "view-name")
    (:file "text-pane")
    (:file "with-current-cursor")
