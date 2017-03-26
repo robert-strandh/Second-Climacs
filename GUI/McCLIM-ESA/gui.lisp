@@ -11,7 +11,10 @@
   (let* ((pane (esa:esa-current-window frame))
          (clim-view (clim:stream-default-view pane))
          (climacs-view (climacs-view clim-view)))
-    (format info-pane "(~a)" (view-name climacs-view))))
+    (format info-pane
+            " ~a (~a)"
+            (esa-utils:name (esa:current-buffer))
+            (view-name climacs-view))))
 
 (defclass minibuffer-pane (esa:minibuffer-pane)
   ()
