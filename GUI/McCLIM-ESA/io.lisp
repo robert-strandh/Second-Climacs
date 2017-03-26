@@ -16,3 +16,9 @@
     (loop until (cluffer:end-of-buffer-p cursor)
           do (write-char (cluffer-emacs:item-after-cursor cursor) stream)
              (cluffer-emacs:forward-item cursor))))
+
+(defmethod esa-buffer:frame-make-new-buffer ((frame climacs) &key)
+  (multiple-value-bind (buffer cursor)
+      (climacs2-base:make-empty-standard-buffer-and-cursor)
+    (declare (ignore cursor))
+    buffer))
