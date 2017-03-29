@@ -17,6 +17,7 @@
    (:file "more-variables")
    (:file "additional-conditions")
    (:file "analyzer")
+   (:file "reader")
    (:file "parse")
    (:file "read-forms")
    (:file "view")
