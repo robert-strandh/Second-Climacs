@@ -70,21 +70,22 @@
                     (setf start-column (current-item-number input-stream))
                     (go step-1-start))
                   (progn
-                    (make-instance 'expression-parse-result
-                      :expression (first values)
-                      :max-line-width (compute-max-line-width
-                                       input-stream
-                                       start-line
-                                       (current-line-number input-stream)
-                                       (first *stack*))
-                      :children (make-relative (nreverse (first *stack*))
-                                 start-line)
-                      :start-line start-line
-                      :start-column start-column
-                      :height (- (current-line-number input-stream)
-                               start-line)
-                      :end-column (current-item-number input-stream)
-                      :relative-p nil)
+                    (push-parse-result
+                     (make-instance 'expression-parse-result
+                       :expression (first values)
+                       :max-line-width (compute-max-line-width
+                                        input-stream
+                                        start-line
+                                        (current-line-number input-stream)
+                                        (first *stack*))
+                       :children (make-relative (nreverse (first *stack*))
+                                  start-line)
+                       :start-line start-line
+                       :start-column start-column
+                       :height (- (current-line-number input-stream)
+                                start-line)
+                       :end-column (current-item-number input-stream)
+                       :relative-p nil))
                     (return-from sicl-reader:read-common (car values))))))
            (t
             (unread-char char input-stream)
