@@ -9,9 +9,21 @@
      step-1-start
        (let ((char (read-char input-stream nil nil)))
          (when (null char)
-           (if eof-error-p
-               (error 'end-of-file :stream input-stream)
-               (return-from sicl-reader:read-common eof-value)))
+           (push-parse-result
+            (make-instance 'eof-parse-result
+              :max-line-width (compute-max-line-width
+                               input-stream
+                               start-line
+                               (current-line-number input-stream)
+                               (first *stack*))
+              :children (make-relative (nreverse (first *stack*))
+                         start-line)
+              :start-line start-line
+              :start-column start-column
+              :height (- (current-line-number input-stream) start-line)
+              :end-column (current-item-number input-stream)
+              :relative-p nil))
+           (return-from sicl-reader:read-common eof-value))
          (case (sicl-reader:syntax-type char)
            (:whitespace
             (setf start-line (current-line-number input-stream))
@@ -24,8 +36,41 @@
                             input-stream
                             char))))
               (if (null values)
-                  (go step-1-start)
-                  (return-from sicl-reader:read-common (car values)))))
+                  (progn
+                    (push-parse-result
+                     (make-instance 'no-expression-parse-result
+                       :max-line-width (compute-max-line-width
+                                        input-stream
+                                        start-line
+                                        (current-line-number input-stream)
+                                        (first *stack*))
+                       :children (make-relative (nreverse (first *stack*))
+                                  start-line)
+                       :start-line start-line
+                       :start-column start-column
+                       :height (- (current-line-number input-stream) start-line)
+                       :end-column (current-item-number input-stream)
+                       :relative-p nil))
+                    (setf start-line (current-line-number input-stream))
+                    (setf start-column (current-item-number input-stream))
+                    (go step-1-start))
+                  (progn
+                    (make-instance 'expression-parse-result
+                      :expression (first values)
+                      :max-line-width (compute-max-line-width
+                                       input-stream
+                                       start-line
+                                       (current-line-number input-stream)
+                                       (first *stack*))
+                      :children (make-relative (nreverse (first *stack*))
+                                 start-line)
+                      :start-line start-line
+                      :start-column start-column
+                      :height (- (current-line-number input-stream)
+                               start-line)
+                      :end-column (current-item-number input-stream)
+                      :relative-p nil)
+                    (return-from sicl-reader:read-common (car values))))))
            (t
             (unread-char char input-stream)
             (return-from sicl-reader:read-common
