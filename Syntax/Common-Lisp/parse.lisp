@@ -1,14 +1,11 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defun parse (analyzer)
+(defun parse-and-cache (analyzer)
   (let ((*stack* (list '()))
         (sicl-reader:*preserve-whitespace* t))
-    (handler-case (sicl-reader:read analyzer)
-      (end-of-file () nil))
-    (first (first *stack*))))
-
-(defun parse-and-cache (analyzer)
-  (push-to-prefix (folio analyzer) (parse analyzer)))
+    (sicl-reader:read analyzer)
+    (loop for parse-result in (reverse (first *stack*))
+          do (push-to-prefix (folio analyzer) parse-result))))
 
 (defun parse-buffer (analyzer)
   (with-accessors ((current-line-number current-line-number)
