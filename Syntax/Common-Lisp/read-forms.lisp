@@ -24,7 +24,8 @@
                    ;; reach EOF, then we stop only if the current position
                    ;; is that of the first parse result on the suffix.
                    (return-from read-forms nil)
-                   (let ((next (parse analyzer)))
+                   (progn
+                     (parse-and-cache analyzer)
                      (loop until (or (null residue)
                                      (> (start-line (first residue))
                                         current-line-number)
@@ -41,5 +42,4 @@
                                                current-line-number)
                                             (> (start-column (first suffix))
                                                current-item-number)))
-                             do (pop-from-suffix cache)))
-                     (push-to-prefix cache next)))))))
+                             do (pop-from-suffix cache)))))))))
