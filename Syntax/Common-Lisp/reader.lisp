@@ -14,6 +14,8 @@
                (return-from sicl-reader:read-common eof-value)))
          (case (sicl-reader:syntax-type char)
            (:whitespace
+            (setf start-line (current-line-number input-stream))
+            (setf start-column (current-item-number input-stream))
             (go step-1-start))
            ((:terminating-macro :non-terminating-macro)
             (let ((values (multiple-value-list
