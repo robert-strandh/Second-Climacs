@@ -3,15 +3,33 @@
 (defclass token () ())
 
 (defclass symbol-token (token)
-  ((package-name
+  ((%package-marker-1
+    :initform nil
+    :initarg :package-marker-1
+    :reader package-marker-1)
+   (%package-marker-2
+    :initform nil
+    :initarg :package-marker-2
+    :reader package-marker-2)))
+
+(defclass legal-symbol-token (symbol-token)
+  ((%package-name
     :initform nil
     :initarg :package-name
     :reader package-name)
-   (package-marker-count
-    :initform 0
-    :initarg :package-marker-count
-    :reader package-marker-count)
-   (name :initarg :name :reader name)))
+   (%name :initarg :name :reader name)))
+
+(defclass illegal-symbol-token (symbol-token)
+  ())
+
+(defclass non-existing-symbol-token (legal-symbol-token)
+  ())
+
+(defclass non-existing-package-symbol-token (legal-symbol-token)
+  ())
+
+(defclass existing-symbol-token (legal-symbol-token)
+  ())
 
 (defclass other-token (token)
   ((%characters :initarg :characters :reader characters)))
@@ -44,20 +62,28 @@
        (when (or (/= position-package-marker-2 (1+ position-package-marker-1))
                  (= position-package-marker-2 (1- (length token))))
          (return-from sicl-reader:interpret-symbol
-           (make-instance 'other-token :characters token)))
+           (make-instance 'illegal-symbol-token
+             :package-marker-1 position-package-marker-1
+             :package-marker-2 position-package-marker-2)))
        (setf package-designator (subseq token 0 position-package-marker-1))
        (setf symbol-name (subseq token (1+ position-package-marker-2)))))
     (let ((package (find-package package-designator)))
       (if (null package)
-          (make-instance 'symbol-token
+          (make-instance 'non-existing-package-symbol-token
             :package-name package-designator
-            :package-marker-count package-marker-count
+            :package-marker-1 position-package-marker-1
+            :package-marker-2 position-package-marker-2
             :name symbol-name)
           (multiple-value-bind (symbol status)
               (find-symbol symbol-name package)
             (if (null status)
-                (make-instance 'symbol-token
+                (make-instance 'non-existing-symbol-token
                   :package-name (cl:package-name package)
-                  :package-marker-count package-marker-count
+                  :package-marker-1 position-package-marker-1
+                  :package-marker-2 position-package-marker-2
                   :name symbol-name)
-                symbol))))))
+                (make-instance 'existing-symbol-token
+                  :package-name (cl:package-name (symbol-package symbol))
+                  :package-marker-1 position-package-marker-1
+                  :package-marker-2 position-package-marker-2
+                  :name (symbol-name symbol))))))))
