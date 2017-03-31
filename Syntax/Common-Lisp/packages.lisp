@@ -22,6 +22,7 @@
    #:no-expression-parse-result
    #:comment-parse-result
    #:eof-parse-result
+   #:error-parse-result
    #:start-line
    #:height
    #:end-line
