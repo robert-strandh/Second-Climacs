@@ -22,6 +22,7 @@
 	   #:update-analyzer
 	   #:null-analyzer
 	   #:view
+           #:view-class
 	   #:cursor
 	   #:window
 	   #:update-view-from-analyzer
