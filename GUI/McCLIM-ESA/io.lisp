@@ -22,3 +22,10 @@
       (climacs2-base:make-empty-standard-buffer-and-cursor)
     (declare (ignore cursor))
     buffer))
+
+(defun file-name-extension (file-path)
+  (let* ((namestring (namestring file-path))
+         (dot-position (position #\. namestring :from-end t)))
+    (if (null dot-position)
+        nil
+        (subseq namestring (1+ dot-position)))))
