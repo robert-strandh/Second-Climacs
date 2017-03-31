@@ -34,8 +34,14 @@
    #:expression
    #:token
    #:symbol-token
+   #:legal-symbol-token
+   #:illegal-symbol-token
+   #:non-existing-package-symbol-token
+   #:non-existing-symbol-token
+   #:existing-symbol-token
    #:package-name
-   #:package-marker-count
+   #:package-marker-1
+   #:package-marker-2
    #:name
    #:cache
    #:prefix
