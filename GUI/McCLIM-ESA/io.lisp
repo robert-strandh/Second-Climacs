@@ -43,5 +43,6 @@
                      :cursor-position 0
                      :line first-line))
            (view (make-instance view-class :buffer buffer :cursor cursor)))
+      (push view (climacs2-base:views frame))
       (detach-view window)
       (attach-view window view))))
