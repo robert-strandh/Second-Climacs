@@ -29,3 +29,19 @@
     (if (null dot-position)
         nil
         (subseq namestring (1+ dot-position)))))
+
+(defmethod esa-io:frame-find-file :around ((frame climacs) file-path)
+  (let* ((extension (file-name-extension file-path))
+         (view-class (second-climacs-base:view-class extension))
+         (buffer (call-next-method))
+         (cluffer-buffer (climacs2-base:cluffer-buffer buffer))
+         (first-line (cluffer:find-line cluffer-buffer 0))
+         (window (esa:current-window)))
+    (when (null view-class)
+      (setf view-class 'climacs-syntax-fundamental:view))
+    (let* ((cursor (make-instance 'cluffer-standard-line:right-sticky-cursor
+                     :cursor-position 0
+                     :line first-line))
+           (view (make-instance view-class :buffer buffer :cursor cursor)))
+      (detach-view window)
+      (attach-view window view))))
