@@ -9,6 +9,9 @@
 (defclass common-lisp-view (second-climacs-clim-base:climacs-clim-view)
   ())
 
+(setf (second-climacs-base:view-class "lisp")
+      'common-lisp-view)
+
 (defmethod second-climacs-clim-base:make-climacs-clim-view
     ((view climacs-syntax-common-lisp:view))
   (let* ((analyzer (climacs2-base:analyzer view))
