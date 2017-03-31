@@ -228,6 +228,17 @@
   (clim:with-drawing-options (pane :ink clim:+red+)
     (call-next-method)))
 
+(defmethod draw-parse-result :around
+    ((parse-result climacs-syntax-common-lisp:error-parse-result)
+     start-ref
+     pane
+     cache
+     first-line
+     last-line)
+  (declare (ignore start-ref pane cache first-line last-line))
+  (clim:with-drawing-options (pane :ink clim:+red+)
+    (call-next-method)))
+
 (defmethod draw-parse-result ((parse-result presentation)
                               start-ref
                               pane
