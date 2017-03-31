@@ -49,23 +49,29 @@
                                         climacs2-base:application)
   ()
   (:panes
-   (window (let* ((my-pane (make-climacs-pane))
-                  (my-info-pane (clim:make-pane 'info-pane
-                                                :master-pane my-pane
-                                                :width 900))
-             (view (make-instance 'climacs-syntax-fundamental:view)))
-             (setf (clim:stream-recording-p my-pane) nil)
-             (setf (clim:stream-end-of-line-action my-pane) :allow)
-             ;; Unfortunately, the ESA top-level accesses the slot
-             ;; named WINDOWS directly (using WITH-SLOTS) rather than
-             ;; using the accessor, so we must initialize this slot
-             ;; by using the slot writer provided by ESA.
-             (setf (esa:windows clim:*application-frame*) (list my-pane))
-             (attach-view my-pane view)
-             (clim:vertically ()
-               (clim:scrolling ()
-                 my-pane)
-               my-info-pane)))
+   (window
+    (multiple-value-bind (buffer cursor)
+        (climacs2-base:make-empty-standard-buffer-and-cursor)
+      (let* ((my-pane (make-climacs-pane))
+             (my-info-pane (clim:make-pane 'info-pane
+                                           :master-pane my-pane
+                                           :width 900))
+             ;; (view (make-instance 'climacs-syntax-fundamental:view
+             ;;        :buffer buffer :cursor cursor))
+             (view (make-instance 'climacs-syntax-common-lisp:view
+                     :buffer buffer :cursor cursor)))
+        (setf (clim:stream-recording-p my-pane) nil)
+        (setf (clim:stream-end-of-line-action my-pane) :allow)
+        ;; Unfortunately, the ESA top-level accesses the slot
+        ;; named WINDOWS directly (using WITH-SLOTS) rather than
+        ;; using the accessor, so we must initialize this slot
+        ;; by using the slot writer provided by ESA.
+        (setf (esa:windows clim:*application-frame*) (list my-pane))
+        (attach-view my-pane view)
+        (clim:vertically ()
+          (clim:scrolling ()
+            my-pane)
+          my-info-pane))))
    (minibuffer (clim:make-pane 'minibuffer-pane :width 900)))
   (:layouts
    (default (clim:vertically (:scroll-bars nil)
