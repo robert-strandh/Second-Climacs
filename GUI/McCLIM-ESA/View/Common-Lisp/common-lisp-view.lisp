@@ -332,6 +332,21 @@
       (clim:with-drawing-options (pane :ink clim:+red+)
 	(call-next-method))))
 
+(defmethod draw-token-parse-result :around
+    (parse-result
+     (token climacs-syntax-common-lisp:non-existing-package-symbol-token)
+     start-ref
+     pane
+     (cache output-history)
+     first-line
+     last-line)
+  (declare (ignorable parse-result token start-ref)
+           (ignorable  pane cache first-line last-line))
+  (if (null (climacs-syntax-common-lisp:package-marker-1 token))
+      (call-next-method)
+      (clim:with-drawing-options (pane :ink clim:+red+)
+	(call-next-method))))
+
 (defmethod draw-token-parse-result (parse-result
                                     token
                                     start-ref
