@@ -32,6 +32,11 @@
         (text-ascent (clim:text-style-ascent text-style pane)))
     (+ text-ascent (* line-number text-height))))
 
+;;; Given a column number, return the X coordinate of the left edge of
+;;; the column with that number.
+(defun horizontal-position (text-style pane column-number)
+  (* column-number (clim:text-style-width  text-style pane)))
+
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
