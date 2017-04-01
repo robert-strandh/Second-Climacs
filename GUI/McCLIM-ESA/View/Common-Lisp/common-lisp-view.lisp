@@ -37,6 +37,23 @@
 (defun horizontal-position (text-style pane column-number)
   (* column-number (clim:text-style-width  text-style pane)))
 
+;;; Given a line number, a start-column-number, and an end-column
+;;; number, return the rectangle coordinates of the corresponding text
+;;; as four values: The X coordinate of the upper-left corner, the Y
+;;; coordinate of the upper-left corner, the X coordinate of the
+;;; lower-right corner, and the Y coordinate of the lower-right
+;;; corner.
+(defun rectangle-coordinates
+    (pane line-number start-column-number end-column-number)
+  (let* ((text-style (clim:medium-text-style pane))
+         (text-height (clim:text-style-height text-style pane))
+         (text-width (clim:text-style-width text-style pane))
+         (text-ascent (clim:text-style-ascent text-style pane)))
+    (values (* start-column-number text-width)
+	    (* line-number text-height)
+	    (* end-column-number text-width)
+	    (+ text-ascent (* line-number text-height)))))
+
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
