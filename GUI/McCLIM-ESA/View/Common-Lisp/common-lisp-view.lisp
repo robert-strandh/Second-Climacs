@@ -192,22 +192,6 @@
                                last-line))
 
 (defmethod draw-parse-result :around
-    ((parse-result climacs-syntax-common-lisp:expression-parse-result)
-     start-ref
-     pane
-     cache
-     first-line
-     last-line)
-  (declare (ignore start-ref pane cache first-line last-line))
-  (let ((expression (climacs-syntax-common-lisp:expression parse-result)))
-    (if (and (typep expression 'climacs-syntax-common-lisp:existing-symbol-token)
-             (equal (climacs-syntax-common-lisp:package-name expression)
-                    "COMMON-LISP"))
-        (clim:with-drawing-options (pane :ink clim:+purple+)
-          (call-next-method))
-        (call-next-method))))
-
-(defmethod draw-parse-result :around
     ((parse-result climacs-syntax-common-lisp:comment-parse-result)
      start-ref
      pane
@@ -240,12 +224,12 @@
   (clim:with-drawing-options (pane :ink clim:+red+)
     (call-next-method)))
 
-(defmethod draw-parse-result ((parse-result presentation)
-                              start-ref
-                              pane
-                              (cache output-history)
-                              first-line
-                              last-line)
+(defun draw-non-token-parse-result (parse-result
+                                    start-ref
+                                    pane
+                                    cache
+                                    first-line
+                                    last-line)
   (flet ((start-line (pr) (climacs-syntax-common-lisp:start-line pr))
          (start-column (pr) (climacs-syntax-common-lisp:start-column pr))
          (height (pr) (climacs-syntax-common-lisp:height pr))
@@ -272,6 +256,84 @@
                             (+ start-ref (height pr))
                             (end-column pr)
                             first-line last-line)))))
+
+(defgeneric draw-token-parse-result (parse-result
+                                     token
+                                     start-ref
+                                     pane
+                                     cache
+                                     first-line
+                                     last-line))
+
+(defmethod draw-parse-result ((parse-result presentation)
+                              start-ref
+                              pane
+                              (cache output-history)
+                              first-line
+                              last-line)
+  (draw-non-token-parse-result parse-result
+                               start-ref
+                               pane
+                               cache
+                               first-line
+                               last-line))
+
+(defmethod draw-parse-result
+    ((parse-result climacs-syntax-common-lisp:expression-parse-result)
+     start-ref
+     pane
+     (cache output-history)
+     first-line
+     last-line)
+  (let ((expression (climacs-syntax-common-lisp:expression parse-result)))
+    (if (typep expression 'climacs-syntax-common-lisp:token)
+        (draw-token-parse-result parse-result
+                                 expression
+                                 start-ref
+                                 pane
+                                 cache
+                                 first-line
+                                 last-line)
+        (draw-non-token-parse-result parse-result
+                                     start-ref
+                                     pane
+                                     cache
+                                     first-line
+                                     last-line))))
+
+(defmethod draw-token-parse-result :around
+    (parse-result
+     (token climacs-syntax-common-lisp:existing-symbol-token)
+     start-ref
+     pane
+     (cache output-history)
+     first-line
+     last-line)
+  (declare (ignorable parse-result token start-ref)
+           (ignorable  pane cache first-line last-line))
+  (if (equal (climacs-syntax-common-lisp:package-name token)
+             "COMMON-LISP")
+      (clim:with-drawing-options (pane :ink clim:+purple+)
+        (call-next-method))
+      (call-next-method)))
+
+(defmethod draw-token-parse-result (parse-result
+                                    token
+                                    start-ref
+                                    pane
+                                    (cache output-history)
+                                    first-line
+                                    last-line)
+  (let* ((pr parse-result)
+         (start-column (climacs-syntax-common-lisp:start-column pr))
+         (end-column (climacs-syntax-common-lisp:end-column pr))
+         (height (climacs-syntax-common-lisp:height pr)))
+    (draw-filtered-area pane cache
+                        start-ref
+                        start-column
+                        (+ start-ref height)
+                        end-column
+                        first-line last-line)))
 
 ;;; Given a folio and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
