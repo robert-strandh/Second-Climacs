@@ -373,10 +373,15 @@
      last-line)
   (declare (ignorable parse-result token start-ref)
            (ignorable  pane cache first-line last-line))
-  (if (null (climacs-syntax-common-lisp:package-marker-1 token))
-      (call-next-method)
-      (clim:with-drawing-options (pane :ink clim:+red+)
-	(call-next-method))))
+  (let ((pos (climacs-syntax-common-lisp:package-marker-1 token))
+	(start (climacs-syntax-common-lisp:start-column parse-result))
+	(end (climacs-syntax-common-lisp:end-column parse-result)))
+    (if (or (null pos) (not (= first-line last-line)))
+	(call-next-method)
+	(progn
+	  (draw-rectangle pane first-line start pos clim:+red+)
+	  (draw-rectangle pane first-line pos end clim:+pink+)
+	  (call-next-method)))))
 
 (defmethod draw-token-parse-result (parse-result
                                     token
