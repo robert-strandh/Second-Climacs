@@ -54,6 +54,15 @@
 	    (* end-column-number text-width)
 	    (+ text-ascent (* line-number text-height)))))
 
+;;; Draw a rectangle defined by the start column and end column of a
+;;; single line of text.
+(defun draw-rectangle
+    (pane line-number start-column-number end-column-number ink)
+  (multiple-value-bind (x1 y1 x2 y2)
+      (rectangle-coordinates
+       pane line-number start-column-number end-column-number)
+    (clim:draw-rectangle* pane x1 y1 x2 y2 :ink ink)))
+
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
