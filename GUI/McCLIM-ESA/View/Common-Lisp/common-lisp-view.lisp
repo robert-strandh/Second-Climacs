@@ -379,8 +379,8 @@
     (if (or (null pos) (not (= first-line last-line)))
 	(call-next-method)
 	(progn
-	  (draw-rectangle pane first-line start pos clim:+red+)
-	  (draw-rectangle pane first-line pos end clim:+pink+)
+	  (draw-rectangle pane first-line start (+ start pos) clim:+red+)
+	  (draw-rectangle pane first-line (+ start pos) end clim:+pink+)
 	  (call-next-method)))))
 
 (defmethod draw-token-parse-result (parse-result
