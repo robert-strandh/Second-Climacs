@@ -19,6 +19,14 @@
     :reader package-name)
    (%name :initarg :name :reader name)))
 
+(defmethod print-object ((object legal-symbol-token) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s ~s ~s"
+	    (package-name object)
+	    (package-marker-1 object)
+	    (package-marker-2 object)
+	    (name object))))
+
 (defclass illegal-symbol-token (symbol-token)
   ())
 
