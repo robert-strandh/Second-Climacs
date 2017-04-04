@@ -8,4 +8,5 @@
   :components
   ((:file "packages")
    (:file "common-lisp-view")
+   (:file "token-drawing")
    (:file "common-lisp-command-table")))
