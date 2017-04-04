@@ -271,6 +271,8 @@
           (prev-end-column (start-column parse-result)))
       (let ((ref start-ref))
         (loop for child in children
+	      for start-line = (start-line child)
+	      until (> (+ ref start-line) last-line)
               do (incf ref (start-line child))
                  (draw-filtered-area pane cache
                                      prev-end-line
