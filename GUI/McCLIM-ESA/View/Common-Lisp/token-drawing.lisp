@@ -1,13 +1,8 @@
 (cl:in-package #:second-climacs-clim-common-lisp-view)
 
 (defmethod draw-token-parse-result :around
-    (parse-result
-     (token climacs-syntax-common-lisp:existing-symbol-token)
-     start-ref
-     pane
-     (cache output-history)
-     first-line
-     last-line)
+    (parse-result (token climacs-syntax-common-lisp:existing-symbol-token)
+     start-ref pane (cache output-history) first-line last-line)
   (declare (ignorable parse-result token start-ref)
            (ignorable  pane cache first-line last-line))
   (if (equal (climacs-syntax-common-lisp:package-name token)
@@ -17,13 +12,8 @@
       (call-next-method)))
 
 (defmethod draw-token-parse-result :before
-    (parse-result
-     (token climacs-syntax-common-lisp:non-existing-symbol-token)
-     start-ref
-     pane
-     (cache output-history)
-     first-line
-     last-line)
+    (parse-result (token climacs-syntax-common-lisp:non-existing-symbol-token)
+     start-ref pane (cache output-history) first-line last-line)
   (declare (ignorable parse-result token start-ref)
            (ignorable  pane cache first-line last-line))
   (let ((pos (climacs-syntax-common-lisp:package-marker-1 token))
@@ -37,11 +27,7 @@
 (defmethod draw-token-parse-result :before
     (parse-result
      (token climacs-syntax-common-lisp:non-existing-package-symbol-token)
-     start-ref
-     pane
-     (cache output-history)
-     first-line
-     last-line)
+     start-ref pane (cache output-history) first-line last-line)
   (declare (ignorable parse-result token start-ref)
            (ignorable  pane cache first-line last-line))
   (let ((pos (climacs-syntax-common-lisp:package-marker-1 token))
@@ -52,13 +38,9 @@
       (draw-rectangle pane start-ref start (+ start pos) clim:+red+)
       (draw-rectangle pane start-ref (+ start pos) end clim:+pink+))))
 
-(defmethod draw-token-parse-result (parse-result
-                                    token
-                                    start-ref
-                                    pane
-                                    (cache output-history)
-                                    first-line
-                                    last-line)
+(defmethod draw-token-parse-result
+    (parse-result token
+     start-ref pane (cache output-history) first-line last-line)
   (let* ((pr parse-result)
          (start-column (climacs-syntax-common-lisp:start-column pr))
          (end-column (climacs-syntax-common-lisp:end-column pr))
