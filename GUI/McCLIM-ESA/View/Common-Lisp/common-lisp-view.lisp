@@ -224,33 +224,21 @@
 
 (defmethod draw-parse-result :around
     ((parse-result climacs-syntax-common-lisp:comment-parse-result)
-     start-ref
-     pane
-     cache
-     first-line
-     last-line)
+     start-ref pane cache first-line last-line)
   (declare (ignore start-ref pane cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+brown+)
     (call-next-method)))
 
 (defmethod draw-parse-result :before
     ((parse-result climacs-syntax-common-lisp:eof-parse-result)
-     start-ref
-     pane
-     cache
-     first-line
-     last-line)
+     start-ref pane cache first-line last-line)
   (declare (ignore first-line last-line))
   (let ((start-column (climacs-syntax-common-lisp:start-column parse-result)))
     (draw-rectangle pane start-ref start-column (1+ start-column) clim:+red+)))
 
 (defmethod draw-parse-result :around
     ((parse-result climacs-syntax-common-lisp:error-parse-result)
-     start-ref
-     pane
-     cache
-     first-line
-     last-line)
+     start-ref pane cache first-line last-line)
   (declare (ignore start-ref pane cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+red+)
     (call-next-method)))
