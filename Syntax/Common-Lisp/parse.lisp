@@ -6,6 +6,8 @@
         (start-line (current-line-number analyzer))
         (start-column (current-item-number analyzer)))
     (handler-case (sicl-reader:read analyzer)
+      (end-of-file ()
+	nil)
       (error ()
 	(setf (first *stack*)
 	      (list (make-instance 'error-parse-result
