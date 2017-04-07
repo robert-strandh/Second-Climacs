@@ -6,36 +6,21 @@
         (start-line (current-line-number analyzer))
         (start-column (current-item-number analyzer)))
     (handler-case (sicl-reader:read analyzer)
-      (end-of-file ()
-        (push (make-instance 'eof-parse-result
-                :max-line-width (compute-max-line-width
-                                 analyzer
-                                 start-line
-                                 (current-line-number analyzer)
-                                 (first *stack*))
-                :children (make-relative (nreverse (first *stack*))
-                           start-line)
-                :start-line start-line
-                :start-column start-column
-                :height (- (current-line-number analyzer) start-line)
-                :end-column (current-item-number analyzer)
-                :relative-p nil)
-              (first *stack*)))
       (error ()
-        (push (make-instance 'error-parse-result
-                :max-line-width (compute-max-line-width
-                                 analyzer
-                                 start-line
-                                 (current-line-number analyzer)
-                                 (first *stack*))
-                :children (make-relative (nreverse (first *stack*))
-                           start-line)
-                :start-line start-line
-                :start-column start-column
-                :height (- (current-line-number analyzer) start-line)
-                :end-column (current-item-number analyzer)
-                :relative-p nil)
-              (first *stack*))))
+	(setf (first *stack*)
+	      (list (make-instance 'error-parse-result
+		      :max-line-width (compute-max-line-width
+				       analyzer
+				       start-line
+				       (current-line-number analyzer)
+				       (first *stack*))
+		      :children (make-relative (nreverse (first *stack*))
+					       start-line)
+		      :start-line start-line
+		      :start-column start-column
+		      :height (- (current-line-number analyzer) start-line)
+		      :end-column (current-item-number analyzer)
+		      :relative-p nil)))))
     (loop for parse-result in (reverse (first *stack*))
           do (push-to-prefix (folio analyzer) parse-result))))
 
