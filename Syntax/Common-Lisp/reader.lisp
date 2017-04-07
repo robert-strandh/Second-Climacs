@@ -113,4 +113,5 @@
 					start-line)
 			     :end-column (current-item-number input-stream)
 			     :relative-p nil)
-	      (second *stack*))))))
+	      (second *stack*))
+	(error 'end-of-file)))))
