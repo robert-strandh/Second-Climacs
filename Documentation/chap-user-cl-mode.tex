@@ -153,6 +153,17 @@ tooltip says ``Odd number of multiple escape characters''.
 
 No context menu is suggested for tokens with invalid syntax.
 
+\subsubsection{Incomplete expression}
+
+An incomplete expression is an expression that starts at some point in
+the buffer, but the end of the buffer is reached before the expression
+is complete.
+
+Information about an incomplete expression is shown as an orange
+background of the first character of the expression.  When several
+nested expressions are incomplete, the first character of each nested
+expression is marked this way.
+
 \subsubsection{Extraneous whitespace}
 
 Whitespace is considered \emph{extraneous} in the following cases: 
