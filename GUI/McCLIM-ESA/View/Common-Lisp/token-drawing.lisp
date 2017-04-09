@@ -62,9 +62,9 @@
 	    (t
 	     (draw-rectangle pane start-ref start (+ start pos1) clim:+pink+)
 	     (draw-rectangle pane start-ref (+ start pos1) (+ start pos1 1) clim:+red+)
-	     (draw-rectangle pane start-ref (+ start pos1 1) (+ start pos2) clim:+pink+))
-	     (draw-rectangle pane start-ref (+ start pos2) (+ start pos2 1) clim:+red+)
-	     (draw-rectangle pane start-ref (+ start pos2 1) end clim:+pink+)))))
+	     (draw-rectangle pane start-ref (+ start pos1 1) (+ start pos2) clim:+pink+)
+             (draw-rectangle pane start-ref (+ start pos2) (+ start pos2 1) clim:+red+)
+	     (draw-rectangle pane start-ref (+ start pos2 1) end clim:+pink+))))))
 
 (defmethod draw-token-parse-result
     (parse-result token
