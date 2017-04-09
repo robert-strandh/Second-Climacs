@@ -233,8 +233,11 @@
     ((parse-result climacs-syntax-common-lisp:eof-parse-result)
      start-ref pane cache first-line last-line)
   (declare (ignore first-line last-line))
-  (let ((start-column (climacs-syntax-common-lisp:start-column parse-result)))
-    (draw-rectangle pane start-ref start-column (1+ start-column) clim:+orange+)))
+  (let ((start-col (climacs-syntax-common-lisp:start-column parse-result))
+        (end-col (climacs-syntax-common-lisp:end-column parse-result))
+        (height (climacs-syntax-common-lisp:height parse-result)))
+    (unless (and (zerop height) (= start-col end-col))
+      (draw-rectangle pane start-ref start-col (1+ start-col) clim:+orange+))))
 
 (defmethod draw-parse-result :around
     ((parse-result climacs-syntax-common-lisp:error-parse-result)
