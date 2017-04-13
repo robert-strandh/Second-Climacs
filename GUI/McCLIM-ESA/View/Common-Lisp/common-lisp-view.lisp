@@ -422,6 +422,21 @@
                           end-line end-column
                           first-line last-line))))
 
+;;; Render the space between two consecutive top-level parse-results
+;;; (PR1 and PR2) or (when PR1 is NIL) between the beginning of the
+;;; buffer and PR2.
+(defun render-gap (cache pane pr1 pr2 first-line last-line)
+  (let ((start-line
+          (if (null pr1) 0 (climacs-syntax-common-lisp:end-line pr1)))
+        (start-column
+          (if (null pr1) 0 (climacs-syntax-common-lisp:end-column pr1)))
+        (end-line (climacs-syntax-common-lisp:start-line pr2))
+        (end-column (climacs-syntax-common-lisp:start-column pr2)))
+    (draw-filtered-area pane cache
+                        start-line start-column
+                        end-line end-column
+                        first-line last-line)))
+
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
