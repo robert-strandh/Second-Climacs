@@ -381,21 +381,36 @@
                         last-line))
           do (climacs-syntax-common-lisp:prefix-to-suffix cache))))
 
+(defgeneric render-empty-cache (cache pane first-line last-line))
+
+(defmethod render-empty-cache ((cache output-history) pane first-line last-line)
+  (let* ((line-count (climacs-syntax-common-lisp:line-count cache))
+         (last-line-contents (climacs-syntax-common-lisp:line-contents
+                              cache (1- line-count)))
+         (end-column-number (length last-line-contents)))
+    (draw-filtered-area pane cache
+                        0 0
+                        (1- line-count) end-column-number
+                        first-line last-line)))
+
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
-  (adjust-for-rendering cache last-line)
-  (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
-        for parse-result in prefix
-        until (< (climacs-syntax-common-lisp:end-line parse-result)
-                 first-line)
-        do (draw-parse-result
-            parse-result
-            (climacs-syntax-common-lisp:start-line parse-result)
-            pane
-            cache
-            first-line
-            last-line)))
+  (if (and (null (climacs-syntax-common-lisp:prefix cache))
+           (null (climacs-syntax-common-lisp:suffix cache)))
+      (render-empty-cache cache pane first-line last-line)
+      (progn (adjust-for-rendering cache last-line)
+             (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
+                   for parse-result in prefix
+                   until (< (climacs-syntax-common-lisp:end-line parse-result)
+                            first-line)
+                   do (draw-parse-result
+                       parse-result
+                       (climacs-syntax-common-lisp:start-line parse-result)
+                       pane
+                       cache
+                       first-line
+                       last-line)))))
 
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
