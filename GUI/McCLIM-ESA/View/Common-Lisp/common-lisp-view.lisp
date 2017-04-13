@@ -393,6 +393,35 @@
                         (1- line-count) end-column-number
                         first-line last-line)))
 
+;;; When this function is called, the suffix contains no parse result
+;;; to be rendered.  Either the suffix is empty, or the first parse
+;;; result on the suffix lies entirely below the visible area.
+;;; However, there may be some whitespace between the end of the first
+;;; parse result on the prefix and either the first parse result on
+;;; the suffix or the end of the buffer.  This function is responsible
+;;; for rendering that whitespace.
+(defun render-trailing-whitespace (cache pane first-line last-line)
+  (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
+                   (suffix climacs-syntax-common-lisp:suffix)
+                   (line-count climacs-syntax-common-lisp:line-count))
+      cache
+    (let ((start-line
+            (climacs-syntax-common-lisp:end-line (first prefix)))
+          (start-column
+            (climacs-syntax-common-lisp:end-column (first prefix)))
+          (end-line
+            (if (null suffix)
+                (1- line-count)
+                (climacs-syntax-common-lisp:start-line (first suffix))))
+          (end-column
+            (if (null suffix)
+                (climacs-syntax-common-lisp:line-length cache (1- line-count))
+                (climacs-syntax-common-lisp:start-column (first suffix)))))
+      (draw-filtered-area pane cache
+                          start-line start-column
+                          end-line end-column
+                          first-line last-line))))
+
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
@@ -400,6 +429,7 @@
            (null (climacs-syntax-common-lisp:suffix cache)))
       (render-empty-cache cache pane first-line last-line)
       (progn (adjust-for-rendering cache last-line)
+             (render-trailing-whitespace cache pane first-line last-line)
              (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
                    for parse-result in prefix
                    until (< (climacs-syntax-common-lisp:end-line parse-result)
