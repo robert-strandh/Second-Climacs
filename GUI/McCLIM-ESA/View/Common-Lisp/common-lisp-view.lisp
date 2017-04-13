@@ -446,16 +446,17 @@
       (progn (adjust-for-rendering cache last-line)
              (render-trailing-whitespace cache pane first-line last-line)
              (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
-                   for parse-result in prefix
-                   until (< (climacs-syntax-common-lisp:end-line parse-result)
+                   for (pr2 pr1) on prefix
+                   until (< (climacs-syntax-common-lisp:end-line pr2)
                             first-line)
                    do (draw-parse-result
-                       parse-result
-                       (climacs-syntax-common-lisp:start-line parse-result)
+                       pr2
+                       (climacs-syntax-common-lisp:start-line pr2)
                        pane
                        cache
                        first-line
-                       last-line)))))
+                       last-line)
+                      (render-gap cache pane pr1 pr2 first-line last-line)))))
 
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
