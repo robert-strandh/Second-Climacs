@@ -462,18 +462,18 @@
 ;;; column number.  We return only integers, so that if a fraction of
 ;;; a line or a column is included in the viewport, then the entire
 ;;; line or column is included in the return values.  Four values are
-;;; returned: The line and the column of the upper-left corner and the
-;;; line and the column of the lower-right corner.
+;;; returned: The column and the line of the upper-left corner and the
+;;; column and the line of the lower-right corner.
 (defun viewport-area (pane)
   (multiple-value-bind (left top right bottom)
       (clim:bounding-rectangle* (clim:pane-viewport-region pane))
     (let* ((text-style (clim:medium-text-style pane))
            (text-style-height (clim:text-style-height text-style pane))
            (text-style-width (clim:text-style-width text-style pane)))
-      (values (floor top text-style-height)
-              (floor left text-style-width)
-              (ceiling bottom text-style-height)
-              (ceiling right text-style-width)))))
+      (values (floor left text-style-width)
+              (floor top text-style-height)
+              (ceiling right text-style-width)
+              (ceiling bottom text-style-height)))))
 
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
