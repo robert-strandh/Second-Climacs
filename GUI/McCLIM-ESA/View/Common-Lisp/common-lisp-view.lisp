@@ -25,6 +25,14 @@
       (length contents)
       position))
 
+;;; Return the text-style width, height, and ascent of PANE as three
+;;; values.
+(defun text-style-dimensions (pane)
+  (let ((text-style (clim:medium-text-style pane)))
+    (values (clim:text-style-width text-style pane)
+            (clim:text-style-height text-style pane)
+            (clim:text-style-ascent text-style pane))))
+
 ;;; Given a line number, return the Y coordinate of the base line of
 ;;; the line with that number.
 (defun base-line-position (text-style pane line-number)
