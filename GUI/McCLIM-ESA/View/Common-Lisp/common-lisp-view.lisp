@@ -484,10 +484,10 @@
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
+  (clear-viewport stream)
   (multiple-value-bind (left top right bottom)
       (clim:bounding-rectangle* (clim:pane-viewport-region stream))
-    (clim:medium-clear-area (clim:sheet-medium stream)
-                            left top right bottom)
+    (declare (ignore left right))
     (let* ((text-style (clim:medium-text-style stream))
            (text-style-height (clim:text-style-height text-style stream))
            (first-line-number (floor top text-style-height))
