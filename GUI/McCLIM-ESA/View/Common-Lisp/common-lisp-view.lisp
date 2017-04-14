@@ -72,51 +72,48 @@
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
 (defun draw-interval (pane line-number contents start-column end-column)
-  (let* ((text-style (clim:medium-text-style pane))
-         (text-height (clim:text-style-height text-style pane))
-         (text-width (clim:text-style-width text-style pane))
-         (text-ascent (clim:text-style-ascent text-style pane))
-         (y (+ text-ascent (* line-number text-height)))
-         (x (* start-column text-width))
-         (clim-view (clim:stream-default-view pane))
-         (climacs-view (second-climacs-clim-base:climacs-view clim-view))
-         (cursor (climacs2-base:cursor climacs-view))
-         (cursor-column-number (cluffer:cursor-position cursor))
-         (canonicalized-end-column-number
-           (canonicalize-column-number contents end-column)))
-    (unless (= start-column canonicalized-end-column-number)
-      (if (= (cluffer:line-number cursor) line-number)
-          (cond ((<= cursor-column-number start-column)
-                 (clim:draw-text* pane contents
-                                  (+ x 5) y
-                                  :start start-column
-                                  :end end-column))
-                ((>= cursor-column-number end-column)
-                 (clim:draw-text* pane contents
-                                  x y
-                                  :start start-column
-                                  :end end-column))
-                (t
-                 (draw-interval pane line-number contents
-                                start-column cursor-column-number)
-                 (draw-interval pane line-number contents
-                                cursor-column-number end-column)))
-          (clim:draw-text* pane contents
-                           x y
-                           :start start-column
-                           :end end-column)))
-    (when (= (cluffer:line-number cursor) line-number)
-      (cond ((= cursor-column-number start-column)
-             (clim:draw-rectangle* pane (1+ x) (- y text-height) (+ x 4) y
-                                   :ink clim:+blue+))
-            ((= canonicalized-end-column-number
-                cursor-column-number
-                (length contents))
-             (let ((cursor-x (* cursor-column-number text-width)))
-               (clim:draw-rectangle* pane
-                                     (1+ cursor-x) (- y text-height)
-                                     (+ cursor-x 4) y
-                                     :ink clim:+blue+)))))))
+  (multiple-value-bind (width height ascent) (text-style-dimensions pane)
+    (let* ((y (+ ascent (* line-number height)))
+           (x (* start-column width))
+           (clim-view (clim:stream-default-view pane))
+           (climacs-view (second-climacs-clim-base:climacs-view clim-view))
+           (cursor (climacs2-base:cursor climacs-view))
+           (cursor-column-number (cluffer:cursor-position cursor))
+           (canonicalized-end-column-number
+             (canonicalize-column-number contents end-column)))
+      (unless (= start-column canonicalized-end-column-number)
+        (if (= (cluffer:line-number cursor) line-number)
+            (cond ((<= cursor-column-number start-column)
+                   (clim:draw-text* pane contents
+                                    (+ x 5) y
+                                    :start start-column
+                                    :end end-column))
+                  ((>= cursor-column-number end-column)
+                   (clim:draw-text* pane contents
+                                    x y
+                                    :start start-column
+                                    :end end-column))
+                  (t
+                   (draw-interval pane line-number contents
+                                  start-column cursor-column-number)
+                   (draw-interval pane line-number contents
+                                  cursor-column-number end-column)))
+            (clim:draw-text* pane contents
+                             x y
+                             :start start-column
+                             :end end-column)))
+      (when (= (cluffer:line-number cursor) line-number)
+        (cond ((= cursor-column-number start-column)
+               (clim:draw-rectangle* pane (1+ x) (- y height) (+ x 4) y
+                                     :ink clim:+blue+))
+              ((= canonicalized-end-column-number
+                  cursor-column-number
+                  (length contents))
+               (let ((cursor-x (* cursor-column-number width)))
+                 (clim:draw-rectangle* pane
+                                       (1+ cursor-x) (- y height)
+                                       (+ cursor-x 4) y
+                                       :ink clim:+blue+))))))))
 
 ;;; Draw an area of text defined by START-LINE-NUMBER,
 ;;; START-COLUMN-NUMBER, END-LINE-NUMBER, and END-COLUMN-NUMBER.  The
