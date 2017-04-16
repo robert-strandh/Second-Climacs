@@ -66,6 +66,12 @@
             (end-column object)
             (relative-p object))))
 
+;;; Define an indirection for MAKE-INSTANCE for creating parse
+;;; results.  The main purpose is so that the creation of parse
+;;; results can be traced.
+(defun make-parse-result (class &rest initargs)
+  (apply #'make-instance class initargs))
+
 (defclass expression-parse-result (parse-result)
   ((%expression :initarg :expression :accessor expression)))
 
