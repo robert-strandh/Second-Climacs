@@ -505,9 +505,7 @@
          (line-count (climacs-syntax-common-lisp:line-count history))
          (prefix (climacs-syntax-common-lisp:prefix history))
          (pfirst (first prefix))
-         (gap-start (if (null prefix)
-                        0
-                        (1+ (climacs-syntax-common-lisp:end-line pfirst))))
+         (gap-start (gap-start history))
          (suffix (climacs-syntax-common-lisp:suffix history))
          (sfirst (first suffix))
          (gap-end (if (null suffix)
