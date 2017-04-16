@@ -8,7 +8,7 @@
 (defun position-less (line-number-a item-number-a line-number-b item-number-b)
   (or (< line-number-a line-number-b)
       (and (= line-number-a line-number-b)
-	   (< item-number-a item-number-b))))
+           (< item-number-a item-number-b))))
 
 ;;; Return true if and only if the start position of PARSE-RESULT is
 ;;; strictly less than the position indicated by LINE-NUMBER and
@@ -16,7 +16,7 @@
 (defun parse-result-starts-before-position-p
     (parse-result line-number item-number)
   (position-less (start-line parse-result) (start-column parse-result)
-		 line-number item-number))
+                 line-number item-number))
 
 ;;; Make sure that the first parse result that we consider recycling
 ;;; starts at or beyond the current stream position.  Parse results
@@ -26,17 +26,17 @@
 ;;; parse results and the suffix.
 (defun pop-to-stream-position (analyzer)
   (let ((cache (folio analyzer))
-	(line-number (current-line-number analyzer))
-	(item-number (current-item-number analyzer)))
+        (line-number (current-line-number analyzer))
+        (item-number (current-item-number analyzer)))
     (loop while (and (not (null (residue cache)))
-		     (parse-result-starts-before-position-p
-		      (first (residue cache)) line-number item-number))
-	  do (pop-from-residue cache))
+                     (parse-result-starts-before-position-p
+                      (first (residue cache)) line-number item-number))
+          do (pop-from-residue cache))
     (when (null (residue cache))
       (loop while (and (not (null (suffix cache)))
-		       (parse-result-starts-before-position-p
-			(first (suffix cache)) line-number item-number))
-	    do (pop-from-suffix cache)))))
+                       (parse-result-starts-before-position-p
+                        (first (suffix cache)) line-number item-number))
+            do (pop-from-suffix cache)))))
 
 ;;; Check whether there is a cached parse result with a start position
 ;;; that corresponds to the current stream position of ANALYZER, and
@@ -81,6 +81,6 @@
 
 (defun advance-stream-to-beyond-parse-result (analyzer parse-result)
   (setf (current-line-number analyzer)
-	(end-line parse-result))
+        (end-line parse-result))
   (setf (current-item-number analyzer)
-	(end-column parse-result)))
+        (end-column parse-result)))
