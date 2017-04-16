@@ -83,17 +83,4 @@
   (setf (current-line-number analyzer)
 	(end-line parse-result))
   (setf (current-item-number analyzer)
-	(end-column parse-result))
-  (read-char analyzer nil nil))
-
-;; (defmethod sicl-reader:read-common :around
-;;     ((input-stream analyzer) eof-error-p eof-value)
-;;   (skip-whitespace input-stream)
-;;   (let ((parse-result (cached-parse-result input-stream)))
-;;     (if (null parse-result)
-;; 	(call-next-method)
-;; 	(progn (push parse-result (first *stack*))
-;; 	       (advance-stream-to-beyond-parse-result input-stream parse-result)
-;; 	       (if (typep parse-result 'expression-parse-result)
-;; 		   (expression parse-result)
-;; 		   (sicl-reader:read-common input-stream eof-error-p eof-value))))))
+	(end-column parse-result)))
