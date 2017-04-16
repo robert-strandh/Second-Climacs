@@ -217,6 +217,15 @@
    (%max-line-width-list :accessor max-line-width-list))
   (:default-initargs :single-box t))
 
+;;; For convenience, define methods on MAX-LINE-WIDTH-LIST on CONS and
+;;; NULL so that MAX-LINE-WIDTH-LIST can be applied to the prefix or
+;;; the suffix directly.
+(defmethod max-line-width-list ((object null))
+  0)
+
+(defmethod max-line-width-list ((object CONS))
+  (max-line-width-list (first object)))
+
 (defgeneric draw-parse-result (parse-result
                                start-ref
                                pane
