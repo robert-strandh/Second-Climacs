@@ -514,22 +514,20 @@
         (1- (climacs-syntax-common-lisp:start-line (first suffix))))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
-  (let* ((stream (clim:output-record-parent history))
-         (text-style (clim:medium-text-style stream))
-         (text-style-height (clim:text-style-height text-style stream))
-         (text-style-width (clim:text-style-width text-style stream))
-         (line-count (climacs-syntax-common-lisp:line-count history))
-         (prefix (climacs-syntax-common-lisp:prefix history))
-         (gap-start (gap-start history))
-         (suffix (climacs-syntax-common-lisp:suffix history))
-         (gap-end (gap-end history))
-         (total-width (max (max-line-width-list prefix)
-                           (max-line-length history gap-start gap-end)
-                           (max-line-width-list suffix))))
-    (values 0
-            0
-            (* text-style-width total-width)
-            (* text-style-height line-count))))
+  (let ((pane (clim:output-record-parent history)))
+    (multiple-value-bind (width height) (text-style-dimensions pane)
+      (let* ((line-count (climacs-syntax-common-lisp:line-count history))
+             (prefix (climacs-syntax-common-lisp:prefix history))
+             (gap-start (gap-start history))
+             (suffix (climacs-syntax-common-lisp:suffix history))
+             (gap-end (gap-end history))
+             (total-width (max (max-line-width-list prefix)
+                               (max-line-length history gap-start gap-end)
+                               (max-line-width-list suffix))))
+        (values 0
+                0
+                (* width total-width)
+                (* height line-count))))))
 
 ;;; I don't know why this one is called at all
 (defmethod clim:clear-output-record ((history output-history))
