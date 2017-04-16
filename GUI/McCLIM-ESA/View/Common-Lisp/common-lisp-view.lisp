@@ -511,14 +511,13 @@
          (text-style-width (clim:text-style-width text-style stream))
          (line-count (climacs-syntax-common-lisp:line-count history))
          (prefix (climacs-syntax-common-lisp:prefix history))
-         (pfirst (first prefix))
          (gap-start (gap-start history))
          (suffix (climacs-syntax-common-lisp:suffix history))
          (sfirst (first suffix))
          (gap-end (gap-end history))
          (width (max (if (null prefix)
                          0
-                         (max-line-width-list pfirst))
+                         (max-line-width-list (first prefix)))
                      (max-line-length history gap-start gap-end)
                      (if (null suffix)
                          0
