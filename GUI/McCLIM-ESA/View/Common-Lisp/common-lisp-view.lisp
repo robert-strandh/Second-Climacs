@@ -491,6 +491,12 @@
       (unless (minusp last-line-number)
         (render-cache cache stream top last-line-number)))))
 
+(defun gap-start (history)
+  (let ((prefix (climacs-syntax-common-lisp:prefix history)))
+    (if (null prefix)
+        0
+        (1+ (climacs-syntax-common-lisp:end-line (first prefix))))))
+
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let* ((stream (clim:output-record-parent history))
          (text-style (clim:medium-text-style stream))
