@@ -497,6 +497,13 @@
         0
         (1+ (climacs-syntax-common-lisp:end-line (first prefix))))))
 
+(defun gap-end (history)
+  (let ((suffix (climacs-syntax-common-lisp:suffix history))
+        (line-count (climacs-syntax-common-lisp:line-count history)))
+    (if (null suffix)
+        (1- line-count)
+        (1- (climacs-syntax-common-lisp:start-line (first suffix))))))
+
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let* ((stream (clim:output-record-parent history))
          (text-style (clim:medium-text-style stream))
