@@ -513,7 +513,6 @@
          (prefix (climacs-syntax-common-lisp:prefix history))
          (gap-start (gap-start history))
          (suffix (climacs-syntax-common-lisp:suffix history))
-         (sfirst (first suffix))
          (gap-end (gap-end history))
          (width (max (if (null prefix)
                          0
@@ -521,7 +520,7 @@
                      (max-line-length history gap-start gap-end)
                      (if (null suffix)
                          0
-                         (max-line-width-list sfirst)))))
+                         (max-line-width-list (first suffix))))))
     (values 0
             0
             (* text-style-width width)
