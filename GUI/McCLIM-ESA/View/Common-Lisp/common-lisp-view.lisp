@@ -524,10 +524,7 @@
              (total-width (max (max-line-width-list prefix)
                                (max-line-length history gap-start gap-end)
                                (max-line-width-list suffix))))
-        (values 0
-                0
-                (* width total-width)
-                (* height line-count))))))
+        (values 0 0 (* width total-width) (* height line-count))))))
 
 ;;; I don't know why this one is called at all
 (defmethod clim:clear-output-record ((history output-history))
