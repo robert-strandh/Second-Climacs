@@ -10,7 +10,7 @@
 	nil)
       (error ()
 	(setf (first *stack*)
-	      (list (make-instance 'error-parse-result
+	      (list (make-parse-result 'error-parse-result
 		      :max-line-width (compute-max-line-width
 				       analyzer
 				       start-line
