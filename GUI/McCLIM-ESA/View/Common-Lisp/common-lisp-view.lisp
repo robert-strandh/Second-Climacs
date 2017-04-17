@@ -55,9 +55,9 @@
     (pane line-number start-column-number end-column-number)
   (multiple-value-bind (width height ascent) (text-style-dimensions pane)
     (values (* start-column-number width)
-	    (* line-number height)
-	    (* end-column-number width)
-	    (+ ascent (* line-number height)))))
+            (* line-number height)
+            (* end-column-number width)
+            (+ ascent (* line-number height)))))
 
 ;;; Draw a rectangle defined by the start column and end column of a
 ;;; single line of text.
@@ -273,8 +273,8 @@
           (prev-end-column (start-column parse-result)))
       (let ((ref start-ref))
         (loop for child in children
-	      for start-line = (start-line child)
-	      until (> (+ ref start-line) last-line)
+              for start-line = (start-line child)
+              until (> (+ ref start-line) last-line)
               do (incf ref (start-line child))
                  (draw-filtered-area pane cache
                                      prev-end-line
