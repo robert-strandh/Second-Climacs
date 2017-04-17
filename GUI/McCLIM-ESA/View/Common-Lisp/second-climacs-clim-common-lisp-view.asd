@@ -9,4 +9,5 @@
   ((:file "packages")
    (:file "common-lisp-view")
    (:file "token-drawing")
+   (:file "cursor-visibility")
    (:file "common-lisp-command-table")))
