@@ -315,26 +315,13 @@
 
 (defmethod draw-parse-result
     ((parse-result climacs-syntax-common-lisp:expression-parse-result)
-     start-ref
-     pane
-     (cache output-history)
-     first-line
-     last-line)
+     start-ref pane (cache output-history) first-line last-line)
   (let ((expression (climacs-syntax-common-lisp:expression parse-result)))
     (if (typep expression 'climacs-syntax-common-lisp:token)
-        (draw-token-parse-result parse-result
-                                 expression
-                                 start-ref
-                                 pane
-                                 cache
-                                 first-line
-                                 last-line)
-        (draw-non-token-parse-result parse-result
-                                     start-ref
-                                     pane
-                                     cache
-                                     first-line
-                                     last-line))))
+        (draw-token-parse-result
+         parse-result expression start-ref pane cache first-line last-line)
+        (draw-non-token-parse-result
+         parse-result start-ref pane cache first-line last-line))))
 
 ;;; Given a folio and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
