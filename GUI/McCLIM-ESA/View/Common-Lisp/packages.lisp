@@ -2,4 +2,4 @@
 
 (defpackage #:second-climacs-clim-common-lisp-view
   (:use #:common-lisp)
-  (:export))
+  (:export #:move-viewport-to-cursor))
