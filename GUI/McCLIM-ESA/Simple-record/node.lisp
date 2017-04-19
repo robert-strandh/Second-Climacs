@@ -1,8 +1,8 @@
 (cl:in-package #:clim-simple-editor-record)
 
 (defclass node (clump-binary-tree:node-with-parent
-		clim:output-record
-		relative-coordinates-output-record-mixin)
+                clim:output-record
+                relative-coordinates-output-record-mixin)
   (;; This slot contains the total number of lines in the entire
    ;; subtree rooted at this node.
    (%line-count :initarg :line-count :accessor line-count)
@@ -34,17 +34,17 @@
       (decf (height node) (height left))
       (decf (line-count node) (line-count left))
       (setf (width node)
-	    (max (width (line node))
-		 (if (null (clump-binary-tree:right node))
-		     0
-		     (width (clump-binary-tree:right node))))))))
+            (max (width (line node))
+                 (if (null (clump-binary-tree:right node))
+                     0
+                     (width (clump-binary-tree:right node))))))))
 
 (defmethod (setf clump-binary-tree:left) :after ((new-left node) (node node))
   (incf (height node) (height new-left))
   (incf (line-count node) (line-count new-left))
   (setf (width node)
-	(max (width node)
-	     (width new-left))))
+        (max (width node)
+             (width new-left))))
 
 (defmethod (setf clump-binary-tree:right) :before (new-right (node node))
   (declare (ignore new-right))
@@ -53,17 +53,17 @@
       (decf (height node) (height right))
       (decf (line-count node) (line-count right))
       (setf (width node)
-	    (max (width (line node))
-		 (if (null (clump-binary-tree:left node))
-		     0
-		     (width (clump-binary-tree:left node))))))))
+            (max (width (line node))
+                 (if (null (clump-binary-tree:left node))
+                     0
+                     (width (clump-binary-tree:left node))))))))
 
 (defmethod (setf clump-binary-tree:right) :after ((new-right node) (node node))
   (incf (height node) (height new-right))
   (incf (line-count node) (line-count new-right))
   (setf (width node)
-	(max (width node)
-	     (width new-right))))
+        (max (width node)
+             (width new-right))))
 
 (defmethod clump-binary-tree:splay :after ((node node))
   (setf (contents (record node)) node))
@@ -75,13 +75,13 @@
 (defmethod clim:output-record-parent ((node node))
   (let ((tree-parent (clump-binary-tree:parent node)))
     (if (null tree-parent)
-	;; This means that NODE is the root of the binary tree.  And
-	;; this, in turn, means that the parent output record is the
-	;; top-level output record.
-	(record node)
-	;; Otherwise, the parent of the output record is the same as
-	;; the parent in the binary tree.
-	tree-parent)))
+        ;; This means that NODE is the root of the binary tree.  And
+        ;; this, in turn, means that the parent output record is the
+        ;; top-level output record.
+        (record node)
+        ;; Otherwise, the parent of the output record is the same as
+        ;; the parent in the binary tree.
+        tree-parent)))
 
 (defmethod clim:bounding-rectangle* ((node node))
   (multiple-value-bind (x y)
@@ -97,19 +97,19 @@
 
 (defun find-node-by-number (root node-number)
   (labels ((find-aux (node node-number)
-	     (let* ((left (clump-binary-tree:left node))
-		    (left-line-count (line-count left)))
-	       (cond ((< node-number left-line-count)
-		      (find-aux left node-number))
-		     ((= node-number left-line-count)
-		      node)
-		     (t
-		      (find-aux (clump-binary-tree:right node)
-				(- node-number left-line-count)))))))
+             (let* ((left (clump-binary-tree:left node))
+                    (left-line-count (line-count left)))
+               (cond ((< node-number left-line-count)
+                      (find-aux left node-number))
+                     ((= node-number left-line-count)
+                      node)
+                     (t
+                      (find-aux (clump-binary-tree:right node)
+                                (- node-number left-line-count)))))))
     (if (<= 0 node-number (1- (line-count root)))
-	(find-aux root node-number)
-	(error "Node number ~d was given for a tree with ~d nodes."
-	       node-number (line-count root)))))
+        (find-aux root node-number)
+        (error "Node number ~d was given for a tree with ~d nodes."
+               node-number (line-count root)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -137,33 +137,33 @@
     (function (node node) x y &optional x-offset y-offset &rest args)
   (declare (ignore x-offset y-offset))
   (loop with relative-y = y
-	with current-node = node
-	do (let* ((line (line current-node))
-		  (dy (dy line))
-		  (height (clim:bounding-rectangle-height line))
-		  (left (clump-binary-tree:left current-node))
-		  (right (clump-binary-tree:right current-node)))
-	     (cond ((<= dy relative-y (1- (+ dy height)))
-		    ;; We found THE line containing the position
-		    (apply function current-node args)
-		    (loop-finish))
-		   ((< relative-y dy)
-		    ;; If there is a record containing the position,
-		    ;; then it must be one of the ones in the left
-		    ;; child of CURRENT-NODE.
-		    (if (null left)
-			(loop-finish)
-			(setf current-node left)))
-		   (t
-		    ;; Come here when RELATIVE-Y is greater than or
-		    ;; equal to the sum of DY and HEIGHT.  If there is
-		    ;; a record containing the position, then it must
-		    ;; be one of the ones in the right child of
-		    ;; CURRENT-NODE.
-		    (if (null right)
-			(loop-finish)
-			(progn (setf current-node left)
-			       (incf relative-y (+ dy height)))))))))
+        with current-node = node
+        do (let* ((line (line current-node))
+                  (dy (dy line))
+                  (height (clim:bounding-rectangle-height line))
+                  (left (clump-binary-tree:left current-node))
+                  (right (clump-binary-tree:right current-node)))
+             (cond ((<= dy relative-y (1- (+ dy height)))
+                    ;; We found THE line containing the position
+                    (apply function current-node args)
+                    (loop-finish))
+                   ((< relative-y dy)
+                    ;; If there is a record containing the position,
+                    ;; then it must be one of the ones in the left
+                    ;; child of CURRENT-NODE.
+                    (if (null left)
+                        (loop-finish)
+                        (setf current-node left)))
+                   (t
+                    ;; Come here when RELATIVE-Y is greater than or
+                    ;; equal to the sum of DY and HEIGHT.  If there is
+                    ;; a record containing the position, then it must
+                    ;; be one of the ones in the right child of
+                    ;; CURRENT-NODE.
+                    (if (null right)
+                        (loop-finish)
+                        (progn (setf current-node left)
+                               (incf relative-y (+ dy height)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -198,14 +198,14 @@
 
 (defun transform-band-for-right-subtree (node min-y max-y)
   (let* ((left (clump-binary-tree:left node))
-	 (delta (if (null left) 0 (height left))))
+         (delta (if (null left) 0 (height left))))
     (values (+ min-y delta) (+ max-y delta))))
 
 (defun irrelevant-p (node min-y max-y)
   (let ((dy (dy node))
-	(height (height node)))
+        (height (height node)))
     (or (>= min-y (+ dy height))
-	(<= max-y dy))))
+        (<= max-y dy))))
 
 (defun root-node-precedes-band-p (node max-y)
   (let ((record (record node)))
@@ -224,13 +224,13 @@
       (clim:bounding-rectangle* region)
     (declare (ignore min-x max-x))
     (let ((dy (dy node))
-	  (height (height node)))
+          (height (height node)))
       (unless (or (>= min-y (+ dy height))
-		  (<= max-y dy))
-	;; We only restructure the tree if there is some overlap
-	;; between REGION and the lines of the tree.
-	(restructure-left node min-y max-y)
-	(restructure-right node min-y max-y)))))
+                  (<= max-y dy))
+        ;; We only restructure the tree if there is some overlap
+        ;; between REGION and the lines of the tree.
+        (restructure-left node min-y max-y)
+        (restructure-right node min-y max-y)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
