@@ -22,4 +22,5 @@
    (:file "parse")
    (:file "read-forms")
    (:file "view")
-   (:file "set-mode")))
+   (:file "set-mode")
+   (:file "parse-result-to-cst")))
