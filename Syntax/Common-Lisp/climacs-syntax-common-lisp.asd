@@ -2,6 +2,7 @@
 
 (asdf:defsystem :climacs-syntax-common-lisp
   :depends-on (:trivial-gray-streams
+               :concrete-syntax-tree
 	       :cluffer
 	       :flexichain
 	       :sicl-reader-simple)
