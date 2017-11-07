@@ -1,5 +1,17 @@
 \section{Conclusions and future work}
 
+Currently, parse results that are not part of the final structure of
+the buffer are discarded.  When the user is not using an editor mode
+that automatically balances characters such as parentheses and double
+quotes, inserting such a character often results in a large number of
+parse results being discarded, only to have to be created again soon
+afterward, when the user inserts the balancing character of the pair.
+We can avoid this situation by keeping parse results that are not part
+of the final structure in the cache, in the hopes that they will again
+be required later.  We then also need a strategy for removing such
+parse results from the cache after some time, so as to avoid that the
+cache grows without limits.
+
 Parsing \commonlisp{} source code is only the first step in the
 analysis of its structure.  In order to determine the role of each
 symbol and other information such as indentation, further analysis is
