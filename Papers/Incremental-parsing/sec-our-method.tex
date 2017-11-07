@@ -69,6 +69,11 @@ The reader from the \sicl{} project%
 modified to allow this kind of customization, thereby avoiding the
 necessity of maintaining the code for a completely separate reader.
 
+No changes to the mechanism for handling reader macros is necessary.
+Therefore, we handle custom reader macros as well.  Whenever a reader
+macro calls \texttt{read} recursively, a nested parse result is
+created in the same way as with the standard reader macros.
+
 The buffer update protocol is typically invoked after each keystroke
 by the end user, and the modifications to the buffer are typically
 very modest, in that usually a single line has been modified.  It
