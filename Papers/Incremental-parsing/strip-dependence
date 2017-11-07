@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 CHAINE=$1
 MOTIF="^\\\\$CHAINE\{.*\}"
 shift
