@@ -1,0 +1,8 @@
+\section{Cache representation}
+
+The sequence of top-level parse results is split into a \emph{prefix}
+and a \emph{suffix}, typically reflecting the current position in the
+buffer being edited by the end user.  The suffix contains parse
+results in the order they appear in the buffer, whereas the prefix
+contains parse results in reverse order, making it easy to move parse
+results between the prefix and the suffix.
