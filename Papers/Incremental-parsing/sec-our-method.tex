@@ -89,7 +89,12 @@ The cache is organized as a sequence%
   set of items organized consecutively, and not in the more
   restrictive meaning defined by the \commonlisp{} standard.}  of
 top-level parse results.  Each top-level parse result contains the
-parse results returned by nested calls to the reader.
+parse results returned by nested calls to the reader.  Here, we are
+not concerened with the details of the representation of the cache.
+Such details are crucial in order to obtain acceptable performance,
+but they are unimportant for understanding the general technique of
+incremental parsing.  Refer to \refapp{app-cache-representation} for an
+in-depth description of these details.
 
 Depending on the location of the parse result in the cache data
 structure, its position may be \emph{absolute} or \emph{relative}.
