@@ -113,6 +113,33 @@ phases:
 
 \subsubsection{Description}
 
+As mentioned in \refSec{sec-buffer-update-protocol}, the invocation of
+the buffer-update protocol results in a sequence descriptions of
+operations that describe how the buffer has changed from the previous
+invocation.
+
+As far as the invalidation phase is concerned, there are only minor
+variations in how the different types of operations are handled.  In
+all cases (line modification, line insertion, line deletion), the
+existing parse results that straddle a place that has been altered
+must be invalidated.  Notice that when a top-level parse result
+straddles such a modification, that parse result is invalidated, but
+It is very likely that several of its children do not straddle the
+point of modification.  Therefore such children are not invalidated,
+and are kept in the cache in case they are needed during the
+rehabilitation phase.
+
+In addition to the parse results being invalidated as described in the
+previous paragraph, when the operation represents the insertion or the
+deletion of a line, remaining valid parse results following the point
+of the operation must be modified to reflect the fact that they now
+have a new start-line position.
+
+As described in \refApp{app-cache-representation}, we designed the
+data structure carefully both so that invalidating parse results as a
+result of these operations, and modifying the start-line position of
+remaining valid parse results can be done at very little cost.
+
 \subsection{Rehabilitation phase}
 
 \subsubsection{Description}
