@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defclass parse-result ()
+(defclass basic-parse-result ()
   (;; When this parse result is absolute, this slot contains the
    ;; absolute start line of this parse result.  The first line in the
    ;; buffer has the number 0.  When this parse line is relative, this
@@ -20,8 +20,10 @@
    ;; the parse result.  The value of this slot can never be 0.  If
    ;; the last character of the parse result is the leftmost character
    ;; in a line, then this slot contains the value 1.
-   (%end-column :initarg :end-column :accessor end-column)
-   ;; This slot contains the column number of the leftmost known
+   (%end-column :initarg :end-column :accessor end-column)))
+
+(defclass parse-result (basic-parse-result)
+  (;; This slot contains the column number of the leftmost known
    ;; non-whitespace character of the parse result.  It may not be
    ;; entirely correct if a reader macro reads character by character
    ;; and such characters happen to be outside the part that is
