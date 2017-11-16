@@ -1,12 +1,11 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
 (defclass basic-parse-result ()
-  (;; When this parse result is absolute, this slot contains the
-   ;; absolute start line of this parse result.  The first line in the
-   ;; buffer has the number 0.  When this parse line is relative, this
-   ;; slot contains the difference between the start line of this
-   ;; parse result, and the start line of the parse result that this
-   ;; parse result is relative to.
+  (;; This slot contains information about the start line of the parse
+   ;; result.  Simple applications might always store the absolute
+   ;; line number of the first line of the parse result in this slot.
+   ;; Other applications might store a line number relative to some
+   ;; other parse result.
    (%start-line :initarg :start-line :accessor start-line)
    ;; This slot contains the difference between the start line and the
    ;; end line.  A value of 0 indicates that the parse result starts
