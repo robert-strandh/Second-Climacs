@@ -32,3 +32,27 @@ techniques most frequently used.  We show that our analysis is
 sufficiently fast because it is done incrementally, and it requires
 very little incremental work for most simple editing operations.
 
+The work in this paper is specific to the \commonlisp{} language.
+This language has a number of specific features in terms of its
+syntax, some of which make it harder to write a parser for it, and
+some of which make it easier:
+
+\begin{itemize}
+\item The reader algorithm is defined in terms of a non-tokenizing
+  recursive descent parser.  This fact makes our task easier, because
+  the result of calling \texttt{read} at any location in the source
+  code is well defined and yields a unique result.  For other
+  languages, the meaning of some sequence of characters may depend on
+  what comes much later.
+\item The \commonlisp{} reader is \emph{programmable} in that the
+  application programmer can define \emph{reader macros} that invoke
+  arbitrary code.  This feature makes our task harder, because it
+  makes it impossible to establish fixed rules for the meaning of a
+  sequence of characters in the buffer.  The technique described in
+  this paper can handle such arbitrary syntax extensions.
+\item As previously mentioned, arbitrary \commonlisp{} code may be
+  invoked as part of a call to \texttt{read}, and that code may modify
+  the readtable and/or the global environment.  This possibility makes
+  our task harder, and we are only able to address some of the
+  problems it creates.
+\end{itemize}
