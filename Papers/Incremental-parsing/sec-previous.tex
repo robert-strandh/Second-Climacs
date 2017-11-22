@@ -4,6 +4,13 @@ In this section, we present a selection of existing editors, and in
 particular, we discuss the technique that each selected editor uses in
 order to analyze a text buffer containing \commonlisp{} code.
 
+We do not cover languages other than \commonlisp{}, simply because our
+technique crucially depends on ability to analyse the buffer contents
+with a non-tokenizing (i.e, based on reading a character at a time)
+recursive descent parser.  The \commonlisp{} \texttt{read} function is
+defined this way, but most other languages require more sophisticated
+parsing techniques for a correct analysis.
+
 \subsection{\emacs{}}
 \label{sec-previous-emacs}
 
