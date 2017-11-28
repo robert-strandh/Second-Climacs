@@ -4,9 +4,10 @@
 \label{sec-buffer-update-protocol}
 
 Our incremental parser parses the contents of a buffer, specified in
-the form of a \clos{} protocol
-\cite{Strandh:2016:CPE:3005729.3005732}.  The protocol contains two
-sub-protocols:
+the form of a \clos{} protocol\cite{Strandh:2016:CPE:3005729.3005732}.
+We include a brief summary of that protocol here.
+
+The protocol contains two sub-protocols:
 
 \begin{enumerate}
 \item The \emph{edit protocol} is used whenever items are inserted or
@@ -21,6 +22,67 @@ sub-protocols:
   hidden.  Only when the view becomes visible is the update protocol
   invoked.
 \end{enumerate}
+
+This organization solves several problems with the design of similar
+protocols:
+
+\begin{itemize}
+\item The edit protocol does not trigger any updates of the display.
+  The edit operations simply modify the buffer contents, and marks
+  modified lines with a \emph{time stamp}.  Therefore the operations
+  of the edit protocol are fast.  As a result, complex operations such
+  as inserting or deleting a region, or executing a complicated
+  keyboard macro, can be implemented as the repeated invocation of
+  simpler operations in the edit protocol.  No special treatment is
+  required for such complex operations, which simplifies the overall
+  design of these operations.
+\item There is no need for the equivalent of \emph{observers} as many
+  object-oriented design methods require.  Views are automatically
+  updated after every keystroke.  Each view contains a time stamp
+  corresponding to the previous time it was updated, and this time
+  stamp is transmitted to the buffer when the update protocol is
+  invoked.
+\item Views that are invisible are not updated as a result of a
+  keystroke.  Such views are updated if and when they again become
+  visible.
+\end{itemize}
+
+When a view invokes the update protocol, in addition to transmitting
+its time stamp to the buffer, it also transmits four \emph{callback
+  functions}.  Conceptually, the view contains some mirror
+representation of the lines of the buffer.  Before the update protocol
+is invoked, the view sets an index into that representation to zero,
+meaning the first line.  As  a result of invoking the update protocol,
+the buffer informs the view of changes that happened after the time
+indicated by the time stamp by calling these callback functions as
+follows:
+
+\begin{itemize}
+\item The callback function \emph{skip} indicates to the view that the
+  index should be incremented by a number given as argument to the
+  function.
+\item The callback function \emph{modify} indicates a line that has been
+  modified since the last update.  The line is passed as an argument.
+  The view must delete lines at the current index until the correct
+  line is the one at the index.  It must then take appropriate action
+  to reflect the modification, typically by copying the new line
+  contents into its own mirror data structure.
+\item The callback function \emph{insert} indicates that a line has
+  been inserted at the current index since the last update.  Again,
+  the line is passed as an argument.  The view updates its mirror data
+  structure to reflect the new line.
+\item The callback function \emph{sync} is with a line passed as an
+  argument.  The view must delete lines at the current index until the
+  correct line is the one at the index.
+\end{itemize}
+
+Notice that there is no \emph{delete} callback function.  The buffer
+does not hold on to lines that have been deleted, so it is incapable
+of supplying this information.  Instead, the \emph{modify} and
+\emph{sync} operations provide this information implicitly by
+supplying the next line to be operated on.  Any lines preceding it in
+the mirror data structure are no longer present in the buffer and
+should be deleted by the view.
 
 The buffer protocol is \emph{line-oriented} in two different ways:
 
