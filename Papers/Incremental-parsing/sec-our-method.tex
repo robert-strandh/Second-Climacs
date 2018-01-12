@@ -108,6 +108,13 @@ order.  There can be three different update operations:
 \item Delete.  An existing line has been deleted.
 \end{itemize}
 
+Although the presence of a \emph{delete} operation may seem to
+contradict the fact that no such operation is possible, it is fairly
+trivial to derive this operation from the ones that are actually
+supported by the update protocol.  Furthermore, this derived set of
+operations simplifies the presentation of our technique in the rest of
+the paper.
+
 In order to parse the buffer contents, we use a custom \texttt{read}
 function.  This version of the \texttt{read} function differs from the
 standard one in the following ways:
