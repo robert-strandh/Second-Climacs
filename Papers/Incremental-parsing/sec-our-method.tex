@@ -71,9 +71,9 @@ follows:
   been inserted at the current index since the last update.  Again,
   the line is passed as an argument.  The view updates its mirror data
   structure to reflect the new line.
-\item The callback function \emph{sync} is with a line passed as an
-  argument.  The view must delete lines at the current index until the
-  correct line is the one at the index.
+\item The callback function \emph{sync} is called with a line passed
+  as an argument.  The view must delete lines at the current index
+  until the correct line is the one at the index.
 \end{itemize}
 
 Notice that there is no \emph{delete} callback function.  The buffer
