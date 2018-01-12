@@ -37,11 +37,11 @@ protocols:
   required for such complex operations, which simplifies the overall
   design of these operations.
 \item There is no need for the equivalent of \emph{observers} as many
-  object-oriented design methods require.  Views are automatically
-  updated after every keystroke.  Each view contains a time stamp
-  corresponding to the previous time it was updated, and this time
-  stamp is transmitted to the buffer when the update protocol is
-  invoked.
+  object-oriented design methods require.  Visible views are
+  automatically updated after every keystroke.  Each view contains a
+  time stamp corresponding to the previous time it was updated, and
+  this time stamp is transmitted to the buffer when the update
+  protocol is invoked.
 \item Views that are invisible are not updated as a result of a
   keystroke.  Such views are updated if and when they again become
   visible.
