@@ -208,3 +208,22 @@ result of these operations, and modifying the start-line position of
 remaining valid parse results can be done at very little cost.
 
 \subsection{Rehabilitation phase}
+
+Conceptually, the rehabilitation phase consist of parsing the entire
+buffer from the beginning by calling \texttt{read} until the end of
+the buffer is reached.  However, three crucial design elements avoid
+the necessity of a full re-analysis:
+
+\begin{itemize}
+\item Top level parse results that precede the first modification to
+  the buffer do not have to be re-analyzed, because they must return
+  the same result as before any modification.
+\item When \texttt{read} is called at a buffer position corresponding
+  to a parse result that is in the cache, we can simply return the
+  cache entry rather than re-analyzing the buffer contents at that
+  point.
+\item If a top-level call to \texttt{read} is made beyond the last
+  modification to the buffer, and there is a top-level parse result in
+  the cache at that point, then every remaining top-level parse result
+  in the cache can be re-used without any further analysis required.
+\end{itemize}
