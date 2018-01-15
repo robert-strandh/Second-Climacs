@@ -27,7 +27,8 @@ This result deserves some clarifications:
   parser.  In particular, to read a character, several generic
   functions where called, including the \texttt{stream-read-char}
   function of the Gray streams library, and then several others in
-  order to access the character in the buffer.
+  order to access the character in the buffer.  Further optimizations
+  are likely to decrease the time spent to read a single character.
 \item This situation will happen only when a buffer is initially read
   into the editor.  Even very significant subsequent changes to the
   contents will still preserve large portions of the cache, so that
@@ -35,11 +36,14 @@ This result deserves some clarifications:
   of the total number of characters in the buffer.
 \item All the code was compiled with a value $3$ of the \texttt{debug}
   optimize quality, and with a value of $0$ of the \texttt{speed}
-  optimize quality.
+  optimize quality.  We plan to investigate what parts of the code are
+  critical for good performance and selectively alter the default
+  optimize settings for these parts.
 \item This particular case can be handled by giving the parser the
   original stream from which the buffer contents was created, rather
   than giving it the buffer protocol wrapped in a stream protocol
-  after the buffer has been filled.
+  after the buffer has been filled.  That way, the entire overhead of
+  the Gray-stream protocol is avoided altogether.
 \end{itemize}
 
 \subsection{Parsing after small modifications}
