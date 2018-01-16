@@ -1,6 +1,9 @@
 \section{Cache representation}
 \label{app-cache-representation}
 
+\refFig{fig-cache} illustrates the representation of the cache for
+parse results.
+
 The sequence of top-level parse results is split into a \emph{prefix}
 and a \emph{suffix}, typically reflecting the current position in the
 buffer being edited by the end user.  The suffix contains parse
@@ -28,6 +31,14 @@ its position changes, we make the position of the first child of some
 parse result $P$ relative to that of $P$, and the children, other than
 the first, of some parse result $P$, have positions relative to the
 previous child in the list.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-cache.pdf_t}
+\end{center}
+\caption{\label{fig-cache}
+Representation of the cache.}
+\end{figure}
 
 \subsection{Invalidation phase}
 
