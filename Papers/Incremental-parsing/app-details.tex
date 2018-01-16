@@ -2,7 +2,17 @@
 \label{app-cache-representation}
 
 \refFig{fig-cache} illustrates the representation of the cache for
-parse results.
+parse results.  The buffer contents that corresponds to that cache
+contents might for instance be:
+
+\begin{verbatim}
+(a
+ (b c))
+(d)
+(e
+ f)
+(g (h))
+\end{verbatim}
 
 The sequence of top-level parse results is split into a \emph{prefix}
 and a \emph{suffix}, typically reflecting the current position in the
