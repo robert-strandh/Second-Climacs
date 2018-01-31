@@ -190,7 +190,7 @@ all cases (line modification, line insertion, line deletion), the
 existing parse results that straddle a place that has been altered
 must be invalidated.  Notice that when a top-level parse result
 straddles such a modification, that parse result is invalidated, but
-It is very likely that several of its children do not straddle the
+it is very likely that several of its children do not straddle the
 point of modification.  Therefore such children are not invalidated,
 and are kept in the cache in case they are needed during the
 rehabilitation phase.
