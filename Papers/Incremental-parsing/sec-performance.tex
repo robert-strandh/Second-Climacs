@@ -39,11 +39,11 @@ This result deserves some clarifications:
   optimize quality.  We plan to investigate what parts of the code are
   critical for good performance and selectively alter the default
   optimize settings for these parts.
-\item This particular case can be handled by giving the parser the
-  original stream from which the buffer contents was created, rather
-  than giving it the buffer protocol wrapped in a stream protocol
-  after the buffer has been filled.  That way, the entire overhead of
-  the Gray-stream protocol is avoided altogether.
+\item This particular case can be handled by having the parser process
+  the original stream from which the buffer contents was created,
+  rather than giving it the buffer protocol wrapped in a stream
+  protocol after the buffer has been filled.  That way, the entire
+  overhead of the Gray-stream protocol is avoided altogether.
 \end{itemize}
 
 \subsection{Parsing after small modifications}
