@@ -53,11 +53,11 @@ Representation of the cache.}
 As a result of executing the invalidation phase, a third sequence of
 parse results is created.  This sequence is called the \emph{residue},
 and it contains valid parse results that were previously children of
-some top-level parse result, but that top-level parse result was
-invalidated.  So, for example, if the line containing the symbol
-\texttt{f} in the buffer corresponding to the cache in
-\refFig{fig-cache} were to be modified, the result of the invalidation
-phase would be the cache shown in \refFig{fig-after-invalidation}.
+some top-level parse result that is no longer valid.  So, for example,
+if the line containing the symbol \texttt{f} in the buffer
+corresponding to the cache in \refFig{fig-cache} were to be modified,
+the result of the invalidation phase would be the cache shown in
+\refFig{fig-after-invalidation}.
 
 \begin{figure}
 \begin{center}
@@ -86,7 +86,7 @@ in this case at the end of the line containing the expression
 is positioned on the left parenthesis of the line containing
 \texttt{(e}.  There is no cache entry, neither in the residue nor in
 the suffix, corresponding to this position, so normal reader operation
-is execution.  Thus, the reader macro associated with the left
+is executed.  Thus, the reader macro associated with the left
 parenthesis is invoked, and the reader is called recursively on the
 elements of the list.  When the reader is called with the position
 corresponding to the expression \texttt{e}, we find that there is an
