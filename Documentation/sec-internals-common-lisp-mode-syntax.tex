@@ -1,0 +1,622 @@
+\section{Syntax}
+
+\subsection{Parsing using the \commonlisp{} reader}
+
+We use a special version of the \commonlisp{} reader to parse the
+contents of a buffer.  We use a special version of the reader for the
+following reasons:
+
+\begin{itemize}
+\item We need a different action from that of the standard reader when
+  it comes to interpreting tokens.  In particular, we do not
+  necessarily want the incremental parser to intern symbols
+  automatically, and we do not want the reader to fail when a symbol
+  with an explicit package prefix does not exist or when the package
+  corresponding to the package prefix does not exists.
+\item We need for the reader to return not only a resulting
+  expression, but an object that describes the start and end positions
+  in the buffer where the expression was read.
+\item The reader needs to return source elements that are not returned
+  by an ordinary reader, such as comments and expressions that are
+  skipped by certain other reader macros.
+\item The reader can not fail when an incorrect character is
+  encountered, nor when end of file is encountered in the middle of a
+  call.
+\end{itemize}
+
+We call the data structure referred to in the last item a \emph{parse
+  result}.  It contains the following slots:
+
+\begin{itemize}
+\item The start and the end location of the parse result in the
+  buffer.  For details on how this parse result is represented,
+  \refSec{sec-common-lisp-mode-syntax-data-structure}.
+\item The expression that was read, with some possible modifications.
+  Tokens are not represented as themselves for reasons mentioned
+  above.
+\item A list of \emph{children}.  These are parse results that were
+  returned by recursive calls to the reader.  The children are
+  represented in the order they were encountered in the buffer.  This
+  order may be different from the order in which the corresponding
+  expressions appear in the expression resulting from the call to the
+  reader.
+\end{itemize}
+
+\subsection{Data structure}
+\label{sec-common-lisp-mode-syntax-data-structure}
+
+A location in the buffer is considered a \emph{top-level location} if
+and only if, when the buffer is parsed by a number of consecutive
+calls to \texttt{read}, when this location is reached, the reader is
+in its initial state with no recursive pending invocations.
+
+The \commonlisp{} syntax maintains a sequence%
+\footnote{It is not a \commonlisp{} sequence, but just a suite
+  represented in a different way.}  of \emph{top-level parse results}.
+A parse result is considered top-level if it is the result of an
+immediate call to \texttt{read}, as opposed to of a recursive call.
+
+This sequence is organized as two ordinary \commonlisp{} lists, called
+the \emph{prefix} and the \emph{suffix}.  Given a top-level location
+$L$ in the buffer, the prefix contains a list of the top-level parse
+results that precede $L$ and the suffix contains a list of the
+top-level parse results that follow $L$.  The top-level parse results
+in the prefix occur in reverse order compared to order in which they
+appear in the buffer.  The top-level parse results in the suffix occur
+in the same order as they appear in the buffer.  the location $L$ is
+typically immediately before or immediately after the top-level
+expression in which the \emph{cursor} of the current view is located,
+but that is not a requirement.  \refFig{fig-cl-parser-prefix-suffix}
+illustrates the prefix and the suffix of a buffer with five top-level
+expressions.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-cl-parser-prefix-suffix.pdf_t}
+\end{center}
+\caption{\label{fig-cl-parser-prefix-suffix}
+Prefix and suffix containing top-level parse results.}
+\end{figure}
+
+Either the prefix or the suffix or both may be the empty list.  The
+location $L$ may be moved.  It suffices%
+\footnote{Some slots also need to be updated as will be discussed later.}
+to pop an element off of one
+of the lists and push it onto the other.
+
+The representation of a parse result is shown in
+\refFig{fig-parse-result}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-parse-result.pdf_t}
+\end{center}
+\caption{\label{fig-parse-result}
+Representation of parse result.}
+\end{figure}
+
+Let the \emph{initial character} of some parse result be the first
+non-whitespace character encountered during the call to the reader
+that produced this parse result.  Similarly, let the \emph{final
+  character} of some parse result be the last character encountered
+during the call to the reader that produced this parse result,
+excluding any look-ahead character that could be un-read before the
+parse result was returned.
+
+The slot named \texttt{start-line} is computed as follows:
+
+\begin{itemize}
+\item If the parse result is one of the top-level parse results in the
+  prefix or the first top-level parse result in the suffix, then the
+  value of this slot is the absolute line number of the initial
+  character of this parse result.  The first line of the buffer is
+  numbered $0$.
+\item If the parse result is a top-level parse result in the suffix
+  other than the first one, then the value of this slot is the number
+  of lines between the value of the slot \texttt{start-line} of the
+  preceding parse result and the initial character of this parse
+  result.  A value of $0$ indicates the same line as the
+  \texttt{start-line} of the preceding parse result.
+\item If this parse result is the first in a list of children of some
+  parent parse result, then the value of this slot is the number of
+  lines between the value of the slot \texttt{start-line} of the parent
+  parse result and the initial character of this parse result.
+\item If this parse result is the child other than the first in a list
+  of children of some parent parse result, then the value of this slot
+  is the number of lines between the value of the slot
+  \texttt{start-line} of the preceding sibling parse result and the
+  initial character of this parse result.
+\end{itemize}
+
+The value of the slot \texttt{start-column} is the absolute column
+number of the initial character of this parse result.  A value of $0$
+means the leftmost column.
+
+The value of the slot \texttt{end-line} of some parse result is the
+number of lines between the value of the slot \texttt{start-line} of
+the same parse result and the final character of the parse result.
+If the parse result starts and ends on the same line, then the value
+of this slot is $0$.
+
+The value of the slot \texttt{end-column} is the absolute column
+number of the final character of the parse result.
+
+To illustrate the data structure, we use the following example:
+
+\begin{verbatim}
+...
+34 (f 10)
+35
+36 (let ((x 1)
+37       (y 2))
+38   (g (h x)
+39      (i y)
+40      (j x y)))
+41
+42 (f 20)
+...
+\end{verbatim}
+
+Each line is preceded by the absolute line number.  If the parse
+result starting at line 36 is a member of the prefix or if it is the
+first element of the suffix, it would be represented like this:
+
+\begin{verbatim}
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+   00 01 ((x 1) (y 2))
+      00 00 (x 1)
+      01 00 (y 2)
+   02 02 (g (h x) (i y) (j x y))
+      00 00 (h x)
+      01 00 (i y)
+      02 00 (j x y)
+\end{verbatim}
+
+Since column numbers are uninteresting for our illustration, we
+show only line numbers.  Furthermore, we present a list as a table for
+a more compact presentation.
+
+\subsection{Moving top-level parse results}
+
+Occasionally, some top-level parse results need to be moved from the
+prefix to the suffix or from the suffix to the prefix.  There could be
+several reasons for such moves:
+
+\begin{itemize}
+\item The place between the prefix and the suffix must always be near
+  the part of the buffer currently on display when the contents are
+  presented to the user.  If the part on display changes as a result
+  of scrolling or as a result of the user moving the current cursor,
+  then the prefix and suffix must be adjusted to reflect the new
+  position prior to the presentation.
+\item After items have been inserted into or deleted from the buffer,
+  the incremental parser may have to adjust the prefix and the suffix
+  so that the altered top-level parse results are near the beginning
+  of the suffix.
+\end{itemize}
+
+These adjustments are always accomplished by repeatedly moving a
+single top-level parse result.
+
+To move a single top-level parse result $P$ from the prefix to the
+suffix, the following actions are executed:
+
+\begin{enumerate}
+\item Modify the slot \texttt{start-line} of the first parse result of
+  the suffix so that, instead of containing the absolute line number,
+  it contains the line number relative to the value of the slot
+  \texttt{start-line} of $P$.
+\item Pop $P$ from the prefix and push it onto the suffix.  Rather
+  than using the straightforward technique, the \texttt{cons} cell
+  referring to $P$ can be reused so as to avoid unnecessary consing.
+\end{enumerate}
+
+To move a single top-level parse-result $P$ from the suffix to the
+prefix, the following actions are executed:
+
+\begin{enumerate}
+\item If $P$ has a successor $S$ in the suffix, then the slot
+  \texttt{start-line} of $S$ is adjusted so that it contains the
+  absolute line number as opposed to the line number relative to the
+  slot \texttt{start-line} of $P$.
+\item Pop $P$ from the suffix and push it onto the prefix.  Rather
+  than using the straightforward technique, the \texttt{cons} cell
+  referring to $P$ can be reused so as to avoid unnecessary consing.
+\end{enumerate}
+
+We illustrate this process by showing four possible top-level
+locations in the example buffer.  If all three top-level parse results
+are located in the suffix, we have the following situation:
+
+\begin{verbatim}
+prefix
+...
+suffix
+34 00 (f 10)
+02 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+06 00 (f 20)
+...
+\end{verbatim}
+
+In the example, we do not show the children of the top-level parse
+results.
+
+If the prefix contains the first top-level expression and the suffix
+the other two, we have the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+suffix
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+06 00 (f 20)
+...
+\end{verbatim}
+
+If the prefix contains the first two top-level expressions and the suffix
+the remaining one, we have the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+Finally, if the prefix contains all three top-level expressions, we
+have the following situation:
+
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+42 00 (f 20)
+suffix
+...
+\end{verbatim}
+
+\subsection{Incremental update}
+
+Modifications to the buffer are reported at the granularity of entire
+lines.  The following operations are possible:
+
+\begin{itemize}
+\item A line may be modified.
+\item A line may be inserted.
+\item A line may be deleted.
+\end{itemize}
+
+Several different lines may be modified between two incremental
+updates, and in different ways.  The first step in an incremental
+update step is to invalidate parse results that are no longer known to
+be correct after these modifications.  This step modifies the data
+structure described in
+\refSec{sec-common-lisp-mode-syntax-data-structure} in the following
+way:
+
+\begin{itemize}
+\item After the invalidation step, the prefix contains the parse
+  results preceding the first modified line, so that these parse
+  results are still valid.
+\item The suffix contains those parse results following the last
+  modified line.  These parse results are still valid, but they may no
+  longer be top-level parse results, because the nesting may have
+  changed as a result of the modifications preceding the suffix.
+\item An additional list of \emph{residual parse results} is created.
+  This list contains parse results that have not been invalidated by
+  the modifications, i.e. that appear only in lines that have not been
+  modified.
+\end{itemize}
+
+The order of the parse results in the list of residual parse results
+is the same as the order of the parse results in the buffer.  The slot
+\texttt{start-line} of each parse result in the list is the absolute
+line number of the initial character of that parse result.
+
+Suppose, for example, that the buffer contents in our running example
+was modified so that line 37 was altered in some way, and a line was
+inserted between the lines 39 and 40.  As a result of this update, we
+need to represent the following parse results:
+
+\begin{verbatim}
+...
+34 (f 10)
+35
+36       (x 1)
+37
+38      (h x)
+39      (i y)
+40
+41      (j x y)
+42
+43 (f 20)
+...
+\end{verbatim}
+
+In other words, we need to obtain the following representation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residual
+36 00 (x 1)
+38 00 (h x)
+39 00 (i y)
+41 00 (j x y)
+suffix
+43 00 (f 20)
+...
+\end{verbatim}
+
+\subsubsection{Processing modifications}
+
+While the list of residual parse results is being constructed, its
+elements are in the reverse order.  Only when all buffer updates have
+been processed is the list of residual parse results reversed to
+obtain the final representation.
+
+All line modifications are reported in increasing order of line
+number.  Before the first modification is processed, the prefix and
+the suffix are positioned as indicated above, and the list of residual
+parse results is initialized to the empty list.
+
+The following actions are taken, depending on the position of the
+modified line with respect to the suffix, and on the nature of the
+modification:
+
+\begin{itemize}
+\item If a line has been modified, and either the suffix is empty or
+  the modified line precedes the first parse result of the suffix,
+  then no action is taken.
+\item If a line has been deleted, and the suffix is empty, then no
+  action is taken.
+\item If a line has been deleted, and it precedes the first parse
+  result of the suffix, then the slot \texttt{start-line} of the first
+  parse result of the suffix is decremented.
+\item If a line has been inserted, and the suffix is empty, then no
+  action is taken.
+\item If a line has been inserted, and it precedes the first parse
+  result of the suffix, then the slot \texttt{start-line} of the first
+  parse result of the suffix is incremented.
+\item If a line has been modified and the entire first parse result of
+  the suffix is entirely contained in this line, then remove the first
+  parse result from the suffix and start the entire process again with
+  the same modified line.  To remove the first parse result from the
+  suffix, first adjust the slot \texttt{start-line} of the second
+  element of the suffix (if any) to reflect the absolute start line.
+  Then pop the first element off the suffix.
+\item If a line has been modified, deleted, or inserted, in a way that
+  may affect the first parse result of the suffix, then this parse
+  result is first removed from the suffix and then processed as
+  indicated below.  Finally, start the entire process again with the
+  same modified line.  To remove the first parse result from the
+  suffix, first adjust the slot \texttt{start-line} of the second
+  element of the suffix (if any) to reflect the absolute start line.
+  Then pop the first element off the suffix.
+\end{itemize}
+
+Modifications potentially apply to elements of the suffix.  When such
+an element needs to be taken apart, we try to salvage as many as
+possible of its descendants.  We do this by moving the element to a
+\emph{worklist} organized as a stack represented as an ordinary
+\commonlisp{} list.  The top of the stack is taken apart by popping it
+from the stack and pushing its children.  This process goes on until
+either the top element has no children, or it is no longer affected by
+a modification to the buffer, in which case it is moved to the list of
+residual parse results.
+
+Let us see how we process the modifications in our running example.
+
+Line 37 has been altered, so our first task is to adjust the prefix
+and the suffix so that the prefix contains the last parse result that
+is unaffected by the modifications.  This adjustment results in the
+following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+worklist
+suffix
+36 04 (let ((x 1) (y 2)) (g (h x) (i y) (j x y)))
+06 00 (f 20)
+...
+\end{verbatim}
+
+The first parse result of the suffix is affected by the fact that line
+37 has been modified.  We must move the children of that parse result
+to the worklist.  In doing so, we make the \texttt{start-line} of the
+children reflect the absolute line number, and we also make the
+\texttt{start-line} of the next parse result of the suffix also
+reflect the absolute line number.  We obtain the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+worklist
+36 01 ((x 1) (y 2))
+38 02 (g (h x) (i y) (j x y))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+The first element of the worklist is affected by the modification of
+line 37.  We therefore remove it from the worklist, and add its
+children to the top of the worklist.  In doing so, we make the
+\texttt{start-line} of those children reflect absolute line numbers.
+We obtain the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+worklist
+36 00 (x 1)
+37 00 (y 2)
+38 02 (g (h x) (i y) (j x y))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+The first element of the worklist is unaffected by the modification,
+because it precedes the modified line entirely.  We therefore move it
+to the residue list.  We now have the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+worklist
+37 00 (y 2)
+38 02 (g (h x) (i y) (j x y))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+The first parse result of the top of the worklist is affected by the
+modification.  It has no children, so we pop it off the worklist.
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+worklist
+38 02 (g (h x) (i y) (j x y))
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+The modification of line 37 is now entirely processed.  We know this
+because the first parse result on the worklist occurs beyond the
+modified line in the buffer.  We therefore start processing the line
+inserted between the existing lines 39 and 40.  The first item on the
+worklist is affected by this insertion.  We therefore remove it from
+the worklist and push its children instead.  In doing so, we make the
+\texttt{start-line} slot those children reflect the absolute line
+number.  We obtain the following result:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+worklist
+38 00 (h x)
+39 00 (i y)
+40 00 (j x y)
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+The first element of the worklist is unaffected by the insertion
+because it precedes the inserted line entirely.  We therefore move it
+to the residue list.  We now have the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+38 00 (h x)
+worklist
+39 00 (i y)
+40 00 (j x y)
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+Once again, the first element of the worklist is unaffected by the
+insertion because it precedes the inserted line entirely.  We
+therefore move it to the residue list.  We now have the following
+situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+38 00 (h x)
+39 00 (i y)
+worklist
+40 00 (j x y)
+suffix
+42 00 (f 20)
+...
+\end{verbatim}
+
+The first element of the worklist is affected by the insertion, in
+that it must have its line number incremented.  In fact, every element
+of the worklist and also the first element of the suffix must have
+their line numbers incremented.  Furthermore, this update finishes the
+processing of the inserted line.  We now have the following situation:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+38 00 (h x)
+39 00 (i y)
+worklist
+41 00 (j x y)
+suffix
+43 00 (f 20)
+...
+\end{verbatim}
+
+With no more buffer modifications to process, we terminate the
+procedure by moving remaining parse results from the worklist to the
+residue list.  The final situation is shown here:
+
+\begin{verbatim}
+prefix
+...
+34 00 (f 10)
+residue
+36 00 (x 1)
+38 00 (h x)
+39 00 (i y)
+41 00 (j x y)
+worklist
+suffix
+43 00 (f 20)
+...
+\end{verbatim}
+
+\subsubsection{Recreating the cache}
+
+Once the cache has been processed so that only parse results that are
+known to be valid remain, the new buffer contents must be fully parsed
+so that its complete structure is reflected in the cache.
+
+Conceptually, we obtain a complete cache by applying \texttt{read}
+repeatedly from the beginning of the buffer, until all top-level parse
+results have been found.  But doing it this way essentially for every
+keystroke would be too slow.  In this section we explain how the
+partially invalidated cache is used to make this process sufficiently
+fast.
