@@ -1,6 +1,8 @@
 \section{Computing indentation}
 \label{sec-internals-common-lisp-mode-indentation}
 
+\subsection{Introduction}
+
 There are two basic cases for computing indentation of some parse
 result:
 
@@ -31,3 +33,23 @@ We must distinguish between the following cases:
 
 In case 1,  we are done because its indentation has already been
 computed.
+
+\subsection{Special indentation rules}
+
+\subsection{Indenting a function call}
+
+If $P$ represents a function call, then its children are indented
+according to the following rules:
+
+\begin{itemize}
+\item If $P$ has at least two children and the second child is
+  positioned on the same line as the first child, then the remaining
+  children (starting with the third one) are indented so that they
+  align with the second child.
+\item If either $P$ has only one child (which must then be the
+  function to be called), or the second child is not positioned on the
+  same line as the first child, then every child is indented by two
+  positions relative to $P$.
+\end{itemize}
+
+\subsection{Indenting a macro call}
