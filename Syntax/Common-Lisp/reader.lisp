@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defmethod sicl-reader:read-common
+(defmethod reader:read-common
     ((input-stream analyzer) eof-error-p eof-value)
   (let ((*stack* (cons '() *stack*))
         (start-line (current-line-number input-stream))
@@ -20,20 +20,20 @@
                      (advance-stream-to-beyond-parse-result input-stream parse-result)
                      (etypecase parse-result
                        (expression-parse-result
-                        (return-from sicl-reader:read-common
+                        (return-from reader:read-common
                           (expression parse-result)))
                        (eof-parse-result
-                        (return-from sicl-reader:read-common nil))
+                        (return-from reader:read-common nil))
                        (no-expression-parse-result
                         (go step-1-start))))))
-             (case (sicl-readtable::syntax-type sicl-reader:*readtable* char)
+             (case (sicl-readtable::syntax-type reader:*readtable* char)
                (:whitespace
                 (setf start-line (current-line-number input-stream))
                 (setf start-column (current-item-number input-stream))
                 (go step-1-start))
                ((:terminating-macro :non-terminating-macro)
                 (let ((values (multiple-value-list
-                               (sicl-reader:call-reader-macro
+                               (reader:call-reader-macro
                                 (get-macro-character char)
                                 input-stream
                                 char))))
@@ -76,12 +76,12 @@
                                       start-line)
                            :end-column (current-item-number input-stream)
                            :relative-p nil))
-                        (return-from sicl-reader:read-common (car values))))))
+                        (return-from reader:read-common (car values))))))
                (t
                 (unread-char char input-stream)
-                (let ((token (sicl-reader:read-token input-stream
-                                                     eof-error-p
-                                                     eof-value)))
+                (let ((token (reader:read-token input-stream
+                                                eof-error-p
+                                                eof-value)))
                   (push-parse-result
                    (make-parse-result 'expression-parse-result
                      :expression token
@@ -98,7 +98,7 @@
                                 start-line)
                      :end-column (current-item-number input-stream)
                      :relative-p nil))
-                  (return-from sicl-reader:read-common token))))))
+                  (return-from reader:read-common token))))))
       (end-of-file ()
         (push (make-parse-result 'eof-parse-result
                 :max-line-width (compute-max-line-width

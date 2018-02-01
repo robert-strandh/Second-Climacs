@@ -49,7 +49,7 @@
   (print-unreadable-object (object stream)
     (format stream "~a" (characters object))))
 
-(defmethod sicl-reader:interpret-symbol
+(defmethod reader:interpret-symbol
     (token position-package-marker-1 position-package-marker-2 input-stream)
   (let ((package-designator nil)
         (symbol-name nil)
@@ -69,7 +69,7 @@
       (2
        (when (or (/= position-package-marker-2 (1+ position-package-marker-1))
                  (= position-package-marker-2 (1- (length token))))
-         (return-from sicl-reader:interpret-symbol
+         (return-from reader:interpret-symbol
            (make-instance 'illegal-symbol-token
              :package-marker-1 position-package-marker-1
              :package-marker-2 position-package-marker-2)))

@@ -2,10 +2,10 @@
 
 (defun parse-and-cache (analyzer)
   (let ((*stack* (list '()))
-        (sicl-reader:*preserve-whitespace* t)
+        (reader:*preserve-whitespace* t)
         (start-line (current-line-number analyzer))
         (start-column (current-item-number analyzer)))
-    (handler-case (sicl-reader:read-preserving-whitespace analyzer)
+    (handler-case (reader:read-preserving-whitespace analyzer)
       (end-of-file ()
 	nil)
       (error ()
