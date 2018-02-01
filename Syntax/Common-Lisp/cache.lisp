@@ -77,9 +77,9 @@
 
 (defun finish-scavenge (cache)
   (loop until (null (worklist cache))
-	do (move-to-residue cache))
+        do (move-to-residue cache))
   (setf (residue cache)
-	(nreverse (residue cache))))
+        (nreverse (residue cache))))
 
 ;;; This function is called by the three operations that handle
 ;;; modifications.  The first time this function is called, we must
@@ -90,15 +90,15 @@
   ;; completely precede the number of skipped lines, move them to the
   ;; suffix.
   (loop while (and (not (null (prefix cache)))
-		   (>= (end-line (first (prefix cache)))
-		       (line-counter cache)))
-	do (prefix-to-suffix cache))
+                   (>= (end-line (first (prefix cache)))
+                       (line-counter cache)))
+        do (prefix-to-suffix cache))
   ;; As long as there are parse results on the suffix that completely
   ;; precede the number of skipped lines, move them to the prefix.
   (loop while (and (not (null (suffix cache)))
-		   (< (end-line (first (suffix cache)))
-		      (line-counter cache)))
-	do (suffix-to-prefix cache)))
+                   (< (end-line (first (suffix cache)))
+                      (line-counter cache)))
+        do (suffix-to-prefix cache)))
 
 ;;; Return true if and only if either there are no more parse results,
 ;;; or the first parse result starts at a line that is strictly
@@ -106,9 +106,9 @@
 (defun next-parse-result-is-beyond-line-p (cache line-number)
   (with-accessors ((suffix suffix) (worklist worklist)) cache
     (if (null worklist)
-	(or (null suffix)
-	    (> (start-line (first suffix)) line-number))
-	(> (start-line (first worklist)) line-number))))
+        (or (null suffix)
+            (> (start-line (first suffix)) line-number))
+        (> (start-line (first worklist)) line-number))))
 
 ;;; Return true if and only if LINE-NUMBER is one of the lines of
 ;;; PARSE-RESULT.  The START-LINE of PARSE-RESULT is an absolute line
@@ -122,7 +122,7 @@
 ;;; the worklist, and of the first parse result of the suffix, if any.
 (defun adjust-worklist-and-suffix (cache increment)
   (loop for parse-result in (worklist cache)
-	do (incf (start-line parse-result) increment))
+        do (incf (start-line parse-result) increment))
   (unless (null (suffix cache))
     (incf (start-line (first (suffix cache))) increment)))
 
@@ -144,26 +144,26 @@
     (ensure-worklist-not-empty cache)
     (let ((parse-result (pop-from-worklist cache)))
       (if (line-is-inside-parse-result-p parse-result line-number)
-	  (let ((children (children parse-result)))
-	    (make-absolute children (start-line parse-result))
-	    (setf worklist (append children worklist)))
-	  (push-to-residue cache parse-result)))))
+          (let ((children (children parse-result)))
+            (make-absolute children (start-line parse-result))
+            (setf worklist (append children worklist)))
+          (push-to-residue cache parse-result)))))
 
 (defun handle-modified-line (cache line-number)
   (let ((line (flexichain:element* (contents cache) line-number)))
     (setf (contents line)
           (cluffer:items (cluffer-line line))))
   (loop until (next-parse-result-is-beyond-line-p cache line-number)
-	do (process-next-parse-result cache line-number)))
+        do (process-next-parse-result cache line-number)))
 
 (defun handle-inserted-line (cache line-number)
   (loop until (next-parse-result-is-beyond-line-p cache (1- line-number))
-	do (process-next-parse-result cache line-number))
+        do (process-next-parse-result cache line-number))
   (adjust-worklist-and-suffix cache 1))
 
 (defun handle-deleted-line (cache line-number)
   (loop until (next-parse-result-is-beyond-line-p cache line-number)
-	do (process-next-parse-result cache line-number))
+        do (process-next-parse-result cache line-number))
   (adjust-worklist-and-suffix cache -1))
 
 ;;; Take into account modifications to the buffer by destroying the
@@ -172,41 +172,41 @@
 (defun scavenge (cache buffer)
   (let ((cache-initialized-p nil))
     (with-accessors ((lines contents)
-		     (line-counter line-counter))
-	cache
+                     (line-counter line-counter))
+        cache
       (setf line-counter 0)
       (flet ((remove-deleted-lines (line)
-	       (loop for cache-line = (flexichain:element* lines line-counter)
-		     for cluffer-line = (cluffer-line cache-line)
-		     until (eq line cluffer-line)
-		     do (flexichain:delete* lines line-counter)
-			(handle-deleted-line cache line-counter)))
-	     (ensure-cache-initialized ()
-	       (unless cache-initialized-p
-		 (setf cache-initialized-p t)
-		 (ensure-update-initialized cache))))
-	(flet ((skip (count)
-		 (incf line-counter count))
-	       (modify (line)
-		 (ensure-cache-initialized)
-		 (remove-deleted-lines line)
-		 (handle-modified-line cache line-counter)
-		 (incf line-counter))
-	       (create (line)
-		 (ensure-cache-initialized)
-		 (let ((temp (make-instance 'line
-			       :cluffer-line line
-			       :contents (cluffer:items line))))
-		   (flexichain:insert* lines line-counter temp))
-		 (handle-inserted-line cache line-counter)
-		 (incf line-counter))
-	       (sync (line)
-		 (remove-deleted-lines line)
-		 (incf line-counter)))
-	  (setf (time-stamp cache)
-		(cluffer:update buffer
-				(time-stamp cache)
-				#'sync #'skip #'modify #'create))))))
+               (loop for cache-line = (flexichain:element* lines line-counter)
+                     for cluffer-line = (cluffer-line cache-line)
+                     until (eq line cluffer-line)
+                     do (flexichain:delete* lines line-counter)
+                        (handle-deleted-line cache line-counter)))
+             (ensure-cache-initialized ()
+               (unless cache-initialized-p
+                 (setf cache-initialized-p t)
+                 (ensure-update-initialized cache))))
+        (flet ((skip (count)
+                 (incf line-counter count))
+               (modify (line)
+                 (ensure-cache-initialized)
+                 (remove-deleted-lines line)
+                 (handle-modified-line cache line-counter)
+                 (incf line-counter))
+               (create (line)
+                 (ensure-cache-initialized)
+                 (let ((temp (make-instance 'line
+                               :cluffer-line line
+                               :contents (cluffer:items line))))
+                   (flexichain:insert* lines line-counter temp))
+                 (handle-inserted-line cache line-counter)
+                 (incf line-counter))
+               (sync (line)
+                 (remove-deleted-lines line)
+                 (incf line-counter)))
+          (setf (time-stamp cache)
+                (cluffer:update buffer
+                                (time-stamp cache)
+                                #'sync #'skip #'modify #'create))))))
   (finish-scavenge cache))
 
 ;;; Methods that make an instance of CACHE behave like an instance
@@ -217,7 +217,7 @@
 
 (defmethod item ((folio cache) line-number item-number)
   (aref (contents (flexichain:element* (contents folio) line-number))
-	item-number))
+        item-number))
 
 (defmethod line-contents ((folio cache) line-number)
   (contents (flexichain:element* (contents folio) line-number)))
