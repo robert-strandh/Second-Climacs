@@ -32,9 +32,26 @@ We must distinguish between the following cases:
 \end{enumerate}
 
 In case 1,  we are done because its indentation has already been
-computed.
+computed.  The remaining cases are treated below.
 
 \subsection{Special indentation rules}
+
+Certain operators have their own indentation rules.  In particular,
+most special operators do, but it is also possible to define special
+indentation rules for functions and macros.
+
+Such an indentation rule is a method on the generic-function
+\texttt{compute-indentation}.  This function takes the parse result
+$P$, a symbol (the name of the operator), and a \emph{client}
+instance.  A method should specialize on the name of the operator (in
+the form of an EQL specializer) and on the client parameter (unless
+this is a default method).
+
+The method computes and assigns indentation for the descendants that
+have fixed relative indentation according to the syntax of the
+operator, and then recursively calls the global indentation
+computation function in order to recursively compute indentation for
+the children of those descendants.
 
 \subsection{Indenting a function call}
 
@@ -53,3 +70,30 @@ according to the following rules:
 \end{itemize}
 
 \subsection{Indenting a macro call}
+
+The indentation of a macro call depends on the lambda list for the
+macro.  Two major cases are identified:
+
+\begin{itemize}
+\item The lambda list does not have \texttt{&body} in it.
+\item The lambda list has \texttt{&body} in it.
+\end{itemize}
+
+In the first case, the macro call is indented in the same way as a
+function call.
+
+In the second case, there are two sub-cases:
+
+\begin{itemize}
+\item If any of the arguments of the body is positioned on the same
+  line as the operator, then every child that is not positioned on the
+  same line as the operator is aligned under the first body argument.
+\item Otherwise, every child that belongs to the body is indented by
+  two positions relative to $P$.
+\end{itemize}
+
+If there is a child of $P$ preceding the body arguments and the first
+such child is positioned on the same line as the operator, then every
+child line preceding the body arguments is indented below the first
+child.  Otherwise, if there is a child of $P$ preceding the body
+arguments, then every line of such a child is indented by four spaces.
