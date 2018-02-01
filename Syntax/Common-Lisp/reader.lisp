@@ -26,7 +26,7 @@
                         (return-from sicl-reader:read-common nil))
                        (no-expression-parse-result
                         (go step-1-start))))))
-             (case (sicl-reader:syntax-type char)
+             (case (sicl-readtable::syntax-type sicl-reader:*readtable* char)
                (:whitespace
                 (setf start-line (current-line-number input-stream))
                 (setf start-column (current-item-number input-stream))
