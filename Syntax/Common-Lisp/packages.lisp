@@ -3,7 +3,8 @@
 (defpackage #:climacs-syntax-common-lisp
   (:use #:common-lisp)
   (:shadow #:package-name)
-  (:local-nicknames (#:reader #:sicl-reader))
+  (:local-nicknames (#:reader #:sicl-reader)
+                    (#:readtable #:sicl-readtable))
   (:export
    #:folio
    #:line-count
