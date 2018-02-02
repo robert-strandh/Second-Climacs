@@ -6,10 +6,10 @@
   climacs-syntax-common-lisp:cache
   ((%parent :initarg :parent :accessor clim:output-record-parent)))
 
-(defclass common-lisp-view (second-climacs-clim-base:climacs-clim-view)
+(defclass common-lisp-view (clim-base:climacs-clim-view)
   ())
 
-(defmethod second-climacs-clim-base:make-climacs-clim-view
+(defmethod clim-base:make-climacs-clim-view
     ((view climacs-syntax-common-lisp:view))
   (let* ((analyzer (climacs2-base:analyzer view))
          (cache (climacs-syntax-common-lisp:folio analyzer)))
@@ -76,7 +76,7 @@
     (let* ((y (+ ascent (* line-number height)))
            (x (* start-column width))
            (clim-view (clim:stream-default-view pane))
-           (climacs-view (second-climacs-clim-base:climacs-view clim-view))
+           (climacs-view (clim-base:climacs-view clim-view))
            (cursor (climacs2-base:cursor climacs-view))
            (cursor-column-number (cluffer:cursor-position cursor))
            (canonicalized-end-column-number
@@ -194,7 +194,7 @@
                    first-line last-line)
     (draw-area pane cache sl sc el ec)))
 
-(defmethod second-climacs-clim-base:command-table
+(defmethod clim-base:command-table
     ((view  climacs-syntax-common-lisp:view))
   (clim:find-command-table 'common-lisp-table))
 
@@ -517,9 +517,9 @@
 (defmethod clim:clear-output-record ((history output-history))
   nil)
 
-(defmethod second-climacs-clim-base:update-view (pane (view common-lisp-view))
+(defmethod clim-base:update-view (pane (view common-lisp-view))
   (let ((history (clim:stream-output-history pane)))
-    (climacs2-base:update-view (second-climacs-clim-base:climacs-view view))
+    (climacs2-base:update-view (clim-base:climacs-view view))
     (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
       (declare (ignore x1 y1))
       (clim:change-space-requirements
@@ -550,6 +550,6 @@
 
 (defmethod climacs2-base:update-view-from-analyzer
     ((view climacs-syntax-common-lisp:view)
-     (pane second-climacs-clim-base:text-pane)
+     (pane clim-base:text-pane)
      (analyzer climacs-syntax-common-lisp:analyzer))
   (update-cache view pane analyzer))

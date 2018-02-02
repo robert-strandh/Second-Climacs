@@ -7,7 +7,7 @@
 
 (defun move-viewport-to-cursor (pane)
   (let* ((clim-view (clim:stream-default-view pane))
-         (climacs-view (second-climacs-clim-base:climacs-view clim-view))
+         (climacs-view (clim-base:climacs-view clim-view))
          (cursor (climacs2-base:cursor climacs-view))
          (cursor-line-number (cluffer:line-number cursor))
          (cursor-column-number (cluffer:cursor-position cursor)))
@@ -23,7 +23,7 @@
 
 (defun move-cursor-to-viewport (pane)
   (let* ((clim-view (clim:stream-default-view pane))
-         (climacs-view (second-climacs-clim-base:climacs-view clim-view))
+         (climacs-view (clim-base:climacs-view clim-view))
          (cursor (climacs2-base:cursor climacs-view))
          (cursor-line-number (cluffer:line-number cursor))
          (cursor-column-number (cluffer:cursor-position cursor)))
