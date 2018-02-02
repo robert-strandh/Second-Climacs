@@ -1,4 +1,4 @@
-(cl:in-package #:second-climacs-clim-common-lisp-view)
+(cl:in-package #:second-climacs-clim-view-common-lisp)
 
 (clim:define-command-table common-lisp-table
   :inherit-from

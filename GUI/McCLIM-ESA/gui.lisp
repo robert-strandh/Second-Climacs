@@ -120,7 +120,7 @@
         (call-next-method)
         ;; This is probably wrong.  All windows may be concerned.
         (let ((pane (esa:current-window)))
-          (second-climacs-clim-common-lisp-view:move-viewport-to-cursor pane)))
+          (second-climacs-clim-view-common-lisp:move-viewport-to-cursor pane)))
     (cluffer:cluffer-error (condition)
       (esa:display-message "~a" condition))))
 

@@ -1,4 +1,4 @@
-(cl:in-package #:second-climacs-clim-common-lisp-view)
+(cl:in-package #:second-climacs-clim-view-common-lisp)
 
 (stealth-mixin:define-stealth-mixin
     output-history

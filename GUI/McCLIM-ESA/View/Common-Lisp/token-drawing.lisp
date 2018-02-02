@@ -1,4 +1,4 @@
-(cl:in-package #:second-climacs-clim-common-lisp-view)
+(cl:in-package #:second-climacs-clim-view-common-lisp)
 
 (defmethod draw-token-parse-result :around
     (parse-result (token climacs-syntax-common-lisp:existing-symbol-token)
