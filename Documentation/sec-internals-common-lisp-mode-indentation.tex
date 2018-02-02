@@ -8,31 +8,38 @@ result:
 
 \begin{enumerate}
 \item If the parse result is a top-level parse result, then the
-  indentation is always 0, i.e. it should be positioned in the
+  indentation is always $0$, i.e. it should be positioned in the
   leftmost column.
 \item If the parse result is a nested parse result, then the
   indentation is relative to some ancestor parse result.
 \end{enumerate}
 
-The first case is trivial.  For the second case, computing indentation
-is a top-down procedure applied to the children of some parse result
-$P$.  It is assumed that the indentation (absolute or relative) of $P$
-has already been computed, either because it is a top-level parse
-result, or because its indentation was computed relative to some
-ancestor.
+For each top-level parse result, its absolute indentation is first set
+to $0$ and then the function \texttt{compute-child-indentations} is
+called on that top-level parse result.
+
+The function \texttt{compute-child-indentations} takes two parameters,
+a parse result and a \emph{client} instance.
 
 We must distinguish between the following cases:
 
 \begin{enumerate}
 \item $P$ is an atomic parse result.
 \item $P$ represents a special form or a function or macro call with
-  its own indentation rule
+  its own indentation rule.
 \item $P$ represents a function call without its own indentation rule.
 \item $P$ represents a macro call without its own indentation rule.
 \end{enumerate}
 
-In case 1,  we are done because its indentation has already been
-computed.  The remaining cases are treated below.
+In case 1, we are done because its indentation has already been
+computed and it has no children.  The remaining cases are treated
+below.
+
+The different cases are recognized because the function
+\texttt{function-information} of the Cleavir system
+\texttt{cst-to-ast} is called with the operator as an argument and the
+return value of that function determines whether the operator is a
+function, a macro, or a special operator.
 
 \subsection{Special indentation rules}
 
@@ -40,23 +47,23 @@ Certain operators have their own indentation rules.  In particular,
 most special operators do, but it is also possible to define special
 indentation rules for functions and macros.
 
-Such an indentation rule is a method on the generic-function
-\texttt{compute-indentation}.  This function takes the parse result
-$P$, a symbol (the name of the operator), and a \emph{client}
-instance.  A method should specialize on the name of the operator (in
-the form of an EQL specializer) and on the client parameter (unless
-this is a default method).
+Such an indentation rule is defined as a method on the
+generic-function named \texttt{compute-child-indentations-special}.
+This function takes the parse result $P$, a symbol (the name of the
+operator), and a \emph{client} instance.  A method should specialize
+on the name of the operator (in the form of an EQL specializer) and on
+the client parameter (unless this is a default method).
 
 The method computes and assigns indentation for the descendants that
 have fixed relative indentation according to the syntax of the
-operator, and then recursively calls the global indentation
-computation function in order to recursively compute indentation for
-the children of those descendants.
+operator, and then recursively calls
+\texttt{compute-child-indentations} in order to recursively compute
+indentation for the children of those descendants.
 
 \subsection{Indenting a function call}
 
-If $P$ represents a function call, then its children are indented
-according to the following rules:
+If $P$ represents a function call, then by default, its children are
+indented according to the following rules:
 
 \begin{itemize}
 \item If $P$ has at least two children and the second child is
@@ -69,14 +76,19 @@ according to the following rules:
   positions relative to $P$.
 \end{itemize}
 
+However, some special cases exist.  For example, when the lambda list
+of the function has keyword arguments, then keywords are aligned
+vertically.%
+\footnote{Provide a more detailed description.}
+
 \subsection{Indenting a macro call}
 
 The indentation of a macro call depends on the lambda list for the
 macro.  Two major cases are identified:
 
 \begin{itemize}
-\item The lambda list does not have \texttt{&body} in it.
-\item The lambda list has \texttt{&body} in it.
+\item The lambda list does not have \texttt{\&body} in it.
+\item The lambda list has \texttt{\&body} in it.
 \end{itemize}
 
 In the first case, the macro call is indented in the same way as a
