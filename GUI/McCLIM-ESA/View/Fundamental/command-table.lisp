@@ -2,7 +2,7 @@
 
 (clim:define-command-table fundamental-table
   :inherit-from
-  (second-climacs-clim-base:global-table
-   second-climacs-clim-base:ascii-insert-table
-   second-climacs-clim-base:delete-table
-   second-climacs-clim-base:motion-table))
+  (clim-base:global-table
+   clim-base:ascii-insert-table
+   clim-base:delete-table
+   clim-base:motion-table))

@@ -40,10 +40,10 @@
     ((analyzer output-history))
   (pop (max-widths-suffix analyzer)))
 
-(defclass fundamental-view (second-climacs-clim-base:climacs-clim-view)
+(defclass fundamental-view (clim-base:climacs-clim-view)
   ())
 
-(defmethod second-climacs-clim-base:make-climacs-clim-view
+(defmethod clim-base:make-climacs-clim-view
     ((view climacs-syntax-fundamental:view))
   (let ((analyzer (climacs2-base:analyzer view)))
     (make-instance 'fundamental-view
@@ -59,7 +59,7 @@
          (text-ascent (clim:text-style-ascent text-style pane))
          (y (+ text-ascent (* line-number text-height)))
          (clim-view (clim:stream-default-view pane))
-         (climacs-view (second-climacs-clim-base:climacs-view clim-view))
+         (climacs-view (clim-base:climacs-view clim-view))
          (cursor (climacs2-base:cursor climacs-view))
          (cursor-column-number (cluffer:cursor-position cursor))
          (string (coerce contents 'string)))
@@ -167,9 +167,9 @@
 (defmethod clim:clear-output-record ((history output-history))
   nil)
 
-(defmethod second-climacs-clim-base:update-view (pane (view fundamental-view))
+(defmethod clim-base:update-view (pane (view fundamental-view))
   (let ((history (clim:stream-output-history pane)))
-    (climacs2-base:update-view (second-climacs-clim-base:climacs-view view))
+    (climacs2-base:update-view (clim-base:climacs-view view))
     (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
       (declare (ignore x1 y1))
       (clim:change-space-requirements
@@ -198,10 +198,10 @@
 
 (defmethod climacs2-base:update-view-from-analyzer
     ((view climacs-syntax-fundamental:view)
-     (pane second-climacs-clim-base:text-pane)
+     (pane clim-base:text-pane)
      (analyzer climacs-syntax-fundamental:analyzer))
   (update-analyzer view pane analyzer))
 
-(defmethod second-climacs-clim-base:command-table
+(defmethod clim-base:command-table
     ((view  climacs-syntax-fundamental:view))
   (clim:find-command-table 'fundamental-table))
