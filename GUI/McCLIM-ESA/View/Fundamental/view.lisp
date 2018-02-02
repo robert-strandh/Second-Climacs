@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-clim-view-fundamental)
+(cl:in-package #:second-climacs-clim-view-fundamental)
 
 (stealth-mixin:define-stealth-mixin
     output-history
