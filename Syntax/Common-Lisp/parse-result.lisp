@@ -19,7 +19,12 @@
    ;; the parse result.  The value of this slot can never be 0.  If
    ;; the last character of the parse result is the leftmost character
    ;; in a line, then this slot contains the value 1.
-   (%end-column :initarg :end-column :accessor end-column)))
+   (%end-column :initarg :end-column :accessor end-column)
+   ;; This slot contains the absolute column that the first character
+   ;; of this parse result should be positioned in, as computed by the
+   ;; rules of indentation.  If this parse result is not the first one
+   ;; on the line, then this slot contains NIL.
+   (%indentation :initform nil :initarg :indentation :accessor indentation)))
 
 (defclass parse-result (basic-parse-result)
   (;; This slot contains the column number of the leftmost known
