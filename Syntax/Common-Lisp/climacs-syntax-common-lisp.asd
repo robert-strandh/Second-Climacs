@@ -23,4 +23,5 @@
    (:file "read-forms")
    (:file "view")
    (:file "set-mode")
-   (:file "parse-result-to-cst")))
+   (:file "parse-result-to-cst")
+   (:file "indentation")))
