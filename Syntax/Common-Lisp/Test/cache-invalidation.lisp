@@ -136,29 +136,29 @@
 
 ;;; Compare a parse result with an absolute location to a node.  The
 ;;; children of the parse result have relative locations as usual.
-(defun equal-absolute (parse-result node)
-  (and (= (climacs-syntax-common-lisp::start-line parse-result)
+(defun equal-absolute (wad node)
+  (and (= (climacs-syntax-common-lisp::start-line wad)
 	  (start-line node))
-       (= (climacs-syntax-common-lisp::end-line parse-result)
+       (= (climacs-syntax-common-lisp::end-line wad)
 	  (end-line node))
-       (equal-relative-list (climacs-syntax-common-lisp::children parse-result)
+       (equal-relative-list (climacs-syntax-common-lisp::children wad)
 			    (children node)
 			    (start-line node))))
 
 ;;; Compare a parse result with a relative location to a node.
-(defun equal-relative (parse-result node base)
-  (and (= (climacs-syntax-common-lisp::start-line parse-result)
+(defun equal-relative (wad node base)
+  (and (= (climacs-syntax-common-lisp::start-line wad)
 	  (- (start-line node) base))
-       (= (climacs-syntax-common-lisp::height parse-result)
+       (= (climacs-syntax-common-lisp::height wad)
 	  (- (end-line node) (start-line node)))
-       (equal-relative-list (climacs-syntax-common-lisp::children parse-result)
+       (equal-relative-list (climacs-syntax-common-lisp::children wad)
 			    (children node)
 			    (start-line node))))
 
-(defun equal-relative-list (parse-results nodes base)
-  (or (and (null parse-results) (null nodes))
-      (equal-relative (first parse-results) (first nodes) base)
-      (equal-relative-list (rest parse-results)
+(defun equal-relative-list (wads nodes base)
+  (or (and (null wads) (null nodes))
+      (equal-relative (first wads) (first nodes) base)
+      (equal-relative-list (rest wads)
 			   (rest nodes)
 			   (+ base (start-line (first nodes))))))
 
@@ -171,9 +171,9 @@
 	       (+ (length prefix)
 		  (length residue)
 		  (length suffix))))
-    (loop for parse-result in (append (reverse prefix) residue)
+    (loop for wad in (append (reverse prefix) residue)
 	  for node in nodes
-	  do (assert (equal-absolute parse-result node)))
+	  do (assert (equal-absolute wad node)))
     (let ((rest (nthcdr (+ (length prefix) (length residue)) nodes)))
       (unless (null suffix)
 	(assert (equal-absolute (first suffix) (first rest)))
@@ -185,7 +185,7 @@
 ;;; The children of the parse results have relative locations as
 ;;; usual.
 (defun make-absolute (node)
-  (make-instance 'climacs-syntax-common-lisp::parse-result
+  (make-instance 'climacs-syntax-common-lisp::wad
     :start-line (start-line node)
     :height (- (end-line node) (start-line node))
     :children (make-relative-list (children node) (start-line node))
@@ -193,7 +193,7 @@
 
 ;;; Given a node, create a parse result with a relative location.
 (defun make-relative (node base)
-  (make-instance 'climacs-syntax-common-lisp::parse-result
+  (make-instance 'climacs-syntax-common-lisp::wad
     :start-line (- (start-line node) base)
     :height (- (end-line node) (start-line node))
     :children (make-relative-list (children node) (start-line node))

@@ -10,12 +10,12 @@
       (and (= line-number-a line-number-b)
            (< item-number-a item-number-b))))
 
-;;; Return true if and only if the start position of PARSE-RESULT is
+;;; Return true if and only if the start position of WAD is
 ;;; strictly less than the position indicated by LINE-NUMBER and
 ;;; ITEM-NUMBER.
-(defun parse-result-starts-before-position-p
-    (parse-result line-number item-number)
-  (position-less (start-line parse-result) (start-column parse-result)
+(defun wad-starts-before-position-p
+    (wad line-number item-number)
+  (position-less (start-line wad) (start-column wad)
                  line-number item-number))
 
 ;;; Make sure that the first parse result that we consider recycling
@@ -29,12 +29,12 @@
         (line-number (current-line-number analyzer))
         (item-number (current-item-number analyzer)))
     (loop while (and (not (null (residue cache)))
-                     (parse-result-starts-before-position-p
+                     (wad-starts-before-position-p
                       (first (residue cache)) line-number item-number))
           do (pop-from-residue cache))
     (when (null (residue cache))
       (loop while (and (not (null (suffix cache)))
-                       (parse-result-starts-before-position-p
+                       (wad-starts-before-position-p
                         (first (suffix cache)) line-number item-number))
             do (pop-from-suffix cache)))))
 
@@ -43,7 +43,7 @@
 ;;; if so, return that parse result.  If there is no such parse
 ;;; result, then return NIL.  If there are cached parse results that
 ;;; entirely precede the current stream position, then remove them.
-(defun cached-parse-result (analyzer)
+(defun cached-wad (analyzer)
   (let ((cache (folio analyzer)))
     (with-accessors ((residue residue) (suffix suffix)) cache
       (loop while (and (not (null residue))
@@ -79,8 +79,8 @@
                     nil)
                 nil))))))
 
-(defun advance-stream-to-beyond-parse-result (analyzer parse-result)
+(defun advance-stream-to-beyond-wad (analyzer wad)
   (setf (current-line-number analyzer)
-        (end-line parse-result))
+        (end-line wad))
   (setf (current-item-number analyzer)
-        (end-column parse-result)))
+        (end-column wad)))

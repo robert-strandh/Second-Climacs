@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defclass basic-parse-result ()
+(defclass basic-wad ()
   (;; This slot contains information about the start line of the parse
    ;; result.  Simple applications might always store the absolute
    ;; line number of the first line of the parse result in this slot.
@@ -26,7 +26,7 @@
    ;; on the line, then this slot contains NIL.
    (%indentation :initform nil :initarg :indentation :accessor indentation)))
 
-(defclass parse-result (basic-parse-result)
+(defclass wad (basic-wad)
   (;; This slot contains the column number of the leftmost known
    ;; non-whitespace character of the parse result.  It may not be
    ;; entirely correct if a reader macro reads character by character
@@ -46,7 +46,7 @@
    (%relative-p :initarg :relative-p :accessor relative-p)
    (%children :initarg :children :accessor children)))
 
-(defmethod initialize-instance :after ((object parse-result) &key)
+(defmethod initialize-instance :after ((object wad) &key)
   (let ((min-column-number (min (start-column object)
                                 (end-column object)
                                 (reduce #'min (children object)
@@ -61,7 +61,7 @@
                            :min-column-number min-column-number
                            :max-column-number max-column-number)))
 
-(defmethod print-object ((object parse-result) stream)
+(defmethod print-object ((object wad) stream)
   (print-unreadable-object (object stream :type t)
     (format stream "(~d,~d -> ~d,~d) rel: ~s"
             (start-line object)
@@ -75,64 +75,64 @@
 ;;; Define an indirection for MAKE-INSTANCE for creating parse
 ;;; results.  The main purpose is so that the creation of parse
 ;;; results can be traced.
-(defun make-parse-result (class &rest initargs)
+(defun make-wad (class &rest initargs)
   (apply #'make-instance class initargs))
 
-(defclass expression-parse-result (parse-result)
+(defclass expression-wad (wad)
   ((%expression :initarg :expression :accessor expression)))
 
-(defclass no-expression-parse-result (parse-result)
+(defclass no-expression-wad (wad)
   ())
 
-(defclass comment-parse-result (no-expression-parse-result)
+(defclass comment-wad (no-expression-wad)
   ())
 
-(defclass error-parse-result (parse-result)
+(defclass error-wad (wad)
   ())
 
-(defclass eof-parse-result (parse-result)
+(defclass eof-wad (wad)
   ())
 
-(defgeneric relative-to-absolute (parse-result offset)
-  (:method ((p parse-result) offset)
+(defgeneric relative-to-absolute (wad offset)
+  (:method ((p wad) offset)
     (assert (relative-p p))
     (incf (start-line p) offset)
     (setf (relative-p p) nil)))
 
-(defgeneric absolute-to-relative (parse-result offset)
-  (:method ((p parse-result) offset)
+(defgeneric absolute-to-relative (wad offset)
+  (:method ((p wad) offset)
     (assert (not (relative-p p)))
     (decf (start-line p) offset)
     (setf (relative-p p) t)))
 
-;;; RELATIVE-PARSE-RESULTS is a list of parse results where the start
+;;; RELATIVE-WADS is a list of parse results where the start
 ;;; line of the first element is relative to OFFSET, and the start
 ;;; line of each of the other elements is relative to the start line
 ;;; of the preceding element.  Modify the parse results in the list so
 ;;; that they are absolute.  Return the original list, now containing
 ;;; the modified parse results.
-(defun make-absolute (relative-parse-results offset)
+(defun make-absolute (relative-wads offset)
   (loop with base = offset
-        for parse-result in relative-parse-results
-        do (relative-to-absolute parse-result base)
-           (setf base (start-line parse-result)))
-  relative-parse-results)
+        for wad in relative-wads
+        do (relative-to-absolute wad base)
+           (setf base (start-line wad)))
+  relative-wads)
 
-;;; ABSOLUTE-PARSE-RESULTS is a list of absolute parse results.
+;;; ABSOLUTE-WADS is a list of absolute parse results.
 ;;; Modify the parse results in the list so that the start line of the
 ;;; first element is absolute to OFFSET, and the start line of each of
 ;;; the other elements is relative to the start line of the preceding
 ;;; element.  Return the original list, now containing the modified
 ;;; parse results.
-(defun make-relative (absolute-parse-results offset)
+(defun make-relative (absolute-wads offset)
   (loop with base = offset
-        for parse-result in absolute-parse-results
-        for start-line = (start-line parse-result)
-        do (absolute-to-relative parse-result base)
+        for wad in absolute-wads
+        for start-line = (start-line wad)
+        do (absolute-to-relative wad base)
            (setf base start-line))
-  absolute-parse-results)
+  absolute-wads)
 
-(defgeneric end-line (parse-result)
-  (:method ((p parse-result))
+(defgeneric end-line (wad)
+  (:method ((p wad))
     (assert (not (relative-p p)))
     (+ (start-line p) (height p))))

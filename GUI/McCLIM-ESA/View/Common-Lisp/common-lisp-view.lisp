@@ -201,7 +201,7 @@
 (stealth-mixin:define-stealth-mixin
     presentation
     (clim:standard-presentation)
-  climacs-syntax-common-lisp:parse-result
+  climacs-syntax-common-lisp:wad
   (;; When this parse result is an element of the PREFIX, this slot
    ;; contains the the length of the longest line of all the lines
    ;; from the beginning of the buffer and up to and including the
@@ -226,38 +226,38 @@
 (defmethod max-line-width-list ((object CONS))
   (max-line-width-list (first object)))
 
-(defgeneric draw-parse-result (parse-result
+(defgeneric draw-wad (wad
                                start-ref
                                pane
                                cache
                                first-line
                                last-line))
 
-(defmethod draw-parse-result :around
-    ((parse-result climacs-syntax-common-lisp:comment-parse-result)
+(defmethod draw-wad :around
+    ((wad climacs-syntax-common-lisp:comment-wad)
      start-ref pane cache first-line last-line)
   (declare (ignore start-ref pane cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+brown+)
     (call-next-method)))
 
-(defmethod draw-parse-result :before
-    ((parse-result climacs-syntax-common-lisp:eof-parse-result)
+(defmethod draw-wad :before
+    ((wad climacs-syntax-common-lisp:eof-wad)
      start-ref pane cache first-line last-line)
   (declare (ignore first-line last-line))
-  (let ((start-col (climacs-syntax-common-lisp:start-column parse-result))
-        (end-col (climacs-syntax-common-lisp:end-column parse-result))
-        (height (climacs-syntax-common-lisp:height parse-result)))
+  (let ((start-col (climacs-syntax-common-lisp:start-column wad))
+        (end-col (climacs-syntax-common-lisp:end-column wad))
+        (height (climacs-syntax-common-lisp:height wad)))
     (unless (and (zerop height) (= start-col end-col))
       (draw-rectangle pane start-ref start-col (1+ start-col) clim:+orange+))))
 
-(defmethod draw-parse-result :around
-    ((parse-result climacs-syntax-common-lisp:error-parse-result)
+(defmethod draw-wad :around
+    ((wad climacs-syntax-common-lisp:error-wad)
      start-ref pane cache first-line last-line)
   (declare (ignore start-ref pane cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+red+)
     (call-next-method)))
 
-(defun draw-non-token-parse-result (parse-result
+(defun draw-non-token-wad (wad
                                     start-ref
                                     pane
                                     cache
@@ -267,10 +267,10 @@
          (start-column (pr) (climacs-syntax-common-lisp:start-column pr))
          (height (pr) (climacs-syntax-common-lisp:height pr))
          (end-column (pr) (climacs-syntax-common-lisp:end-column pr)))
-    (let ((children (climacs-syntax-common-lisp:children parse-result))
-          (pr parse-result)
+    (let ((children (climacs-syntax-common-lisp:children wad))
+          (pr wad)
           (prev-end-line start-ref)
-          (prev-end-column (start-column parse-result)))
+          (prev-end-column (start-column wad)))
       (let ((ref start-ref))
         (loop for child in children
               for start-line = (start-line child)
@@ -282,7 +282,7 @@
                                      ref
                                      (start-column child)
                                      first-line last-line)
-                 (draw-parse-result child ref pane cache first-line last-line)
+                 (draw-wad child ref pane cache first-line last-line)
                  (setf prev-end-line (+ ref (height child)))
                  (setf prev-end-column (end-column child)))
         (draw-filtered-area pane cache
@@ -292,7 +292,7 @@
                             (end-column pr)
                             first-line last-line)))))
 
-(defgeneric draw-token-parse-result (parse-result
+(defgeneric draw-token-wad (wad
                                      token
                                      start-ref
                                      pane
@@ -300,28 +300,28 @@
                                      first-line
                                      last-line))
 
-(defmethod draw-parse-result ((parse-result presentation)
+(defmethod draw-wad ((wad presentation)
                               start-ref
                               pane
                               (cache output-history)
                               first-line
                               last-line)
-  (draw-non-token-parse-result parse-result
+  (draw-non-token-wad wad
                                start-ref
                                pane
                                cache
                                first-line
                                last-line))
 
-(defmethod draw-parse-result
-    ((parse-result climacs-syntax-common-lisp:expression-parse-result)
+(defmethod draw-wad
+    ((wad climacs-syntax-common-lisp:expression-wad)
      start-ref pane (cache output-history) first-line last-line)
-  (let ((expression (climacs-syntax-common-lisp:expression parse-result)))
+  (let ((expression (climacs-syntax-common-lisp:expression wad)))
     (if (typep expression 'climacs-syntax-common-lisp:token)
-        (draw-token-parse-result
-         parse-result expression start-ref pane cache first-line last-line)
-        (draw-non-token-parse-result
-         parse-result start-ref pane cache first-line last-line))))
+        (draw-token-wad
+         wad expression start-ref pane cache first-line last-line)
+        (draw-non-token-wad
+         wad start-ref pane cache first-line last-line))))
 
 ;;; Given a folio and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
@@ -330,11 +330,11 @@
         maximize (climacs-syntax-common-lisp:line-length folio line-number)))
 
 (defmethod climacs-syntax-common-lisp:push-to-prefix :before
-    (cache (parse-result presentation))
+    (cache (wad presentation))
   (with-accessors ((max-line-width-list max-line-width-list)
                    (start-line climacs-syntax-common-lisp:start-line)
                    (max-line-width climacs-syntax-common-lisp:max-line-width))
-      parse-result
+      wad
     (with-accessors ((prefix climacs-syntax-common-lisp:prefix)) cache
       (setf max-line-width-list
             (if (null prefix)
@@ -347,11 +347,11 @@
                        max-line-width)))))))
 
 (defmethod climacs-syntax-common-lisp:push-to-suffix :before
-    (cache (parse-result presentation))
+    (cache (wad presentation))
   (with-accessors ((max-line-width-list max-line-width-list)
                    (end-line climacs-syntax-common-lisp:end-line)
                    (max-line-width climacs-syntax-common-lisp:max-line-width))
-      parse-result
+      wad
     (with-accessors ((suffix climacs-syntax-common-lisp:suffix)) cache
       (setf max-line-width-list
             (if (null suffix)
@@ -420,7 +420,7 @@
                           end-line end-column
                           first-line last-line))))
 
-;;; Render the space between two consecutive top-level parse-results
+;;; Render the space between two consecutive top-level wads
 ;;; (PR1 and PR2) or (when PR1 is NIL) between the beginning of the
 ;;; buffer and PR2.
 (defun render-gap (cache pane pr1 pr2 first-line last-line)
@@ -447,7 +447,7 @@
                    for (pr2 pr1) on prefix
                    until (< (climacs-syntax-common-lisp:end-line pr2)
                             first-line)
-                   do (draw-parse-result
+                   do (draw-wad
                        pr2
                        (climacs-syntax-common-lisp:start-line pr2)
                        pane

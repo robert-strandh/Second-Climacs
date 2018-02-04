@@ -75,8 +75,8 @@
 
 (defvar *stack*)
 
-(defun push-parse-result (parse-result)
-  (push parse-result (second *stack*)))
+(defun push-wad (wad)
+  (push wad (second *stack*)))
 
 (defun skip-whitespace (stream)
   (loop until (eof-p stream)

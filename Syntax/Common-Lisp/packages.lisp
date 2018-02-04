@@ -19,12 +19,12 @@
    #:analyzer
    #:scavenge
    #:read-forms
-   #:parse-result
-   #:expression-parse-result
-   #:no-expression-parse-result
-   #:comment-parse-result
-   #:eof-parse-result
-   #:error-parse-result
+   #:wad
+   #:expression-wad
+   #:no-expression-wad
+   #:comment-wad
+   #:eof-wad
+   #:error-wad
    #:start-line
    #:height
    #:end-line

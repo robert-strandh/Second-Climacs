@@ -32,36 +32,36 @@
           (relative-to-absolute (first suffix) (start-line result)))
         result))))
 
-(defgeneric push-to-suffix (cache parse-result)
-  (:method ((cache cache) (parse-result parse-result))
-    (assert (not (relative-p parse-result)))
+(defgeneric push-to-suffix (cache wad)
+  (:method ((cache cache) (wad wad))
+    (assert (not (relative-p wad)))
     (with-accessors ((suffix suffix))
         cache
       (unless (null suffix)
-        (absolute-to-relative (first suffix) (start-line parse-result)))
-      (push parse-result suffix))))
+        (absolute-to-relative (first suffix) (start-line wad)))
+      (push wad suffix))))
 
 (defgeneric pop-from-prefix (cache)
   (:method ((cache cache))
     (pop (prefix cache))))
 
-(defgeneric push-to-prefix (cache parse-result)
-  (:method ((cache cache) (parse-result parse-result))
+(defgeneric push-to-prefix (cache wad)
+  (:method ((cache cache) (wad wad))
     (with-accessors ((prefix prefix))
         cache
-      (push parse-result prefix))))
+      (push wad prefix))))
 
 (defun pop-from-worklist (cache)
   (pop (worklist cache)))
 
-(defun push-to-worklist (cache parse-result)
-  (push parse-result (worklist cache)))
+(defun push-to-worklist (cache wad)
+  (push wad (worklist cache)))
 
 (defun pop-from-residue (cache)
   (pop (residue cache)))
 
-(defun push-to-residue (cache parse-result)
-  (push parse-result (residue cache)))
+(defun push-to-residue (cache wad)
+  (push wad (residue cache)))
 
 (defgeneric suffix-to-prefix (cache)
   (:method ((cache cache))
@@ -103,7 +103,7 @@
 ;;; Return true if and only if either there are no more parse results,
 ;;; or the first parse result starts at a line that is strictly
 ;;; greater than LINE-NUMBER.
-(defun next-parse-result-is-beyond-line-p (cache line-number)
+(defun next-wad-is-beyond-line-p (cache line-number)
   (with-accessors ((suffix suffix) (worklist worklist)) cache
     (if (null worklist)
         (or (null suffix)
@@ -111,18 +111,18 @@
         (> (start-line (first worklist)) line-number))))
 
 ;;; Return true if and only if LINE-NUMBER is one of the lines of
-;;; PARSE-RESULT.  The START-LINE of PARSE-RESULT is an absolute line
+;;; WAD.  The START-LINE of WAD is an absolute line
 ;;; number.
-(defun line-is-inside-parse-result-p (parse-result line-number)
-  (<= (start-line parse-result)
+(defun line-is-inside-wad-p (wad line-number)
+  (<= (start-line wad)
       line-number
-      (+ (start-line parse-result) (height parse-result))))
+      (+ (start-line wad) (height wad))))
 
 ;;; Add INCREMENT to the absolute line number of every parse result on
 ;;; the worklist, and of the first parse result of the suffix, if any.
 (defun adjust-worklist-and-suffix (cache increment)
-  (loop for parse-result in (worklist cache)
-        do (incf (start-line parse-result) increment))
+  (loop for wad in (worklist cache)
+        do (incf (start-line wad) increment))
   (unless (null (suffix cache))
     (incf (start-line (first (suffix cache))) increment)))
 
@@ -139,31 +139,31 @@
 ;;; i.e., that parse result either entirely precedes LINE-NUMBER (so
 ;;; that it should be moved to the residue), or it straddles the line
 ;;; with that line number, so that it must be taken apart.
-(defun process-next-parse-result (cache line-number)
+(defun process-next-wad (cache line-number)
   (with-accessors ((worklist worklist)) cache
     (ensure-worklist-not-empty cache)
-    (let ((parse-result (pop-from-worklist cache)))
-      (if (line-is-inside-parse-result-p parse-result line-number)
-          (let ((children (children parse-result)))
-            (make-absolute children (start-line parse-result))
+    (let ((wad (pop-from-worklist cache)))
+      (if (line-is-inside-wad-p wad line-number)
+          (let ((children (children wad)))
+            (make-absolute children (start-line wad))
             (setf worklist (append children worklist)))
-          (push-to-residue cache parse-result)))))
+          (push-to-residue cache wad)))))
 
 (defun handle-modified-line (cache line-number)
   (let ((line (flexichain:element* (contents cache) line-number)))
     (setf (contents line)
           (cluffer:items (cluffer-line line))))
-  (loop until (next-parse-result-is-beyond-line-p cache line-number)
-        do (process-next-parse-result cache line-number)))
+  (loop until (next-wad-is-beyond-line-p cache line-number)
+        do (process-next-wad cache line-number)))
 
 (defun handle-inserted-line (cache line-number)
-  (loop until (next-parse-result-is-beyond-line-p cache (1- line-number))
-        do (process-next-parse-result cache line-number))
+  (loop until (next-wad-is-beyond-line-p cache (1- line-number))
+        do (process-next-wad cache line-number))
   (adjust-worklist-and-suffix cache 1))
 
 (defun handle-deleted-line (cache line-number)
-  (loop until (next-parse-result-is-beyond-line-p cache line-number)
-        do (process-next-parse-result cache line-number))
+  (loop until (next-wad-is-beyond-line-p cache line-number)
+        do (process-next-wad cache line-number))
   (adjust-worklist-and-suffix cache -1))
 
 ;;; Take into account modifications to the buffer by destroying the

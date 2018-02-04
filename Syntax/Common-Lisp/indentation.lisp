@@ -2,29 +2,29 @@
 
 ;;; We define a form to be SIMPLE if and only if it is a proper list,
 ;;; and if the elements of the list correspond exactly to the
-;;; expression parse results of the children of PARSE-RESULT in the
+;;; expression parse results of the children of WAD in the
 ;;; same order.
 
-(defun children-correspond-p (form parse-result-children)
+(defun children-correspond-p (form wad-children)
   (if (null form)
-      (or (null parse-result-children)
-          (and (not (typep (car parse-result-children)
-                           'expression-parse-result))
-               (children-correspond-p form (cdr parse-result-children))))
-      (and (not (null parse-result-children))
-           (if (typep (car parse-result-children)
-                      'expression-parse-result)
+      (or (null wad-children)
+          (and (not (typep (car wad-children)
+                           'expression-wad))
+               (children-correspond-p form (cdr wad-children))))
+      (and (not (null wad-children))
+           (if (typep (car wad-children)
+                      'expression-wad)
                (and (eq (car form)
-                        (expression (car parse-result-children)))
+                        (expression (car wad-children)))
                     (children-correspond-p (cdr form)
-                                           (cdr parse-result-children)))
-               (children-correspond-p form (cdr parse-result-children))))))
+                                           (cdr wad-children)))
+               (children-correspond-p form (cdr wad-children))))))
 
 (defun proper-list-p (object)
   (not (null (ignore-errors (list-length object)))))
 
-(defun simple-form-p (parse-result)
-  (let ((expression (expression parse-result)))
+(defun simple-form-p (wad)
+  (let ((expression (expression wad)))
     (and (consp expression)
          (proper-list-p expression)
-         (children-correspond-p expression (children parse-result)))))
+         (children-correspond-p expression (children wad)))))

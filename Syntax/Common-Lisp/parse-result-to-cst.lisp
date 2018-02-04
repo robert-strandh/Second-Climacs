@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defgeneric parse-result-to-cst (parse-result))
+(defgeneric wad-to-cst (wad))
 
 (defun children-match-sub-expressions-p (children sub-expressions)
   (and (= (length children) (length sub-expressions))
@@ -8,23 +8,23 @@
              for sub-expression in sub-expressions
              always (eq sub-expression (expression child)))))
 
-(defmethod parse-result-to-cst ((parse-result expression-parse-result))
+(defmethod wad-to-cst ((wad expression-wad))
   (let ((relevant-children (remove-if-not (lambda (x)
-                                            (typep x 'expression-parse-result))
-                                          (children parse-result)))
-        (expression (expression parse-result)))
+                                            (typep x 'expression-wad))
+                                          (children wad)))
+        (expression (expression wad)))
     (cond ((atom expression)
            (make-instance 'cst:atom-cst
              :raw expression
-             :source (list (cons (start-line parse-result)
-                                 (start-column parse-result))
-                           (cons (height parse-result)
-                                 (end-column parse-result)))))
+             :source (list (cons (start-line wad)
+                                 (start-column wad))
+                           (cons (height wad)
+                                 (end-column wad)))))
           ((children-match-sub-expressions-p relevant-children expression)
            (loop with result = (cst:cst-from-expression nil)
                  for child in (reverse relevant-children)
                  do (setf result
-                          (cst:cons (parse-result-to-cst child)
+                          (cst:cons (wad-to-cst child)
                                     result
                                     :source (list (cons (start-line child)
                                                         (start-column child))

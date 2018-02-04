@@ -10,7 +10,7 @@
 	nil)
       (error ()
 	(setf (first *stack*)
-	      (list (make-parse-result 'error-parse-result
+	      (list (make-wad 'error-wad
 		      :max-line-width (compute-max-line-width
 				       analyzer
 				       start-line
@@ -23,8 +23,8 @@
 		      :height (- (current-line-number analyzer) start-line)
 		      :end-column (current-item-number analyzer)
 		      :relative-p nil)))))
-    (loop for parse-result in (reverse (first *stack*))
-          do (push-to-prefix (folio analyzer) parse-result))))
+    (loop for wad in (reverse (first *stack*))
+          do (push-to-prefix (folio analyzer) wad))))
 
 (defun parse-buffer (analyzer)
   (with-accessors ((current-line-number current-line-number)

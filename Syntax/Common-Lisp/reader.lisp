@@ -12,19 +12,19 @@
              (when (null char)
                (error 'end-of-file :stream input-stream))
              (unread-char char input-stream)
-             (let ((parse-result (cached-parse-result input-stream)))
-               (if (null parse-result)
+             (let ((wad (cached-wad input-stream)))
+               (if (null wad)
                    (setf char (read-char input-stream nil nil))
                    (progn
-                     (push-parse-result parse-result)
-                     (advance-stream-to-beyond-parse-result input-stream parse-result)
-                     (etypecase parse-result
-                       (expression-parse-result
+                     (push-wad wad)
+                     (advance-stream-to-beyond-wad input-stream wad)
+                     (etypecase wad
+                       (expression-wad
                         (return-from reader:read-common
-                          (expression parse-result)))
-                       (eof-parse-result
+                          (expression wad)))
+                       (eof-wad
                         (return-from reader:read-common nil))
-                       (no-expression-parse-result
+                       (no-expression-wad
                         (go step-1-start))))))
              (case (readtable::syntax-type reader:*readtable* char)
                (:whitespace
@@ -39,11 +39,11 @@
                                 char))))
                   (if (null values)
                       (progn
-                        (push-parse-result
-                         (make-parse-result
+                        (push-wad
+                         (make-wad
                              (if (eql char #\;)
-                                 'comment-parse-result
-                                 'no-expression-parse-result)
+                                 'comment-wad
+                                 'no-expression-wad)
                            :max-line-width (compute-max-line-width
                                             input-stream
                                             start-line
@@ -60,8 +60,8 @@
                         (setf start-column (current-item-number input-stream))
                         (go step-1-start))
                       (progn
-                        (push-parse-result
-                         (make-parse-result 'expression-parse-result
+                        (push-wad
+                         (make-wad 'expression-wad
                            :expression (first values)
                            :max-line-width (compute-max-line-width
                                             input-stream
@@ -82,8 +82,8 @@
                 (let ((token (reader:read-token input-stream
                                                 eof-error-p
                                                 eof-value)))
-                  (push-parse-result
-                   (make-parse-result 'expression-parse-result
+                  (push-wad
+                   (make-wad 'expression-wad
                      :expression token
                      :max-line-width (compute-max-line-width
                                       input-stream
@@ -100,7 +100,7 @@
                      :relative-p nil))
                   (return-from reader:read-common token))))))
       (end-of-file ()
-        (push (make-parse-result 'eof-parse-result
+        (push (make-wad 'eof-wad
                 :max-line-width (compute-max-line-width
                                  input-stream
                                  start-line

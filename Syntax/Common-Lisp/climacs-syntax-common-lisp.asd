@@ -9,7 +9,7 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "parse-result")
+   (:file "wad")
    (:file "folio")
    (:file "token")
    (:file "folio-stream")
@@ -23,5 +23,5 @@
    (:file "read-forms")
    (:file "view")
    (:file "set-mode")
-   (:file "parse-result-to-cst")
+   (:file "wad-to-cst")
    (:file "indentation")))
