@@ -67,12 +67,10 @@
              (draw-rectangle pane start-ref (+ start pos2 1) end clim:+pink+))))))
 
 (defmethod draw-token-wad
-    (wad token
-     start-ref pane (cache output-history) first-line last-line)
-  (let* ((pr wad)
-         (start-column (climacs-syntax-common-lisp:start-column pr))
-         (end-column (climacs-syntax-common-lisp:end-column pr))
-         (height (climacs-syntax-common-lisp:height pr)))
+    (wad token start-ref pane (cache output-history) first-line last-line)
+  (let* ((start-column (climacs-syntax-common-lisp:start-column wad))
+         (end-column (climacs-syntax-common-lisp:end-column wad))
+         (height (climacs-syntax-common-lisp:height wad)))
     (draw-filtered-area pane cache
                         start-ref
                         start-column

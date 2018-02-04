@@ -226,12 +226,7 @@
 (defmethod max-line-width-list ((object CONS))
   (max-line-width-list (first object)))
 
-(defgeneric draw-wad (wad
-                               start-ref
-                               pane
-                               cache
-                               first-line
-                               last-line))
+(defgeneric draw-wad (wad start-ref pane cache first-line last-line))
 
 (defmethod draw-wad :around
     ((wad climacs-syntax-common-lisp:comment-wad)
@@ -257,18 +252,12 @@
   (clim:with-drawing-options (pane :ink clim:+red+)
     (call-next-method)))
 
-(defun draw-non-token-wad (wad
-                                    start-ref
-                                    pane
-                                    cache
-                                    first-line
-                                    last-line)
-  (flet ((start-line (pr) (climacs-syntax-common-lisp:start-line pr))
-         (start-column (pr) (climacs-syntax-common-lisp:start-column pr))
-         (height (pr) (climacs-syntax-common-lisp:height pr))
-         (end-column (pr) (climacs-syntax-common-lisp:end-column pr)))
+(defun draw-non-token-wad (wad start-ref pane cache first-line last-line)
+  (flet ((start-line (wad) (climacs-syntax-common-lisp:start-line wad))
+         (start-column (wad) (climacs-syntax-common-lisp:start-column wad))
+         (height (wad) (climacs-syntax-common-lisp:height wad))
+         (end-column (wad) (climacs-syntax-common-lisp:end-column wad)))
     (let ((children (climacs-syntax-common-lisp:children wad))
-          (pr wad)
           (prev-end-line start-ref)
           (prev-end-column (start-column wad)))
       (let ((ref start-ref))
@@ -288,30 +277,19 @@
         (draw-filtered-area pane cache
                             prev-end-line
                             prev-end-column
-                            (+ start-ref (height pr))
-                            (end-column pr)
+                            (+ start-ref (height wad))
+                            (end-column wad)
                             first-line last-line)))))
 
-(defgeneric draw-token-wad (wad
-                                     token
-                                     start-ref
-                                     pane
-                                     cache
-                                     first-line
-                                     last-line))
+(defgeneric draw-token-wad (wad token start-ref pane cache first-line last-line))
 
 (defmethod draw-wad ((wad presentation)
-                              start-ref
-                              pane
-                              (cache output-history)
-                              first-line
-                              last-line)
-  (draw-non-token-wad wad
-                               start-ref
-                               pane
-                               cache
-                               first-line
-                               last-line))
+                     start-ref
+                     pane
+                     (cache output-history)
+                     first-line
+                     last-line)
+  (draw-non-token-wad wad start-ref pane cache first-line last-line))
 
 (defmethod draw-wad
     ((wad climacs-syntax-common-lisp:expression-wad)
@@ -420,16 +398,16 @@
                           end-line end-column
                           first-line last-line))))
 
-;;; Render the space between two consecutive top-level wads
-;;; (PR1 and PR2) or (when PR1 is NIL) between the beginning of the
-;;; buffer and PR2.
-(defun render-gap (cache pane pr1 pr2 first-line last-line)
+;;; Render the space between two consecutive top-level wads (WAD1 and
+;;; WAD2) or (when WAD1 is NIL) between the beginning of the buffer and
+;;; WAD2.
+(defun render-gap (cache pane wad1 wad2 first-line last-line)
   (let ((start-line
-          (if (null pr1) 0 (climacs-syntax-common-lisp:end-line pr1)))
+          (if (null wad1) 0 (climacs-syntax-common-lisp:end-line wad1)))
         (start-column
-          (if (null pr1) 0 (climacs-syntax-common-lisp:end-column pr1)))
-        (end-line (climacs-syntax-common-lisp:start-line pr2))
-        (end-column (climacs-syntax-common-lisp:start-column pr2)))
+          (if (null wad1) 0 (climacs-syntax-common-lisp:end-column wad1)))
+        (end-line (climacs-syntax-common-lisp:start-line wad2))
+        (end-column (climacs-syntax-common-lisp:start-column wad2)))
     (draw-filtered-area pane cache
                         start-line start-column
                         end-line end-column
@@ -444,17 +422,17 @@
       (progn (adjust-for-rendering cache last-line)
              (render-trailing-whitespace cache pane first-line last-line)
              (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
-                   for (pr2 pr1) on prefix
-                   until (< (climacs-syntax-common-lisp:end-line pr2)
+                   for (wad2 wad1) on prefix
+                   until (< (climacs-syntax-common-lisp:end-line wad2)
                             first-line)
                    do (draw-wad
-                       pr2
-                       (climacs-syntax-common-lisp:start-line pr2)
+                       wad2
+                       (climacs-syntax-common-lisp:start-line wad2)
                        pane
                        cache
                        first-line
                        last-line)
-                      (render-gap cache pane pr1 pr2 first-line last-line)))))
+                      (render-gap cache pane wad1 wad2 first-line last-line)))))
 
 ;;; Return the area of the viewport of PANE in units of line and
 ;;; column number.  We return only integers, so that if a fraction of
