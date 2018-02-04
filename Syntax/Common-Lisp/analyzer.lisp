@@ -10,11 +10,9 @@
       (and (= line-number-a line-number-b)
            (< item-number-a item-number-b))))
 
-;;; Return true if and only if the start position of WAD is
-;;; strictly less than the position indicated by LINE-NUMBER and
-;;; ITEM-NUMBER.
-(defun wad-starts-before-position-p
-    (wad line-number item-number)
+;;; Return true if and only if the start position of WAD is strictly
+;;; less than the position indicated by LINE-NUMBER and ITEM-NUMBER.
+(defun wad-starts-before-position-p (wad line-number item-number)
   (position-less (start-line wad) (start-column wad)
                  line-number item-number))
 

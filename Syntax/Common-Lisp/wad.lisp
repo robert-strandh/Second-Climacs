@@ -105,12 +105,12 @@
     (decf (start-line p) offset)
     (setf (relative-p p) t)))
 
-;;; RELATIVE-WADS is a list of parse results where the start
-;;; line of the first element is relative to OFFSET, and the start
-;;; line of each of the other elements is relative to the start line
-;;; of the preceding element.  Modify the parse results in the list so
-;;; that they are absolute.  Return the original list, now containing
-;;; the modified parse results.
+;;; RELATIVE-WADS is a list of parse results where the start line of
+;;; the first element is relative to OFFSET, and the start line of
+;;; each of the other elements is relative to the start line of the
+;;; preceding element.  Modify the parse results in the list so that
+;;; they are absolute.  Return the original list, now containing the
+;;; modified parse results.
 (defun make-absolute (relative-wads offset)
   (loop with base = offset
         for wad in relative-wads
@@ -118,10 +118,10 @@
            (setf base (start-line wad)))
   relative-wads)
 
-;;; ABSOLUTE-WADS is a list of absolute parse results.
-;;; Modify the parse results in the list so that the start line of the
-;;; first element is absolute to OFFSET, and the start line of each of
-;;; the other elements is relative to the start line of the preceding
+;;; ABSOLUTE-WADS is a list of absolute parse results.  Modify the
+;;; parse results in the list so that the start line of the first
+;;; element is absolute to OFFSET, and the start line of each of the
+;;; other elements is relative to the start line of the preceding
 ;;; element.  Return the original list, now containing the modified
 ;;; parse results.
 (defun make-relative (absolute-wads offset)

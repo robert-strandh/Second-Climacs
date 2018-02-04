@@ -110,9 +110,8 @@
             (> (start-line (first suffix)) line-number))
         (> (start-line (first worklist)) line-number))))
 
-;;; Return true if and only if LINE-NUMBER is one of the lines of
-;;; WAD.  The START-LINE of WAD is an absolute line
-;;; number.
+;;; Return true if and only if LINE-NUMBER is one of the lines of WAD.
+;;; The START-LINE of WAD is an absolute line number.
 (defun line-is-inside-wad-p (wad line-number)
   (<= (start-line wad)
       line-number
