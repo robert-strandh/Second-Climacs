@@ -36,3 +36,15 @@
 ;;; specializer on the TOKEN parameter.  Client code should specialize
 ;;; on its own CLIENT class.
 (defgeneric compute-child-indentations (wad token client))
+
+(defun intern-token (package-name-designator symbol-name-designator)
+  (let* ((package-name (string package-name-designator))
+         (symbol-name (string symbol-name-designator))
+         (key (cons package-name symbol-name)))
+    (multiple-value-bind (existing-token present-p) (gethash key *tokens*)
+      (if (null present-p)
+          (setf (gethash key *tokens*)
+                (make-instance 'token
+                  :package-name package-name
+                  :symbol-name symbol-name))
+          existing-token))))
