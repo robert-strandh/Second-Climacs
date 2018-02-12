@@ -2,7 +2,7 @@
 
 (defpackage #:climacs-syntax-common-lisp
   (:use #:common-lisp)
-  (:shadow #:package-name)
+  (:shadow #:package-name #:symbol-name)
   (:local-nicknames (#:reader #:sicl-reader)
                     (#:readtable #:sicl-readtable))
   (:export
