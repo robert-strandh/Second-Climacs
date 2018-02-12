@@ -24,4 +24,5 @@
    (:file "view")
    (:file "set-mode")
    (:file "wad-to-cst")
+   (:file "indentation-support")
    (:file "indentation")))
