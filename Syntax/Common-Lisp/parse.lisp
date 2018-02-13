@@ -24,7 +24,8 @@
 		      :end-column (current-item-number analyzer)
 		      :relative-p nil)))))
     (loop for wad in (reverse (first *stack*))
-          do (push-to-prefix (folio analyzer) wad))))
+          do (compute-child-indentations wad nil)
+             (push-to-prefix (folio analyzer) wad))))
 
 (defun parse-buffer (analyzer)
   (with-accessors ((current-line-number current-line-number)
