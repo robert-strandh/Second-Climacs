@@ -43,7 +43,8 @@
         ;; columns.
         (loop for child in remaining-children
               unless (zerop (start-column child))
-                do (setf (indentation child) (+ start-column 2)))))))
+                do (setf (indentation child) (+ start-column 2))
+              do (compute-child-indentations child client))))))
 
 ;;; Compute the indentation for a wad representing a list of LET or
 ;;; LET* bindings.
@@ -68,7 +69,7 @@
   (loop for wad in body-wads
         unless (zerop (start-column wad))
           do (setf (indentation wad) column)
-        do (compute-indentations wad client)))
+        do (compute-child-indentations wad client)))
 
 (defun indent-up-to-and-including-bindings (column wads client)
   (loop for remaining on wads
@@ -80,7 +81,7 @@
         until (typep wad 'expression-wad)
         finally (return remaining)))
 
-(defmethod compute-child-indentations
+(defmethod compute-sub-form-indentations
     (wad (token (eql (intern-token '#:common-lisp '#:let))) client)
   (let ((children (children wad))
         (wad-start-column (start-column wad)))
