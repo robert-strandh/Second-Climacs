@@ -62,7 +62,7 @@
 ;;; indentation of the children of WAD.  Each method defines an EQL
 ;;; specializer on the TOKEN parameter.  Client code should specialize
 ;;; on its own CLIENT class.
-(defgeneric compute-child-indentations (wad token client))
+(defgeneric compute-sub-form-indentations (wad token client))
 
 (defun intern-token (package-name-designator symbol-name-designator)
   (let* ((package-name (string package-name-designator))
@@ -85,3 +85,8 @@
           ;; FIXME: signal a specific condition.
           (error "Unknown token (~s .~s)" package-name symbol-name)
           existing-token))))
+
+;;; This generic function is called on any wad.  It determines what
+;;; kind of wad it is and either calls some specific indentation
+;;; function, or some default one.
+(defgeneric compute-child-indentations (wad client))
