@@ -94,4 +94,4 @@
                   :package-name (cl:package-name (symbol-package symbol))
                   :package-marker-1 position-package-marker-1
                   :package-marker-2 position-package-marker-2
-                  :name (symbol-name symbol))))))))
+                  :name (cl:symbol-name symbol))))))))
