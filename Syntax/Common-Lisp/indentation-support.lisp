@@ -7,7 +7,7 @@
 
 ;;; By default, we do nothing.
 (defmethod compute-child-indentations (wad client)
-  (declare (ignore wad child))
+  (declare (ignore wad client))
   nil)
 
 ;;; This function is called when we have a simple form, and we have no
@@ -15,7 +15,7 @@
 ;;; operator is a LAMBDA expression, a symbol that is know to be the
 ;;; name of a function, but the lambda list of of that function is
 ;;; very simple, or a symbol that we have no information about.
-(defun indent-default-function-call (wad)
+(defun indent-default-function-call (wad client)
   (let ((children (children wad)))
     (unless (null (rest children))
       (let* ((first-child (first children))
@@ -35,7 +35,8 @@
                 ;; indentation.  If it is different from 0, then we
                 ;; set the indentation so that it aligns with the
                 ;; start column of the first child of the wad.
-                do (setf (indentation child) first-child-start-column))))))
+                do (setf (indentation child) first-child-start-column)
+              do (compute-child-indentations child client))))))
 
 ;;; We define a form to be SIMPLE if and only if it is a proper list,
 ;;; and if the elements of the list correspond exactly to the
@@ -130,7 +131,7 @@
             (let ((token (find-token (package-name first-child)
                                      (name first-child))))
               (if (null token)
-                  (indent-default-function-call wad)
+                  (indent-default-function-call wad client)
                   (compute-sub-form-indentations wad token client)))
-            (indent-default-function-call wad)))
-      (indent-default-function-call wad)))
+            (indent-default-function-call wad client)))
+      (indent-default-function-call wad client)))
