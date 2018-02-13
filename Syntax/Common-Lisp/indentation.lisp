@@ -64,21 +64,39 @@
               unless (zerop (start-column child))
                 do (setf (indentation child) start-column))))))
 
+(defun indent-body (column body-wads client)
+  (loop for wad in body-wads
+        unless (zerop (start-column wad))
+          do (setf (indentation wad) column)
+        do (compute-indentations wad client)))
+
+(defun indent-up-to-and-including-bindings (column wads client)
+  (loop for remaining on wads
+        for wad = (first remaining)
+        for start-column = (start-column wad)
+        unless (zerop start-column)
+          do (setf (indentation wad) column)
+        do (compute-binding-indentations wad client)
+        until (typep wad 'expression-wad)
+        finally (return remaining)))
+
 (defmethod compute-child-indentations
     (wad (token (eql (intern-token '#:common-lisp '#:let))) client)
-  (let ((children (children wad)))
+  (let ((children (children wad))
+        (wad-start-column (start-column wad)))
     (if (null children)
         ;; We have no bindings and no LET body.  Do nothing.
         nil
         (let ((start-column (start-column (first children))))
-          (cond ((zerop start-column)
-                 ;; The first argument starts on the same line as the
-                 ;; operator.  Indent every line up to and including
-                 ;; the first expression wad as the first child.
-                 (pop children)
-                 (loop until (or (null children)
-                                 (typep (first children) 'expression-wad))
-                       do (setf (indentation (first children)) start-column)
-                          (pop children))
-                 (unless (null children)
-                   (compute-binding-indentations (car children) client)
+          (if (zerop start-column)
+              ;; The first argument starts on the same line as the
+              ;; operator.  Indent every line up to and including the
+              ;; first expression wad as the first child.
+              (let ((body-wads (indent-up-to-and-including-bindings
+                                start-column (rest children) client)))
+                (indent-body (+ wad-start-column 2) body-wads client))
+              ;; The first argument starts on a different line from
+              ;; that of the operator.
+              (let ((body-wads (indent-up-to-and-including-bindings
+                                (+ wad-start-column 4) children client)))
+                (indent-body (+ (start-column wad) 2) body-wads client)))))))
