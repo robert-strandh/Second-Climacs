@@ -117,3 +117,20 @@
 ;;; kind of wad it is and either calls some specific indentation
 ;;; function, or some default one.
 (defgeneric compute-child-indentations (wad client))
+
+;;; By default, we do nothing.
+(defmethod compute-child-indentations (wad client)
+  (declare (ignore wad child))
+  nil)
+
+(defmethod compute-child-indentations ((wad expression-wad) client)
+  (if (simple-form-p wad)
+      (let ((first-child (first (children wad))))
+        (if (typep first-child 'legal-symbol-token)
+            (let ((token (find-token (package-name first-child)
+                                     (name first-child))))
+              (if (null token)
+                  (indent-default-function-call wad)
+                  (compute-sub-form-indentations wad token client)))
+            (indent-default-function-call wad)))
+      (indent-default-function-call wad)))
