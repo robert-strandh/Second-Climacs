@@ -77,61 +77,59 @@
 ;;;
 ;;; We solve this problem with an idea due to Jan Moringer, namely to
 ;;; "intern" a pair consisting of a package name and a symbol name
-;;; (both string) in a hash table, thereby creating a TOKEN object
+;;; (both string) in a hash table, thereby creating a PAWN object
 ;;; that can then be used as an EQL specializer.
 ;;;
 ;;; Currently, we don't take care of garbage that may accumulate in
 ;;; the form of methods that can never be invoked, but we intend to
 ;;; address this problem later.
 
-;;; The class of the tokens that will be used as EQL specializers.  We
+;;; The class of the pawns that will be used as EQL specializers.  We
 ;;; include the name of the package and the name of the symbol for
 ;;; debugging purposes.
-(defclass token ()
+(defclass pawn ()
   ((%package-name :initarg :package-name :reader package-name)
    (%symbol-name :initarg :symbol-name :reader symbol-name)))
 
-;;; A hash table mapping pairs to tokens.  Each pair is a CONS cell
+;;; A hash table mapping pairs to pawns.  Each pair is a CONS cell
 ;;; with the package name in the CAR slot and the symbol name in the
 ;;; CDR slot.
-(defparameter *tokens* (make-hash-table :test #'equal))
+(defparameter *pawns* (make-hash-table :test #'equal))
 
 ;;; The generic function called in order to compute the relative
 ;;; indentation of the children of WAD.  Each method defines an EQL
-;;; specializer on the TOKEN parameter.  Client code should specialize
+;;; specializer on the PAWN parameter.  Client code should specialize
 ;;; on its own CLIENT class.
-(defgeneric compute-sub-form-indentations (wad token client))
+(defgeneric compute-sub-form-indentations (wad pawn client))
 
-(defun intern-token (package-name-designator symbol-name-designator)
+(defun intern-pawn (package-name-designator symbol-name-designator)
   (let* ((package-name (string package-name-designator))
          (symbol-name (string symbol-name-designator))
          (key (cons package-name symbol-name)))
-    (multiple-value-bind (existing-token present-p) (gethash key *tokens*)
+    (multiple-value-bind (existing-pawn present-p) (gethash key *pawns*)
       (if (null present-p)
-          (setf (gethash key *tokens*)
-                (make-instance 'token
+          (setf (gethash key *pawns*)
+                (make-instance 'pawn
                   :package-name package-name
                   :symbol-name symbol-name))
-          existing-token))))
+          existing-pawn))))
 
-(defun find-token (package-name-designator symbol-name-designator)
+(defun find-pawn (package-name-designator symbol-name-designator)
   (let* ((package-name (string package-name-designator))
          (symbol-name (string symbol-name-designator))
          (key (cons package-name symbol-name)))
-    (multiple-value-bind (existing-token present-p) (gethash key *tokens*)
-      (if (null present-p)
-          ;; FIXME: signal a specific condition.
-          (error "Unknown token (~s .~s)" package-name symbol-name)
-          existing-token))))
+    (gethash key *pawns*)))
 
 (defmethod compute-child-indentations ((wad expression-wad) client)
   (if (simple-form-p wad)
       (let ((first-child (first (children wad))))
-        (if (typep first-child 'legal-symbol-token)
-            (let ((token (find-token (package-name first-child)
-                                     (name first-child))))
-              (if (null token)
+        (if (and (typep first-child 'expression-wad)
+                 (typep (expression first-child) 'legal-symbol-token))
+            (let* ((token (expression first-child))
+                   (pawn (find-pawn (package-name token)
+                                    (name token))))
+              (if (null pawn)
                   (indent-default-function-call wad client)
-                  (compute-sub-form-indentations wad token client)))
+                  (compute-sub-form-indentations wad pawn client)))
             (indent-default-function-call wad client)))
       (indent-default-function-call wad client)))
