@@ -55,7 +55,7 @@
         finally (return remaining)))
 
 (defmethod compute-sub-form-indentations
-    (wad (token (eql (intern-token '#:common-lisp '#:let))) client)
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:let))) client)
   (let ((children (children wad))
         (wad-start-column (start-column wad)))
     (if (null children)
