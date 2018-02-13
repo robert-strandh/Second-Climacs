@@ -10,6 +10,8 @@
   :components
   ((:file "packages")
    (:file "wad")
+   (:file "indentation-support")
+   (:file "indentation")
    (:file "folio")
    (:file "token")
    (:file "folio-stream")
@@ -23,6 +25,4 @@
    (:file "read-forms")
    (:file "view")
    (:file "set-mode")
-   (:file "wad-to-cst")
-   (:file "indentation-support")
-   (:file "indentation")))
+   (:file "wad-to-cst")))
