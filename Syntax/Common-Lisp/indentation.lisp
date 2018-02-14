@@ -55,8 +55,7 @@
         until (typep wad 'expression-wad)
         finally (return (rest remaining))))
 
-(defmethod compute-sub-form-indentations
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:let))) client)
+(defun compute-let-and-letstar-indentation (wad client)
   (let ((children (rest (children wad)))
         (wad-start-column (start-column wad)))
     (if (null children)
@@ -76,3 +75,7 @@
               (let ((body-wads (indent-up-to-and-including-bindings
                                 (+ wad-start-column 4) children client)))
                 (indent-body (+ wad-start-column 2) body-wads client)))))))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:let))) client)
+  (compute-let-and-letstar-indentation wad client))
