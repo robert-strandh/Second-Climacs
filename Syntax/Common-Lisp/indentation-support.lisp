@@ -19,17 +19,18 @@
   (let ((children (children wad)))
     (unless (null (rest children))
       (let* ((first-child (first children))
+             (first-child-start-line (start-line first-child))
              (first-child-start-column (start-column first-child)))
-        (unless (zerop first-child-start-column)
-          ;; If the start column of the first child is 0, that means
+        (unless (zerop first-child-start-line)
+          ;; If the start line of the first child is 0, that means
           ;; that the first child is positioned on the same line as
           ;; the operator, so we do not modify its indentation.  If it
           ;; is different from 0, then we set the indentation to be 2
           ;; columns with respect to the start column of the wad.
           (setf (indentation first-child) (+ 2 (start-column wad))))
         (loop for child in (rest children)
-              unless (zerop (start-column child))
-                ;; If the start column of the child is 0, that means
+              unless (zerop (start-line child))
+                ;; If the start line of the child is 0, that means
                 ;; that this child is positioned on the same line as
                 ;; the previous child, so we do not modify its
                 ;; indentation.  If it is different from 0, then we
