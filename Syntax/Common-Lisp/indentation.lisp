@@ -79,3 +79,7 @@
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:let))) client)
   (compute-let-and-letstar-indentation wad client))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:let*))) client)
+  (compute-let-and-letstar-indentation wad client))
