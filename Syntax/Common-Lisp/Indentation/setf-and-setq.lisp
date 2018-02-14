@@ -15,7 +15,7 @@
               when (typep child 'expression-wad)
                 do (setf additional-indentation
                          (- 2 additional-indentation))
-                   (compute-child-indentations child client))))))
+              do (compute-child-indentations child client))))))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:setf))) client)
