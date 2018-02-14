@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "indentation-support")
-   (:file "let-and-letstar")))
+   (:file "let-and-letstar")
+   (:file "setf-and-setq")))
