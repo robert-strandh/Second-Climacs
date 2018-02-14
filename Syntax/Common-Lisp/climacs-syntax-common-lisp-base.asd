@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :climacs-syntax-common-lisp-base
+(defsystem :climacs-syntax-common-lisp-base
   :depends-on (:trivial-gray-streams
                :concrete-syntax-tree
 	       :cluffer

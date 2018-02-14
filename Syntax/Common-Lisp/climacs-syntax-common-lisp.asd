@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :climacs-syntax-common-lisp
+(defsystem :climacs-syntax-common-lisp
   :depends-on (:climacs-syntax-common-lisp-base)
   :serial t
   :components
