@@ -1,16 +1,10 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :climacs-syntax-common-lisp
-  :depends-on (:trivial-gray-streams
-               :concrete-syntax-tree
-	       :cluffer
-	       :flexichain
-	       :sicl-reader-simple)
+  :depends-on (:climacs-syntax-common-lisp-base)
   :serial t
   :components
-  ((:file "packages")
-   (:file "wad")
-   (:file "indentation-support")
+  ((:file "indentation-support")
    (:file "indentation")
    (:file "folio")
    (:file "token")
