@@ -32,11 +32,13 @@
              (first-child (first children))
              (start-column (start-column first-child))
              (remaining-children (rest children)))
+        (compute-binding-indentation first-child client)
         ;; We indent every remaining child as the first one, plus 2
         ;; columns.
         (loop for child in remaining-children
               unless (zerop (start-line child))
-                do (setf (indentation child) start-column))))))
+                do (setf (indentation child) start-column)
+              do (compute-binding-indentation child client))))))
 
 (defun indent-body (column body-wads client)
   (loop for wad in body-wads
