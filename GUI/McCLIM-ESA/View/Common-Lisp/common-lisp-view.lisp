@@ -294,6 +294,12 @@
 (defmethod draw-wad
     ((wad climacs-syntax-common-lisp:expression-wad)
      start-ref pane (cache output-history) first-line last-line)
+  (let ((indentation (climacs-syntax-common-lisp::indentation wad))
+        (start-column (climacs-syntax-common-lisp::start-column wad)))
+    (unless (or (null indentation) (= indentation start-column))
+      (if (< indentation start-column)
+          (draw-rectangle pane start-ref 0 1 clim:+green+)
+          (draw-rectangle pane start-ref 0 1 clim:+magenta+))))
   (let ((expression (climacs-syntax-common-lisp:expression wad)))
     (if (typep expression 'climacs-syntax-common-lisp:token)
         (draw-token-wad
