@@ -51,7 +51,8 @@
         for wad = (first remaining)
         unless (zerop (start-line wad))
           do (setf (indentation wad) column)
-        do (compute-binding-indentations wad client)
+        when (typep wad 'expression-wad)
+          do (compute-binding-indentations wad client)
         until (typep wad 'expression-wad)
         finally (return (rest remaining))))
 
