@@ -40,12 +40,6 @@
                 do (setf (indentation child) start-column)
               do (compute-binding-indentation child client))))))
 
-(defun indent-body (column body-wads client)
-  (loop for wad in body-wads
-        unless (zerop (start-line wad))
-          do (setf (indentation wad) column)
-        do (compute-child-indentations wad client)))
-
 (defun indent-up-to-and-including-bindings (column wads client)
   (loop for remaining on wads
         for wad = (first remaining)

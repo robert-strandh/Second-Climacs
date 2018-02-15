@@ -134,3 +134,9 @@
                   (compute-sub-form-indentations wad pawn client)))
             (indent-default-function-call wad client)))
       (indent-default-function-call wad client)))
+
+(defun indent-body (column body-wads client)
+  (loop for wad in body-wads
+        unless (zerop (start-line wad))
+          do (setf (indentation wad) column)
+        do (compute-child-indentations wad client)))
