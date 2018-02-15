@@ -1,15 +1,5 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defun indent-up-to-and-including-expression (column wads client)
-  (loop for remaining on wads
-        for wad = (first remaining)
-        unless (zerop (start-line wad))
-          do (setf (indentation wad) column)
-        when (typep wad 'expression-wad)
-          do (compute-binding-indentations wad client)
-             (loop-finish)
-        finally (return (rest remaining))))
-
 (defun compute-setf-and-setq-indentation (wad client)
   (let ((arguments (rest (children wad))))
     (unless (null arguments)
