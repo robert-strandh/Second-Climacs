@@ -7,4 +7,5 @@
   ((:file "indentation-support")
    (:file "let-and-letstar")
    (:file "setf-and-setq")
-   (:file "eval-when")))
+   (:file "eval-when")
+   (:file "prog1")))
