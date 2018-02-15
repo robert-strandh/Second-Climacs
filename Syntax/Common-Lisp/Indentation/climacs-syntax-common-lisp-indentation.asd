@@ -6,4 +6,5 @@
   :components
   ((:file "indentation-support")
    (:file "let-and-letstar")
-   (:file "setf-and-setq")))
+   (:file "setf-and-setq")
+   (:file "eval-when")))
