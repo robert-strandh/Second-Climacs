@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defun indent-block (wad client)
+(defun indent-block-etc (wad client)
   (let ((arguments (rest (children wad))))
     (unless (null arguments)
       (let* ((argument (pop arguments))
@@ -43,4 +43,8 @@
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:block))) client)
-  (indent-block wad client))
+  (indent-block-etc wad client))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:return-from))) client)
+  (indent-block-etc wad client))
