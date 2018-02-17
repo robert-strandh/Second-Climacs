@@ -8,4 +8,5 @@
    (:file "let-and-letstar")
    (:file "setf-and-setq")
    (:file "eval-when")
-   (:file "prog1")))
+   (:file "prog1")
+   (:file "block")))
