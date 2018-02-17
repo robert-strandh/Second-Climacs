@@ -159,3 +159,9 @@
                      (cl:package-name (symbol-package symbol)))
               (equal (name expression)
                      (cl:symbol-name symbol))))))
+
+(defun first-child-wad-represents-symbol-p (wad symbol)
+  (and (typep wad 'expression-wad)
+       (let ((children (children wad)))
+         (and (consp children)
+              (wad-represents-symbol-p (first children) symbol)))))
