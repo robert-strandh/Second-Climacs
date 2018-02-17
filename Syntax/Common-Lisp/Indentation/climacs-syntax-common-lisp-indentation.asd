@@ -9,5 +9,5 @@
    (:file "setf-and-setq")
    (:file "eval-when")
    (:file "prog1-etc")
-   (:file "block")
+   (:file "block-etc")
    (:file "locally")))
