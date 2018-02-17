@@ -46,3 +46,7 @@
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:prog1))) client)
   (indent-prog1-and-multiple-value-prog1 wad client))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:multiple-value-prog1))) client)
+  (indent-prog1-and-multiple-value-prog1 wad client))
