@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defun indent-prog1-and-multiple-value-prog1 (wad client)
+(defun indent-prog1-etc (wad client)
   (let ((arguments (rest (children wad))))
     (unless (null arguments)
       (let* ((argument (pop arguments))
@@ -45,16 +45,20 @@
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:prog1))) client)
-  (indent-prog1-and-multiple-value-prog1 wad client))
+  (indent-prog1-etc wad client))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:multiple-value-prog1))) client)
-  (indent-prog1-and-multiple-value-prog1 wad client))
+  (indent-prog1-etc wad client))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:multiple-value-call))) client)
-  (indent-prog1-and-multiple-value-prog1 wad client))
+  (indent-prog1-etc wad client))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:catch))) client)
-  (indent-prog1-and-multiple-value-prog1 wad client))
+  (indent-prog1-etc wad client))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:throw))) client)
+  (indent-prog1-etc wad client))
