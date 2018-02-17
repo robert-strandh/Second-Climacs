@@ -150,3 +150,12 @@
           do (compute-binding-indentations wad client)
              (loop-finish)
         finally (return (rest remaining))))
+
+(defun wad-represents-symbol-p (wad symbol)
+  (and (typep wad 'expression-wad)
+       (let ((expression (expression wad)))
+         (and (typep expression 'legal-symbol-token)
+              (equal (package-name expression)
+                     (cl:package-name (symbol-package symbol)))
+              (equal (name expression)
+                     (cl:symbol-name symbol))))))
