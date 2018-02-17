@@ -10,4 +10,5 @@
    (:file "eval-when")
    (:file "prog1-etc")
    (:file "block-etc")
-   (:file "locally")))
+   (:file "locally")
+   (:file "tagbody")))
