@@ -165,3 +165,11 @@
        (let ((children (children wad)))
          (and (consp children)
               (wad-represents-symbol-p (first children) symbol)))))
+
+(defun indent-simple-list (wad)
+  (let ((children (children wad)))
+    (unless (null children)
+      (loop for child in (rest children)
+            unless (zerop (start-line child))
+              do (setf (indentation child)
+                       (start-column (first children)))))))
