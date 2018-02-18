@@ -191,36 +191,23 @@
 ;;; parameter, because there is great variation as to the nature of
 ;;; the distinguished expression, and how it should be indented.
 (defun compute-distinguished-indentation
-    (wad delta-indentation distinguished-expression-indent-function)
+    (wad delta-indentation indent-function)
   (let ((arguments (rest (children wad))))
     (if (null arguments)
         '()
-        (let* ((argument (pop arguments))
-               (distinguished-indentation (start-column argument)))
-          (flet ((maybe-set-indentation (wad-to-indent)
-                   (unless (or (zerop (start-line wad-to-indent))
-                               (eq wad-to-indent (second (children wad))))
-                     (setf (indentation wad-to-indent)
-                           distinguished-indentation))))
-            (unless (zerop (start-line argument))
-              (setf (indentation argument)
+        (destructuring-bind (first . remaining) arguments
+          (let ((distinguished-indentation (start-column first)))
+            (unless (zerop (start-line first))
+              (setf (indentation first)
                     (+ (start-column wad) delta-indentation)))
-            (tagbody
-               (if (typep argument 'expression-wad)
-                   (go distinguished-wad)
-                   (go preceding-distinguished))
-             preceding-distinguished
-               ;; ARGUMENT is a NON-EXPRESSION-WAD preceding the list of
-               ;; distinguished.
-               (maybe-set-indentation argument)
-               (if (null arguments)
-                   (go out)
-                   (progn (setf argument (pop arguments))
-                          (if (typep argument 'expression-wad)
-                              (go distinguished-wad)
-                              (go preceding-distinguished))))
-             distinguished-wad
-               (maybe-set-indentation argument)
-               (funcall distinguished-expression-indent-function argument)
-             out)
-            arguments)))))
+            (if (typep first 'expression-wad)
+                (progn (funcall indent-function first)
+                       remaining)
+                (loop for (argument . rest) on remaining
+                      unless (zerop (start-line argument))
+                        do (setf (indentation argument)
+                                 distinguished-indentation)
+                      when (typep argument 'expression-wad)
+                        do (funcall indent-function argument)
+                           (loop-finish)
+                      finally (return rest))))))))
