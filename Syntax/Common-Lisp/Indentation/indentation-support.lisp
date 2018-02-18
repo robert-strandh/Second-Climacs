@@ -173,3 +173,54 @@
             unless (zerop (start-line child))
               do (setf (indentation child)
                        (start-column (first children)))))))
+
+;;; Many standard forms have a distinguished expression as their first
+;;; argument.  If the distinguished expression is on the same line as
+;;; the operator, then no particular indentation is imposed, but if it
+;;; is on a line by itself. it is indented DELTA-INDENTATION compared
+;;; to the START-COLUMN of WAD.  The distinguished expression may be
+;;; preceded by an arbitrary number of NON-EXPRESSION-WADs.  The first
+;;; wad determines the indentation, whether it is an expression wad or
+;;; not, so that all the NON-EXPRESSION-WADs and the distinguished
+;;; expression wad are aligned.  This function returns a list of the
+;;; wads that remain after the distinguished expression wad.  If there
+;;; is no expression wad among the children, or if there are no more
+;;; wads after the first one, then the empty list is returned.  The
+;;; parameter DISTINGUISHED-EXPRESSION-INDENT-FUNCTION is a function
+;;; that is applied to the distinguished expression.  We need this
+;;; parameter, because there is great variation as to the nature of
+;;; the distinguished expression, and how it should be indented.
+(defun compute-distinguished-indentation
+    (wad delta-indentation distinguished-expression-indent-function)
+  (let ((arguments (rest (children wad))))
+    (if (null arguments)
+        '()
+        (let* ((argument (pop arguments))
+               (distinguished-indentation (start-column argument)))
+          (flet ((maybe-set-indentation (wad-to-indent)
+                   (unless (or (zerop (start-line wad-to-indent))
+                               (eq wad-to-indent (second (children wad))))
+                     (setf (indentation wad-to-indent)
+                           distinguished-indentation))))
+            (unless (zerop (start-line argument))
+              (setf (indentation argument)
+                    (+ (start-column wad) delta-indentation)))
+            (tagbody
+               (if (typep argument 'expression-wad)
+                   (go distinguished-wad)
+                   (go preceding-distinguished))
+             preceding-distinguished
+               ;; ARGUMENT is a NON-EXPRESSION-WAD preceding the list of
+               ;; distinguished.
+               (maybe-set-indentation argument)
+               (if (null arguments)
+                   (go out)
+                   (progn (setf argument (pop arguments))
+                          (if (typep argument 'expression-wad)
+                              (go distinguished-wad)
+                              (go preceding-distinguished))))
+             distinguished-wad
+               (maybe-set-indentation argument)
+               (funcall distinguished-expression-indent-function argument)
+             out)
+            arguments)))))
