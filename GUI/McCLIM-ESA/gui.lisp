@@ -52,6 +52,8 @@
    (window
     (multiple-value-bind (buffer cursor)
         (climacs2-base:make-empty-standard-buffer-and-cursor)
+      (setf (esa-buffer:filepath buffer)
+            (first (directory ".")))
       (let* ((my-pane (make-climacs-pane))
              (my-info-pane (clim:make-pane 'info-pane
                                            :master-pane my-pane
