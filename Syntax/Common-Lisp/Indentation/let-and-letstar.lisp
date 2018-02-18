@@ -40,36 +40,11 @@
                 do (setf (indentation child) start-column)
               do (compute-binding-indentation child client))))))
 
-(defun indent-up-to-and-including-bindings (column wads client)
-  (loop for remaining on wads
-        for wad = (first remaining)
-        unless (zerop (start-line wad))
-          do (setf (indentation wad) column)
-        when (typep wad 'expression-wad)
-          do (compute-binding-indentations wad client)
-        until (typep wad 'expression-wad)
-        finally (return (rest remaining))))
-
 (defun compute-let-and-letstar-indentation (wad client)
-  (let ((children (rest (children wad)))
-        (wad-start-column (start-column wad)))
-    (if (null children)
-        ;; We have no bindings and no LET body.  Do nothing.
-        nil
-        (let ((start-line (start-line (first children)))
-              (start-column (start-column (first children))))
-          (if (zerop start-line)
-              ;; The first argument starts on the same line as the
-              ;; operator.  Indent every line up to and including the
-              ;; first expression wad as the first child.
-              (let ((body-wads (indent-up-to-and-including-bindings
-                                start-column children client)))
-                (indent-body (+ wad-start-column 2) body-wads client))
-              ;; The first argument starts on a different line from
-              ;; that of the operator.
-              (let ((body-wads (indent-up-to-and-including-bindings
-                                (+ wad-start-column 4) children client)))
-                (indent-body (+ wad-start-column 2) body-wads client)))))))
+  (let* ((fun (lambda (wad)
+                (compute-binding-indentations wad client)))
+         (arguments (compute-distinguished-indentation wad 4 fun)))
+    (indent-body (+ (start-column wad) 2) arguments client)))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:let))) client)
