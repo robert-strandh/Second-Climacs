@@ -19,6 +19,17 @@
              '((#\Newline)))
 
 (clim:define-command
+    (com-open-line :name t :command-table ascii-insert-table)
+    ()
+  (with-current-cursor (cursor)
+    (climacs2-base:insert-item cursor #\Newline)
+    (climacs2-base:backward-item cursor)))
+
+(esa:set-key `(com-open-line)
+             'ascii-insert-table
+             '((#\o :control)))
+
+(clim:define-command
     (com-insert-file :name t :command-table ascii-insert-table)
     ((filepath 'pathname
                :prompt "Insert File: "
