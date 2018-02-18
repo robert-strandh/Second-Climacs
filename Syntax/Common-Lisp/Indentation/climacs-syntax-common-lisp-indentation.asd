@@ -11,4 +11,5 @@
    (:file "prog1-etc")
    (:file "block-etc")
    (:file "locally")
-   (:file "tagbody")))
+   (:file "tagbody")
+   (:file "multiple-value-setq")))
