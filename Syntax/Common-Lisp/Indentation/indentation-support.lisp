@@ -204,23 +204,21 @@
 ;;; parameter, because there is great variation as to the nature of
 ;;; the distinguished expression, and how it should be indented.
 (defun compute-distinguished-indentation
-    (wad delta-indentation indent-function)
-  (let ((arguments (rest (children wad))))
-    (if (null arguments)
-        '()
-        (destructuring-bind (first . remaining) arguments
-          (let ((distinguished-indentation (start-column first)))
-            (unless (zerop (start-line first))
-              (setf (indentation first)
-                    (+ (start-column wad) delta-indentation)))
-            (if (typep first 'expression-wad)
-                (progn (funcall indent-function first)
-                       remaining)
-                (loop for (argument . rest) on remaining
-                      unless (zerop (start-line argument))
-                        do (setf (indentation argument)
-                                 distinguished-indentation)
-                      when (typep argument 'expression-wad)
-                        do (funcall indent-function argument)
-                           (loop-finish)
-                      finally (return rest))))))))
+    (arguments indentation indent-function)
+  (if (null arguments)
+      '()
+      (destructuring-bind (first . remaining) arguments
+        (let ((distinguished-indentation (start-column first)))
+          (unless (zerop (start-line first))
+            (setf (indentation first) indentation))
+          (if (typep first 'expression-wad)
+              (progn (funcall indent-function first)
+                     remaining)
+              (loop for (argument . rest) on remaining
+                    unless (zerop (start-line argument))
+                      do (setf (indentation argument)
+                               distinguished-indentation)
+                    when (typep argument 'expression-wad)
+                      do (funcall indent-function argument)
+                         (loop-finish)
+                    finally (return rest)))))))

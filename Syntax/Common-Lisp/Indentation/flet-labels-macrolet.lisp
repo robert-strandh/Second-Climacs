@@ -7,9 +7,12 @@
              (consp (children wad)))
     (let* ((fun (lambda (w)
                   (indent-lambda-list w client)))
+           (arguments (rest (children wad)))
+           (indentation (+ (start-column wad) 4))
            ;; We start by computing the indentation for the the
            ;; lambda list.
-           (body-wads (compute-distinguished-indentation wad 4 fun)))
+           (body-wads (compute-distinguished-indentation
+                       arguments indentation fun)))
       (indent-body (+ (start-column wad) 2) body-wads client))))
 
 (defgeneric indent-local-function-definitions (wad client))
@@ -24,8 +27,11 @@
 (defun indent-flet-etc (wad client)
   (let* ((fun (lambda (w)
                 (indent-local-function-definitions w client)))
-         (arguments (compute-distinguished-indentation wad 4 fun)))
-    (indent-body (+ (start-column wad) 2) arguments client)))
+         (arguments (rest (children wad)))
+         (indentation (+ (start-column wad) 4))
+         (body-wads (compute-distinguished-indentation
+                     arguments indentation fun)))
+    (indent-body (+ (start-column wad) 2) body-wads client)))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:flet))) client)

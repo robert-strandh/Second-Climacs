@@ -11,5 +11,8 @@
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:eval-when))) client)
   (let* ((fun #'indent-situations)
-         (arguments (compute-distinguished-indentation wad 4 fun)))
-    (indent-body (+ (start-column wad) 2) arguments client)))
+         (arguments (rest (children wad)))
+         (indentation (+ (start-column wad) 4))
+         (body-wads (compute-distinguished-indentation
+                     arguments indentation fun)))
+    (indent-body (+ (start-column wad) 2) body-wads client)))

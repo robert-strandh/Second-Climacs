@@ -1,8 +1,11 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
 (defun indent-block-etc (wad client)
-  (let ((arguments (compute-distinguished-indentation wad 4 #'identity)))
-    (indent-body (+ (start-column wad) 2) arguments client)))
+  (let* ((arguments (rest (children wad)))
+         (indentation (+ (start-column wad) 4))
+         (body-wads (compute-distinguished-indentation
+                     arguments indentation #'identity)))
+    (indent-body (+ (start-column wad) 2) body-wads client)))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:block))) client)
