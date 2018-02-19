@@ -13,4 +13,5 @@
    (:file "locally")
    (:file "tagbody")
    (:file "multiple-value-setq")
-   (:file "lambda-list")))
+   (:file "lambda-list")
+   (:file "flet-labels-macrolet")))
