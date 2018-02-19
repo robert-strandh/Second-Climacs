@@ -12,4 +12,5 @@
    (:file "block-etc")
    (:file "locally")
    (:file "tagbody")
-   (:file "multiple-value-setq")))
+   (:file "multiple-value-setq")
+   (:file "lambda-list")))
