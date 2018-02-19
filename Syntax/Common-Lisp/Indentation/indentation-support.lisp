@@ -177,7 +177,7 @@
                 do (setf (indentation child)
                          (start-column first ))
               when (typep child 'expression-wad)
-                do (apply element-indent-function child))))))
+                do (funcall element-indent-function child))))))
 
 (defun indent-simple-list (wad)
   (let ((children (children wad)))
