@@ -166,6 +166,19 @@
          (and (consp children)
               (wad-represents-symbol-p (first children) symbol)))))
 
+(defun indent-list (wad element-indent-function)
+  (let ((children (children wad)))
+    (unless (null children)
+      (destructuring-bind (first . rest) children
+        (when (typep first 'expression-wad)
+          (apply element-indent-function first))
+        (loop for child in rest
+              unless (zerop (start-line child))
+                do (setf (indentation child)
+                         (start-column first ))
+              when (typep child 'expression-wad)
+                do (apply element-indent-function child))))))
+
 (defun indent-simple-list (wad)
   (let ((children (children wad)))
     (unless (null children)
