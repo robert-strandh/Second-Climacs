@@ -14,4 +14,5 @@
    (:file "tagbody")
    (:file "multiple-value-setq")
    (:file "lambda-list")
-   (:file "flet-labels-macrolet")))
+   (:file "flet-labels-macrolet")
+   (:file "defun")))
