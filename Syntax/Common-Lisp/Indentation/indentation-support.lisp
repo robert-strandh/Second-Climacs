@@ -16,9 +16,9 @@
 ;;; name of a function, but the lambda list of of that function is
 ;;; very simple, or a symbol that we have no information about.
 (defun indent-default-function-call (wad client)
-  (let ((children (children wad)))
-    (unless (null (rest children))
-      (let* ((first-child (first children))
+  (let ((arguments (rest (children wad))))
+    (unless (null arguments)
+      (let* ((first-child (first arguments))
              (first-child-start-line (start-line first-child))
              (first-child-start-column (start-column first-child)))
         (unless (zerop first-child-start-line)
@@ -28,7 +28,7 @@
           ;; is different from 0, then we set the indentation to be 2
           ;; columns with respect to the start column of the wad.
           (setf (indentation first-child) (+ 2 (start-column wad))))
-        (loop for child in (rest children)
+        (loop for child in (rest arguments)
               unless (zerop (start-line child))
                 ;; If the start line of the child is 0, that means
                 ;; that this child is positioned on the same line as
@@ -171,7 +171,7 @@
     (unless (null children)
       (destructuring-bind (first . rest) children
         (when (typep first 'expression-wad)
-          (apply element-indent-function first))
+          (funcall element-indent-function first))
         (loop for child in rest
               unless (zerop (start-line child))
                 do (setf (indentation child)
