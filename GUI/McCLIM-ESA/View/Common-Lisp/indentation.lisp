@@ -10,7 +10,10 @@
          (climacs-buffer (climacs2-base:buffer analyzer))
          (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
     (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
-    (climacs-syntax-common-lisp:read-forms analyzer)))
+    (climacs-syntax-common-lisp:read-forms analyzer)
+    (second-climacs-clim-base::with-current-cursor (cursor)
+      (climacs-syntax-common-lisp:indent-line
+       analyzer (cluffer:line-number cursor)))))
 
 (esa:set-key `(com-indent-line)
 	     'common-lisp-table
