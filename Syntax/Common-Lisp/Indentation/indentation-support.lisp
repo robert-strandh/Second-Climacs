@@ -222,3 +222,27 @@
                       do (funcall indent-function argument)
                          (loop-finish)
                     finally (return rest)))))))
+
+;;; Many Common Lisp operators have a first argument that is
+;;; distinguished in some way, followed by one or more expression that
+;;; are part of a sequence of similar expressions.  If the
+;;; distinguished argument starts on the same line as the operator, no
+;;; indentation is imposed on it.  If it starts on a separate line, it
+;;; is indented by 4 positions, compared to the parent expression.
+;;; The remaining expressions are indented by 2 position, compared to
+;;; the parent expression.  This computation needs two parameters,
+;;; namely a function that determines how the distinguished argument
+;;; is to be recursively indented, and a function that determines how
+;;; the remaining expressions are to be indented.
+(defun compute-indentation-single-distinguished
+    (wad compute-distinguished-indentation compute-remaining-indentation)
+  (let ((remaining-wads (compute-distinguished-indentation
+                         (rest (children wad))
+                         (+ (start-column wad) 4)
+                         compute-distinguished-indentation)))
+    (funcall compute-remaining-indentation
+             (+ (start-column wad) 2)
+             remaining-wads)))
+
+(defun indent-line (analyzer line-number)
+  (declare (ignore analyzer line-number)))
