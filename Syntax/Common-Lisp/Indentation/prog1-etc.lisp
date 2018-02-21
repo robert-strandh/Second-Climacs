@@ -1,12 +1,11 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
 (defun indent-prog1-etc (wad client)
-  (let* ((fun (lambda (wad) (compute-child-indentations wad client)))
-         (arguments (rest (children wad)))
-         (indentation (+ (start-column wad) 4))
-         (body-wads (compute-distinguished-indentation
-                     arguments indentation fun)))
-    (indent-body (+ (start-column wad) 2) body-wads client)))
+  (compute-indentation-single-distinguished
+   wad
+   (lambda (wad) (compute-child-indentations wad client))
+   (lambda (indentation wads)
+     (indent-body indentation wads client))))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:prog1))) client)
