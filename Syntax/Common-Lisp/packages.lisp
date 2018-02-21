@@ -56,4 +56,5 @@
    #:suffix-to-prefix
    #:min-column-number
    #:max-column-number
-   #:max-line-width))
+   #:max-line-width
+   #:indent-line))
