@@ -10,9 +10,8 @@
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:eval-when))) client)
-  (let* ((fun #'indent-situations)
-         (arguments (rest (children wad)))
-         (indentation (+ (start-column wad) 4))
-         (body-wads (compute-distinguished-indentation
-                     arguments indentation fun)))
-    (indent-body (+ (start-column wad) 2) body-wads client)))
+  (compute-indentation-single-distinguished
+   wad
+   #'indent-situations
+   (lambda (indentation wads)
+     (indent-body indentation wads client))))
