@@ -25,13 +25,11 @@
                    (indent-local-function-definition w client)))))
 
 (defun indent-flet-etc (wad client)
-  (let* ((fun (lambda (w)
-                (indent-local-function-definitions w client)))
-         (arguments (rest (children wad)))
-         (indentation (+ (start-column wad) 4))
-         (body-wads (compute-distinguished-indentation
-                     arguments indentation fun)))
-    (indent-body (+ (start-column wad) 2) body-wads client)))
+  (compute-indentation-single-distinguished
+   wad
+   (lambda (wad) (indent-local-function-definitions wad client))
+   (lambda (indentation wads)
+     (indent-body indentation wads client))))
 
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:flet))) client)
