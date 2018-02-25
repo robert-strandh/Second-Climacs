@@ -38,7 +38,8 @@
         (loop for child in remaining-children
               unless (zerop (start-line child))
                 do (setf (indentation child) start-column)
-              do (compute-binding-indentation child client))))))
+              when (typep child 'expression-wad)
+                do (compute-binding-indentation child client))))))
 
 (defun compute-let-and-letstar-indentation (wad client)
   (compute-indentation-single-distinguished
