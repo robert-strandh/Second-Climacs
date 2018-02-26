@@ -14,4 +14,3 @@
                      (lambda (w)
                        (indent-lambda-list w client)))))
     (indent-body body-indentation body-wads client)))
-         
