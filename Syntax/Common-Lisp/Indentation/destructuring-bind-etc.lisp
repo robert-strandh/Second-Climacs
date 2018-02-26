@@ -20,3 +20,7 @@
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:destructuring-bind))) client)
   (compute-indentation-destruturing-bind-etc wad client))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:multiple-value-bind))) client)
+  (compute-indentation-destruturing-bind-etc wad client))
