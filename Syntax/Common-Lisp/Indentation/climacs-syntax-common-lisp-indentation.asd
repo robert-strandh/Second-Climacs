@@ -15,4 +15,5 @@
    (:file "multiple-value-setq")
    (:file "lambda-list")
    (:file "flet-labels-macrolet")
-   (:file "defun")))
+   (:file "defun")
+   (:file "destructuring-bind-etc")))
