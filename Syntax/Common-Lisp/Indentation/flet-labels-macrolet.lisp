@@ -42,3 +42,7 @@
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:macrolet))) client)
   (indent-flet-etc wad client))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:lambda))) client)
+  (indent-flet-etc wad client))
