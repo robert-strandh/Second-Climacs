@@ -16,4 +16,5 @@
    (:file "lambda-list")
    (:file "flet-labels-macrolet")
    (:file "defun")
-   (:file "destructuring-bind-etc")))
+   (:file "destructuring-bind-etc")
+   (:file "make-instance")))
