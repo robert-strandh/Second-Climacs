@@ -17,4 +17,4 @@
    (:file "flet-labels-macrolet")
    (:file "defun")
    (:file "destructuring-bind-etc")
-   (:file "make-instance")))
+   (:file "make-instance-etc")))
