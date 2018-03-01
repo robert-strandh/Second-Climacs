@@ -1,5 +1,9 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
+;;; FIXME: Treat the case with only two arguments as a special case
+;;; that does not need any additional indentation for the second
+;;; argument.
+
 (defun compute-setf-and-setq-indentation (wad client)
   (let ((arguments (rest (children wad))))
     (unless (null arguments)
