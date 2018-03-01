@@ -19,3 +19,14 @@
 ;;;     (case ...
 ;;;           ...))
 
+(defun indent-make-instance-etc (wad client)
+  (let ((remaining-wads (compute-distinguished-indentation
+                         (rest (children wad))
+                         (+ (start-column wad) 4)
+                         (lambda (w)
+                           (compute-child-indentations w client)))))
+    (unless (or (null remaining-wads)
+                (zerop (start-line (first remaining-wads))))
+      (setf (indentation (first remaining-wads))
+            (+ (start-column wad) 2)))
+    (indent-make-instance-keyword-arguments remaining-wads client)))
