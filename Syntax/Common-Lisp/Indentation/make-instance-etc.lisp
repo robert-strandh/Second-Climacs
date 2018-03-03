@@ -50,3 +50,7 @@
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:make-instance))) client)
   (indent-make-instance-etc wad client))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:reinitialize-instance))) client)
+  (indent-make-instance-etc wad client))
