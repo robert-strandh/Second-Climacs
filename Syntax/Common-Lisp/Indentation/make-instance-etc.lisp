@@ -20,13 +20,33 @@
 ;;;           ...))
 
 (defun indent-make-instance-etc (wad client)
-  (let ((remaining-wads (compute-distinguished-indentation
-                         (rest (children wad))
-                         (+ (start-column wad) 4)
-                         (lambda (w)
-                           (compute-child-indentations w client)))))
-    (unless (or (null remaining-wads)
-                (zerop (start-line (first remaining-wads))))
-      (setf (indentation (first remaining-wads))
-            (+ (start-column wad) 2)))
-    (indent-make-instance-keyword-arguments remaining-wads client)))
+  (let ((arguments (split-wads (rest (children wad)))))
+    (unless (null arguments)
+      ;; First handle the distinguished argument.
+      (let ((distinguished (first arguments)))
+        (if (zerop (start-line (first distinguished)))
+            (loop with indentation = (start-column (first distinguished))
+                  for wad in (rest distinguished)
+                  unless (zerop (start-line wad))
+                    do (setf (indentation wad) indentation))
+            (loop with indentation = (+ (start-column wad) 4)
+                  for wad in distinguished
+                  unless (zerop (start-line wad))
+                    do (setf (indentation wad) indentation)))
+        (let ((distinguished-expression (first (last distinguished))))
+          (when (typep distinguished-expression 'expression-wad)
+            (compute-child-indentations distinguished-expression client))))
+      ;; Next, indent the keyword/value pairs.
+      (loop with indentation = (+ (start-column wad) 2)
+            with additional = 0
+            for argument in (rest arguments)
+            do (loop for wad in argument
+                     unless (zerop (start-line wad))
+                       do (setf (indentation wad) (+ indentation additional)))
+               (when (typep (first (last argument)) 'expression-wad)
+                 (compute-child-indentations (first (last argument)) client))
+               (setf additional (- 2 additional))))))
+
+(defmethod compute-sub-form-indentations
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:make-instance))) client)
+  (indent-make-instance-etc wad client))
