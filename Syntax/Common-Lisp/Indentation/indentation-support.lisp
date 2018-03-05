@@ -103,6 +103,12 @@
 ;;; on its own CLIENT class.
 (defgeneric compute-sub-form-indentations (wad pawn client))
 
+;;; This generic function is called in order to determine the
+;;; indentation of a line that is located after the last sub-wad in
+;;; WAD.  Each method defines an EQL specializer on the PAWN
+;;; parameter.  Client code should specialize on its own CLIENT class.
+(defgeneric compute-indentation-after-last-sub-wad (wad pawn client))
+
 (defun intern-pawn (package-name-designator symbol-name-designator)
   (let* ((package-name (string package-name-designator))
          (symbol-name (string symbol-name-designator))
