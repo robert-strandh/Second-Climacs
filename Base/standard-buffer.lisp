@@ -83,13 +83,14 @@
   (let* ((line (make-instance 'cluffer-standard-line:closed-line))
          (buffer (make-instance 'cluffer-standard-buffer:buffer
                    :initial-line line))
+         (standard-buffer (make-instance 'standard-buffer
+                            :cluffer-buffer buffer))
          (cursor (make-instance
                      'cluffer-standard-line:right-sticky-cursor)))
     (change-class cursor 'standard-cursor
-                  :buffer buffer)
+                  :buffer standard-buffer)
     (cluffer:attach-cursor cursor line)
-    (values (make-instance 'standard-buffer :cluffer-buffer buffer)
-            cursor)))
+    (values standard-buffer cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
