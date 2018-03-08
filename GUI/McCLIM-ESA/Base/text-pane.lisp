@@ -1,7 +1,7 @@
 (cl:in-package #:second-climacs-clim-base)
 
 (defclass text-pane (esa:esa-pane-mixin
-		     clim:application-pane)
+                     clim:application-pane)
   ()
   (:default-initargs
    :background clim:+white+
