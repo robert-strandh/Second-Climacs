@@ -39,7 +39,8 @@
          (window (esa:current-window)))
     (when (null view-class)
       (setf view-class 'climacs-syntax-fundamental:view))
-    (let* ((cursor (make-instance 'cluffer-standard-line:right-sticky-cursor))
+    (let* ((cursor (make-instance 'second-climacs-base:standard-cursor
+                     :buffer buffer))
            (view (make-instance view-class :buffer buffer :cursor cursor)))
       (cluffer:attach-cursor cursor first-line)
       (push view (climacs2-base:views frame))
