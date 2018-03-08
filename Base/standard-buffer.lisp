@@ -6,6 +6,12 @@
 (defclass standard-buffer (buffer)
   ((%cluffer-buffer :initarg :cluffer-buffer :reader cluffer-buffer)))
 
+;;; A STANDARD-CURSOR is a subclass of a Cluffer RIGHT-STICKY-CURSOR.
+;;; It contains a reference to the standard buffer.
+
+(defclass standard-cursor (cluffer-standard-line:right-sticky-cursor)
+  ((%buffer :initarg :buffer :reader buffer)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Method on INSERT-ITEM.
@@ -79,6 +85,8 @@
                    :initial-line line))
          (cursor (make-instance
                      'cluffer-standard-line:right-sticky-cursor)))
+    (change-class cursor 'standard-cursor
+                  :buffer buffer)
     (cluffer:attach-cursor cursor line)
     (values (make-instance 'standard-buffer :cluffer-buffer buffer)
             cursor)))
