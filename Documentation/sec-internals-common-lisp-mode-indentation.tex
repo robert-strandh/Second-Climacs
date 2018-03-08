@@ -3,28 +3,27 @@
 
 \subsection{Introduction}
 
-There are two basic cases for computing indentation of some parse
-result:
+There are two basic cases for computing indentation of some wad:
 
 \begin{enumerate}
-\item If the parse result is a top-level parse result, then the
+\item If the wad is a top-level wad, then the
   indentation is always $0$, i.e. it should be positioned in the
   leftmost column.
-\item If the parse result is a nested parse result, then the
-  indentation is relative to some ancestor parse result.
+\item If the wad is a nested wad, then the
+  indentation is relative to some ancestor wad.
 \end{enumerate}
 
-For each top-level parse result, its absolute indentation is first set
+For each top-level wad, its absolute indentation is first set
 to $0$ and then the function \texttt{compute-child-indentations} is
-called on that top-level parse result.
+called on that top-level wad.
 
 The function \texttt{compute-child-indentations} takes two parameters,
-a parse result and a \emph{client} instance.
+a wad and a \emph{client} instance.
 
 We must distinguish between the following cases:
 
 \begin{enumerate}
-\item $P$ is an atomic parse result.
+\item $P$ is an atomic wad.
 \item $P$ represents a special form or a function or macro call with
   its own indentation rule.
 \item $P$ represents a function call without its own indentation rule.
@@ -49,7 +48,7 @@ indentation rules for functions and macros.
 
 Such an indentation rule is defined as a method on the
 generic-function named \texttt{compute-child-indentations-special}.
-This function takes the parse result $P$, a symbol (the name of the
+This function takes the wad $P$, a symbol (the name of the
 operator), and a \emph{client} instance.  A method should specialize
 on the name of the operator (in the form of an EQL specializer) and on
 the client parameter (unless this is a default method).
