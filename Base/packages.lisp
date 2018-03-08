@@ -14,6 +14,7 @@
 	   #:item-before-cursor
 	   #:item-after-cursor
 	   #:standard-buffer
+	   #:standard-cursor
 	   #:cluffer-buffer
 	   #:make-empty-standard-buffer-and-cursor
 	   #:fill-buffer-from-stream
