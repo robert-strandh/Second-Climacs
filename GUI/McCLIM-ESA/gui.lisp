@@ -25,7 +25,7 @@
   (clim:make-pane 'text-pane
                   :name 'stuff
                   :default-view clim:+textual-view+
-                  :width 900 :height 400
+                  :width 900 :height 900
                   :display-time nil))
 
 (defun pane-has-attached-view-p (pane)
@@ -71,7 +71,7 @@
         (setf (esa:windows clim:*application-frame*) (list my-pane))
         (attach-view my-pane view)
         (clim:vertically ()
-          (clim:scrolling ()
+          (clim:scrolling (:height 700)
             my-pane)
           my-info-pane))))
    (minibuffer (clim:make-pane 'minibuffer-pane :width 900)))
