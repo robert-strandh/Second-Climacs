@@ -6,7 +6,8 @@
     (com-insert-item :name t :command-table ascii-insert-table)
     ((item t))
   (with-current-cursor (cursor)
-    (climacs2-base:insert-item cursor item)))
+    (climacs2-base:insert-item cursor item)
+    (setf (esa-buffer:needs-saving (second-climacs-base:buffer cursor)) t)))
 
 (loop for i from 32 to 126
       for char = (code-char i)
