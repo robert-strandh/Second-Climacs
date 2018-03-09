@@ -9,26 +9,10 @@
   (let ((arguments (split-wads (rest (children wad)))))
     (unless (null arguments)
       (destructuring-bind (class-name . remaining) arguments
-        (if (zerop (start-line (first class-name)))
-            (loop with indentation = (start-column (first class-name))
-                  for wad in (rest class-name)
-                  unless (zerop (start-line wad))
-                    do (setf (indentation wad) indentation))
-            (loop with indentation = (+ (start-column wad) 4)
-                  for wad in class-name
-                  unless (zerop (start-line wad))
-                    do (setf (indentation wad) indentation)))
+        (align-or-indent class-name  (+ (start-column wad) 4))
         (unless (null remaining)
           (destructuring-bind (superclasses . remaining) remaining
-            (if (zerop (start-line (first superclasses)))
-                (loop with indentation = (start-column (first superclasses))
-                      for wad in (rest superclasses)
-                      unless (zerop (start-line wad))
-                        do (setf (indentation wad) indentation))
-                (loop with indentation = (+ (start-column wad) 4)
-                      for wad in superclasses
-                      unless (zerop (start-line wad))
-                        do (setf (indentation wad) indentation)))
+            (align-or-indent superclasses (+ (start-column wad) 4))
             (unless (null remaining)
               (destructuring-bind (slots . options) remaining
                 ;; FIXME: indent options.
