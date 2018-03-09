@@ -280,3 +280,16 @@
                       collect first
                       until (or (null remaining)
                                 (typep first 'expression-wad)))))
+
+;;; Take a list of wads.  If the first wad is not first on a line, then
+;;; then indent the others like the first one.  If the first wad IS first
+;;; on a line, then indent every wad according to INDENTATION.
+(defun align-or-indent (wads indentation)
+  (if (zerop (start-line (first wads)))
+      (loop with indentation = (start-column (first wads))
+            for wad in (rest wads)
+            unless (zerop (start-line wad))
+              do (setf (indentation wad) indentation))
+      (loop for wad in wads
+            unless (zerop (start-line wad))
+              do (setf (indentation wad) indentation))))
