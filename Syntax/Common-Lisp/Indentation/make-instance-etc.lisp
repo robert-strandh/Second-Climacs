@@ -24,15 +24,7 @@
     (unless (null arguments)
       ;; First handle the distinguished argument.
       (let ((distinguished (first arguments)))
-        (if (zerop (start-line (first distinguished)))
-            (loop with indentation = (start-column (first distinguished))
-                  for wad in (rest distinguished)
-                  unless (zerop (start-line wad))
-                    do (setf (indentation wad) indentation))
-            (loop with indentation = (+ (start-column wad) 4)
-                  for wad in distinguished
-                  unless (zerop (start-line wad))
-                    do (setf (indentation wad) indentation)))
+        (align-or-indent distinguished (+ (start-column wad) 4))
         (let ((distinguished-expression (first (last distinguished))))
           (when (typep distinguished-expression 'expression-wad)
             (compute-child-indentations distinguished-expression client))))
