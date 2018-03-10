@@ -269,10 +269,11 @@
           until (typep (first first-result) 'expression-wad)
           finally (return (values first-result second-result)))))
 
-;;; Take a list of wads and split it into sub-lists, and return a list
-;;; of those sub-lists.  Each sub-list, except possibly the last one,
-;;; contains exactly one expression wad as its last element.  The last
-;;; sub-list may contain only non-expression wads.
+;;; Take a list of wads and split it into wad groups, and return a
+;;; list of those wad groups.  A wad group is a list of wads.  Each
+;;; wad group, except possibly the last one, contains exactly one
+;;; expression wad as its last element.  The last wad group may
+;;; contain only non-expression wads.
 (defun split-wads (wads)
   (loop with remaining = wads
         until (null remaining)
