@@ -281,6 +281,14 @@
                       until (or (null remaining)
                                 (typep first 'expression-wad)))))
 
+;;; Take a list of wads.  Use the column of the first one to align all
+;;; the remaining ones that are on the beginning of a line.
+(defun align-with-first (wads)
+  (loop with indentation = (start-column (first wads))
+        for wad in (rest wads)
+        unless (zerop (start-line wad))
+          do (setf (indentation wad) indentation)))
+
 ;;; Take a list of wads.  If the first wad is not first on a line, then
 ;;; then indent the others like the first one.  If the first wad IS first
 ;;; on a line, then indent every wad according to INDENTATION.
