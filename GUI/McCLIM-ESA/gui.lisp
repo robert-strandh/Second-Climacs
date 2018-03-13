@@ -21,9 +21,10 @@
   (:default-initargs
    :height 20 :max-height 20 :min-height 20))
 
-(defun make-climacs-pane ()
+(defun make-climacs-pane (gutter)
   (clim:make-pane 'text-pane
                   :name 'stuff
+                  :left-gutter gutter
                   :default-view clim:+textual-view+
                   :width 900 :height 900
                   :display-time nil))
@@ -54,7 +55,11 @@
         (climacs2-base:make-empty-standard-buffer-and-cursor)
       (setf (esa-buffer:filepath buffer)
             (first (directory ".")))
-      (let* ((my-pane (make-climacs-pane))
+      (let* ((gutter (clim:make-pane 'clim:application-pane
+                                     :background clim:+gray+
+                                     :max-width 10
+                                     :width 10))
+             (my-pane (make-climacs-pane gutter))
              (my-info-pane (clim:make-pane 'info-pane
                                            :master-pane my-pane
                                            :width 900))
@@ -72,7 +77,9 @@
         (attach-view my-pane view)
         (clim:vertically ()
           (clim:scrolling (:height 700)
-            my-pane)
+            (clim:horizontally ()
+              gutter
+              my-pane))
           my-info-pane))))
    (minibuffer (clim:make-pane 'minibuffer-pane :width 900)))
   (:layouts
