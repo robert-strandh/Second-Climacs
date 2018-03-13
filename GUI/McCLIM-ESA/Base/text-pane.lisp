@@ -2,7 +2,7 @@
 
 (defclass text-pane (esa:esa-pane-mixin
                      clim:application-pane)
-  ()
+  ((%left-gutter :initarg :left-gutter :reader left-gutter))
   (:default-initargs
    :background clim:+white+
    :text-style (clim:make-text-style :fixed nil 14)))
