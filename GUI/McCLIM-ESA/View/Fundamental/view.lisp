@@ -132,7 +132,8 @@
     ((analyzer output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
   (multiple-value-bind (left top right bottom)
-      (clim:bounding-rectangle* (clim:pane-viewport-region stream))
+      (clim:bounding-rectangle*
+       (clim:pane-viewport-region (clim:sheet-parent stream)))
     (clim:medium-clear-area (clim:sheet-medium stream)
                             left top right bottom)
     (let* ((text-style (clim:medium-text-style stream))

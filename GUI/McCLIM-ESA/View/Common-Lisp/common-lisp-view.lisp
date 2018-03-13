@@ -233,9 +233,10 @@
   (let ((indentation (climacs-syntax-common-lisp::indentation wad))
         (start-column (climacs-syntax-common-lisp::start-column wad)))
     (unless (or (null indentation) (= indentation start-column))
-      (if (< indentation start-column)
-          (draw-rectangle pane start-ref 0 1 clim:+green+)
-          (draw-rectangle pane start-ref 0 1 clim:+magenta+))))
+      (let ((gutter (second-climacs-clim-base::left-gutter pane)))
+        (if (< indentation start-column)
+            (draw-rectangle gutter start-ref 0 1 clim:+green+)
+            (draw-rectangle gutter start-ref 0 1 clim:+magenta+)))))
   (call-next-method))
 
 (defmethod draw-wad :around
@@ -452,14 +453,16 @@
 ;;; column and the line of the lower-right corner.
 (defun viewport-area (pane)
   (multiple-value-bind (left top right bottom)
-      (clim:bounding-rectangle* (clim:pane-viewport-region pane))
+      (clim:bounding-rectangle*
+       (clim:pane-viewport-region (clim:sheet-parent pane)))
     (multiple-value-bind (width height) (text-style-dimensions pane)
       (values (floor left width) (floor top height)
               (ceiling right width) (ceiling bottom height)))))
 
 (defun clear-viewport (pane)
   (multiple-value-bind (left top right bottom)
-      (clim:bounding-rectangle* (clim:pane-viewport-region pane))
+      (clim:bounding-rectangle*
+       (clim:pane-viewport-region (clim:sheet-parent pane)))
     (clim:medium-clear-area (clim:sheet-medium pane)
                             left top right bottom)))
 
