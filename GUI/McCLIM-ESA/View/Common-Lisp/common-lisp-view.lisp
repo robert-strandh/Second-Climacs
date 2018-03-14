@@ -75,13 +75,13 @@
        pane line-number start-column-number end-column-number)
     (clim:draw-polygon*
      gutter
-     (list x2 (+ (* y1 1/4) (* y2 3/4))
-           (+ (* x2 2/3) (* x1 1/3)) (+ (* y1 1/4) (* y2 3/4))
+     (list x2 (+ (* y1 0.3) (* y2 0.7))
+           (+ (* x2 2/3) (* x1 1/3)) (+ (* y1 0.3) (* y2 0.7))
            (+ (* x2 2/3) (* x1 1/3)) y2
            x1 (+ (* y1 1/2) (* y2 1/2))
            (+ (* x2 2/3) (* x1 1/3)) y1
-           (+ (* x2 2/3) (* x1 1/3)) (+ (* y1 3/4) (* y2 1/4))
-           x2 (+ (* y1 3/4) (* y2 1/4)))
+           (+ (* x2 2/3) (* x1 1/3)) (+ (* y1 0.7) (* y2 0.3))
+           x2 (+ (* y1 0.7) (* y2 0.3)))
      :closed t :filled t :ink ink)))
 
 (defun draw-right-arrow
@@ -91,13 +91,13 @@
        pane line-number start-column-number end-column-number)
     (clim:draw-polygon*
      gutter
-     (list x1 (+ (* y1 1/4) (* y2 3/4))
-           (+ (* x1 2/3) (* x2 1/3)) (+ (* y1 1/4) (* y2 3/4))
+     (list x1 (+ (* y1 0.3) (* y2 0.7))
+           (+ (* x1 2/3) (* x2 1/3)) (+ (* y1 0.3) (* y2 0.7))
            (+ (* x1 2/3) (* x2 1/3)) y2
            x2 (+ (* y1 1/2) (* y2 1/2))
            (+ (* x1 2/3) (* x2 1/3)) y1
-           (+ (* x1 2/3) (* x2 1/3)) (+ (* y1 3/4) (* y2 1/4))
-           x1 (+ (* y1 3/4) (* y2 1/4)))
+           (+ (* x1 2/3) (* x2 1/3)) (+ (* y1 0.7) (* y2 0.3))
+           x1 (+ (* y1 0.7) (* y2 0.3)))
      :closed t :filled t :ink ink)))
 
 ;;; Draw an interval of text from a single line.  Optimize by not
@@ -267,8 +267,7 @@
     (unless (or (null indentation) (= indentation start-column))
       (let ((gutter (second-climacs-clim-base::left-gutter pane)))
         (if (< indentation start-column)
-            (progn (draw-rectangle pane start-ref 0 1 clim:+green+)
-                   (draw-left-arrow pane gutter start-ref 0 1 clim:+blue+))
+            (draw-left-arrow pane gutter start-ref 0 1 clim:+blue+)
             (draw-right-arrow pane gutter start-ref 0 1 clim:+blue+)))))
   (call-next-method))
 
