@@ -57,8 +57,8 @@
             (first (directory ".")))
       (let* ((gutter (clim:make-pane 'clim:application-pane
                                      :background clim:+gray+
-                                     :max-width 10
-                                     :width 10))
+                                     :max-width 12
+                                     :width 12))
              (my-pane (make-climacs-pane gutter))
              (my-info-pane (clim:make-pane 'info-pane
                                            :master-pane my-pane
