@@ -68,6 +68,15 @@
        pane line-number start-column-number end-column-number)
     (clim:draw-rectangle* pane x1 y1 x2 y2 :ink ink)))
 
+(defun arrow-y-coordinates (pane line-number)
+  (multiple-value-bind (width height ascent) (text-style-dimensions pane)
+    (declare (ignore width))
+    (let* ((y1 (* line-number height))
+           (y2 (+ ascent y1)))
+      (values (round (* 0.5 (+ y1 y2)))
+              (round (* 0.15 (- y2 y1)))
+              (round (* 0.25 (- y2 y1)))))))
+
 (defun draw-left-arrow
     (pane gutter line-number start-column-number end-column-number ink)
   (multiple-value-bind (x1 y1 x2 y2)
