@@ -1,4 +1,4 @@
-K(cl:in-package #:climacs-commands)
+(cl:in-package #:climacs-commands)
 
 (defclass emacs-style-command-processor
     (clim3:command-table)
