@@ -87,20 +87,14 @@
        :closed t :filled t :ink ink)))
 
 (defun draw-right-arrow
-    (pane gutter line-number start-column-number end-column-number ink)
-  (multiple-value-bind (x1 y1 x2 y2)
-      (rectangle-coordinates
-       pane line-number start-column-number end-column-number)
-    (clim:draw-polygon*
-     gutter
-     (list x1 (+ (* y1 0.3) (* y2 0.7))
-           (+ (* x1 2/3) (* x2 1/3)) (+ (* y1 0.3) (* y2 0.7))
-           (+ (* x1 2/3) (* x2 1/3)) y2
-           x2 (+ (* y1 1/2) (* y2 1/2))
-           (+ (* x1 2/3) (* x2 1/3)) y1
-           (+ (* x1 2/3) (* x2 1/3)) (+ (* y1 0.7) (* y2 0.3))
-           x1 (+ (* y1 0.7) (* y2 0.3)))
-     :closed t :filled t :ink ink)))
+    (pane gutter line-number ink)
+  (multiple-value-bind (middle h1 h2)
+      (arrow-y-coordinates pane line-number)
+      (clim:draw-polygon*
+       gutter
+       (list 0 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 12 middle
+             6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
+       :closed t :filled t :ink ink)))
 
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
@@ -270,7 +264,7 @@
       (let ((gutter (second-climacs-clim-base::left-gutter pane)))
         (if (< indentation start-column)
             (draw-left-arrow pane gutter start-ref clim:+blue+)
-            (draw-right-arrow pane gutter start-ref 0 1 clim:+blue+)))))
+            (draw-right-arrow pane gutter start-ref clim:+blue+)))))
   (call-next-method))
 
 (defmethod draw-wad :around
