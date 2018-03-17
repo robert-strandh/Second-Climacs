@@ -420,22 +420,23 @@
                    (suffix climacs-syntax-common-lisp:suffix)
                    (line-count climacs-syntax-common-lisp:line-count))
       cache
-    (let ((start-line
-            (climacs-syntax-common-lisp:end-line (first prefix)))
-          (start-column
-            (climacs-syntax-common-lisp:end-column (first prefix)))
-          (end-line
-            (if (null suffix)
-                (1- line-count)
-                (climacs-syntax-common-lisp:start-line (first suffix))))
-          (end-column
-            (if (null suffix)
-                (climacs-syntax-common-lisp:line-length cache (1- line-count))
-                (climacs-syntax-common-lisp:start-column (first suffix)))))
-      (draw-filtered-area pane cache
-                          start-line start-column
-                          end-line end-column
-                          first-line last-line))))
+    (unless (null prefix)
+      (let ((start-line
+              (climacs-syntax-common-lisp:end-line (first prefix)))
+            (start-column
+              (climacs-syntax-common-lisp:end-column (first prefix)))
+            (end-line
+              (if (null suffix)
+                  (1- line-count)
+                  (climacs-syntax-common-lisp:start-line (first suffix))))
+            (end-column
+              (if (null suffix)
+                  (climacs-syntax-common-lisp:line-length cache (1- line-count))
+                  (climacs-syntax-common-lisp:start-column (first suffix)))))
+        (draw-filtered-area pane cache
+                            start-line start-column
+                            end-line end-column
+                            first-line last-line)))))
 
 ;;; Render the space between two consecutive top-level wads (WAD1 and
 ;;; WAD2) or (when WAD1 is NIL) between the beginning of the buffer and
