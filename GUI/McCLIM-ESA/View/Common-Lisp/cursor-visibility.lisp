@@ -3,7 +3,7 @@
 (defun scroll-extent (pane x y)
   (multiple-value-bind (width height)
       (text-style-dimensions pane)
-    (clim:scroll-extent pane (* x width) (* y height))))
+    (clim:scroll-extent (clim:sheet-parent pane) (* x width) (* y height))))
 
 (defun move-viewport-to-cursor (pane)
   (let* ((clim-view (clim:stream-default-view pane))
