@@ -48,23 +48,8 @@ This result deserves some clarifications:
 
 \subsection{Parsing after small modifications}
 
-To get an idea of performance during normal editing, we measured the
-time to update the cache after a single character was added or deleted
-to an existing symbol nested inside a top-level function definition.
-
-For a small function ($10$ lines) with a nesting depth of $4$, we
-measured a total time for update to around $5ms$ when the inserted or
-deleted character was at the deepest nesting level, which is the least
-favorable situation.
-
-For a much larger function ($136$ lines) with a nesting depth of $12$,
-the time for update varied according to the nesting level affected by
-the inserted or deleted character.  For a small nesting depth, we
-obtained an update time of $12ms$, and for a large nesting depth, we
-obtained a time of $30ms$.
-
 We measured the time to update the cache of a buffer with 1200 lines
-of \commonlisp{} code.  We several variations on the number of
+of \commonlisp{} code.  We used several variations on the number of
 top-level forms and the size of each top-level form.  Three types of
 representative modifications were used, namely inserting/deleting a
 constituent character, inserting/deleting left parenthesis, and
