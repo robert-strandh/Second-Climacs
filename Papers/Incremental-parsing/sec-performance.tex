@@ -62,3 +62,30 @@ the time for update varied according to the nesting level affected by
 the inserted or deleted character.  For a small nesting depth, we
 obtained an update time of $12ms$, and for a large nesting depth, we
 obtained a time of $30ms$.
+
+For inserting and deleting a left parenthesis, we obtained the
+result shown in the table below.  For this benchmark, the performance
+is independent of the size of the sub-forms of the top-level forms.
+For that reason, the form size is given only in number of lines.
+These are the results:
+
+\vskip 0.3cm
+\begin{tabular}{|r|r|r|}
+\hline
+forms & form size & time\\
+\hline
+120 & 10 & 1.3ms\\
+80 & 15  & 1.0ms\\
+60 & 20  & 0.5ms\\
+40 & 30  & 0.7ms\\
+30 & 40  & 0.6ms\\
+24 & 50  & 0.5ms\\
+12 & 100 & 0.5ms\\
+\hline
+\end{tabular}
+\vskip 0.3cm
+
+As the table shows, the performance is worse for many small top-level
+forms, and then the execution time is roughly proportional to the
+number of forms.  When the number of top-level forms is small, the
+execution time decreases asymptotically to around 0.5ms.
