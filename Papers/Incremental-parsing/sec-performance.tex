@@ -59,8 +59,11 @@ technique.
 
 For inserting and deleting a constituent character, we obtained the
 result shown in the table below.  For this benchmark, the performance
-is independent of the distribution of forms and sub-forms, and roughly
-proportional to the number of lines in the buffer:
+is independent of the distribution of forms and sub-forms, and also of
+the number of characters in a line.  The execution time is roughly
+proportional to the number of lines in the buffer.  For that reason,
+the form size is given only in number of lines.  These are the
+results:
 
 \vskip 0.3cm
 \begin{tabular}{|r|r|r|}
@@ -75,6 +78,10 @@ forms & form size & time\\
 \hline
 \end{tabular}
 \vskip 0.3cm
+
+\noindent
+The table shows that the parser is indeed very fast for this kind of
+incremental modification to the buffer.
 
 For inserting and deleting a left parenthesis, we obtained the
 result shown in the table below.  For this benchmark, the performance
@@ -101,4 +108,35 @@ forms & form size & time\\
 As the table shows, the performance is worse for many small top-level
 forms, and then the execution time is roughly proportional to the
 number of forms.  When the number of top-level forms is small, the
-execution time decreases asymptotically to around 0.5ms.
+execution time decreases asymptotically to around 0.5ms.  However,
+even the slowest case is very fast and has no impact on the perceived
+overall performance of the editor.
+
+Finally, for inserting and deleting a double quote, we obtained the
+result shown in the table below.  For this benchmark, the performance
+is roughly proportional to the number of characters in the buffer when
+the double quote is inserted, and completely dominated by the
+execution time of the reader when the double quote is deleted.  The
+execution time thus depends not only on the number of characters in
+the buffer, but also on how those characters determine what the reader
+does.
+
+\vskip 0.3cm
+\begin{tabular}{|r|r|r|r|}
+\hline
+forms & form size (lines) & characters per line & time\\
+\hline
+120 & 10 & 1 & 18ms\\
+80 & 15  & 1 & 15ms\\
+60 & 20  & 1 & 17ms\\
+24 & 100 & 1 & 33ms\\
+36 & 100 & 1 & 50ms\\
+120 & 10 & 30 & 70ms\\
+\hline
+\end{tabular}
+\vskip 0.3cm
+
+\noindent
+As the table shows, these execution times are borderline acceptable.
+In the next section, we discuss possible ways of improving the
+performance for this case.
