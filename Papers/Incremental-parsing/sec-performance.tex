@@ -63,6 +63,34 @@ the inserted or deleted character.  For a small nesting depth, we
 obtained an update time of $12ms$, and for a large nesting depth, we
 obtained a time of $30ms$.
 
+We measured the time to update the cache of a buffer with 1200 lines
+of \commonlisp{} code.  We several variations on the number of
+top-level forms and the size of each top-level form.  Three types of
+representative modifications were used, namely inserting/deleting a
+constituent character, inserting/deleting left parenthesis, and
+inserting/deleting a double quote.  All modifications were made at the
+very beginning of the file, which is the worst-case scenario for our
+technique.
+
+For inserting and deleting a constituent character, we obtained the
+result shown in the table below.  For this benchmark, the performance
+is independent of the distribution of forms and sub-forms, and roughly
+proportional to the number of lines in the buffer:
+
+\vskip 0.3cm
+\begin{tabular}{|r|r|r|}
+\hline
+forms & form size & time\\
+\hline
+120 & 10 & 0.14ms\\
+80 & 15  & 0.14ms\\
+60 & 20  & 0.14ms\\
+24 & 100 & 0.23ms\\
+36 & 100 & 0.32ms\\
+\hline
+\end{tabular}
+\vskip 0.3cm
+
 For inserting and deleting a left parenthesis, we obtained the
 result shown in the table below.  For this benchmark, the performance
 is independent of the size of the sub-forms of the top-level forms.
