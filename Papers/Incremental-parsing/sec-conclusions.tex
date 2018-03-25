@@ -40,6 +40,15 @@ technique would allow us to restart the compiler in an appropriate
 environment without having to process the entire buffer from the
 beginning.
 
+The combination of the use of the first pass of the Cleavir compiler
+framework and the use of incremental first-class global environments
+will allow us to handle compile-time evaluation of certain top-level
+forms in a way that corresponds to the semantics of the file compiler.
+In particular, imperative environment operations such as changing the
+current package or modifying the readtable in the middle of a buffer
+will have the expected consequences, but only to subsequent forms in
+the buffer.
+
 A more precise analysis of \commonlisp{} code opens the
 possibility for additional functionality that requires knowledge about
 the role of each expression.  In particular, such an analysis could be
