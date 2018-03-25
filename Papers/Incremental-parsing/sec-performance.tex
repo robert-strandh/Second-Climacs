@@ -16,8 +16,8 @@ contents must then be read, character by character, and the cache must
 be created from the contents.
 
 We timed this situation with a buffer containing $10000$ lines of
-\commonlisp{} code.  The total time to parse was around $2$ seconds.
-This result deserves some clarifications:
+representative \commonlisp{} code.  The total time to parse was around
+$1.5$ seconds.  This result deserves some clarifications:
 
 \begin{itemize}
 \item It is very unusual to have a file of \commonlisp{} code with
@@ -34,11 +34,15 @@ This result deserves some clarifications:
   contents will still preserve large portions of the cache, so that
   the number of characters actually read will only be a tiny fraction
   of the total number of characters in the buffer.
-\item All the code was compiled with a value $3$ of the \texttt{debug}
-  optimize quality, and with a value of $0$ of the \texttt{speed}
-  optimize quality.  We plan to investigate what parts of the code are
-  critical for good performance and selectively alter the default
-  optimize settings for these parts.
+\item Parsing an entire buffer does not exercise the incremental
+  aspect of our parser.  Instead, the execution time is a
+  complex function of the exact structure of the code, the performance
+  of the reader in various situations, the algorithm for
+  generic-function dispatch of the implementation, the cost of
+  allocating standard objects, etc.  For all these reasons, a more
+  thorough analysis of this case is outside the scope of this paper,
+  and the timing is given only to give the reader a rough idea of the
+  performance in this initial situation.
 \item This particular case can be handled by having the parser process
   the original stream from which the buffer contents was created,
   rather than giving it the buffer protocol wrapped in a stream
