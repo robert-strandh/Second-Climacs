@@ -94,6 +94,13 @@ The buffer protocol is \emph{line-oriented} in two different ways:
   entire line can be reported as being modified or inserted.
 \end{enumerate}
 
+In the implementation of the buffer protocol, a line being edited is
+represented as a gap buffer.  Therefore, editing operations are very
+fast, even for very long lines.  However, the update protocol works on
+the granularity of an entire line.  This granularity is acceptable for
+\commonlisp{} code, because lines are typically short.  For other
+languages it might be necessary to use a different buffer library.
+
 For the purpose of this paper, we are only interested in the update
 protocol, because we re-parse the buffer as a result of the update
 protocol having been invoked.  We can think of such an invocation as
