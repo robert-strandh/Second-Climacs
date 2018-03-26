@@ -1,0 +1,57 @@
+\section{Reader customization}
+\label{app-reader-customization}
+
+In order for it to be possible for the \commonlisp{} \texttt{read}
+function to serve as a basis for the incremental parser described in
+this paper, it must be adapted in the ways described below.
+
+\subsection{Returning parse results}
+
+In addition to the nested expressions returned by an unmodified
+\texttt{read} function, it must also return a nested structure of
+\emph{parse results}, i.e. expressions wrapped in standard instances
+that also contain information about the location in the source code of
+the wrapped expressions.
+
+To accomplish this additional functionality, it is not possible to
+create a custom \texttt{read} function that returns parse results
+\emph{instead of} expressions, simply because the function must handle
+custom reader macros, and those reader macros return expressions, and
+not parse results.  Also, it would create unnecessary maintenance work
+if all standard reader macros had to be modified in order to return
+parse results instead of expressions.
+
+It is also not possible to modify the \texttt{read} function to return
+the parse result as a second value, in addition to the normal
+expression.  One reason is that we would like for the modified
+\texttt{read} function to be compatible with the standard version, and
+it is not permitted by the \commonlisp{} standard to return additional
+values.
+
+Instead, the modified \texttt{read} function maintains an explicit
+stack of parse results in parallel with the expressions that are
+normally returned.  This explicit stack is kept as the value of a
+special variable that our parser accesses after a call to
+\texttt{read}.
+
+\subsection{Returning parse results for comments}
+
+The modified \texttt{read} function must return parse results that
+correspond to source code that the standard \texttt{read} function
+does not return, such as comments and expressions that are not
+selected by a read-time conditional.  We solve this problem by
+checking when a reader macro returns no values, and in that case, a
+corresponding parse result is pushed onto the explicit stack mentioned
+in the previous section.
+
+\subsection{Intercepting symbol creation}
+
+The modified \texttt{read} function must not call \texttt{intern} in
+all situations that the ordinary \texttt{read} function would, and it
+must not signal an error when a symbol with an explicit package prefix
+does not exist.  For that reason, the modified reader calls a generic
+function with the characters of a potential token instead.  The
+unmodified \texttt{read} function just calls \texttt{intern}, whereas
+the custom \texttt{read} function creates a particular parse result
+instead that represents that token and that can be exploited by the
+editor.
