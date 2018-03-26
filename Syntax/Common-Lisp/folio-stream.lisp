@@ -67,6 +67,18 @@
                    (item folio current-line-number current-item-number))
           (forward stream)))))
 
+(defmethod trivial-gray-streams:stream-peek-char ((stream folio-stream))
+  (if (eof-p stream)
+      :eof
+      (with-accessors ((folio folio)
+                       (current-line-number current-line-number)
+                       (current-item-number current-item-number))
+          stream
+        (if (= (line-length folio current-line-number)
+               current-item-number)
+            #\Newline
+            (item folio current-line-number current-item-number)))))
+
 (defmethod trivial-gray-streams:stream-unread-char ((stream folio-stream) char)
   (declare (ignore char))
   (backward stream))
