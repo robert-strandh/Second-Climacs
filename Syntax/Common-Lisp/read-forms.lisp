@@ -19,11 +19,14 @@
                                (start-line (first suffix)))
                             (= current-item-number
                                (start-column (first suffix)))))
-                   ;; If we reach EOF while reading whitespace, then the
-                   ;; residue and the suffix must be empty.  If we do not
-                   ;; reach EOF, then we stop only if the current position
-                   ;; is that of the first parse result on the suffix.
-                   (return-from read-forms nil)
+                   ;; If we reach EOF while reading whitespace, suffix
+                   ;; must be empty, and the residue is either empty
+                   ;; or it contains wads that should be removed.  If
+                   ;; we do not reach EOF, then we stop only if the
+                   ;; current position is that of the first parse
+                   ;; result on the suffix.
+                   (progn (setf residue '())
+                          (return-from read-forms nil))
                    (progn
                      (parse-and-cache analyzer)
                      (loop until (or (null residue)
