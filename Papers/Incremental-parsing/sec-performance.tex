@@ -66,10 +66,11 @@ result shown in the table below.  For this benchmark, the performance
 is independent of the distribution of forms and sub-forms, and also of
 the number of characters in a line.  The execution time is roughly
 proportional to the number of lines in the buffer.  For that reason,
-the form size is given only in number of lines.  These are the
-results:
+the form size is given only in number of lines.  The results are given in
+\refTab{t-insert-delete-x}.
 
-\vskip 0.3cm
+\begin{table}[htb]
+  \centering{
 \begin{tabular}{|r|r|r|}
 \hline
 forms & form size & time\\
@@ -81,7 +82,11 @@ forms & form size & time\\
 36 & 100 & 0.32ms\\
 \hline
 \end{tabular}
-\vskip 0.3cm
+\caption{\label{t-insert-delete-x}
+  Inserting and deleting a constituent character.}
+}
+\end{table}
+
 
 \noindent
 The table shows that the parser is indeed very fast for this kind of
@@ -91,56 +96,64 @@ For inserting and deleting a left parenthesis, we obtained the
 result shown in the table below.  For this benchmark, the performance
 is independent of the size of the sub-forms of the top-level forms.
 For that reason, the form size is given only in number of lines.
-These are the results:
+The results are shown in \refTab{t-insert-delete-parenthesis}.
 
-\vskip 0.3cm
-\begin{tabular}{|r|r|r|}
-\hline
-forms & form size & time\\
-\hline
-120 & 10 & 1.3ms\\
-80 & 15  & 1.0ms\\
-60 & 20  & 0.5ms\\
-40 & 30  & 0.7ms\\
-30 & 40  & 0.6ms\\
-24 & 50  & 0.5ms\\
-12 & 100 & 0.5ms\\
-\hline
-\end{tabular}
-\vskip 0.3cm
+\begin{table}[htb]
+  \centering{
+    \begin{tabular}{|r|r|r|}
+      \hline
+      forms & form size & time\\
+      \hline
+      120 & 10 & 1.3ms\\
+      80 & 15  & 1.0ms\\
+      60 & 20  & 0.5ms\\
+      40 & 30  & 0.7ms\\
+      30 & 40  & 0.6ms\\
+      24 & 50  & 0.5ms\\
+      12 & 100 & 0.5ms\\
+      \hline
+    \end{tabular}
+    \caption{\label{t-insert-delete-parenthesis}
+      Inserting and deleting a left parenthesis.}
+  }
+\end{table}
 
-As the table shows, the performance is worse for many small top-level
-forms, and then the execution time is roughly proportional to the
-number of forms.  When the number of top-level forms is small, the
-execution time decreases asymptotically to around 0.5ms.  However,
-even the slowest case is very fast and has no impact on the perceived
-overall performance of the editor.
+As shown in \refTab{t-insert-delete-parenthesis}, the performance is
+worse for many small top-level forms, and then the execution time is
+roughly proportional to the number of forms.  When the number of
+top-level forms is small, the execution time decreases asymptotically
+to around 0.5ms.  However, even the slowest case is very fast and has
+no impact on the perceived overall performance of the editor.
 
 Finally, for inserting and deleting a double quote, we obtained the
-result shown in the table below.  For this benchmark, the performance
-is roughly proportional to the number of characters in the buffer when
-the double quote is inserted, and completely dominated by the
-execution time of the reader when the double quote is deleted.  The
-execution time thus depends not only on the number of characters in
-the buffer, but also on how those characters determine what the reader
-does.
+results shown in \refTab{t-insert-delete-double-quote}.  For this
+benchmark, the performance is roughly proportional to the number of
+characters in the buffer when the double quote is inserted, and
+completely dominated by the execution time of the reader when the
+double quote is deleted.  The execution time thus depends not only on
+the number of characters in the buffer, but also on how those
+characters determine what the reader does.
 
-\vskip 0.3cm
-\begin{tabular}{|r|r|r|r|}
-\hline
-forms & form size (lines) & characters per line & time\\
-\hline
-120 & 10 & 1 & 18ms\\
-80 & 15  & 1 & 15ms\\
-60 & 20  & 1 & 17ms\\
-24 & 100 & 1 & 33ms\\
-36 & 100 & 1 & 50ms\\
-120 & 10 & 30 & 70ms\\
-\hline
-\end{tabular}
-\vskip 0.3cm
+\begin{table}[htb]
+  \centering{
+    \begin{tabular}{|r|r|r|r|}
+      \hline
+      forms & form size (lines) & characters per line & time\\
+      \hline
+      120 & 10 & 1 & 18ms\\
+      80 & 15  & 1 & 15ms\\
+      60 & 20  & 1 & 17ms\\
+      24 & 100 & 1 & 33ms\\
+      36 & 100 & 1 & 50ms\\
+      120 & 10 & 30 & 70ms\\
+      \hline
+    \end{tabular}
+    \caption{\label{t-insert-delete-double-quote}
+      Inserting and deleting a double quote.}
+  }
+\end{table}
 
 \noindent
-As the table shows, these execution times are borderline acceptable.
-In the next section, we discuss possible ways of improving the
-performance for this case.
+As \refTab{t-insert-delete-double-quote} shows, these execution times
+are borderline acceptable.  In the next section, we discuss possible
+ways of improving the performance for this case.
