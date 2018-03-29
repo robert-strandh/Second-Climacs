@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "indentation-support")
+   (:file "define-indentation-defmacro")
    (:file "let-and-letstar")
    (:file "setf-and-setq")
    (:file "eval-when")
