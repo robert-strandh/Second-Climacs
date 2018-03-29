@@ -84,8 +84,20 @@
 (defclass no-expression-wad (wad)
   ())
 
+;;; This class is the base class of all comment wads.
 (defclass comment-wad (no-expression-wad)
   ())
+
+;;; This class is used for a block comment introduced by #|.
+(defclass block-comment-wad (comment-wad)
+  ())
+
+;;; This class is used for a comment introduced by one or more
+;;; semicolons.
+(defclass semicolon-comment-wad (comment-wad)
+  (;; This slot contains the number of consecutive initial semicolons
+   ;; of the comment.
+   (%semicolon-count :initarg :semicolon-count :reader semicolon-count)))
 
 (defclass error-wad (wad)
   ())
