@@ -11,7 +11,8 @@ contents might for instance be:
 (d)
 (e
  f)
-(g (h))
+(g 
+ (h))
 \end{verbatim}
 
 The sequence of top-level parse results is split into a \emph{prefix}
@@ -82,22 +83,22 @@ was inserted after the \texttt{f}, so that the line now reads as
 At the start of the rehabilitation phase, the position for reading is
 set to the end of the last valid top-level parse result in the prefix,
 in this case at the end of the line containing the expression
-\texttt{(d)}.  When the reader is called, it skips whitespace until it
-is positioned on the left parenthesis of the line containing
-\texttt{(e}.  There is no cache entry, neither in the residue nor in
-the suffix, corresponding to this position, so normal reader operation
-is executed.  Thus, the reader macro associated with the left
-parenthesis is invoked, and the reader is called recursively on the
-elements of the list.  When the reader is called with the position
-corresponding to the expression \texttt{e}, we find that there is an
-entry for that position in the residue, so instead of this expression
-being read by normal reader operation, the contents of the cache is
-used instead.  As a result, the position in the buffer is set to the
-end of the cached parse result, i.e. at the end of the expression
-\texttt{e}.  The remaining top-level expression is read using normal
-reader operation resulting in the expression \texttt{(e fi)}.  This
-parse result is added to the prefix resulting in the cache contents
-shown in \reffig{fig-after-read}.
+\texttt{(d)}.  When the reader is called, it skips whitespace
+characters until it is positioned on the left parenthesis of the line
+containing \texttt{(e}.  There is no cache entry, neither in the
+residue nor in the suffix, corresponding to this position, so normal
+reader operation is executed.  Thus, the reader macro associated with
+the left parenthesis is invoked, and the reader is called recursively
+on the elements of the list.  When the reader is called with the
+position corresponding to the expression \texttt{e}, we find that
+there is an entry for that position in the residue, so instead of this
+expression being read by normal reader operation, the contents of the
+cache is used instead.  As a result, the position in the buffer is set
+to the end of the cached parse result, i.e. at the end of the
+expression \texttt{e}.  The remaining top-level expression is read
+using then normal reader operation resulting in the expression \texttt{(e
+  fi)}.  This parse result is added to the prefix resulting in the
+cache contents shown in \reffig{fig-after-read}.
 
 \begin{figure}
 \begin{center}
