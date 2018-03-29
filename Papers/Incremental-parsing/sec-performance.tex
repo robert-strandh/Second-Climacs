@@ -62,12 +62,13 @@ very beginning of the file, which is the worst-case scenario for our
 technique.
 
 For inserting and deleting a constituent character, we obtained the
-result shown in the table below.  For this benchmark, the performance
-is independent of the distribution of forms and sub-forms, and also of
-the number of characters in a line.  The execution time is roughly
-proportional to the number of lines in the buffer.  For that reason,
-the form size is given only in number of lines.  The results are given in
-\refTab{t-insert-delete-x}.
+results shown in \refTab{t-insert-delete-x}.  For this benchmark, the
+performance is independent of the distribution of forms and sub-forms,
+and also of the number of characters in a line.  The execution time is
+roughly proportional to the number of lines in the buffer.  For that
+reason, the form size is given only in number of lines.
+The table shows that the parser is indeed very fast for this kind of
+incremental modification to the buffer.
 
 \begin{table}[htb]
   \centering{
@@ -87,16 +88,16 @@ forms & form size & time\\
 }
 \end{table}
 
-
-\noindent
-The table shows that the parser is indeed very fast for this kind of
-incremental modification to the buffer.
-
-For inserting and deleting a left parenthesis, we obtained the
-result shown in the table below.  For this benchmark, the performance
-is independent of the size of the sub-forms of the top-level forms.
-For that reason, the form size is given only in number of lines.
-The results are shown in \refTab{t-insert-delete-parenthesis}.
+For inserting and deleting a left parenthesis, we obtained the results
+shown in \refTab{t-insert-delete-parenthesis}.  For this benchmark,
+the performance is independent of the size of the sub-forms of the
+top-level forms.  For that reason, the form size is given only in
+number of lines.  As shown in the table, the performance is worse for
+many small top-level forms, and then the execution time is roughly
+proportional to the number of forms.  When the number of top-level
+forms is small, the execution time decreases asymptotically to around
+0.5ms.  However, even the slowest case is very fast and has no impact
+on the perceived overall performance of the editor.
 
 \begin{table}[htb]
   \centering{
@@ -118,13 +119,6 @@ The results are shown in \refTab{t-insert-delete-parenthesis}.
   }
 \end{table}
 
-As shown in \refTab{t-insert-delete-parenthesis}, the performance is
-worse for many small top-level forms, and then the execution time is
-roughly proportional to the number of forms.  When the number of
-top-level forms is small, the execution time decreases asymptotically
-to around 0.5ms.  However, even the slowest case is very fast and has
-no impact on the perceived overall performance of the editor.
-
 Finally, for inserting and deleting a double quote, we obtained the
 results shown in \refTab{t-insert-delete-double-quote}.  For this
 benchmark, the performance is roughly proportional to the number of
@@ -132,7 +126,9 @@ characters in the buffer when the double quote is inserted, and
 completely dominated by the execution time of the reader when the
 double quote is deleted.  The execution time thus depends not only on
 the number of characters in the buffer, but also on how those
-characters determine what the reader does.
+characters determine what the reader does.  As shown by the table,
+these execution times are borderline acceptable.  In the next section,
+we discuss possible ways of improving the performance for this case.
 
 \begin{table}[htb]
   \centering{
@@ -152,8 +148,3 @@ characters determine what the reader does.
       Inserting and deleting a double quote.}
   }
 \end{table}
-
-\noindent
-As \refTab{t-insert-delete-double-quote} shows, these execution times
-are borderline acceptable.  In the next section, we discuss possible
-ways of improving the performance for this case.
