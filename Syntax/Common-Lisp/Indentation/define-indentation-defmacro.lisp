@@ -9,4 +9,6 @@
                           (second operator))))
   `(defmethod compute-sub-form-indentations
        (wad (pawn (eql (intern-pawn ,package-name ,symbol-name))) client)
-     ,lambda-list)))
+     (let ((arguments (split-wads (rest (children wad)))))
+       (unless (null arguments)
+         ,lambda-list)))))
