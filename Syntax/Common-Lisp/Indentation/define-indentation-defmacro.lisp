@@ -1,5 +1,12 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
+(defparameter *indentation-computers*
+  '((:bindings . compute-binding-indentations)
+    (:form . comput-child-indentations)
+    (:forms . compute-form-indentations)
+    (:ordinary-body . comput-ordinary-body-indentations)
+    (:function-body . comput-function-body-indentations)))
+
 (defmacro define-indentation (operator lambda-list)
   (let ((package-name (if (symbolp operator)
                           (cl:package-name (cl:symbol-package operator))
