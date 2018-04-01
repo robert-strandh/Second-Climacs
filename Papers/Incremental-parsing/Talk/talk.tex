@@ -104,7 +104,6 @@ Emacs is likely the most common editor for Common Lisp code.
 \item The current package is not taken into account.
 \item No distinction between different roles of symbols.
 \end{itemize}
-
 }
 
 
@@ -117,6 +116,14 @@ Emacs is likely the most common editor for Common Lisp code.
 \frametitle{Previous work}
 
 }
+
+
+\frame{
+\frametitle{Performance}
+Tests run on a $4$-core Intel Core processor clocked at $3.3$GHz,
+running SBCL version 1.3.11.
+}
+
 
 \frame{
 \frametitle{Performance}
@@ -136,7 +143,6 @@ forms & form size & time\\
 \hline
 \end{tabular}
 \end{center}
-
 }
 
 \frame{
@@ -159,7 +165,6 @@ Inserting and deleting a left parenthesis.
       \hline
     \end{tabular}
 \end{center}
-
 }
 
 \frame{
@@ -181,8 +186,8 @@ Inserting and deleting a double quote.
       \hline
     \end{tabular}
 \end{center}
-
 }
+
 \frame{
 \frametitle{Future work}
 
