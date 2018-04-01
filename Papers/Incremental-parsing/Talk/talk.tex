@@ -118,6 +118,26 @@ Emacs is likely the most common editor for Common Lisp code.
 
 }
 
+\frame{
+\frametitle{Performance}
+
+Inserting and deleting a constituent character.
+
+\begin{center}
+\begin{tabular}{|r|r|r|}
+\hline
+forms & form size & time\\
+\hline
+120 & 10 & 0.14ms\\
+80 & 15  & 0.14ms\\
+60 & 20  & 0.14ms\\
+24 & 100 & 0.23ms\\
+36 & 100 & 0.32ms\\
+\hline
+\end{tabular}
+\end{center}
+
+}
 
 \frame{
 \frametitle{Future work}
