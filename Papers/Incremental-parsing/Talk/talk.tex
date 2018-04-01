@@ -163,6 +163,27 @@ Inserting and deleting a left parenthesis.
 }
 
 \frame{
+\frametitle{Performance}
+
+Inserting and deleting a double quote.
+
+\begin{center}
+    \begin{tabular}{|r|r|r|r|}
+      \hline
+      forms & form size (lines) & characters per line & time\\
+      \hline
+      120 & 10 & 1 & 18ms\\
+      80 & 15  & 1 & 15ms\\
+      60 & 20  & 1 & 17ms\\
+      24 & 100 & 1 & 33ms\\
+      36 & 100 & 1 & 50ms\\
+      120 & 10 & 30 & 70ms\\
+      \hline
+    \end{tabular}
+\end{center}
+
+}
+\frame{
 \frametitle{Future work}
 
 }
