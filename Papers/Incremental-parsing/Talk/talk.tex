@@ -118,7 +118,7 @@ Emacs is likely the most common editor for Common Lisp code.
 }
 
 \begin{frame}
-\frametitle{Our technique}
+\frametitle{Our technique (modified \texttt{read})}
 
 We use a modified version of the standard Common Lisp function
 \texttt{read}:
@@ -128,6 +128,13 @@ We use a modified version of the standard Common Lisp function
 \item It also returns non-expressions like comments and other material
   for which reader macros return no values.
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Our technique (Gray stream for text buffer)}
+
+The modified \texttt{read} function uses a Gray stream that accesses
+the contents of the text buffer.
 \end{frame}
 
 \frame{
