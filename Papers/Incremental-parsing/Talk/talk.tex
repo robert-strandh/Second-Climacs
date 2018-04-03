@@ -117,6 +117,18 @@ Emacs is likely the most common editor for Common Lisp code.
 
 }
 
+\begin{frame}
+\frametitle{Our technique}
+
+We use a modified version of the standard Common Lisp function
+\texttt{read}:
+\begin{itemize}
+\item It returns \emph{parse results} that are expressions wrapped in
+  standard instances containing source location.
+\item It also returns non-expressions like comments and other material
+  for which reader macros return no values.
+\end{itemize}
+\end{frame}
 
 \frame{
 \frametitle{Performance}
