@@ -137,6 +137,16 @@ The modified \texttt{read} function uses a Gray stream that accesses
 the contents of the text buffer.
 \end{frame}
 
+\begin{frame}
+\frametitle{Our technique (cache of parse results)}
+
+We maintain a \emph{cache} that maps source locations to parse results.
+\vskip 0.5cm
+When there is an attempt to call \texttt{read} at a position that has
+an entry in the cache, the cached parse result is returned and the stream is
+advanced past the parse result.
+\end{frame}
+
 \frame{
 \frametitle{Performance}
 Tests run on a $4$-core Intel Core processor clocked at $3.3$GHz,
