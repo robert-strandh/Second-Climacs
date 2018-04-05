@@ -106,6 +106,7 @@ Emacs is likely the most common editor for Common Lisp code.
 \item The indent function can not distinguish between forms and
   bindings.
 \item No distinction between different roles of symbols.
+\item Incorrect indentation is not indicated.
 \end{itemize}
 }
 
@@ -162,6 +163,18 @@ This binding is indented in a different way:
 \end{alltt}
 
 And the role of \texttt{prog1} is not taken into account.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Indicating incorrect indentation}
+Emacs does not indicate bad indentation.
+\vskip 0.5cm
+This form contains an incorrect indentation:
+\begin{alltt}
+(\LIGHTPURPLE{let*} ((x (expt *result* 3))
+  (\LIGHTPURPLE{declare} (float x)))
+  (+ x 1.0))
+\end{alltt}
 \end{frame}
 
 \frame{
