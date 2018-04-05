@@ -150,6 +150,18 @@ This binding is indented in one way:
 \end{alltt}
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Distinguishing between forms and bindings}
+Emacs does distinguish between forms and bindings.
+\vskip 0.5cm
+This binding is indented in a different way:
+\begin{alltt}
+(\LIGHTPURPLE{let} ((\LIGHTPURPLE{prog1}
+          (find key *entries* :test #'eq :key #'car)))
+  ...)
+\end{alltt}
+\end{frame}
+
 \frame{
 \frametitle{The challenge}
 
