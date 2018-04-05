@@ -109,7 +109,6 @@ Emacs is likely the most common editor for Common Lisp code.
 \end{itemize}
 }
 
-
 \begin{frame}[fragile]
 \frametitle{Taking packages into account}
 Emacs does not take packages into account for syntax highlighting.
@@ -139,6 +138,17 @@ This code is \RED{not} highlighted correctly:
 \end{alltt}
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Distinguishing between forms and bindings}
+Emacs does distinguish between forms and bindings.
+\vskip 0.5cm
+This binding is indented in one way:
+\begin{alltt}
+(\LIGHTPURPLE{let} ((temp
+        (find key *entries* :test #'eq :key #'car)))
+  ...)
+\end{alltt}
+\end{frame}
 
 \frame{
 \frametitle{The challenge}
