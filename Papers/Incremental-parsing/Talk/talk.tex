@@ -13,6 +13,7 @@
 \usepackage{listings}
 \usepackage{filecontents}
 \usepackage{graphicx}
+\usepackage{alltt}
 
 \lstset{
   language=Lisp,
@@ -33,6 +34,7 @@
 \definecolor{YELLOW}{rgb}{1,1,0}
 \definecolor{ORANGE}{rgb}{1,0.647,0}
 \definecolor{PURPLE}{rgb}{0.627,0.126,0.941}
+\definecolor{LIGHTPURPLE}{rgb}{0.627,0.200,0.941}
 \definecolor{PURPLE}{named}{purple}
 \definecolor{PINK}{rgb}{1,0.412,0.706}
 \definecolor{WHEAT}{rgb}{1,0.8,0.6}
@@ -50,6 +52,7 @@
 \newcommand{\WHEAT}[1]{\textcolor{wheat}{#1}}
 \newcommand{\GREEN}[1]{\textcolor{GREEN}{#1}}
 \newcommand{\PURPLE}[1]{\textcolor{PURPLE}{#1}}
+\newcommand{\LIGHTPURPLE}[1]{\textcolor{LIGHTPURPLE}{#1}}
 \newcommand{\BLACK}[1]{\textcolor{black}{#1}}
 \newcommand{\WHITE}[1]{\textcolor{WHITE}{#1}}
 \newcommand{\MAGENTA}[1]{\textcolor{MAGENTA}{#1}}
@@ -105,6 +108,36 @@ Emacs is likely the most common editor for Common Lisp code.
 \item No distinction between different roles of symbols.
 \end{itemize}
 }
+
+
+\begin{frame}[fragile]
+\frametitle{Taking packages into account}
+Emacs does not take packages into account for syntax highlighting.
+\vskip 0.5cm
+This code is highlighted correctly:
+
+\begin{alltt}
+(\LIGHTPURPLE{defpackage} :p (:use :common-lisp))
+
+(\LIGHTPURPLE{in-package} :p)
+
+(\LIGHTPURPLE{defun} f (x) x)
+\end{alltt}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Taking packages into account}
+Emacs does not take packages into account for syntax highlighting.
+\vskip 0.5cm
+This code is \RED{not} highlighted correctly:
+\begin{alltt}
+(\LIGHTPURPLE{defpackage} :p (:use))
+
+(\LIGHTPURPLE{in-package} :p)
+
+(\LIGHTPURPLE{defun} f (x) x)
+\end{alltt}
+\end{frame}
 
 
 \frame{
