@@ -1,0 +1,16 @@
+#!/bin/sh
+
+NAME=$0
+TITLE="Inserting and deleting a double quote"
+OUTPUT=eps
+
+gnuplot << _EOF_
+set terminal postscript eps color
+set output "$NAME.$OUTPUT"
+set title "$TITLE"
+set key off inside center top
+set xlabel "forms X form size (characters)"
+set ylabel "Time in ms"
+
+plot '$NAME.res' using (\$1*\$2*\$3):4 with lines lc rgb 'red' # dt 2
+_EOF_
