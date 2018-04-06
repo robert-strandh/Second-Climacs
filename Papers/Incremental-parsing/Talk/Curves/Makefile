@@ -1,11 +1,12 @@
 FILES=$(wildcard *.res)
 TARGETS=$(FILES:.res=.eps)
-SCRIPTS=$(FILES:.res=)
+SCRIPTS=$(FILES:.res=.gp)
+PDF=$(FILES:.res=-eps-converted-to.pdf)
 
 all: $(TARGETFILES)
+	echo $(PDF)
 	for i in $(SCRIPTS) ; do \
-	echo $$i ; \
-	$$i ; \
+	gnuplot ./$$i ; \
 	done
 
 clean:
@@ -13,3 +14,4 @@ clean:
 
 spotless:
 	-rm -f $(TARGETS)
+	-rm -f $(PDF)

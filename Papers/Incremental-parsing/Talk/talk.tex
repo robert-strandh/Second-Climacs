@@ -5,7 +5,7 @@
 \usepackage{epsfig}
 \usepackage{verbatim}
 \usepackage{url}
-%\usepackage{graphics}
+\usepackage{graphics}
 %\usepackage{xcolor}
 \usepackage{fancybox}
 \usepackage{moreverb}
@@ -225,14 +225,14 @@ running SBCL version 1.3.11.
 
 
 \frame{
-\frametitle{Performance}
-
-Inserting and deleting a constituent character.
+\frametitle{Performance \small{Inserting and deleting a constituent character}}
+%Inserting and deleting a constituent character.
 
 \begin{center}
+\small{
 \begin{tabular}{|r|r|r|}
 \hline
-forms & form size & time\\
+nb forms & form size & time\\
 \hline
 120 & 10 & 0.14ms\\
 80 & 15  & 0.14ms\\
@@ -241,18 +241,21 @@ forms & form size & time\\
 36 & 100 & 0.32ms\\
 \hline
 \end{tabular}
+}
+
+\includegraphics[width=7cm]{Curves/insert-delete-x.eps}
 \end{center}
 }
 
 \frame{
-\frametitle{Performance}
-
-Inserting and deleting a left parenthesis.
+\frametitle{Performance \small{Inserting and deleting a left parenthesis}}
+%Inserting and deleting a left parenthesis.
 
 \begin{center}
+{\small
     \begin{tabular}{|r|r|r|}
       \hline
-      forms & form size & time\\
+      nb forms & form size & time\\
       \hline
       120 & 10 & 1.3ms\\
       80 & 15  & 1.0ms\\
@@ -263,18 +266,22 @@ Inserting and deleting a left parenthesis.
       12 & 100 & 0.5ms\\
       \hline
     \end{tabular}
+}
+ 
+\includegraphics[width=7cm]{Curves/insert-delete-parenthesis.eps}
 \end{center}
 }
 
 \frame{
-\frametitle{Performance}
+\frametitle{Performance \small{Inserting and deleting a double quote}}
 
-Inserting and deleting a double quote.
+%Inserting and deleting a double quote.
 
 \begin{center}
+{\small
     \begin{tabular}{|r|r|r|r|}
       \hline
-      forms & form size (lines) & characters per line & time\\
+      nb forms & form size & characters per line & time\\
       \hline
       120 & 10 & 1 & 18ms\\
       80 & 15  & 1 & 15ms\\
@@ -284,6 +291,9 @@ Inserting and deleting a double quote.
       120 & 10 & 30 & 70ms\\
       \hline
     \end{tabular}
+}
+
+\includegraphics[width=7cm]{Curves/insert-delete-double-quote.eps}
 \end{center}
 }
 
