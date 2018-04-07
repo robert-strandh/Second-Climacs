@@ -224,9 +224,8 @@ running SBCL version 1.3.11.
 }
 
 
-\frame{
+\begin{frame}
 \frametitle{Performance \small{Inserting and deleting a constituent character}}
-%Inserting and deleting a constituent character.
 
 \begin{center}
 \small{
@@ -242,14 +241,19 @@ nb forms & form size & time\\
 \hline
 \end{tabular}
 }
+\end{center}
+\end{frame}
 
+\begin{frame}
+\frametitle{Performance \small{Inserting and deleting a constituent character}}
+
+\begin{center}
 \includegraphics[width=7cm]{Curves/insert-delete-x.eps}
 \end{center}
-}
+\end{frame}
 
-\frame{
+\begin{frame}
 \frametitle{Performance \small{Inserting and deleting a left parenthesis}}
-%Inserting and deleting a left parenthesis.
 
 \begin{center}
 {\small
@@ -267,15 +271,18 @@ nb forms & form size & time\\
       \hline
     \end{tabular}
 }
+\end{center}
+\end{frame}
  
+\begin{frame}
+\frametitle{Performance \small{Inserting and deleting a left parenthesis}}
+\begin{center}
 \includegraphics[width=7cm]{Curves/insert-delete-parenthesis.eps}
 \end{center}
-}
+\end{frame}
 
-\frame{
+\begin{frame}
 \frametitle{Performance \small{Inserting and deleting a double quote}}
-
-%Inserting and deleting a double quote.
 
 \begin{center}
 {\small
@@ -292,10 +299,14 @@ nb forms & form size & time\\
       \hline
     \end{tabular}
 }
+\end{center}
+\end{frame}
 
+\begin{frame}
+\begin{center}
 \includegraphics[width=7cm]{Curves/insert-delete-double-quote.eps}
 \end{center}
-}
+\end{frame}
 
 \frame{
 \frametitle{Future work}
