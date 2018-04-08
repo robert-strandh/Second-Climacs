@@ -385,6 +385,15 @@ Step 6b: Return the new parse result.
 \end{center}
 \end{frame}
 
+\begin{frame}
+\frametitle{Optimizations}
+\begin{itemize}
+\item We skip a prefix of unmodified material.
+\item We skip a suffix of unmodified material, provided that structure
+  is preserved.
+\item The cache representation is optimized for small modifications.
+\end{itemize}
+\end{frame}
 
 \frame{
 \frametitle{Performance}
