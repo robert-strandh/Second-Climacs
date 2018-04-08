@@ -229,6 +229,81 @@ A parse result contains:
 \end{frame}
 
 \begin{frame}
+\frametitle{Our technique: Cache of parse results}
+We maintain a \emph{cache} that maps buffer positions to parse results.
+
+\begin{center}
+\inputfig{fig-cache.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Our technique: Two phases}
+Our incremental parses has two phases:
+\vskip 0.5cm
+\begin{itemize}
+\item Invalidation.
+\item Rehabilitation.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Invalidation phase}
+Step 1: Invoke the update protocol of the buffer.
+\begin{center}
+\inputfig{fig-invalidation-1.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Invalidation phase}
+Step 2: Update protocol emits update information.
+\begin{center}
+\inputfig{fig-invalidation-2.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Invalidation phase}
+Step 3: Compare to buffer copy.
+\begin{center}
+\inputfig{fig-invalidation-3.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Invalidation phase}
+Step 4: Convert to \texttt{modify}, \texttt{insert}, \texttt{delete}.
+\begin{center}
+\inputfig{fig-invalidation-4.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Invalidation phase}
+Step 5: Check whether any parse result is affected.
+\begin{center}
+\inputfig{fig-invalidation-5.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Invalidation phase}
+Step 6: If so, remove or split it.
+\begin{center}
+\inputfig{fig-invalidation-6.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Invalidation phase}
+Step 7: Keep parse results that are still valid.
+\begin{center}
+\inputfig{fig-invalidation-7.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
 \frametitle{Our technique (modified \texttt{read})}
 
 We use a modified version of the standard Common Lisp function
