@@ -192,9 +192,25 @@ An excellent editor for \commonlisp{} code:
 \end{frame}
 
 \begin{frame}
-\frametitle {First step towards objectives}
+\frametitle{First step towards objectives}
 Create an incremental parser for \commonlisp{} code that yields a
 considerably more accurate result than existing parsers.
+\end{frame}
+
+\begin{frame}
+\frametitle{Recapitulation: Editor buffer protocol}
+Presented at ELS 2016.
+\vskip 0.5cm
+Two sub-protocols:
+\vskip 0.5cm
+\begin{itemize}
+\item Edit protocol.  Access, insert, or delete an item.  Can be
+  invoked a large number of times for each keystroke.
+\item Update protocol.  Determine changes since last update.
+  Typically invoked one time for each keystroke.
+\end{itemize}
+\vskip 0.5cm
+For the current work, we are only interested in the update protocol.
 \end{frame}
 
 \begin{frame}
