@@ -309,10 +309,8 @@ Step 7: Keep parse results that are still valid.
 We use a modified version of the standard Common Lisp function
 \texttt{read}:
 \begin{itemize}
-\item It returns \emph{parse results} that are expressions wrapped in
-  standard instances containing source location.
-\item It also returns non-expressions like comments and other material
-  for which reader macros return no values.
+\item It returns \emph{parse results} instead of expressions.
+\item It also returns parse results corresponding to non-expressions.
 \end{itemize}
 \end{frame}
 
