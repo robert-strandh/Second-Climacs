@@ -207,7 +207,7 @@ Two sub-protocols:
 \item Edit protocol.  Access, insert, or delete an item.  Can be
   invoked a large number of times for each keystroke.
 \item Update protocol.  Determine changes since last update.
-  Typically invoked one time for each keystroke.
+  Typically invoked once for each keystroke.
 \end{itemize}
 \vskip 0.5cm
 For the current work, we are only interested in the update protocol.
@@ -221,10 +221,9 @@ A parse result contains:
 \vskip 0.5cm
 \begin{itemize}
 \item The \emph{start position} and \emph{end position} (line, column)
-  of the parse result in the buffer.
+  in the buffer of the parse result.
 \item The \emph{type} (expression, comment, etc) of the parse result.
-\item A list of \emph{children} if the parse result corresponds to an
-  expression.
+\item A possibly empty list of \emph{children}.
 \end{itemize}
 \end{frame}
 
