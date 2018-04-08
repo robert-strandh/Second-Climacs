@@ -214,6 +214,21 @@ For the current work, we are only interested in the update protocol.
 \end{frame}
 
 \begin{frame}
+\frametitle{Our technique: Parse result}
+The analysis of the buffer contents returns \emph{parse results}.
+\vskip 0.5cm
+A parse result contains:
+\vskip 0.5cm
+\begin{itemize}
+\item The \emph{start position} and \emph{end position} (line, column)
+  of the parse result in the buffer.
+\item The \emph{type} (expression, comment, etc) of the parse result.
+\item A list of \emph{children} if the parse result corresponds to an
+  expression.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Our technique (modified \texttt{read})}
 
 We use a modified version of the standard Common Lisp function
