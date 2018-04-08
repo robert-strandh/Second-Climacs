@@ -1,4 +1,5 @@
-\documentclass{sig-alternate-05-2015}
+%\documentclass{sig-alternate-05-2015}
+\documentclass[format=sigconf]{acmart}
 \usepackage[utf8]{inputenc}
 \usepackage{color}
 
@@ -11,35 +12,55 @@
 \inputtex{refmacros.tex}
 \inputtex{other-macros.tex}
 
+
+\acmConference[ELS'18]{the 11th European Lisp Symposium}{April 16--17 2018}{%
+  Marbella, Spain}
+\acmISBN{978-2-9557474-2-1}
+\acmDOI{}
+
 \begin{document}
 \setcopyright{rightsretained}
 \title{Incremental Parsing of Common Lisp Code}
-\numberofauthors{2}
-\author{\alignauthor
-Irène Durand\\
-Robert Strandh\\
-\affaddr{University of Bordeaux}\\
-\affaddr{351, Cours de la Libération}\\
-\affaddr{Talence, France}\\
+%\numberofauthors{2}
+
+\author{Irène Durand}
 \email{irene.durand@u-bordeaux.fr}
-\email{robert.strandh@u-bordeaux.fr}}
 
-\toappear{Permission to make digital or hard copies of all or part of
-  this work for personal or classroom use is granted without fee
-  provided that copies are not made or distributed for profit or
-  commercial advantage and that copies bear this notice and the full
-  citation on the first page. Copyrights for components of this work
-  owned by others than the author(s) must be honored. Abstracting with
-  credit is permitted. To copy otherwise, or republish, to post on
-  servers or to redistribute to lists, requires prior specific
-  permission and/or a fee. Request permissions from
-  Permissions@acm.org.
+\author{Robert Strandh}
+\email{robert.strandh@u-bordeaux.fr}
 
-  ELS '18, April 16 -- 17 2018, Marbella, Spain.
-  Copyright is held by the owner/author(s). %Publication rights licensed to ACM.
-%  ACM 978-1-4503-2931-6/14/08\$15.00.
-%  http://dx.doi.org/10.1145/2635648.2635654
-}
+\affiliation{
+  \institution{LaBRI, University of Bordeaux}
+  \streetaddress{351 cours de la libération}
+  \city{Talence}
+  \country{France}}
+
+    
+%% \author{\alignauthor
+%% Irène Durand\\
+%% Robert Strandh\\
+%% \affaddr{University of Bordeaux}\\
+%% \affaddr{351, Cours de la Libération}\\
+%% \affaddr{Talence, France}\\
+%% \email{irene.durand@u-bordeaux.fr}
+%% \email{robert.strandh@u-bordeaux.fr}}
+
+%% \toappear{Permission to make digital or hard copies of all or part of
+%%   this work for personal or classroom use is granted without fee
+%%   provided that copies are not made or distributed for profit or
+%%   commercial advantage and that copies bear this notice and the full
+%%   citation on the first page. Copyrights for components of this work
+%%   owned by others than the author(s) must be honored. Abstracting with
+%%   credit is permitted. To copy otherwise, or republish, to post on
+%%   servers or to redistribute to lists, requires prior specific
+%%   permission and/or a fee. Request permissions from
+%%   Permissions@acm.org.
+
+%%   ELS '18, April 16 -- 17 2018, Marbella, Spain.
+%%   Copyright is held by the owner/author(s). %Publication rights licensed to ACM.
+%% %  ACM 978-1-4503-2931-6/14/08\$15.00.
+%% %  http://dx.doi.org/10.1145/2635648.2635654
+%% }
 
 \maketitle
 
@@ -96,7 +117,6 @@ character has been altered takes only a few milliseconds.
 <concept_significance>300</concept_significance>
 </concept>
 </ccs2012>
-
 \end{CCSXML}
 
 \ccsdesc[500]{Applied computing~Text editing}
@@ -106,7 +126,7 @@ character has been altered takes only a few milliseconds.
 \ccsdesc[500]{Software and its engineering~Integrated and visual development environments}
 \ccsdesc[300]{Software and its engineering~Functional languages}
 \ccsdesc[300]{Software and its engineering~Multiparadigm languages}
-\printccsdesc
+%\printccsdesc
 
 \keywords{\commonlisp{}}
 
@@ -117,7 +137,8 @@ character has been altered takes only a few milliseconds.
 \inputtex{sec-conclusions.tex}
 \inputtex{sec-acknowledgements.tex}
 
-\bibliographystyle{abbrv}
+%\bibliographystyle{abbrv}
+\bibliographystyle{plainnat}
 \bibliography{incremental-parsing}
 \appendix
 \inputtex{app-details.tex}
