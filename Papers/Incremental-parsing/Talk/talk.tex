@@ -324,6 +324,70 @@ the contents of the text buffer.
 \end{frame}
 
 \begin{frame}
+\frametitle{Rehabilitation phase}
+Step 1: Conceptually invoke \texttt{read} on entire buffer copy.
+\begin{center}
+\inputfig{fig-rehabilitation-a-1.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Rehabilitation phase}
+Step 2: Check whether a parse result exists in the cache.
+\begin{center}
+\inputfig{fig-rehabilitation-a-2.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Rehabilitation phase}
+Step 3a: If so, update position and return from reader.
+\begin{center}
+\inputfig{fig-rehabilitation-a-3.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Rehabilitation phase}
+Step 3b: If not, access characters from buffer copy.
+\begin{center}
+\inputfig{fig-rehabilitation-b-3.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Rehabilitation phase}
+Step 3b: The result is a new parse result.
+\begin{center}
+\inputfig{fig-rehabilitation-b-31.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Rehabilitation phase}
+Step 4b: Remove overlapping parse results from cache.
+\begin{center}
+\inputfig{fig-rehabilitation-b-4.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Rehabilitation phase}
+Step 5b: Insert new parse result into cache.
+\begin{center}
+\inputfig{fig-rehabilitation-b-5.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Rehabilitation phase}
+Step 6b: Return the new parse result.
+\begin{center}
+\inputfig{fig-rehabilitation-b-6.pdf_t}
+\end{center}
+\end{frame}
+
+\begin{frame}
 \frametitle{Our technique (cache of parse results)}
 
 We maintain a \emph{cache} that maps source locations to parse results.
