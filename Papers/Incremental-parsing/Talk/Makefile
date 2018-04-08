@@ -1,8 +1,8 @@
 NAME=talk
 LATEX=pdflatex
 TEXFILES=$(NAME).tex $(shell ./tex-dependencies $(NAME).tex)
-PSTEX_T=$(shell ./strip-dependence inputfig $(TEXFILES))
-PSTEX=$(subst .pstex_t,.pstex,$(PSTEX_T))
+PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
+PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 
 RES=$(wildcard Curves/*.res)
 GP=$(RES:.res=.gp)
@@ -15,7 +15,7 @@ FIG = $(wildcard *.fig) $(wildcard *.pstex_t)
 
 all: $(NAME).pdf
 
-$(NAME).pdf: $(TEXFILES) $(PSTEX_T) $(EPS) $(CODE) $(VERBATIM) Makefile
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(EPS) $(CODE) $(VERBATIM) Makefile
 	$(LATEX) $(NAME).tex
 	$(LATEX) $<
 
@@ -23,10 +23,10 @@ $(EPS): $(RES) $(GP)
 	$(MAKE) -C Curves
 
 %.pdf: %.fig
-	fig2dev -Lpdftex -m 0.75  $< $@
+	fig2dev -Lpdftex -m 0.3  $< $@
 
 %.pdf_t: %.fig %.pdf
-	fig2dev -Lpdftex_t -m 0.75 -p $(basename $<).pdf $< $@
+	fig2dev -Lpdftex_t -m 0.3 -p $(basename $<).pdf $< $@
 
 .PHONY: clean spotless install init
 
@@ -40,7 +40,8 @@ clean:
 spotless:
 	$(MAKE) -C Curves spotless
 	make clean
-	rm -f  $(NAME).pdf $(PSTEX) $(PSTEX_T)
+	rm fig*.pdf
+	rm -f  $(NAME).pdf $(PDF_T)
 
 install: $(NAME).pdf
 	cp $(NAME).pdf /usr/labri/idurand/public_html/ELS2015/.
