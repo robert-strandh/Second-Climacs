@@ -7,45 +7,45 @@
         (start-column (current-item-number analyzer)))
     (handler-case (reader:read-preserving-whitespace analyzer)
       (end-of-file ()
-	nil)
+        nil)
       (error ()
-	(setf (first *stack*)
-	      (list (make-wad 'error-wad
-		      :max-line-width (compute-max-line-width
-				       analyzer
-				       start-line
-				       (current-line-number analyzer)
-				       (first *stack*))
-		      :children (make-relative (nreverse (first *stack*))
-					       start-line)
-		      :start-line start-line
-		      :start-column start-column
-		      :height (- (current-line-number analyzer) start-line)
-		      :end-column (current-item-number analyzer)
-		      :relative-p nil)))))
+        (setf (first *stack*)
+              (list (make-wad 'error-wad
+                      :max-line-width (compute-max-line-width
+                                       analyzer
+                                       start-line
+                                       (current-line-number analyzer)
+                                       (first *stack*))
+                      :children (make-relative (nreverse (first *stack*))
+                                               start-line)
+                      :start-line start-line
+                      :start-column start-column
+                      :height (- (current-line-number analyzer) start-line)
+                      :end-column (current-item-number analyzer)
+                      :relative-p nil)))))
     (loop for wad in (reverse (first *stack*))
           do (compute-child-indentations wad nil)
              (push-to-prefix (folio analyzer) wad))))
 
 (defun parse-buffer (analyzer)
   (with-accessors ((current-line-number current-line-number)
-		   (current-item-number current-item-number)
-		   (cache folio))
+                   (current-item-number current-item-number)
+                   (cache folio))
       analyzer
     (let ((prefix (prefix cache)))
       (if (null prefix)
-	  (setf current-line-number 0
-		current-item-number 0)
-	  (setf current-line-number (end-line (first prefix))
-		current-item-number (end-column (first prefix)))))
+          (setf current-line-number 0
+                current-item-number 0)
+          (setf current-line-number (end-line (first prefix))
+                current-item-number (end-column (first prefix)))))
     (loop until (progn
-		  (skip-whitespace analyzer)
-		  (or (eof-p analyzer)
-		      (and (not (null (suffix cache)))
-			   (let* ((pr (first (suffix cache)))
-				  (l (start-line pr))
-				  (c (start-column pr)))
-			     (and (= l current-line-number)
-				  (= c current-item-number))))))
-	  do (parse-and-cache analyzer)
-	     (pop-to-stream-position analyzer))))
+                  (skip-whitespace analyzer)
+                  (or (eof-p analyzer)
+                      (and (not (null (suffix cache)))
+                           (let* ((pr (first (suffix cache)))
+                                  (l (start-line pr))
+                                  (c (start-column pr)))
+                             (and (= l current-line-number)
+                                  (= c current-item-number))))))
+          do (parse-and-cache analyzer)
+             (pop-to-stream-position analyzer))))

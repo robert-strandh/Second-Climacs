@@ -4,8 +4,8 @@
 ;;; is a vector of items.
 (defclass flexichain-folio (folio)
   ((%contents :initform (make-instance 'flexichain:standard-flexichain)
-	      :initarg :contents
-	      :reader contents)))
+              :initarg :contents
+              :reader contents)))
 
 (defmethod line-count ((folio flexichain-folio))
   (flexichain:nb-elements (contents folio)))
