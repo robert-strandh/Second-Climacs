@@ -83,7 +83,7 @@
           my-info-pane))))
    (minibuffer (clim:make-pane 'minibuffer-pane :width 900)))
   (:layouts
-   (default (clim:vertically (:scroll-bars nil)
+   (default (clim:vertically ()
               window
               minibuffer)))
   (:top-level (esa:esa-top-level)))
