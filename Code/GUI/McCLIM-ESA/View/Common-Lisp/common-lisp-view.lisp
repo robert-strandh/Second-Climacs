@@ -251,7 +251,7 @@
 (defmethod draw-wad :around (wad start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
   (let ((indentation (cl-syntax::indentation wad))
-        (start-column (cl-syntax::start-column wad))
+        (start-column (cl-syntax:start-column wad))
         (gutter (clim-base:left-gutter pane)))
     (cond ((null indentation)
            nil)

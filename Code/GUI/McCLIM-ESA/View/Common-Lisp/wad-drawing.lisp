@@ -29,12 +29,6 @@
                      last-line)
   (draw-non-token-wad wad start-ref pane cache first-line last-line))
 
-(defmethod draw-wad :around ((wad cl-syntax:error-wad)
-                             start-ref pane cache first-line last-line)
-  (declare (ignore start-ref cache first-line last-line))
-  (clim:with-drawing-options (pane :ink clim:+red+)
-    (call-next-method)))
-
 (defmethod draw-wad :around ((wad cl-syntax:comment-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore start-ref cache first-line last-line))

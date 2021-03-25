@@ -7,6 +7,7 @@
                (:file "utilities")
                (:file "common-lisp-view")
                (:file "wad-drawing")
+               (:file "error-drawing")
                (:file "cursor-visibility")
                (:file "common-lisp-command-table")
                (:file "indentation")))
