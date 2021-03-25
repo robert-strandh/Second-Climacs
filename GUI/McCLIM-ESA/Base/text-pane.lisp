@@ -5,7 +5,7 @@
   ((%left-gutter :initarg :left-gutter :reader left-gutter))
   (:default-initargs
    :background clim:+white+
-   :text-style (clim:make-text-style :fix nil 14)))
+   :text-style (clim:make-text-style :fix :roman 14)))
 
 (defmethod clim:stream-output-history ((stream text-pane))
   (let ((view (clim:stream-default-view stream)))
