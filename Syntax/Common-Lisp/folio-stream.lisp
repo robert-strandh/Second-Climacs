@@ -2,7 +2,7 @@
 
 ;;; A folio stream is a stream that uses a folio as a source for the
 ;;; items to return as a result of reading.
-(defclass folio-stream ()
+(defclass folio-stream (trivial-gray-streams:fundamental-character-input-stream)
   ((%folio :initarg :folio :reader folio)
    (%current-line-number :initform 0 :accessor current-line-number)
    (%current-item-number :initform 0 :accessor current-item-number)))
