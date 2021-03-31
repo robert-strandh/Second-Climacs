@@ -17,5 +17,4 @@
    (:file "parse")
    (:file "read-forms")
    (:file "view")
-   (:file "set-mode")
-   (:file "wad-to-cst")))
+   (:file "set-mode")))
