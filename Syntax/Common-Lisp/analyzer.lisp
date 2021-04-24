@@ -16,26 +16,6 @@
   (position-less (start-line wad) (start-column wad)
                  line-number item-number))
 
-;;; Make sure that the first parse result that we consider recycling
-;;; starts at or beyond the current stream position.  Parse results
-;;; that start before the current stream position are either no longer
-;;; valid, or have been recycled already, so we remove them.  Two
-;;; places are considered for recycling, namely the list of residual
-;;; parse results and the suffix.
-(defun pop-to-stream-position (analyzer)
-  (let ((cache (folio analyzer))
-        (line-number (current-line-number analyzer))
-        (item-number (current-item-number analyzer)))
-    (loop while (and (not (null (residue cache)))
-                     (wad-starts-before-position-p
-                      (first (residue cache)) line-number item-number))
-          do (pop-from-residue cache))
-    (when (null (residue cache))
-      (loop while (and (not (null (suffix cache)))
-                       (wad-starts-before-position-p
-                        (first (suffix cache)) line-number item-number))
-            do (pop-from-suffix cache)))))
-
 ;;; Check whether there is a cached parse result with a start position
 ;;; that corresponds to the current stream position of ANALYZER, and
 ;;; if so, return that parse result.  If there is no such parse
