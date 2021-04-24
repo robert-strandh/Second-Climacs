@@ -1,5 +1,8 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
+(defun indent-slot (wad client)
+  )
+
 ;;; SLOTS is a list of wads, some of which may be expression wads and
 ;;; some of which may be wads of some other type.  An expression wad
 ;;; in the list then represents a single slot specifier.
@@ -17,7 +20,7 @@
   (let ((arguments (split-wads (rest (children wad)))))
     (unless (null arguments)
       (destructuring-bind (class-name . remaining) arguments
-        (align-or-indent class-name  (+ (start-column wad) 4))
+        (align-or-indent class-name (+ (start-column wad) 4))
         (unless (null remaining)
           (destructuring-bind (superclasses . remaining) remaining
             (align-or-indent superclasses (+ (start-column wad) 4))
@@ -29,7 +32,7 @@
                 (let ((last (first (last slots))))
                   (when (typep last 'expression-wad)
                     (indent-slots (children last) client)))))))))))
-              
+
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:defclass))) client)
   (indent-defclass wad client))
