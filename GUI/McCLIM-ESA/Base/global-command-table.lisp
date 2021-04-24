@@ -6,7 +6,7 @@
    esa-io:esa-io-table))
 
 (clim:define-command (com-inspect :name t :command-table global-table) ()
-  (clouseau:inspect clim:*application-frame*))
+  (clouseau:inspect clim:*application-frame* :new-process t))
 
 (clim:define-command (com-profile-reset :name t :command-table global-table) ()
   (sb-profile:reset))
