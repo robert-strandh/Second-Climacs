@@ -174,17 +174,26 @@
                      (line-counter line-counter))
         cache
       (setf line-counter 0)
-      (flet ((remove-deleted-lines (line)
-               (loop for cache-line = (flexichain:element* lines line-counter)
-                     for cluffer-line = (cluffer-line cache-line)
-                     until (eq line cluffer-line)
-                     do (flexichain:delete* lines line-counter)
-                        (handle-deleted-line cache line-counter)))
-             (ensure-cache-initialized ()
-               (unless cache-initialized-p
-                 (setf cache-initialized-p t)
-                 (ensure-update-initialized cache))))
-        (flet ((skip (count)
+      (labels ((ensure-cache-initialized ()
+                 (unless cache-initialized-p
+                   (setf cache-initialized-p t)
+                   (ensure-update-initialized cache)))
+               ;; Line deletion
+               (delete-cache-line ()
+                 (flexichain:delete* lines line-counter)
+                 (handle-deleted-line cache line-counter))
+               (remove-deleted-lines (line)
+                 ;; Look at cache lines starting at LINE-COUNTER. Delete
+                 ;; all cache lines that do not have LINE as their
+                 ;; associated cluffer line. Those lines correspond to
+                 ;; deleted lines between the previously processed line
+                 ;; and LINE.
+                 (loop for cache-line = (flexichain:element* lines line-counter)
+                       for cluffer-line = (cluffer-line cache-line)
+                       until (eq line cluffer-line)
+                       do (delete-cache-line)))
+               ;; Handlers for Cluffer's update protocol events.
+               (skip (count)
                  (incf line-counter count))
                (modify (line)
                  (ensure-cache-initialized)
@@ -193,19 +202,26 @@
                  (incf line-counter))
                (create (line)
                  (ensure-cache-initialized)
-                 (let ((temp (make-instance 'line
-                               :cluffer-line line
-                               :contents (cluffer:items line))))
+                 (let ((temp (make-instance 'line :cluffer-line line
+                                                  :contents (cluffer:items line))))
                    (flexichain:insert* lines line-counter temp))
                  (handle-inserted-line cache line-counter)
                  (incf line-counter))
                (sync (line)
                  (remove-deleted-lines line)
                  (incf line-counter)))
-          (setf (time-stamp cache)
-                (cluffer:update buffer
-                                (time-stamp cache)
-                                #'sync #'skip #'modify #'create))))))
+        ;; Run update protocol. The handler functions defined above
+        ;; change the cache lines and the worklist so that they
+        ;; correspond to the new buffer state.
+        (setf (time-stamp cache)
+              (cluffer:update buffer
+                              (time-stamp cache)
+                              #'sync #'skip #'modify #'create))
+        ;; Remove trailing cache lines after the last
+        ;; skipped/modified/... cache line, that no longer correspond
+        ;; to existing lines in the cluffer buffer.
+        (loop while (< line-counter (flexichain:nb-elements lines))
+              do (delete-cache-line)))))
   (finish-scavenge cache))
 
 ;;; Methods that make an instance of CACHE behave like an instance
