@@ -35,8 +35,7 @@
 (defgeneric push-to-suffix (cache wad)
   (:method ((cache cache) (wad wad))
     (assert (not (relative-p wad)))
-    (with-accessors ((suffix suffix))
-        cache
+    (with-accessors ((suffix suffix)) cache
       (unless (null suffix)
         (absolute-to-relative (first suffix) (start-line wad)))
       (push wad suffix))))
@@ -47,9 +46,7 @@
 
 (defgeneric push-to-prefix (cache wad)
   (:method ((cache cache) (wad wad))
-    (with-accessors ((prefix prefix))
-        cache
-      (push wad prefix))))
+    (push wad (prefix cache))))
 
 (defun pop-from-worklist (cache)
   (pop (worklist cache)))
