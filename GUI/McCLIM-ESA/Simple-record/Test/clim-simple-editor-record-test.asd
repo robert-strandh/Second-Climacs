@@ -1,10 +1,7 @@
-(cl:in-package #:asdf-user)
-
-(defsystem clim-simple-editor-record-test
-  :depends-on (:mcclim
-	       :clim-simple-editor-record
-	       :clueless)
+(defsystem "clim-simple-editor-record-test"
+  :depends-on ("mcclim"
+               "clim-simple-editor-record"
+               "clueless")
   :serial t
-  :components
-  ((:file "packages")
-   (:file "record-test")))
+  :components ((:file "packages")
+               (:file "record-test")))
