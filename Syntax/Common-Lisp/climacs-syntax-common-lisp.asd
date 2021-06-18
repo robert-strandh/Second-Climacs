@@ -1,5 +1,9 @@
 (defsystem "climacs-syntax-common-lisp"
-  :depends-on ("climacs-syntax-common-lisp-base"
+  :depends-on ("second-climacs-base"
+
+               "second-climacs-clim-base"
+
+               "climacs-syntax-common-lisp-base"
                "climacs-syntax-common-lisp-indentation")
   :serial t
   :components ((:file "folio")
