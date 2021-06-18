@@ -3,6 +3,11 @@
 (defclass analyzer (folio-stream climacs2-base:analyzer)
   ())
 
+(defmethod print-object ((object analyzer) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~A,~A"
+            (current-line-number object) (current-item-number object))))
+
 ;;; Return true if and only if position A occurs strictly before
 ;;; position B in some buffer.
 (defun position-less (line-number-a item-number-a line-number-b item-number-b)
