@@ -9,7 +9,9 @@
 ;;; asked for it.
 (defclass line ()
   ((%cluffer-line :initarg :cluffer-line :reader cluffer-line)
-   (%contents :initarg :contents :accessor contents)))
+   (%contents :initarg  :contents
+              :type     string
+              :accessor contents)))
 
 (defclass cache (flexichain-folio)
   ((%prefix :initform '() :accessor prefix)
@@ -146,9 +148,10 @@
           (push-to-residue cache wad)))))
 
 (defun handle-modified-line (cache line-number)
-  (let ((line (flexichain:element* (contents cache) line-number)))
-    (setf (contents line)
-          (cluffer:items (cluffer-line line))))
+  (let* ((line         (flexichain:element* (contents cache) line-number))
+         (cluffer-line (cluffer-line line))
+         (string       (coerce (cluffer:items cluffer-line) 'string)))
+    (setf (contents line) string))
   (loop until (next-wad-is-beyond-line-p cache line-number)
         do (process-next-wad cache line-number)))
 
@@ -199,8 +202,9 @@
                  (incf line-counter))
                (create (line)
                  (ensure-cache-initialized)
-                 (let ((temp (make-instance 'line :cluffer-line line
-                                                  :contents (cluffer:items line))))
+                 (let* ((string (coerce (cluffer:items line) 'string))
+                        (temp   (make-instance 'line :cluffer-line line
+                                                     :contents     string)))
                    (flexichain:insert* lines line-counter temp))
                  (handle-inserted-line cache line-counter)
                  (incf line-counter))

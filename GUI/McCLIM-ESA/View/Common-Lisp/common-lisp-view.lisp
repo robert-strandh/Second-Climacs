@@ -154,41 +154,42 @@
                   start-column-number
                   end-line-number
                   end-column-number)
-  (if (= start-line-number end-line-number)
-      (let* ((contents (climacs-syntax-common-lisp:line-contents
-                        cache start-line-number))
-             (string (coerce contents 'string)))
-        (draw-interval pane
-                       start-line-number
-                       string
-                       start-column-number
-                       end-column-number))
-      (progn (let* ((first (climacs-syntax-common-lisp:line-contents
-                            cache start-line-number))
-                    (string (coerce first 'string)))
-               (draw-interval pane
-                              start-line-number
-                              string
-                              start-column-number
-                              (length first)))
-             (let* ((last (climacs-syntax-common-lisp:line-contents
-                           cache end-line-number))
-                    (string (coerce last 'string)))
-               (draw-interval pane
-                              end-line-number
-                              string
-                              0
-                              end-column-number))
-             (loop for line-number from (1+ start-line-number)
-                     to (1- end-line-number)
-                   for contents = (climacs-syntax-common-lisp:line-contents
-                                   cache line-number)
-                   for string = (coerce contents 'string)
-                   do (draw-interval pane
-                                     line-number
-                                     string
-                                     0
-                                     (length contents))))))
+  (cond ((= start-line-number end-line-number)
+         (let ((contents (climacs-syntax-common-lisp:line-contents
+                          cache start-line-number)))
+           (declare (type string contents))
+           (draw-interval pane
+                          start-line-number
+                          contents
+                          start-column-number
+                          end-column-number)))
+        (t
+         (let ((first (climacs-syntax-common-lisp:line-contents
+                       cache start-line-number)))
+           (declare (type string first))
+           (draw-interval pane
+                          start-line-number
+                          first
+                          start-column-number
+                          (length first)))
+         (let ((last (climacs-syntax-common-lisp:line-contents
+                      cache end-line-number)))
+           (declare (type string last))
+           (draw-interval pane
+                          end-line-number
+                          last
+                          0
+                          end-column-number))
+         (loop for line-number from (1+ start-line-number)
+               to (1- end-line-number)
+               for contents of-type string
+                  = (climacs-syntax-common-lisp:line-contents
+                     cache line-number)
+               do (draw-interval pane
+                                 line-number
+                                 contents
+                                 0
+                                 (length contents))))))
 
 ;;; The parameters START-LINE, START-COLUMN, END-LINE, and END-COLUMN
 ;;; together define an initial area.  END-COLUMN may be NIL, meaning

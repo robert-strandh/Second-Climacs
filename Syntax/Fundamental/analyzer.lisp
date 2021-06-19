@@ -12,7 +12,9 @@
    (%line :initarg :line :reader line)
    ;; This slot contains the contents of the line as it was when we
    ;; last updated the analyzer.
-   (%contents :initarg :contents :accessor contents)
+   (%contents :initarg  :contents
+              :type     string
+              :accessor contents)
    ;; This slot contains the number of entries in the list (prefix or
    ;; suffix) that this entry is a member of.
    (%list-length :initarg list-length :accessor list-length)))
