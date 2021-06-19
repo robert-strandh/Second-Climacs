@@ -95,53 +95,47 @@
              6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
        :closed t :filled t :ink ink)))
 
+(defun draw-cursor (pane x y height)
+  (clim:draw-rectangle* pane (1+ x) (- y height) (+ x 4) y
+                        :ink clim:+blue+))
+
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
 (defun draw-interval (pane line-number contents start-column end-column)
   (multiple-value-bind (width height ascent) (text-style-dimensions pane)
-    (let* ((y                    (+ ascent (* line-number height)))
-           (x                    (* start-column width))
-           (clim-view            (clim:stream-default-view pane))
-           (climacs-view         (clim-base:climacs-view clim-view))
-           (cursor               (climacs2-base:cursor climacs-view))
-           (cursor-line-number   (cluffer:line-number cursor))
+    (let* ((y (+ ascent (* line-number height)))
+           (x (* start-column width))
+           (clim-view (clim:stream-default-view pane))
+           (climacs-view (clim-base:climacs-view clim-view))
+           (cursor (climacs2-base:cursor climacs-view))
+           (cursor-line-number (cluffer:line-number cursor))
            (cursor-column-number (cluffer:cursor-position cursor))
            (canonicalized-end-column-number
              (canonicalize-column-number contents end-column)))
-      (unless (= start-column canonicalized-end-column-number)
-        (if (= cursor-line-number line-number)
-            (cond ((<= cursor-column-number start-column)
-                   (clim:draw-text* pane contents
-                                    (+ x 5) y
-                                    :start start-column
-                                    :end end-column))
-                  ((>= cursor-column-number end-column)
-                   (clim:draw-text* pane contents
-                                    x y
-                                    :start start-column
-                                    :end end-column))
-                  (t
-                   (draw-interval pane line-number contents
-                                  start-column cursor-column-number)
-                   (draw-interval pane line-number contents
-                                  cursor-column-number end-column)))
-            (clim:draw-text* pane contents
-                             x y
-                             :start start-column
-                             :end end-column)))
-      (when (= cursor-line-number line-number)
-        (cond ((= cursor-column-number start-column)
-               (clim:draw-rectangle* pane (1+ x) (- y height) (+ x 4) y
-                                     :ink clim:+blue+))
-              ((= canonicalized-end-column-number
-                  cursor-column-number
-                  (length contents))
-               (let ((cursor-x (* cursor-column-number width)))
-                 (clim:draw-rectangle* pane
-                                       (1+ cursor-x) (- y height)
-                                       (+ cursor-x 4) y
-                                       :ink clim:+blue+))))))))
+      ;; Maybe draw cursor rectangle at the start or at the end of the
+      ;; interval.
+      (cond ((/= cursor-line-number line-number))
+            ((= cursor-column-number start-column)
+             (draw-cursor pane x y height))
+            ((= canonicalized-end-column-number
+                cursor-column-number
+                (length contents))
+             (let ((cursor-x (* cursor-column-number width)))
+               (draw-cursor pane cursor-x y height))))
+      ;; Either draw the whole interval or split the interval so that
+      ;; the cursor can be drawn between the two parts.
+      (cond ((= start-column canonicalized-end-column-number))
+            ((or (not (= cursor-line-number line-number))
+                 (<= cursor-column-number start-column)
+                 (and end-column (>= cursor-column-number end-column)))
+             (clim:draw-text* pane contents x y :start start-column
+                                                :end end-column))
+            (t
+             (draw-interval pane line-number contents
+                            start-column cursor-column-number)
+             (draw-interval pane line-number contents
+                            cursor-column-number end-column))))))
 
 ;;; Draw an area of text defined by START-LINE-NUMBER,
 ;;; START-COLUMN-NUMBER, END-LINE-NUMBER, and END-COLUMN-NUMBER.  The
