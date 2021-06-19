@@ -1,5 +1,3 @@
-(cl:in-package #:asdf-user)
-
 ;;;; This system defines a new CLIM top-level output record suitable
 ;;;; for simple presentation of an editor buffer contents.  It is
 ;;;; simple, in that it does not attempt to fold lines as a function
@@ -26,11 +24,11 @@
 ;;;; splay tree, which is how we take advantage of the likely locality
 ;;;; scenario.
 
-(defsystem clim-simple-editor-record
-  :depends-on (:mcclim :clump)
+(defsystem "clim-simple-editor-record"
+  :depends-on ("mcclim"
+               "clump")
   :serial t
-  :components
-  ((:file "packages")
-   (:file "record")
-   (:file "node")
-   (:file "line-output-records")))
+  :components ((:file "packages")
+               (:file "record")
+               (:file "node")
+               (:file "line-output-records")))
