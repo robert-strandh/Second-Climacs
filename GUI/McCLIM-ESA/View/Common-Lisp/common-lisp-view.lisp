@@ -13,9 +13,8 @@
     ((view climacs-syntax-common-lisp:view))
   (let* ((analyzer (climacs2-base:analyzer view))
          (cache (climacs-syntax-common-lisp:folio analyzer)))
-    (make-instance 'common-lisp-view
-      :output-history cache
-      :climacs-view view)))
+    (make-instance 'common-lisp-view :output-history cache
+                                     :climacs-view view)))
 
 ;;; Given a vector and a position, if the position NIL, meaning the
 ;;; end of the vector, then return the length of the vector.
@@ -96,6 +95,10 @@
              6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
        :closed t :filled t :ink ink)))
 
+(defun draw-cursor (pane x y height)
+  (clim:draw-rectangle* pane (1+ x) (- y height) (+ x 4) y
+                        :ink clim:+blue+))
+
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
@@ -106,42 +109,33 @@
            (clim-view (clim:stream-default-view pane))
            (climacs-view (clim-base:climacs-view clim-view))
            (cursor (climacs2-base:cursor climacs-view))
+           (cursor-line-number (cluffer:line-number cursor))
            (cursor-column-number (cluffer:cursor-position cursor))
            (canonicalized-end-column-number
              (canonicalize-column-number contents end-column)))
-      (unless (= start-column canonicalized-end-column-number)
-        (if (= (cluffer:line-number cursor) line-number)
-            (cond ((<= cursor-column-number start-column)
-                   (clim:draw-text* pane contents
-                                    (+ x 5) y
-                                    :start start-column
-                                    :end end-column))
-                  ((>= cursor-column-number end-column)
-                   (clim:draw-text* pane contents
-                                    x y
-                                    :start start-column
-                                    :end end-column))
-                  (t
-                   (draw-interval pane line-number contents
-                                  start-column cursor-column-number)
-                   (draw-interval pane line-number contents
-                                  cursor-column-number end-column)))
-            (clim:draw-text* pane contents
-                             x y
-                             :start start-column
-                             :end end-column)))
-      (when (= (cluffer:line-number cursor) line-number)
-        (cond ((= cursor-column-number start-column)
-               (clim:draw-rectangle* pane (1+ x) (- y height) (+ x 4) y
-                                     :ink clim:+blue+))
-              ((= canonicalized-end-column-number
-                  cursor-column-number
-                  (length contents))
-               (let ((cursor-x (* cursor-column-number width)))
-                 (clim:draw-rectangle* pane
-                                       (1+ cursor-x) (- y height)
-                                       (+ cursor-x 4) y
-                                       :ink clim:+blue+))))))))
+      ;; Maybe draw cursor rectangle at the start or at the end of the
+      ;; interval.
+      (cond ((/= cursor-line-number line-number))
+            ((= cursor-column-number start-column)
+             (draw-cursor pane x y height))
+            ((= canonicalized-end-column-number
+                cursor-column-number
+                (length contents))
+             (let ((cursor-x (* cursor-column-number width)))
+               (draw-cursor pane cursor-x y height))))
+      ;; Either draw the whole interval or split the interval so that
+      ;; the cursor can be drawn between the two parts.
+      (cond ((= start-column canonicalized-end-column-number))
+            ((or (not (= cursor-line-number line-number))
+                 (<= cursor-column-number start-column)
+                 (and end-column (>= cursor-column-number end-column)))
+             (clim:draw-text* pane contents x y :start start-column
+                                                :end end-column))
+            (t
+             (draw-interval pane line-number contents
+                            start-column cursor-column-number)
+             (draw-interval pane line-number contents
+                            cursor-column-number end-column))))))
 
 ;;; Draw an area of text defined by START-LINE-NUMBER,
 ;;; START-COLUMN-NUMBER, END-LINE-NUMBER, and END-COLUMN-NUMBER.  The
@@ -154,41 +148,42 @@
                   start-column-number
                   end-line-number
                   end-column-number)
-  (if (= start-line-number end-line-number)
-      (let* ((contents (climacs-syntax-common-lisp:line-contents
-                        cache start-line-number))
-             (string (coerce contents 'string)))
-        (draw-interval pane
-                       start-line-number
-                       string
-                       start-column-number
-                       end-column-number))
-      (progn (let* ((first (climacs-syntax-common-lisp:line-contents
-                            cache start-line-number))
-                    (string (coerce first 'string)))
-               (draw-interval pane
-                              start-line-number
-                              string
-                              start-column-number
-                              (length first)))
-             (let* ((last (climacs-syntax-common-lisp:line-contents
-                           cache end-line-number))
-                    (string (coerce last 'string)))
-               (draw-interval pane
-                              end-line-number
-                              string
-                              0
-                              end-column-number))
-             (loop for line-number from (1+ start-line-number)
-                     to (1- end-line-number)
-                   for contents = (climacs-syntax-common-lisp:line-contents
-                                   cache line-number)
-                   for string = (coerce contents 'string)
-                   do (draw-interval pane
-                                     line-number
-                                     string
-                                     0
-                                     (length contents))))))
+  (cond ((= start-line-number end-line-number)
+         (let ((contents (climacs-syntax-common-lisp:line-contents
+                          cache start-line-number)))
+           (declare (type string contents))
+           (draw-interval pane
+                          start-line-number
+                          contents
+                          start-column-number
+                          end-column-number)))
+        (t
+         (let ((first (climacs-syntax-common-lisp:line-contents
+                       cache start-line-number)))
+           (declare (type string first))
+           (draw-interval pane
+                          start-line-number
+                          first
+                          start-column-number
+                          (length first)))
+         (let ((last (climacs-syntax-common-lisp:line-contents
+                      cache end-line-number)))
+           (declare (type string last))
+           (draw-interval pane
+                          end-line-number
+                          last
+                          0
+                          end-column-number))
+         (loop for line-number from (1+ start-line-number)
+               to (1- end-line-number)
+               for contents of-type string
+                  = (climacs-syntax-common-lisp:line-contents
+                     cache line-number)
+               do (draw-interval pane
+                                 line-number
+                                 contents
+                                 0
+                                 (length contents))))))
 
 ;;; The parameters START-LINE, START-COLUMN, END-LINE, and END-COLUMN
 ;;; together define an initial area.  END-COLUMN may be NIL, meaning
@@ -298,27 +293,33 @@
          (end-column (wad) (climacs-syntax-common-lisp:end-column wad)))
     (let ((children (climacs-syntax-common-lisp:children wad))
           (prev-end-line start-ref)
-          (prev-end-column (start-column wad)))
-      (let ((ref start-ref))
-        (loop for child in children
-              for start-line = (start-line child)
-              until (> (+ ref start-line) last-line)
-              do (incf ref (start-line child))
+          (prev-end-column (start-column wad))
+          (ref start-ref))
+      (loop for child in children
+            for start-line = (start-line child)
+            for height     = (height child)
+            until (> (+ ref start-line) last-line)
+            do (incf ref start-line)
+               ;; Ensure that only at least partially visible wad are
+               ;; passed to DRAW-FILTERED-AREA and DRAW-WAD.
+               (when (or (<= first-line ref            last-line)      ; start visible
+                         (<= first-line (+ ref height) last-line)      ; end visible
+                         (<= ref first-line last-line (+ ref height))) ; contains visible region
                  (draw-filtered-area pane cache
                                      prev-end-line
                                      prev-end-column
                                      ref
                                      (start-column child)
                                      first-line last-line)
-                 (draw-wad child ref pane cache first-line last-line)
-                 (setf prev-end-line (+ ref (height child)))
-                 (setf prev-end-column (end-column child)))
-        (draw-filtered-area pane cache
-                            prev-end-line
-                            prev-end-column
-                            (+ start-ref (height wad))
-                            (end-column wad)
-                            first-line last-line)))))
+                 (draw-wad child ref pane cache first-line last-line))
+               (setf prev-end-line   (+ ref height)
+                     prev-end-column (end-column child)))
+      (draw-filtered-area pane cache
+                          prev-end-line
+                          prev-end-column
+                          (+ start-ref (height wad))
+                          (end-column wad)
+                          first-line last-line))))
 
 (defgeneric draw-token-wad (wad token start-ref pane cache first-line last-line))
 
@@ -456,23 +457,25 @@
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
-  (if (and (null (climacs-syntax-common-lisp:prefix cache))
-           (null (climacs-syntax-common-lisp:suffix cache)))
-      (render-empty-cache cache pane first-line last-line)
-      (progn (adjust-for-rendering cache last-line)
-             (render-trailing-whitespace cache pane first-line last-line)
-             (loop with prefix = (climacs-syntax-common-lisp:prefix cache)
-                   for (wad2 wad1) on prefix
-                   until (< (climacs-syntax-common-lisp:end-line wad2)
-                            first-line)
-                   do (draw-wad
-                       wad2
-                       (climacs-syntax-common-lisp:start-line wad2)
-                       pane
-                       cache
-                       first-line
-                       last-line)
-                      (render-gap cache pane wad1 wad2 first-line last-line)))))
+  (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
+                   (suffix climacs-syntax-common-lisp:suffix))
+      cache
+    (cond ((and (null prefix) (null suffix))
+           (render-empty-cache cache pane first-line last-line))
+          (t
+           (adjust-for-rendering cache last-line)
+           (render-trailing-whitespace cache pane first-line last-line)
+           (loop for (wad2 wad1) on prefix
+                 until (< (climacs-syntax-common-lisp:end-line wad2)
+                          first-line)
+                 do (draw-wad
+                     wad2
+                     (climacs-syntax-common-lisp:start-line wad2)
+                     pane
+                     cache
+                     first-line
+                     last-line)
+                    (render-gap cache pane wad1 wad2 first-line last-line))))))
 
 ;;; Return the area of the viewport of PANE in units of line and
 ;;; column number.  We return only integers, so that if a fraction of
