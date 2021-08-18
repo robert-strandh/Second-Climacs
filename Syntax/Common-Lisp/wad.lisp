@@ -84,8 +84,11 @@
 (defclass no-expression-wad (wad)
   ())
 
+(defclass skipped-wad (no-expression-wad)
+  ())
+
 ;;; This class is the base class of all comment wads.
-(defclass comment-wad (no-expression-wad)
+(defclass comment-wad (skipped-wad)
   ())
 
 ;;; This class is used for a block comment introduced by #|.
@@ -99,8 +102,27 @@
    ;; of the comment.
    (%semicolon-count :initarg :semicolon-count :reader semicolon-count)))
 
-(defclass error-wad (wad)
+(defclass ignored-wad (skipped-wad)
   ())
+
+(defclass sharpsign-wad (ignored-wad)
+  ((%expression :initarg :expression :reader expression)))
+
+(defclass sharpsign-plus-wad (sharpsign-wad)
+  ())
+
+(defclass sharpsign-minus-wad (sharpsign-wad)
+  ())
+
+(defclass read-suppress-wad (ignored-wad)
+  ())
+
+(defclass reader-macro-wad (ignored-wad)
+  ())
+
+(defclass error-wad (wad)
+  ((%condition :initarg :condition
+               :reader  condition*)))
 
 (defclass eof-wad (wad)
   ())

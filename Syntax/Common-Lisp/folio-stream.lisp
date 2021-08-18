@@ -83,13 +83,6 @@
   (declare (ignore char))
   (backward stream))
 
-;;; Reader customization.
-
-(defvar *stack*)
-
-(defun push-wad (wad)
-  (push wad (second *stack*)))
-
 (defun skip-whitespace (stream)
   (loop until (eof-p stream)
         for char = (read-char stream nil nil)

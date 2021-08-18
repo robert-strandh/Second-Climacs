@@ -2,7 +2,7 @@
   :depends-on ("trivial-gray-streams"
                "cluffer"
                "flexichain"
-               "sicl-reader-simple")
+               "eclector")
   :serial t
   :components ((:file "packages")
                (:file "wad")))

@@ -3,8 +3,8 @@
 (defpackage #:climacs-syntax-common-lisp
   (:use #:common-lisp)
   (:shadow #:package-name #:symbol-name)
-  (:local-nicknames (#:reader #:sicl-reader)
-                    (#:readtable #:sicl-readtable))
+  (:local-nicknames (#:reader #:eclector.reader)
+                    (#:readtable #:eclector.readtable))
   (:export
    #:folio
    #:line-count
@@ -19,12 +19,23 @@
    #:analyzer
    #:scavenge
    #:read-forms
+
+   ;; Wads
    #:wad
    #:expression-wad
    #:no-expression-wad
+   #:skipped-wad
    #:comment-wad
-   #:eof-wad
+   #:block-command-wad
+   #:semicolon-comment-wad
+   #:ignored-wad
+   #:sharpsign-wad
+   #:sharpsign-plus-wad
+   #:sharpsign-minus-wad
+   #:read-suppress-wad
+   #:reader-macro-wad
    #:error-wad
+   #:eof-wad
    #:start-line
    #:height
    #:end-line
@@ -35,12 +46,17 @@
    #:children
    #:expression
    #:token
+
+   ;; Tokens
+   #:token ; class
    #:symbol-token
-   #:legal-symbol-token
-   #:illegal-symbol-token
    #:non-existing-package-symbol-token
    #:non-existing-symbol-token
    #:existing-symbol-token
+   #:value-token
+   #:numeric-token
+   #:other-token
+
    #:package-name
    #:package-marker-1
    #:package-marker-2
