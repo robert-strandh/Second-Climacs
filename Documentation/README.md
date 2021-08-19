@@ -7,7 +7,7 @@
 [the Cluffer repository]:https://github.com/robert-strandh/Cluffer
 [the Cluffer Emacs Compatiblity]:https://github.com/robert-strandh/cluffer-emacs-compatibility
 [the Stealth mixin repository]:https://github.com/robert-strandh/Stealth-mixin
-[the SICL repository]:https://github.com/robert-strandh/SICL
+[the Eclector repository]:https://github.com/s-expressionists/Eclector
 
    * A LaTeX editor: (Debian) `sudo apt-get install texlive-full` or (macOS) `brew install mactex`
    * fig2dev: (Debian) `sudo apt-get install fig2dev` or (macOS) `brew install fig2dev`
@@ -20,4 +20,3 @@
    ```
 3. Run make command: `make`
 4. Run make command: `make view`
-

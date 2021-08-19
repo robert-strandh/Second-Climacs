@@ -37,13 +37,13 @@ Second Climacs:
 [the Cluffer repository]:https://github.com/robert-strandh/Cluffer
 [the Cluffer Emacs Compatiblity]:https://github.com/robert-strandh/cluffer-emacs-compatibility
 [the Stealth mixin repository]:https://github.com/robert-strandh/Stealth-mixin
-[the SICL repository]:https://github.com/robert-strandh/SICL
+[the Eclector repository]:https://github.com/s-expressionists/Eclector
 
    * A recent 64-bit version of SBCL
    * The system "cluffer" from [the Cluffer repository]
    * The system "cluffer-emacs-compatibility" from [the Cluffer Emacs Compatiblity]
    * The system "stealth-mixin", from [the Stealth mixin repository]
-   * The system "sicl", from [the SICL repository]
+   * The system "eclector", from [the Eclector3 repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 
@@ -91,5 +91,3 @@ I am not accepting contributions at this time.  I will make an
 exception for someone who is highly motivated and willing to spend
 time understanding the goals of the project, and then only after
 discussing the ideas with me.
-
-
