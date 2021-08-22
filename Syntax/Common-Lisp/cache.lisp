@@ -13,6 +13,10 @@
               :type     string
               :accessor contents)))
 
+(defmethod print-object ((object line) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (contents object))))
+
 (defclass cache (flexichain-folio)
   ((%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
