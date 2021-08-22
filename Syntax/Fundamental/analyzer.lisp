@@ -13,7 +13,15 @@
    ;; This slot contains the contents of the line as it was when we
    ;; last updated the analyzer.
    (%contents :initarg  :contents
-              :type     string
+              ;; Cluffer does not return a string, but a simple
+              ;; vector.  So it is not going to work to have a :TYPE
+              ;; STRING here.  There are several ways to handle this
+              ;; problem.  First, we have to decide whether Climacs
+              ;; should be able to handle items that are not
+              ;; characters.  If we decide that the answer is "no", we
+              ;; can either have Cluffer coerce to STRING when every
+              ;; item in a line is a character, or we can coerce here.
+              ;; :type     string
               :accessor contents)
    ;; This slot contains the number of entries in the list (prefix or
    ;; suffix) that this entry is a member of.
