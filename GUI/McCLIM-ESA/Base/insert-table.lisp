@@ -17,7 +17,7 @@
 
 (esa:set-key `(com-insert-item #\Newline)
              'ascii-insert-table
-             '((#\Newline)))
+             '((#\Return)))
 
 (clim:define-command
     (com-open-line :name t :command-table ascii-insert-table)
