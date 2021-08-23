@@ -18,10 +18,13 @@ a result, there are some major differences between \climacs{} and
   parsers for buffer contents.
 \item The incremental parser for \commonlisp{} syntax of \climacs{} is
   very hard to maintain, and while it is better than that of \emacs{},
-  it is still not good enough.  \sysname{} uses a modified version of
-  the \commonlisp{} reader in order to parse buffer contents, making
-  it much closer to the way the contents is read by the \commonlisp{}
-  compiler.
+  it is still not good enough.  \sysname{} uses \eclector{} in order
+  to parse buffer contents.  \eclector{} is a library that implements
+  the \commonlisp{} reader, but that can also be customized in many
+  ways.  We take advantage of these capabilities to read material that
+  is normally skipped, like comments, and for error recovery.  By
+  using a \commonlisp{} reader, we parse the buffer contents in the
+  same way that the \commonlisp{} compiler would.
 \item \climacs{} depends on \mcclim{} for its graphic user interface.
   \sysname{} is independent of any particular library for making
   graphic user interfaces, allowing it to be configured with different
