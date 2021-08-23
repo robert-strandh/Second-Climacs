@@ -15,12 +15,12 @@
   (setf (contents record) nil))
 
 (defmethod clim:replay-output-record ((record record) stream
-				      &optional
-					(region clim:+everywhere+)
-					x-offset y-offset)
+                                      &optional
+                                        (region clim:+everywhere+)
+                                        x-offset y-offset)
   (declare (ignore x-offset y-offset))
   (unless (or (null (contents record))
-	      (eq region clim:+nowhere+))
+              (eq region clim:+nowhere+))
     (clim:replay-output-record (contents record) stream region)))
 
 ;;; The CLIM II specification requires the position of an output
