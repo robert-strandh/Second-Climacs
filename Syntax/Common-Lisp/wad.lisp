@@ -1,5 +1,9 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
+;;; A WAD is the result of parsing an expression or some material that
+;;; is normally skipped, such as a comment or an inactive reader
+;;; conditional.
+
 (defclass basic-wad ()
   (;; This slot contains information about the start line of the parse
    ;; result.  Simple applications might always store the absolute
