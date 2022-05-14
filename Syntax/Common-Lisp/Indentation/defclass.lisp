@@ -7,14 +7,17 @@
 ;;; some of which may be wads of some other type.  An expression wad
 ;;; in the list then represents a single slot specifier.
 (defun indent-slots (wads client)
-  ;; Start by aligning every wad in the list that starts on its own
-  ;; line with the first one.
-  (align-with-first wads)
-  ;; Then, for each expression wad in the list, compute the
-  ;; indentation according to the rules of a single slot specifier.
-  (loop for wad in wads
-        when (typep wad 'expression-wad)
-          do (indent-slot wad client)))
+  ;; It is possible that the list of slots is empty.  In that case, do
+  ;; nothing.
+  (unless (null wads)
+    ;; Start by aligning every wad in the list that starts on its own
+    ;; line with the first one.
+    (align-with-first wads)
+    ;; Then, for each expression wad in the list, compute the
+    ;; indentation according to the rules of a single slot specifier.
+    (loop for wad in wads
+          when (typep wad 'expression-wad)
+            do (indent-slot wad client))))
 
 (defun indent-defclass (wad client)
   (let ((arguments (split-wads (rest (children wad)))))
