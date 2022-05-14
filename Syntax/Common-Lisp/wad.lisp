@@ -3,43 +3,43 @@
 (defclass basic-wad ()
   (;; This slot contains information about the start line of the parse
    ;; result.  Simple applications might always store the absolute
-   ;; line number of the first line of the parse result in this slot.
-   ;; Other applications might store a line number relative to some
-   ;; other parse result.
+   ;; line number of the first line of the wad in this slot.  Other
+   ;; applications might store a line number relative to some other
+   ;; wad.
    (%start-line :initarg :start-line :accessor start-line)
    ;; This slot contains the difference between the start line and the
-   ;; end line.  A value of 0 indicates that the parse result starts
-   ;; and ends in the same line.
+   ;; end line.  A value of 0 indicates that the wad starts and ends
+   ;; in the same line.
    (%height :initarg :height :reader height)
    ;; This slot contains the absolute column of the first character in
-   ;; this parse result.  A value of 0 indicates that this parse
-   ;; result starts in the leftmost position in the source code.
+   ;; this wad.  A value of 0 indicates that this parse result starts
+   ;; in the leftmost position in the source code.
    (%start-column :initarg :start-column :accessor start-column)
    ;; This slot contains the absolute column of the last character of
-   ;; the parse result.  The value of this slot can never be 0.  If
-   ;; the last character of the parse result is the leftmost character
-   ;; in a line, then this slot contains the value 1.
+   ;; the wad.  The value of this slot can never be 0.  If the last
+   ;; character of the wad is the leftmost character in a line, then
+   ;; this slot contains the value 1.
    (%end-column :initarg :end-column :accessor end-column)
    ;; This slot contains the absolute column that the first character
-   ;; of this parse result should be positioned in, as computed by the
-   ;; rules of indentation.  If this parse result is not the first one
-   ;; on the line, then this slot contains NIL.
+   ;; of this wad should be positioned in, as computed by the rules of
+   ;; indentation.  If this wad is not the first one on the line, then
+   ;; this slot contains NIL.
    (%indentation :initform nil :initarg :indentation :accessor indentation)))
 
 (defclass wad (basic-wad)
   (;; This slot contains the column number of the leftmost known
-   ;; non-whitespace character of the parse result.  It may not be
-   ;; entirely correct if a reader macro reads character by character
-   ;; and such characters happen to be outside the part that is
-   ;; returned by a call to READ.  But we only use this information
-   ;; for highlighting, and selection.  Not for drawing.
+   ;; non-whitespace character of the wad.  It may not be entirely
+   ;; correct if a reader macro reads character by character and such
+   ;; characters happen to be outside the part that is returned by a
+   ;; call to READ.  But we only use this information for
+   ;; highlighting, and selection.  Not for drawing.
    (%min-column-number :initarg :min-column-number :reader min-column-number)
    ;; This slot contains the column number of the leftmost known
-   ;; non-whitespace character of the parse result.  It may not be
-   ;; entirely correct for the same reason as the preceding slot.
+   ;; non-whitespace character of the wad.  It may not be entirely
+   ;; correct for the same reason as the preceding slot.
    (%max-column-number :initarg :max-column-number :reader max-column-number)
    ;; This slot contains the maximum line width of any line that is
-   ;; part of the parse result.
+   ;; part of the wad.
    (%max-line-width :initarg :max-line-width :reader max-line-width)
    ;; This slot contains TRUE if and only if the START-LINE slot is
    ;; relative to some other line.
@@ -139,12 +139,11 @@
     (decf (start-line p) offset)
     (setf (relative-p p) t)))
 
-;;; RELATIVE-WADS is a list of parse results where the start line of
-;;; the first element is relative to OFFSET, and the start line of
-;;; each of the other elements is relative to the start line of the
-;;; preceding element.  Modify the parse results in the list so that
-;;; they are absolute.  Return the original list, now containing the
-;;; modified parse results.
+;;; RELATIVE-WADS is a list of wads where the start line of the first
+;;; element is relative to OFFSET, and the start line of each of the
+;;; other elements is relative to the start line of the preceding
+;;; element.  Modify the wads in the list so that they are absolute.
+;;; Return the original list, now containing the modified wads.
 (defun make-absolute (relative-wads offset)
   (loop with base = offset
         for wad in relative-wads
@@ -152,12 +151,11 @@
            (setf base (start-line wad)))
   relative-wads)
 
-;;; ABSOLUTE-WADS is a list of absolute parse results.  Modify the
-;;; parse results in the list so that the start line of the first
-;;; element is absolute to OFFSET, and the start line of each of the
-;;; other elements is relative to the start line of the preceding
-;;; element.  Return the original list, now containing the modified
-;;; parse results.
+;;; ABSOLUTE-WADS is a list of absolute wads.  Modify the wads in the
+;;; list so that the start line of the first element is absolute to
+;;; OFFSET, and the start line of each of the other elements is
+;;; relative to the start line of the preceding element.  Return the
+;;; original list, now containing the modified wads.
 (defun make-relative (absolute-wads offset)
   (loop with base = offset
         for wad in absolute-wads
