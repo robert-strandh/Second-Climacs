@@ -2,7 +2,7 @@
 
 ;;; PARSE-AND-CACHE collects Eclector errors in *ERRORS* during
 ;;; parsing and ADD-CHILDREN adds the resulting ERROR-WADs to the
-;;; appropriate nodes in the parse result tree.
+;;; appropriate nodes in the wad tree.
 (defvar *errors*)
 
 ;;; Establish a handler which collects READER-ERRORs into *ERRORS* and
@@ -123,5 +123,5 @@
                         (unless (every #'relative-p children)
                           (make-relative children (start-line wad))))))))
          (rec wad))
-       ;; (compute-child-indentations wad nil)
+       (compute-child-indentations wad nil)
        (push-to-prefix (folio analyzer) wad)))))

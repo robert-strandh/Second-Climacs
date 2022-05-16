@@ -1,9 +1,9 @@
 (cl:in-package #:climacs-syntax-common-lisp-test)
 
-;;; We define a simplified version of the parse result.  It is
-;;; simplified in that it always has absolute line numbers in it, and
-;;; there are no column numbers, since they are not used or altered by
-;;; the invalidation protocol.
+;;; We define a simplified version of the wad.  It is simplified in
+;;; that it always has absolute line numbers in it, and there are no
+;;; column numbers, since they are not used or altered by the
+;;; invalidation protocol.
 
 (defclass node ()
   ((%start-line :initarg :start-line :accessor start-line)
@@ -134,8 +134,8 @@
       (loop repeat 4
 	    do (random-operation)))))
 
-;;; Compare a parse result with an absolute location to a node.  The
-;;; children of the parse result have relative locations as usual.
+;;; Compare a wad with an absolute location to a node.  The children
+;;; of the wad have relative locations as usual.
 (defun equal-absolute (wad node)
   (and (= (climacs-syntax-common-lisp::start-line wad)
 	  (start-line node))
@@ -145,7 +145,7 @@
 			    (children node)
 			    (start-line node))))
 
-;;; Compare a parse result with a relative location to a node.
+;;; Compare a wad with a relative location to a node.
 (defun equal-relative (wad node base)
   (and (= (climacs-syntax-common-lisp::start-line wad)
 	  (- (start-line node) base))
@@ -181,9 +181,8 @@
 				     (rest rest)
 				     (start-line (first rest))))))))
 
-;;; Given a node, create a parse result with an absolute location.
-;;; The children of the parse results have relative locations as
-;;; usual.
+;;; Given a node, create a wad with an absolute location.  The
+;;; children of the wads have relative locations as usual.
 (defun make-absolute (node)
   (make-instance 'climacs-syntax-common-lisp::wad
     :start-line (start-line node)
@@ -191,7 +190,7 @@
     :children (make-relative-list (children node) (start-line node))
     :relative-p nil))
 
-;;; Given a node, create a parse result with a relative location.
+;;; Given a node, create a wad with a relative location.
 (defun make-relative (node base)
   (make-instance 'climacs-syntax-common-lisp::wad
     :start-line (- (start-line node) base)
@@ -200,9 +199,8 @@
     :relative-p t))
 
 ;;; Given a list of nodes (which have absolute locations), return a
-;;; list of parse results where the first one has a location relative
-;;; to BASE, and each of the others has a location relative to its
-;;; predecessor.
+;;; list of wads where the first one has a location relative to BASE,
+;;; and each of the others has a location relative to its predecessor.
 (defun make-relative-list (nodes base)
   (if (null nodes)
       '()

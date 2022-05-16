@@ -225,18 +225,18 @@
     presentation
     (clim:standard-presentation)
   climacs-syntax-common-lisp:wad
-  (;; When this parse result is an element of the PREFIX, this slot
+  (;; When this wad is an element of the PREFIX, this slot contains
+   ;; the the length of the longest line of all the lines from the
+   ;; beginning of the buffer and up to and including the last line of
+   ;; this wad.  When this wad is an element of the SUFFIX, this slot
    ;; contains the the length of the longest line of all the lines
-   ;; from the beginning of the buffer and up to and including the
-   ;; last line of this parse result.  When this parse result is an
-   ;; element of the SUFFIX, this slot contains the the length of the
-   ;; longest line of all the lines from the first line of this parse
-   ;; result to the end of the buffer.  We can determine the width of
-   ;; the entire buffer by taking the MAX of the values of these lots
-   ;; for the first element of the prefix, the first element of the
-   ;; suffix, and all the lines in the buffer in between the last line
-   ;; of the first element of the prefix and the first line of the
-   ;; first element of the suffix.
+   ;; from the first line of this parse result to the end of the
+   ;; buffer.  We can determine the width of the entire buffer by
+   ;; taking the MAX of the values of these lots for the first element
+   ;; of the prefix, the first element of the suffix, and all the
+   ;; lines in the buffer in between the last line of the first
+   ;; element of the prefix and the first line of the first element of
+   ;; the suffix.
    (%max-line-width-list :accessor max-line-width-list))
   (:default-initargs :single-box t :type t))
 
@@ -409,13 +409,13 @@
                         (1- line-count) end-column-number
                         first-line last-line)))
 
-;;; When this function is called, the suffix contains no parse result
-;;; to be rendered.  Either the suffix is empty, or the first parse
-;;; result on the suffix lies entirely below the visible area.
-;;; However, there may be some whitespace between the end of the first
-;;; parse result on the prefix and either the first parse result on
-;;; the suffix or the end of the buffer.  This function is responsible
-;;; for rendering that whitespace.
+;;; When this function is called, the suffix contains no wad to be
+;;; rendered.  Either the suffix is empty, or the first parse result
+;;; on the suffix lies entirely below the visible area.  However,
+;;; there may be some whitespace between the end of the first wad on
+;;; the prefix and either the first wad on the suffix or the end of
+;;; the buffer.  This function is responsible for rendering that
+;;; whitespace.
 (defun render-trailing-whitespace (cache pane first-line last-line)
   (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
                    (suffix climacs-syntax-common-lisp:suffix)

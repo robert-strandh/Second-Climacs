@@ -21,11 +21,11 @@
   (position-less (start-line wad) (start-column wad)
                  line-number item-number))
 
-;;; Check whether there is a cached parse result with a start position
-;;; that corresponds to the current stream position of ANALYZER, and
-;;; if so, return that parse result.  If there is no such parse
-;;; result, then return NIL.  If there are cached parse results that
-;;; entirely precede the current stream position, then remove them.
+;;; Check whether there is a cached wad with a start position that
+;;; corresponds to the current stream position of ANALYZER, and if so,
+;;; return that wad.  If there is no such parse result, then return
+;;; NIL.  If there are cached wads that entirely precede the current
+;;; stream position, then remove them.
 (defun cached-wad (analyzer)
   (let ((cache (folio analyzer)))
     (with-accessors ((residue residue) (suffix suffix)) cache

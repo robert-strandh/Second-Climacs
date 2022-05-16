@@ -16,8 +16,8 @@
    ;; in the same line.
    (%height :initarg :height :reader height)
    ;; This slot contains the absolute column of the first character in
-   ;; this wad.  A value of 0 indicates that this parse result starts
-   ;; in the leftmost position in the source code.
+   ;; this wad.  A value of 0 indicates that this wad starts in the
+   ;; leftmost position in the source code.
    (%start-column :initarg :start-column :accessor start-column)
    ;; This slot contains the absolute column of the last character of
    ;; the wad.  The value of this slot can never be 0.  If the last

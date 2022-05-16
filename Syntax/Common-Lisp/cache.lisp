@@ -89,23 +89,22 @@
 ;;; position the prefix and the suffix according to the number of
 ;;; lines initially skipped.
 (defun ensure-update-initialized (cache)
-  ;; As long as there are parse results on the prefix that do not
-  ;; completely precede the number of skipped lines, move them to the
-  ;; suffix.
+  ;; As long as there are wads on the prefix that do not completely
+  ;; precede the number of skipped lines, move them to the suffix.
   (loop while (and (not (null (prefix cache)))
                    (>= (end-line (first (prefix cache)))
                        (line-counter cache)))
         do (prefix-to-suffix cache))
-  ;; As long as there are parse results on the suffix that completely
-  ;; precede the number of skipped lines, move them to the prefix.
+  ;; As long as there are wads on the suffix that completely precede
+  ;; the number of skipped lines, move them to the prefix.
   (loop while (and (not (null (suffix cache)))
                    (< (end-line (first (suffix cache)))
                       (line-counter cache)))
         do (suffix-to-prefix cache)))
 
-;;; Return true if and only if either there are no more parse results,
-;;; or the first parse result starts at a line that is strictly
-;;; greater than LINE-NUMBER.
+;;; Return true if and only if either there are no more wads, or the
+;;; first wad starts at a line that is strictly greater than
+;;; LINE-NUMBER.
 (defun next-wad-is-beyond-line-p (cache line-number)
   (with-accessors ((suffix suffix) (worklist worklist)) cache
     (if (null worklist)
@@ -120,27 +119,26 @@
       line-number
       (+ (start-line wad) (height wad))))
 
-;;; Add INCREMENT to the absolute line number of every parse result on
-;;; the worklist, and of the first parse result of the suffix, if any.
+;;; Add INCREMENT to the absolute line number of every wad on the
+;;; worklist, and of the first wad of the suffix, if any.
 (defun adjust-worklist-and-suffix (cache increment)
   (loop for wad in (worklist cache)
         do (incf (start-line wad) increment))
   (unless (null (suffix cache))
     (incf (start-line (first (suffix cache))) increment)))
 
-;;; If the worklist is empty then move a parse result from the suffix
-;;; to the worklist (in that case, it is known that the suffix is not
-;;; empty).
+;;; If the worklist is empty then move a wad from the suffix to the
+;;; worklist (in that case, it is known that the suffix is not empty).
 (defun ensure-worklist-not-empty (cache)
   (with-accessors ((worklist worklist)) cache
     (when (null worklist)
       (push-to-worklist cache (pop-from-suffix cache)))))
 
-;;; When this function is called, there is at least one parse result,
-;;; either on the work list or on the suffix that must be processed,
-;;; i.e., that parse result either entirely precedes LINE-NUMBER (so
-;;; that it should be moved to the residue), or it straddles the line
-;;; with that line number, so that it must be taken apart.
+;;; When this function is called, there is at least one wad, either on
+;;; the work list or on the suffix that must be processed, i.e., that
+;;; wad either entirely precedes LINE-NUMBER (so that it should be
+;;; moved to the residue), or it straddles the line with that line
+;;; number, so that it must be taken apart.
 (defun process-next-wad (cache line-number)
   (with-accessors ((worklist worklist)) cache
     (ensure-worklist-not-empty cache)
