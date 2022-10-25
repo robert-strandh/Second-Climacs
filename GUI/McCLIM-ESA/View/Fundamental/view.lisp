@@ -52,6 +52,10 @@
 
 (defgeneric draw-line (pane analyzer contents line-number))
 
+(defun draw-cursor (pane x y height)
+  (clim:draw-rectangle* pane (1- x) (- y height) (+ x 2) y
+                        :ink clim:+blue+))
+
 (defmethod draw-line (pane (analyzer output-history) contents line-number)
   (let* ((text-style (clim:medium-text-style pane))
          (text-height (clim:text-style-height text-style pane))
@@ -65,30 +69,23 @@
          (string (coerce contents 'string)))
     (if (= (cluffer:line-number cursor) line-number)
         (cond ((zerop cursor-column-number)
-               (clim:draw-rectangle* pane 1 (- y text-height) 4 y
-                                     :ink clim:+blue+)
+               (draw-cursor pane 1 y text-height)
                (unless (zerop (length string))
-                 (clim:draw-text* pane string 5 y)))
+                 (clim:draw-text* pane string 0 y)))
               ((= cursor-column-number (length string))
                (unless (zerop (length string))
                  (clim:draw-text* pane string 0 y))
                (let ((cursor-x (* (length string) text-width)))
-                 (clim:draw-rectangle* pane
-                                       (1+ cursor-x) (- y text-height)
-                                       (+ cursor-x 4) y
-                                       :ink clim:+blue+)))
+                 (draw-cursor pane cursor-x y text-height)))
               (t
                (unless (zerop (length string))
                  (clim:draw-text* pane string 0 y
                                   :start 0
                                   :end cursor-column-number))
                (let ((cursor-x (* cursor-column-number text-width)))
-                 (clim:draw-rectangle* pane
-                                       (1+ cursor-x) (- y text-height)
-                                       (+ cursor-x 4) y
-                                       :ink clim:+blue+)
+                 (draw-cursor pane cursor-x y text-height)
                (unless (zerop (length string))
-                 (clim:draw-text* pane string (+ cursor-x 5) y
+                 (clim:draw-text* pane string cursor-x y
                                   :start cursor-column-number)))))
         (unless (zerop (length string))
           (clim:draw-text* pane string 0 y)))))
