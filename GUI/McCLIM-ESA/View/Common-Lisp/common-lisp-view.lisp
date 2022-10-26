@@ -96,7 +96,7 @@
        :closed t :filled t :ink ink)))
 
 (defun draw-cursor (pane x y height)
-  (clim:draw-rectangle* pane (1+ x) (- y height) (+ x 4) y
+  (clim:draw-rectangle* pane (1- x) (- y height) (+ x 2) y
                         :ink clim:+blue+))
 
 ;;; Draw an interval of text from a single line.  Optimize by not
