@@ -183,130 +183,119 @@ Examples:
   |)
 \end{verbatim}
 
-Some wads representing expressions such as strings, characters and
-real numbers do not have children, so for this type of wad, only the
-overall indentation is defined.
+\subsubsection{Handling incomplete buffer contents}
 
-The component indentation of a compound wad depends only on the
-overall indentation of that wad, and is therefore independent of the
-ancestors of that wad.
+So far, we have assumed that the buffer contains complete top-level
+wads, but the last top-level wad in the buffer is often incomplete, in
+that the call to \texttt{read} encountered and end-of-file situation.
 
-If a wad is preceded by items other than whitespace on the same line,
-then the desired indentation of the wad is the current indentation of
-the wad.
+For the purpose of indenting existing wads in the buffer, we simply
+consider the last top-level wad as being complete, but without any
+explicit characters to mark the end.
 
-For the purpose of this chapter, a buffer is considered to contain a
-number of top-level wads, the last of which may be \emph{incomplete},
-in that an attempt to read it reaches the end of the buffer before the
-wad is complete.  When the cursor is at the end of the buffer, and the
-last wad in the buffer is incomplete, for the purpose of indentation,
-the cursor is considered to be at the end of the innermost incomplete
-expression.
+For the purpose of indenting potential wads, if the cursor is at the
+end of the buffer, then it is positioned at the end of the innermost
+incomplete wad.  If not, the cursor is followed by some wad, and then
+the inter-block rules apply.
 
-There are two basic cases for computing indentation of some wad:
+%% Some wads representing expressions such as strings, characters and
+%% real numbers do not have children, so for this type of wad, only the
+%% overall indentation is defined.
 
-\begin{enumerate}
-\item If the wad is a top-level wad, then the
-  indentation is always $0$, i.e. it should be positioned in the
-  leftmost column.
-\item If the wad is a nested wad, then the
-  indentation is relative to some ancestor wad.
-\end{enumerate}
+%% For each top-level wad, its absolute indentation is first set
+%% to $0$ and then the function \texttt{compute-child-indentations} is
+%% called on that top-level wad.
 
-For each top-level wad, its absolute indentation is first set
-to $0$ and then the function \texttt{compute-child-indentations} is
-called on that top-level wad.
+%% The function \texttt{compute-child-indentations} takes two parameters,
+%% a wad and a \emph{client} instance.
 
-The function \texttt{compute-child-indentations} takes two parameters,
-a wad and a \emph{client} instance.
+%% We must distinguish between the following cases:
 
-We must distinguish between the following cases:
+%% \begin{enumerate}
+%% \item $P$ is an atomic wad.
+%% \item $P$ represents a special form or a function or macro call with
+%%   its own indentation rule.
+%% \item $P$ represents a function call without its own indentation rule.
+%% \item $P$ represents a macro call without its own indentation rule.
+%% \end{enumerate}
 
-\begin{enumerate}
-\item $P$ is an atomic wad.
-\item $P$ represents a special form or a function or macro call with
-  its own indentation rule.
-\item $P$ represents a function call without its own indentation rule.
-\item $P$ represents a macro call without its own indentation rule.
-\end{enumerate}
+%% In case 1, we are done because its indentation has already been
+%% computed and it has no children.  The remaining cases are treated
+%% below.
 
-In case 1, we are done because its indentation has already been
-computed and it has no children.  The remaining cases are treated
-below.
-
-The different cases are recognized because the function
-\texttt{function-information} of the Cleavir system
-\texttt{cst-to-ast} is called with the operator as an argument and the
-return value of that function determines whether the operator is a
-function, a macro, or a special operator.
+%% The different cases are recognized because the function
+%% \texttt{function-information} of the Cleavir system
+%% \texttt{cst-to-ast} is called with the operator as an argument and the
+%% return value of that function determines whether the operator is a
+%% function, a macro, or a special operator.
 
 \subsection{Special indentation rules}
 
-Certain operators have their own indentation rules.  In particular,
-most special operators do, but it is also possible to define special
-indentation rules for functions and macros.
+%% Certain operators have their own indentation rules.  In particular,
+%% most special operators do, but it is also possible to define special
+%% indentation rules for functions and macros.
 
-Such an indentation rule is defined as a method on the
-generic-function named \texttt{compute-child-indentations-special}.
-This function takes the wad $P$, a symbol (the name of the
-operator), and a \emph{client} instance.  A method should specialize
-on the name of the operator (in the form of an EQL specializer) and on
-the client parameter (unless this is a default method).
+%% Such an indentation rule is defined as a method on the
+%% generic-function named \texttt{compute-child-indentations-special}.
+%% This function takes the wad $P$, a symbol (the name of the
+%% operator), and a \emph{client} instance.  A method should specialize
+%% on the name of the operator (in the form of an EQL specializer) and on
+%% the client parameter (unless this is a default method).
 
-The method computes and assigns indentation for the descendants that
-have fixed relative indentation according to the syntax of the
-operator, and then recursively calls
-\texttt{compute-child-indentations} in order to recursively compute
-indentation for the children of those descendants.
+%% The method computes and assigns indentation for the descendants that
+%% have fixed relative indentation according to the syntax of the
+%% operator, and then recursively calls
+%% \texttt{compute-child-indentations} in order to recursively compute
+%% indentation for the children of those descendants.
 
 \subsection{Indenting a function call}
 
-If $P$ represents a function call, then by default, its children are
-indented according to the following rules:
+%% If $P$ represents a function call, then by default, its children are
+%% indented according to the following rules:
 
-\begin{itemize}
-\item If $P$ has at least two children and the second child is
-  positioned on the same line as the first child, then the remaining
-  children (starting with the third one) are indented so that they
-  align with the second child.
-\item If either $P$ has only one child (which must then be the
-  function to be called), or the second child is not positioned on the
-  same line as the first child, then every child is indented by two
-  positions relative to $P$.
-\end{itemize}
+%% \begin{itemize}
+%% \item If $P$ has at least two children and the second child is
+%%   positioned on the same line as the first child, then the remaining
+%%   children (starting with the third one) are indented so that they
+%%   align with the second child.
+%% \item If either $P$ has only one child (which must then be the
+%%   function to be called), or the second child is not positioned on the
+%%   same line as the first child, then every child is indented by two
+%%   positions relative to $P$.
+%% \end{itemize}
 
-However, some special cases exist.  For example, when the lambda list
-of the function has keyword arguments, then keywords are aligned
-vertically.%
-\footnote{Provide a more detailed description.}
+%% However, some special cases exist.  For example, when the lambda list
+%% of the function has keyword arguments, then keywords are aligned
+%% vertically.%
+%% \footnote{Provide a more detailed description.}
 
 \subsection{Indenting a macro call}
 
-The indentation of a macro call depends on the lambda list for the
-macro.  Two major cases are identified:
+%% The indentation of a macro call depends on the lambda list for the
+%% macro.  Two major cases are identified:
 
-\begin{itemize}
-\item The lambda list does not have \texttt{\&body} in it.
-\item The lambda list has \texttt{\&body} in it.
-\end{itemize}
+%% \begin{itemize}
+%% \item The lambda list does not have \texttt{\&body} in it.
+%% \item The lambda list has \texttt{\&body} in it.
+%% \end{itemize}
 
-In the first case, the macro call is indented in the same way as a
-function call.
+%% In the first case, the macro call is indented in the same way as a
+%% function call.
 
-In the second case, there are two sub-cases:
+%% In the second case, there are two sub-cases:
 
-\begin{itemize}
-\item If any of the arguments of the body is positioned on the same
-  line as the operator, then every child that is not positioned on the
-  same line as the operator is aligned under the first body argument.
-\item Otherwise, every child that belongs to the body is indented by
-  two positions relative to $P$.
-\end{itemize}
+%% \begin{itemize}
+%% \item If any of the arguments of the body is positioned on the same
+%%   line as the operator, then every child that is not positioned on the
+%%   same line as the operator is aligned under the first body argument.
+%% \item Otherwise, every child that belongs to the body is indented by
+%%   two positions relative to $P$.
+%% \end{itemize}
 
-If there is a child of $P$ preceding the body arguments and the first
-such child is positioned on the same line as the operator, then every
-child line preceding the body arguments is indented below the first
-child.  Otherwise, if there is a child of $P$ preceding the body
-arguments, then every line of such a child is indented by four spaces.
+%% If there is a child of $P$ preceding the body arguments and the first
+%% such child is positioned on the same line as the operator, then every
+%% child line preceding the body arguments is indented below the first
+%% child.  Otherwise, if there is a child of $P$ preceding the body
+%% arguments, then every line of such a child is indented by four spaces.
 
 \subsection{Indenting lambda lists}
