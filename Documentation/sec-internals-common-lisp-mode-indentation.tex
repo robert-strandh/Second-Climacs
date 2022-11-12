@@ -3,6 +3,206 @@
 
 \subsection{Introduction}
 
+\subsubsection{Definition and unit of indentation}
+
+Indentation refers to the whitespace preceding the first
+non-whitespace item of a line of text in a buffer.  For reasons of
+backward compatibility, we handle indentation in terms of an integral
+number of space characters in a fixed-width font, so that text
+read-from and written-to an external file will be compatible with
+existing development tools.  At the end of this chapter, we describe
+how a buffer containing indented \commonlisp{} code can be displayed
+using a proportional font, even though the buffer contents has been
+computed for a fixed-with font.
+
+The basic unit of indentation is considered to be two space
+characters.  Occasionally, we suggest the use of a single space
+characters for certain buffer elements.
+
+\subsubsection{Indentation block}
+
+Indentation is complicated by the presence of comments.  To simplify
+the computation, we define an \emph{indentation block} as either:
+
+\begin{enumerate}
+\item A maximal sequence of comment wads, each starting with at least
+  two semicolons, followed by a single expression wad, followed by a
+  maximal sequence of comment wads, each starting with a single
+  semicolon.  In this case we say that we have a \emph{complete
+    indentation block}.
+\item The sequence of all child comment wads at the end of an
+  expression wad, if there is a comment wad starting with at least two
+  semicolons not followed by an expression wad, as a child of an
+  expression wad.  In this case, we say that we have a
+  \emph{degenerate indentation block}.
+\end{enumerate}
+
+\subsection{Overall indentation vs component indentation}
+
+We consider two different indentation types for a wad in a buffer:
+
+\begin{enumerate}
+\item The \emph{overall indentation} of the wad, which is the
+  indentation of the first character of the wad relative to the
+  overall indentation of its parent wad.
+\item The \emph{component indentation} of a compound wad, which
+  is the overall indentation of the child wads, of the wad.
+\end{enumerate}
+
+Component indentation of a compound wad is determined by the kind of
+expression that the compound wad represents.  A compound wad that
+represents a special form has rule for computing component indentation
+that depends on the special operator for that form, and similarly, for
+a component wad that represents a standard macro form.
+
+\subsubsection{Current indentation vs desired indentation}
+
+The \emph{current indentation} of a wad is the current relative
+horizontal position of its overall indentation compared to the current
+relative horizontal position of its parent.  The current indentation
+of a top-level wad is its horizontal position relative to 0.
+
+The \emph{desired indentation} of a wad is the desired relative
+horizontal position of its overall indentation compared to the current
+relative horizontal position of its parent.  The desired indentation
+of a wad depends on the nature of its parent.  Notice that the desired
+indentation is independent of the desired indentation of its parent,
+and depends only on the current indentation of its parent.
+
+\subsubsection{Basic rules for desired indentation}
+
+The expression wad and the preceding comment wads of a complete
+indentation block have the same desired indentation.
+
+If the first wad of a complete indentation block (which can be a
+comment wad with at least two semicolons, or an expression wad) is
+preceded on the same line by some other wad, then the desired
+indentation of the preceding comment wads and the expression wad is
+the current indentation of the first wad of the block.
+
+Example:
+\begin{verbatim}
+(let  ;; The user wanted the bindings to start
+      ;; two spaces after LET, for some reason.
+      ((x 10))
+  ...)
+\end{verbatim}
+
+If the first wad of a complete indentation block is not preceded by
+any other wad on the same line, then the desired indentation of the
+preceding comment wads and the expression wad is determined by the
+indentation rules of the parent wad and the nature of the expression
+wad in the block.
+
+Example:
+\begin{verbatim}
+(let  
+    ;; The rule for LET is probably 4 spaces for the bindings.
+    ((x 10))
+   ;; And maybe 3 for declarations?
+   (declare (type integer x))
+  ;; Certainly 2 for the body.
+  (+ x 20))
+\end{verbatim}
+
+If the first comment wad following the expression wad in a complete
+indentation block is preceded by the expression wad on the same line,
+then the desired indentation for the comment wad is its current
+indentation.  Subsequent comment wads have the same desired
+indentation as the first such comment wad.
+
+Example:
+
+\begin{verbatim}
+(let ((x 10))
+  (incf x 20)    ; The user wanted some distance here.
+                 ; But there might be more to say.
+  (+ x 30))
+\end{verbatim}
+
+If the first comment wad following the expression wad in a complete
+indentation block is not preceded by the expression wad on the same
+line, then the desired indentation for the comment wad is two spaces
+past the end of the expression block.
+
+Example:
+\begin{verbatim}
+(let ((x 10))
+  (incf x 20)    
+              ; For some reason, the user put this
+              ; comment on a separate line.
+  (+ x 30))
+\end{verbatim}
+
+Before we state the rules for degenerate indentation blocks, we need
+to define what an inter-block indentation rule is.
+
+\subsubsection{Inter-block indentation rules}
+
+As mentioned previously, a compound wad has a bunch of rules
+associated with it, and those rules determine the desired indentation
+of child wads.  But a component wad also has another bunch of rules
+that determine desired indentation of \emph{potential} wads to be
+inserted between two existing child wads, or after the last child
+wad.  Such a rule depends on the number and nature of preceding and
+following expression types.
+
+An inter-block rule is used in these situations:
+
+\begin{enumerate}
+\item When the cursor is positioned on a blank line between two
+  complete indentation blocks inside a compound wad.
+\item When the cursor is positioned after the last complete
+  indentation block of a compound wad, is preceded by whitespace on
+  the same line, and there is no degenerate indentation block in this
+  compound wad.
+\item For the wads of a degenerate indentation block.
+\end{enumerate}
+
+Examples:
+
+\begin{verbatim}
+;;; In this example, we think the rule for LET should
+;;; indicate that a body form might be about to be typed
+(let ((x 10))
+  |
+  (+ x 20))
+
+;;; In this example, assuming the previous desired
+;;; indentation of a declaration, perhaps another  
+;;; declaration is coming up.
+(let ((x 10))
+   |
+   (declare (type integer x))
+  (+ x 20))
+
+;;; Here, clearly another body form is coming:  
+(let ((x 10))
+   (declare (type integer x))
+  (+ x 20)
+  |)
+\end{verbatim}
+
+Some wads representing expressions such as strings, characters and
+real numbers do not have children, so for this type of wad, only the
+overall indentation is defined.
+
+The component indentation of a compound wad depends only on the
+overall indentation of that wad, and is therefore independent of the
+ancestors of that wad.
+
+If a wad is preceded by items other than whitespace on the same line,
+then the desired indentation of the wad is the current indentation of
+the wad.
+
+For the purpose of this chapter, a buffer is considered to contain a
+number of top-level wads, the last of which may be \emph{incomplete},
+in that an attempt to read it reaches the end of the buffer before the
+wad is complete.  When the cursor is at the end of the buffer, and the
+last wad in the buffer is incomplete, for the purpose of indentation,
+the cursor is considered to be at the end of the innermost incomplete
+expression.
+
 There are two basic cases for computing indentation of some wad:
 
 \begin{enumerate}
