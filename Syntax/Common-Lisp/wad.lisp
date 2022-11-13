@@ -75,9 +75,8 @@
             (end-column object)
             (relative-p object))))
 
-;;; Define an indirection for MAKE-INSTANCE for creating parse
-;;; results.  The main purpose is so that the creation of parse
-;;; results can be traced.
+;;; Define an indirection for MAKE-INSTANCE for creating wads.  The
+;;; main purpose is so that the creation of wads can be traced.
 (defun make-wad (class &rest initargs)
   (apply #'make-instance class initargs))
 
