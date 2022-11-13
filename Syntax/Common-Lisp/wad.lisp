@@ -5,11 +5,10 @@
 ;;; conditional.
 
 (defclass basic-wad ()
-  (;; This slot contains information about the start line of the parse
-   ;; result.  Simple applications might always store the absolute
-   ;; line number of the first line of the wad in this slot.  Other
-   ;; applications might store a line number relative to some other
-   ;; wad.
+  (;; This slot contains information about the start line of the wad.
+   ;; Simple applications might always store the absolute line number
+   ;; of the first line of the wad in this slot.  Other applications
+   ;; might store a line number relative to some other wad.
    (%start-line :initarg :start-line :accessor start-line)
    ;; This slot contains the difference between the start line and the
    ;; end line.  A value of 0 indicates that the wad starts and ends
@@ -35,10 +34,10 @@
    ;; non-whitespace character of the wad.  It may not be entirely
    ;; correct if a reader macro reads character by character and such
    ;; characters happen to be outside the part that is returned by a
-   ;; call to READ.  But we only use this information for
+   ;; call to READ.  But we use this information only for
    ;; highlighting, and selection.  Not for drawing.
    (%min-column-number :initarg :min-column-number :reader min-column-number)
-   ;; This slot contains the column number of the leftmost known
+   ;; This slot contains the column number of the rightmost known
    ;; non-whitespace character of the wad.  It may not be entirely
    ;; correct for the same reason as the preceding slot.
    (%max-column-number :initarg :max-column-number :reader max-column-number)
