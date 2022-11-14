@@ -85,8 +85,7 @@
              6 (- middle h2) 6 (- middle h1) 12 (- middle h1))
        :closed t :filled t :ink ink)))
 
-(defun draw-right-arrow
-    (pane gutter line-number ink)
+(defun draw-right-arrow (pane gutter line-number ink)
   (multiple-value-bind (middle h1 h2)
       (arrow-y-coordinates pane line-number)
       (clim:draw-polygon*
