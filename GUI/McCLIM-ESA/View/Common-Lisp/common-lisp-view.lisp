@@ -24,8 +24,8 @@
       (length contents)
       position))
 
-;;; Return the text-style width, height, and ascent of PANE as three
-;;; values.
+;;; Return the text-style width, the text-style height, and the ascent
+;;; of PANE as three values.
 (defun text-style-dimensions (pane)
   (let ((text-style (clim:medium-text-style pane)))
     (values (clim:text-style-width text-style pane)
