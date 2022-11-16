@@ -79,7 +79,7 @@
 ;;;
 ;;; Generic function ITEM-AFTER-CURSOR.
 ;;;
-;;; Return the item immediately preceding the cursor.
+;;; Return the item immediately following the cursor.
 
 (defgeneric item-after-cursor (cursor))
 
