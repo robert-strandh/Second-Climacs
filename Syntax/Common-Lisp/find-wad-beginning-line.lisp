@@ -11,14 +11,18 @@
 ;;; the prefix (which the line numbers are absolute), and then we scan
 ;;; the prefix from the beginning.
 
-(defun search-wad (wad line-number)
-  (if (= (start-line wad) line-number)
+(defun search-wad (wad start-line-number line-number)
+  (if (= start-line-number line-number)
       wad
       (loop for child in (children wad)
-            when (<= (start-line child)
+            for absolute-line-number = start-line-number
+              then (if (relative-p child)
+                       (+ absolute-line-number (start-line child))
+                       (start-line child))
+            when (<= absolute-line-number
                      line-number
-                     (+ (start-line child) (height child)))
-              return (search-wad child line-number))))
+                     (+ absolute-line-number (height child)))
+              return (search-wad child absolute-line-number line-number))))
 
 (defun find-wad-beginning-line (cache line-number)
   (loop until (null (suffix cache))
@@ -27,4 +31,4 @@
         when (<= (start-line wad)
                  line-number
                  (+ (start-line wad) (height wad)))
-          return (search-wad wad line-number)))
+          return (search-wad wad (start-line wad) line-number)))
