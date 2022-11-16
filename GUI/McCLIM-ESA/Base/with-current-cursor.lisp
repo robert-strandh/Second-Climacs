@@ -14,4 +14,3 @@
 	    (,view-var (climacs-view ,clim-view-var))
 	    (,cursor-var (climacs2-base:cursor ,view-var)))
        ,@body)))
-
