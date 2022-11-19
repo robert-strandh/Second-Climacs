@@ -11,4 +11,5 @@
                (:file "view-class")
                (:file "fundamental-view")
                (:file "window")
-               (:file "application")))
+               (:file "application")
+               (:file "kill-ring")))
