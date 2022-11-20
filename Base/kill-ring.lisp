@@ -25,3 +25,10 @@
 (defun add-kill-ring-line ()
   (let ((element (last-element *kill-ring*)))
     (vector-push-extend (make-empty-adjustable-vector) element)))
+
+;;; Add a new buffer item to the last line of the last element of the
+;;; kill ring.
+(defun add-kill-ring-item (item)
+  (let* ((last-element (last-element *kill-ring*))
+         (last-line (last-element last-element)))
+    (vector-push-extend item last-line)))
