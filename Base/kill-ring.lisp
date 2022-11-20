@@ -7,3 +7,8 @@
 ;;; buffer items.
 
 (defparameter *kill-ring* (make-array 0 :adjustable t :fill-pointer t))
+
+;;; Add a new empty element to the kill ring.
+(defun add-kill-ring-element ()
+  (vector-push-extend (make-array 0 :adjustable t :fill-pointer t)
+                      *kill-ring*))
