@@ -15,5 +15,13 @@
 (defun add-kill-ring-element ()
   (vector-push-extend (make-empty-adjustable-vector) *kill-ring*))
 
+;;; Find the last element of a vector with fill pointer, i.e., the
+;;; element immediately preceding the fill pointer.
 (defun last-element (vector)
   (aref vector (1- (fill-pointer vector))))
+
+;;; Add a new empty line to the end of the last element of the kill
+;;; ring.
+(defun add-kill-ring-line ()
+  (let ((element (last-element *kill-ring*)))
+    (vector-push-extend (make-empty-adjustable-vector) element)))
