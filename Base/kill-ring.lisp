@@ -23,8 +23,8 @@
 ;;; Add a new empty line to the end of the last region of the kill
 ;;; ring.
 (defun add-kill-ring-line ()
-  (let ((region (last-element *kill-ring*)))
-    (vector-push-extend (make-empty-adjustable-vector) region)))
+  (let ((last-region (last-element *kill-ring*)))
+    (vector-push-extend (make-empty-adjustable-vector) last-region)))
 
 ;;; Add a new buffer item to the last line of the last region of the
 ;;; kill ring.
