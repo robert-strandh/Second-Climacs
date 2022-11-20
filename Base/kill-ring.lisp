@@ -6,9 +6,11 @@
 ;;; line of items.  Finally, each line is also an adjustable vector of
 ;;; buffer items.
 
-(defparameter *kill-ring* (make-array 0 :adjustable t :fill-pointer t))
+(defun make-empty-adjustable-vector ()
+  (make-array 0 :adjustable t :fill-pointer t))
+
+(defparameter *kill-ring* (make-empty-adjustable-vector))
 
 ;;; Add a new empty element to the kill ring.
 (defun add-kill-ring-element ()
-  (vector-push-extend (make-array 0 :adjustable t :fill-pointer t)
-                      *kill-ring*))
+  (vector-push-extend (make-empty-adjustable-vector) *kill-ring*))
