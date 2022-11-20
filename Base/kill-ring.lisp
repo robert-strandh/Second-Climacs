@@ -11,8 +11,8 @@
 
 (defparameter *kill-ring* (make-empty-adjustable-vector))
 
-;;; Add a new empty element to the kill ring.
-(defun add-kill-ring-element ()
+;;; Add a new empty region to the kill ring.
+(defun add-kill-ring-region ()
   (vector-push-extend (make-empty-adjustable-vector) *kill-ring*))
 
 ;;; Find the last element of a vector with fill pointer, i.e., the
@@ -20,15 +20,15 @@
 (defun last-element (vector)
   (aref vector (1- (fill-pointer vector))))
 
-;;; Add a new empty line to the end of the last element of the kill
+;;; Add a new empty line to the end of the last region of the kill
 ;;; ring.
 (defun add-kill-ring-line ()
-  (let ((element (last-element *kill-ring*)))
-    (vector-push-extend (make-empty-adjustable-vector) element)))
+  (let ((region (last-element *kill-ring*)))
+    (vector-push-extend (make-empty-adjustable-vector) region)))
 
-;;; Add a new buffer item to the last line of the last element of the
+;;; Add a new buffer item to the last line of the last region of the
 ;;; kill ring.
 (defun add-kill-ring-item (item)
-  (let* ((last-element (last-element *kill-ring*))
-         (last-line (last-element last-element)))
+  (let* ((last-region (last-element *kill-ring*))
+         (last-line (last-element last-region)))
     (vector-push-extend item last-line)))
