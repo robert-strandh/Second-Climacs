@@ -14,3 +14,6 @@
 ;;; Add a new empty element to the kill ring.
 (defun add-kill-ring-element ()
   (vector-push-extend (make-empty-adjustable-vector) *kill-ring*))
+
+(defun last-element (vector)
+  (aref vector (1- (fill-pointer vector))))
