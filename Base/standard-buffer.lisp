@@ -4,7 +4,11 @@
 ;;; Cluffer buffer.
 
 (defclass standard-buffer (buffer)
-  ((%cluffer-buffer :initarg :cluffer-buffer :reader cluffer-buffer)))
+  ((%cluffer-buffer :initarg :cluffer-buffer :reader cluffer-buffer)
+   ;; We emulate Emacs a bit, in that we have a distinguished cursor
+   ;; called the mark, and that is used (together with the cursor) to
+   ;; define what a REGION of the buffer is.
+   (%mark :initform nil :accessor mark)))
 
 ;;; A STANDARD-CURSOR is a subclass of a Cluffer RIGHT-STICKY-CURSOR.
 ;;; It contains a reference to the standard buffer.
