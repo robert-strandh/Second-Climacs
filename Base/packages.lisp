@@ -34,4 +34,5 @@
            #:update-window-from-view
            #:update-window
            #:application
-           #:views))
+           #:views
+           #:mark))
