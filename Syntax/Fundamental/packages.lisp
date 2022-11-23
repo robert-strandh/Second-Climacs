@@ -2,6 +2,7 @@
 
 (defpackage #:climacs-syntax-fundamental
   (:use #:common-lisp)
+  (:local-nicknames (#:base #:second-climacs-base))
   (:shadow #:list-length)
   (:export
    #:analyzer

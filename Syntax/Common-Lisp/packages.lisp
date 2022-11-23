@@ -4,7 +4,8 @@
   (:use #:common-lisp)
   (:shadow #:package-name #:symbol-name)
   (:local-nicknames (#:reader #:eclector.reader)
-                    (#:readtable #:eclector.readtable))
+                    (#:readtable #:eclector.readtable)
+                    (#:base #:second-climacs-base))
   (:export
    #:folio
    #:line-count
