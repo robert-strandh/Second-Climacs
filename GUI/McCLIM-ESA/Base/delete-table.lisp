@@ -7,7 +7,7 @@
     ()
   (with-current-cursor (cursor)
     (base:delete-item cursor)
-    (setf (esa-buffer:needs-saving (second-climacs-base:buffer cursor)) t)))
+    (setf (esa-buffer:needs-saving (base:buffer cursor)) t)))
 
 (esa:set-key `(com-delete-item)
 	     'delete-table

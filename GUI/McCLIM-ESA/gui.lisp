@@ -34,12 +34,12 @@
 
 (defun detach-view (pane)
   (assert (pane-has-attached-view-p pane))
-  (climacs2-base:hide-view (climacs-view (clim:stream-default-view pane)))
+  (base:hide-view (climacs-view (clim:stream-default-view pane)))
   (setf (clim:stream-default-view pane) clim:+textual-view+))
 
 (defun attach-view (pane view)
   (assert (not (pane-has-attached-view-p pane)))
-  (climacs2-base:expose-view view pane)
+  (base:expose-view view pane)
   (let ((climacs-clim-view (make-climacs-clim-view view)))
     (setf (clim:output-record-parent (output-history climacs-clim-view))
           pane)
@@ -47,12 +47,12 @@
 
 (clim:define-application-frame climacs (esa:esa-frame-mixin
                                         clim:standard-application-frame
-                                        climacs2-base:application)
+                                        base:application)
   ()
   (:panes
    (window
     (multiple-value-bind (buffer cursor)
-        (climacs2-base:make-empty-standard-buffer-and-cursor)
+        (base:make-empty-standard-buffer-and-cursor)
       (setf (esa-buffer:filepath buffer)
             (first (directory ".")))
       (let* ((gutter (clim:make-pane 'clim:application-pane
@@ -93,18 +93,18 @@
   (let* ((pane (clim:find-pane-named frame 'stuff))
          (clim-view (clim:stream-default-view pane)))
     (push (climacs-view clim-view)
-          (climacs2-base:views frame))))
+          (base:views frame))))
 
 (defmethod esa:windows ((esa climacs))
-  (loop for view in (climacs2-base:views esa)
-        for window = (climacs2-base:window view)
+  (loop for view in (base:views esa)
+        for window = (base:window view)
         unless (null window)
           collect window))
 
 (defmethod esa:buffers ((esa climacs))
-  (remove-duplicates (loop for view in (climacs2-base:views esa)
-                           for analyzer = (climacs2-base:analyzer view)
-                           collect (climacs2-base:buffer analyzer))
+  (remove-duplicates (loop for view in (base:views esa)
+                           for analyzer = (base:analyzer view)
+                           collect (base:buffer analyzer))
                      :test #'eq))
 
 (defun climacs ()

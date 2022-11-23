@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-fundamental)
 
-(defclass view (climacs2-base:view) ())
+(defclass view (base:view) ())
 
 (defmethod initialize-instance :after ((instance view) &key buffer cursor)
   (let ((analyzer (make-instance 'analyzer :buffer buffer)))

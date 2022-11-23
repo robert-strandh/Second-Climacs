@@ -11,7 +11,7 @@
 
 (defmethod clim-base:make-climacs-clim-view
     ((view climacs-syntax-common-lisp:view))
-  (let* ((analyzer (climacs2-base:analyzer view))
+  (let* ((analyzer (base:analyzer view))
          (cache (climacs-syntax-common-lisp:folio analyzer)))
     (make-instance 'common-lisp-view :output-history cache
                                      :climacs-view view)))
@@ -107,7 +107,7 @@
            (x (* start-column width))
            (clim-view (clim:stream-default-view pane))
            (climacs-view (clim-base:climacs-view clim-view))
-           (cursor (climacs2-base:cursor climacs-view))
+           (cursor (base:cursor climacs-view))
            (cursor-line-number (cluffer:line-number cursor))
            (cursor-column-number (cluffer:cursor-position cursor))
            (canonicalized-end-column-number
@@ -541,7 +541,7 @@
 
 (defmethod clim-base:update-view (pane (view common-lisp-view))
   (let ((history (clim:stream-output-history pane)))
-    (climacs2-base:update-view (clim-base:climacs-view view))
+    (base:update-view (clim-base:climacs-view view))
     (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
       (declare (ignore x1 y1))
       (clim:change-space-requirements
@@ -565,12 +565,12 @@
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
   (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
-         (climacs-buffer (climacs2-base:buffer analyzer))
-         (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
+         (climacs-buffer (base:buffer analyzer))
+         (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
     (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
     (climacs-syntax-common-lisp:read-forms analyzer)))
 
-(defmethod climacs2-base:update-view-from-analyzer
+(defmethod base:update-view-from-analyzer
     ((view climacs-syntax-common-lisp:view)
      (pane clim-base:text-pane)
      (analyzer climacs-syntax-common-lisp:analyzer))

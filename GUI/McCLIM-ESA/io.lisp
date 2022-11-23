@@ -2,13 +2,13 @@
 
 (defmethod esa-buffer:frame-make-buffer-from-stream ((frame climacs) stream)
   (multiple-value-bind (buffer cursor)
-      (climacs2-base:make-empty-standard-buffer-and-cursor)
-    (climacs2-base:fill-buffer-from-stream cursor stream)
+      (base:make-empty-standard-buffer-and-cursor)
+    (base:fill-buffer-from-stream cursor stream)
     buffer))
 
 (defmethod esa-buffer:frame-save-buffer-to-stream
-    ((frame climacs) (buffer climacs2-base:standard-buffer) stream)
-  (let* ((cluffer-buffer (climacs2-base:cluffer-buffer buffer))
+    ((frame climacs) (buffer base:standard-buffer) stream)
+  (let* ((cluffer-buffer (base:cluffer-buffer buffer))
          (class 'cluffer-standard-line:right-sticky-cursor)
          (cursor (make-instance class))
          (first-line (cluffer:find-line cluffer-buffer 0)))
@@ -19,7 +19,7 @@
 
 (defmethod esa-buffer:frame-make-new-buffer ((frame climacs) &key)
   (multiple-value-bind (buffer cursor)
-      (climacs2-base:make-empty-standard-buffer-and-cursor)
+      (base:make-empty-standard-buffer-and-cursor)
     (declare (ignore cursor))
     buffer))
 
@@ -32,17 +32,17 @@
 
 (defmethod esa-io:frame-find-file :around ((frame climacs) file-path)
   (let* ((extension (file-name-extension file-path))
-         (view-class (second-climacs-base:view-class extension))
+         (view-class (base:view-class extension))
          (buffer (call-next-method))
-         (cluffer-buffer (climacs2-base:cluffer-buffer buffer))
+         (cluffer-buffer (base:cluffer-buffer buffer))
          (first-line (cluffer:find-line cluffer-buffer 0))
          (window (esa:current-window)))
     (when (null view-class)
       (setf view-class 'climacs-syntax-fundamental:view))
-    (let* ((cursor (make-instance 'second-climacs-base:standard-cursor
+    (let* ((cursor (make-instance 'base:standard-cursor
                      :buffer buffer))
            (view (make-instance view-class :buffer buffer :cursor cursor)))
       (cluffer:attach-cursor cursor first-line)
-      (push view (climacs2-base:views frame))
+      (push view (base:views frame))
       (detach-view window)
       (attach-view window view))))

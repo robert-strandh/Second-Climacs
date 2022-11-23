@@ -1,6 +1,6 @@
 (cl:in-package #:climacs-syntax-common-lisp)
 
-(defclass analyzer (folio-stream climacs2-base:analyzer)
+(defclass analyzer (folio-stream base:analyzer)
   ())
 
 (defmethod print-object ((object analyzer) stream)

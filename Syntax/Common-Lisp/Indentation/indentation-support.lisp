@@ -259,16 +259,16 @@
                history line-number)))
     (unless (or (null wad) (null (indentation wad)))
       (second-climacs-clim-base::with-current-cursor (cursor)
-        (second-climacs-base:beginning-of-line cursor)
+        (base:beginning-of-line cursor)
         (let ((start-column (start-column wad))
               (indentation (indentation wad)))
           (loop repeat (- start-column indentation)
-                do (second-climacs-base:delete-item cursor))
+                do (base:delete-item cursor))
           (loop repeat (- indentation start-column)
-                do (second-climacs-base:insert-item cursor #\Space))
-          (loop while (eql (second-climacs-base:item-after-cursor cursor)
+                do (base:insert-item cursor #\Space))
+          (loop while (eql (base:item-after-cursor cursor)
                            #\Space)
-                do (second-climacs-base:forward-item cursor)))))))
+                do (base:forward-item cursor)))))))
 
 ;;; Given a list of wads, extract all the wads up to and including the
 ;;; first expression wad.  Return those wads as a list in reverse

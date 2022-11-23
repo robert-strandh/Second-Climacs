@@ -45,7 +45,7 @@
 
 (defmethod clim-base:make-climacs-clim-view
     ((view climacs-syntax-fundamental:view))
-  (let ((analyzer (climacs2-base:analyzer view)))
+  (let ((analyzer (base:analyzer view)))
     (make-instance 'fundamental-view
       :output-history analyzer
       :climacs-view view)))
@@ -64,7 +64,7 @@
          (y (+ text-ascent (* line-number text-height)))
          (clim-view (clim:stream-default-view pane))
          (climacs-view (clim-base:climacs-view clim-view))
-         (cursor (climacs2-base:cursor climacs-view))
+         (cursor (base:cursor climacs-view))
          (cursor-column-number (cluffer:cursor-position cursor))
          (string (coerce contents 'string)))
     (if (= (cluffer:line-number cursor) line-number)
@@ -167,7 +167,7 @@
 
 (defmethod clim-base:update-view (pane (view fundamental-view))
   (let ((history (clim:stream-output-history pane)))
-    (climacs2-base:update-view (clim-base:climacs-view view))
+    (base:update-view (clim-base:climacs-view view))
     (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
       (declare (ignore x1 y1))
       (clim:change-space-requirements
@@ -190,11 +190,11 @@
 
 (defun update-analyzer (view pane analyzer)
   (declare (ignore view pane))
-  (let* ((climacs-buffer (climacs2-base:buffer analyzer))
-         (cluffer-buffer (climacs2-base:cluffer-buffer climacs-buffer)))
+  (let* ((climacs-buffer (base:buffer analyzer))
+         (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
     (climacs-syntax-fundamental:scavenge analyzer cluffer-buffer)))
 
-(defmethod climacs2-base:update-view-from-analyzer
+(defmethod base:update-view-from-analyzer
     ((view climacs-syntax-fundamental:view)
      (pane clim-base:text-pane)
      (analyzer climacs-syntax-fundamental:analyzer))

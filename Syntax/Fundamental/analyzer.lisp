@@ -33,7 +33,7 @@
             (list-length object)
             (contents object))))
 
-(defclass analyzer (climacs2-base:analyzer)
+(defclass analyzer (base:analyzer)
   ((%prefix :initform () :accessor prefix)
    (%suffix :initform () :accessor suffix)
    (%time-stamp :initform nil :accessor time-stamp)))
