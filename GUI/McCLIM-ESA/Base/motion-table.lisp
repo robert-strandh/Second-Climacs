@@ -170,12 +170,7 @@
     (com-set-the-mark :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (let ((buffer (second-climacs-base:buffer cursor)))
-      (setf (second-climacs-base:mark buffer)
-            (make-instance 'second-climacs-base:standard-cursor
-              :buffer buffer
-              :line (cluffer:line cursor)
-              :cursor-position (cluffer:cursor-position cursor))))))
+    (second-climacs-base:set-the-mark cursor)))
 
 (esa:set-key `(com-set-the-mark)
 	     'motion-table
