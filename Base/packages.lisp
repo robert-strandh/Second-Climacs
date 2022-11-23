@@ -35,4 +35,5 @@
            #:update-window
            #:application
            #:views
+           #:set-the-mark
            #:mark))
