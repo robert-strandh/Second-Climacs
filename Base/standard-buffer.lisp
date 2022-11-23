@@ -102,3 +102,15 @@
   (loop for char = (read-char stream nil nil)
         until (null char)
         do (insert-item cursor char)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command SET-THE-MARK.
+
+(defun set-the-mark (cursor)
+  (let ((buffer (buffer cursor)))
+    (setf (mark buffer)
+          (make-instance 'standard-cursor
+            :buffer buffer
+            :line (cluffer:line cursor)
+            :cursor-position (cluffer:cursor-position cursor)))))
