@@ -6,8 +6,8 @@
     (com-insert-item :name t :command-table ascii-insert-table)
     ((item t))
   (with-current-cursor (cursor)
-    (climacs2-base:insert-item cursor item)
-    (setf (esa-buffer:needs-saving (second-climacs-base:buffer cursor)) t)))
+    (base:insert-item cursor item)
+    (setf (esa-buffer:needs-saving (base:buffer cursor)) t)))
 
 (loop for i from 32 to 126
       for char = (code-char i)
@@ -23,8 +23,8 @@
     (com-open-line :name t :command-table ascii-insert-table)
     ()
   (with-current-cursor (cursor)
-    (climacs2-base:insert-item cursor #\Newline)
-    (climacs2-base:backward-item cursor)))
+    (base:insert-item cursor #\Newline)
+    (base:backward-item cursor)))
 
 (esa:set-key `(com-open-line)
              'ascii-insert-table
@@ -40,7 +40,7 @@
                :insert-default t))
   (with-current-cursor (cursor)
     (with-open-file (stream filepath :direction :input)
-      (climacs2-base:fill-buffer-from-stream cursor stream))))
+      (base:fill-buffer-from-stream cursor stream))))
 
 (esa:set-key `(com-insert-file ,clim:*unsupplied-argument-marker*)
              'ascii-insert-table '((#\x :control) (#\i)))

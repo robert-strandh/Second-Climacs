@@ -6,7 +6,7 @@
     (com-forward-item :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (climacs2-base:forward-item cursor)))
+    (base:forward-item cursor)))
 
 (esa:set-key `(com-forward-item)
 	     'motion-table
@@ -16,7 +16,7 @@
     (com-backward-item :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (climacs2-base:backward-item cursor)))
+    (base:backward-item cursor)))
 
 (esa:set-key `(com-backward-item)
 	     'motion-table
@@ -26,7 +26,7 @@
     (com-beginning-of-line :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (climacs2-base:beginning-of-line cursor)))
+    (base:beginning-of-line cursor)))
 
 (esa:set-key `(com-beginning-of-line)
 	     'motion-table
@@ -36,7 +36,7 @@
     (com-end-of-line :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (climacs2-base:end-of-line cursor)))
+    (base:end-of-line cursor)))
 
 (esa:set-key `(com-end-of-line)
 	     'motion-table
@@ -49,7 +49,7 @@
     ()
   (let* ((clim-view (clim:stream-default-view (esa:current-window)))
 	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view))
+	 (cursor (base:cursor climacs-view))
 	 (buffer (cluffer:buffer cursor))
 	 (line-number (cluffer:line-number (cluffer:line cursor))))
     (if (= line-number (1- (cluffer:line-count buffer)))
@@ -73,7 +73,7 @@
     ()
   (let* ((clim-view (clim:stream-default-view (esa:current-window)))
 	 (climacs-view (climacs-view clim-view))
-	 (cursor (climacs2-base:cursor climacs-view))
+	 (cursor (base:cursor climacs-view))
 	 (buffer (cluffer:buffer cursor))
 	 (line-number (cluffer:line-number (cluffer:line cursor))))
     (if (zerop line-number)
@@ -125,12 +125,12 @@
     ()
   (with-current-cursor (cursor)
     (loop until (or (cluffer:end-of-buffer-p cursor)
-		    (alphanumericp (climacs2-base:item-after-cursor cursor)))
-	  do (climacs2-base:forward-item cursor))
+		    (alphanumericp (base:item-after-cursor cursor)))
+	  do (base:forward-item cursor))
     (loop until (or (cluffer:end-of-line-p cursor)
-		    (not (characterp (climacs2-base:item-after-cursor cursor)))
-		    (not (alphanumericp (climacs2-base:item-after-cursor cursor))))
-	  do (climacs2-base:forward-item cursor))))
+		    (not (characterp (base:item-after-cursor cursor)))
+		    (not (alphanumericp (base:item-after-cursor cursor))))
+	  do (base:forward-item cursor))))
 
 (esa:set-key `(com-forward-word)
 	     'motion-table
@@ -141,12 +141,12 @@
     ()
   (with-current-cursor (cursor)
     (loop until (or (cluffer:beginning-of-buffer-p cursor)
-		    (alphanumericp (climacs2-base:item-before-cursor cursor)))
-	  do (climacs2-base:backward-item cursor))
+		    (alphanumericp (base:item-before-cursor cursor)))
+	  do (base:backward-item cursor))
     (loop until (or (cluffer:beginning-of-line-p cursor)
-		    (not (characterp (climacs2-base:item-before-cursor cursor)))
-		    (not (alphanumericp (climacs2-base:item-before-cursor cursor))))
-	  do (climacs2-base:backward-item cursor))))
+		    (not (characterp (base:item-before-cursor cursor)))
+		    (not (alphanumericp (base:item-before-cursor cursor))))
+	  do (base:backward-item cursor))))
 
 (esa:set-key `(com-backward-word)
 	     'motion-table
@@ -170,7 +170,7 @@
     (com-set-the-mark :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (second-climacs-base:set-the-mark cursor)))
+    (base:set-the-mark cursor)))
 
 (esa:set-key `(com-set-the-mark)
 	     'motion-table
@@ -180,7 +180,7 @@
     (com-exchange-cursor-and-mark :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (second-climacs-base:exchange-cursor-and-mark cursor)))
+    (base:exchange-cursor-and-mark cursor)))
 
 (esa:set-key `(com-exchange-cursor-and-mark)
 	     'motion-table
