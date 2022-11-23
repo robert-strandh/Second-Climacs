@@ -114,3 +114,20 @@
             :buffer buffer
             :line (cluffer:line cursor)
             :cursor-position (cluffer:cursor-position cursor)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command
+;;; EXCHANGE-CURSOR-AND-MARK.
+
+(defun exchange-cursor-and-mark (cursor)
+  (let* ((cursor-line (cluffer:line cursor))
+         (cursor-position (cluffer:cursor-position cursor))
+         (buffer (buffer cursor))
+         (mark (mark buffer))
+         (mark-line (cluffer:line mark))
+         (mark-position (cluffer:cursor-position mark)))
+    (cluffer:detach-cursor cursor)
+    (cluffer:detach-cursor mark)
+    (cluffer:attach-cursor cursor mark-line mark-position)
+    (cluffer:attach-cursor mark cursor-line cursor-position)))
