@@ -36,4 +36,5 @@
            #:application
            #:views
            #:set-the-mark
+           #:exchange-cursor-and-mark
            #:mark))
