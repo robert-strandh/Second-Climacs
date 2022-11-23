@@ -180,16 +180,7 @@
     (com-exchange-cursor-and-mark :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (let* ((cursor-line (cluffer:line cursor))
-           (cursor-position (cluffer:cursor-position cursor))
-           (buffer (second-climacs-base:buffer cursor))
-           (mark (second-climacs-base:mark buffer))
-           (mark-line (cluffer:line mark))
-           (mark-position (cluffer:cursor-position mark)))
-      (cluffer:detach-cursor cursor)
-      (cluffer:detach-cursor mark)
-      (cluffer:attach-cursor cursor mark-line mark-position)
-      (cluffer:attach-cursor mark cursor-line cursor-position))))
+    (second-climacs-base:exchange-cursor-and-mark cursor)))
 
 (esa:set-key `(com-exchange-cursor-and-mark)
 	     'motion-table
