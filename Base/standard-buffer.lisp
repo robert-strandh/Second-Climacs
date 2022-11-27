@@ -103,6 +103,10 @@
         until (null char)
         do (insert-item cursor char)))
 
+;;; Return true if the mark is set in the buffer of CURSOR.
+(defun mark-is-set-p (cursor)
+  (not (null (mark (buffer cursor)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; This function implements the essence of the command SET-THE-MARK.
