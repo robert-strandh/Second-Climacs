@@ -119,6 +119,13 @@
             :line (cluffer:line cursor)
             :cursor-position (cluffer:cursor-position cursor)))))
 
+;;; Unset the mark in the buffer of CURSOR.  If the mark is already
+;;; unset, then do nothing.
+(defun unset-the-mark (cursor)
+  (when (mark-is-set-p cursor)
+    (cluffer:detach-cursor (mark (buffer cursor)))
+    (setf (mark (buffer cursor)) nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; This function implements the essence of the command
