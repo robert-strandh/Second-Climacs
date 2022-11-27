@@ -131,3 +131,31 @@
     (cluffer:detach-cursor mark)
     (cluffer:attach-cursor cursor mark-line mark-position)
     (cluffer:attach-cursor mark cursor-line cursor-position)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command
+;;; KILL-REGION.
+
+;;; Return true if and only if CURSOR1 is positioned before CURSOR2.
+(defun cursor-< (cursor1 cursor2)
+  (or (< (cluffer:line-number (cluffer:line cursor1))
+         (cluffer:line-number (cluffer:line cursor2)))
+      (and (= (cluffer:line-number (cluffer:line cursor1))
+              (cluffer:line-number (cluffer:line cursor2)))
+           (< (cluffer:cursor-position cursor1)
+              (cluffer:cursor-position cursor2)))))
+
+(defun cursor-= (cursor1 cursor2)
+  (and (not (cursor-less cursor1 cursor2))
+       (not (cursor-less cursor2 cursor1))))
+
+(defun kill-region (cursor)
+  (let ((mark (mark (buffer cursor))))
+    (if (null mark)
+        ;; FIXME: alert the user that the mark is not set.
+        nil
+        (progn (when (cursor-< mark cursor)
+                 (exchange-cursor-and-mark cursor))
+               (loop until (cursor-= cursor mark)
+                     do (cluffer-emacs:delete-item cursor))))))
