@@ -35,3 +35,13 @@
 (esa:set-key `(com-kill-line)
 	     'delete-table
 	     '((#\k :control)))
+
+(clim:define-command
+    (com-kill-region :name t :command-table delete-table)
+    ()
+  (with-current-cursor (cursor)
+    (base:kill-region cursor)))
+
+(esa:set-key `(com-kill-region)
+	     'delete-table
+	     '((#\w :control)))
