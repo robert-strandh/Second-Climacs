@@ -169,4 +169,5 @@
         (progn (when (cursor-< mark cursor)
                  (exchange-cursor-and-mark cursor))
                (loop until (cursor-= cursor mark)
-                     do (cluffer-emacs:delete-item cursor))))))
+                     do (cluffer-emacs:delete-item cursor))
+               (unset-the-mark cursor)))))
