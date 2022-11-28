@@ -132,6 +132,8 @@
 ;;; EXCHANGE-CURSOR-AND-MARK.
 
 (defun exchange-cursor-and-mark (cursor)
+  (unless (mark-is-set-p cursor)
+    (error 'mark-not-set))
   (let* ((cursor-line (cluffer:line cursor))
          (cursor-position (cluffer:cursor-position cursor))
          (buffer (buffer cursor))
@@ -162,12 +164,11 @@
        (not (cursor-less cursor2 cursor1))))
 
 (defun kill-region (cursor)
+  (unless (mark-is-set-p cursor)
+    (error 'mark-not-set))
   (let ((mark (mark (buffer cursor))))
-    (if (null mark)
-        ;; FIXME: alert the user that the mark is not set.
-        nil
-        (progn (when (cursor-< mark cursor)
-                 (exchange-cursor-and-mark cursor))
-               (loop until (cursor-= cursor mark)
-                     do (cluffer-emacs:delete-item cursor))
-               (unset-the-mark cursor)))))
+    (when (cursor-< mark cursor)
+      (exchange-cursor-and-mark cursor))
+    (loop until (cursor-= cursor mark)
+          do (cluffer-emacs:delete-item cursor))
+    (unset-the-mark cursor)))
