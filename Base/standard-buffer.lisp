@@ -112,12 +112,13 @@
 ;;; This function implements the essence of the command SET-THE-MARK.
 
 (defun set-the-mark (cursor)
-  (let ((buffer (buffer cursor)))
-    (setf (mark buffer)
-          (make-instance 'standard-cursor
-            :buffer buffer
-            :line (cluffer:line cursor)
-            :cursor-position (cluffer:cursor-position cursor)))))
+  (let* ((buffer (buffer cursor))
+         (line (cluffer:line cursor))
+         (position (cluffer:cursor-position cursor))
+         (mark (make-instance 'standard-cursor
+                 :buffer buffer)))
+    (setf (mark buffer) mark)
+    (cluffer:attach-cursor mark line position)))
 
 ;;; Unset the mark in the buffer of CURSOR.  If the mark is already
 ;;; unset, then do nothing.
@@ -160,8 +161,8 @@
               (cluffer:cursor-position cursor2)))))
 
 (defun cursor-= (cursor1 cursor2)
-  (and (not (cursor-less cursor1 cursor2))
-       (not (cursor-less cursor2 cursor1))))
+  (and (not (cursor-< cursor1 cursor2))
+       (not (cursor-< cursor2 cursor1))))
 
 (defun kill-region (cursor)
   (unless (mark-is-set-p cursor)
