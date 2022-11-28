@@ -131,6 +131,8 @@
         (let ((pane (esa:current-window)))
           (second-climacs-clim-view-common-lisp:move-viewport-to-cursor pane)))
     (cluffer:cluffer-error (condition)
+      (esa:display-message "~a" condition))
+    (base:climacs-error (condition)
       (esa:display-message "~a" condition))))
 
 (defmethod esa:find-applicable-command-table ((frame climacs))
