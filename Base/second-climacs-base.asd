@@ -12,4 +12,5 @@
                (:file "fundamental-view")
                (:file "window")
                (:file "application")
-               (:file "kill-ring")))
+               (:file "kill-ring")
+               (:file "conditions")))
