@@ -43,6 +43,7 @@
            #:end-of-buffer
            #:forward-word
            #:backward-word
+           #:back-to-indentation
            #:mark
            #:climacs-error
            #:mark-not-set))
