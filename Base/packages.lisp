@@ -41,6 +41,8 @@
            #:previous-line
            #:beginning-of-buffer
            #:end-of-buffer
+           #:forward-word
+           #:backward-word
            #:mark
            #:climacs-error
            #:mark-not-set))
