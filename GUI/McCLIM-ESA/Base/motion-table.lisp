@@ -88,29 +88,13 @@
     (com-forward-word :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (loop until (or (cluffer:end-of-buffer-p cursor)
-		    (alphanumericp (base:item-after-cursor cursor)))
-	  do (base:forward-item cursor))
-    (loop until (or (cluffer:end-of-line-p cursor)
-		    (not (characterp (base:item-after-cursor cursor)))
-		    (not (alphanumericp (base:item-after-cursor cursor))))
-	  do (base:forward-item cursor))))
-
-(esa:set-key `(com-forward-word)
-	     'motion-table
-	     '((#\f :meta)))
+    (base:forward-word cursor)))
 
 (clim:define-command
     (com-backward-word :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (loop until (or (cluffer:beginning-of-buffer-p cursor)
-		    (alphanumericp (base:item-before-cursor cursor)))
-	  do (base:backward-item cursor))
-    (loop until (or (cluffer:beginning-of-line-p cursor)
-		    (not (characterp (base:item-before-cursor cursor)))
-		    (not (alphanumericp (base:item-before-cursor cursor))))
-	  do (base:backward-item cursor))))
+    (base:backward-word cursor)))
 
 (esa:set-key `(com-backward-word)
 	     'motion-table
