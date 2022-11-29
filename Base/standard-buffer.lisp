@@ -174,6 +174,12 @@
           do (cluffer-emacs:delete-item cursor))
     (unset-the-mark cursor)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; These functions implement the essence of the commands
+;;; NEXT-LINE and PREVIOUS-LINE.
+
 (defvar *target-column*)
 
 (defun next-line (cursor)
@@ -205,3 +211,22 @@
           (cluffer:attach-cursor cursor
                                  previous-line
                                  (min item-count *target-column*))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; These functions implement the essence of the commands
+;;; BEGINNING-OF-BUFFER and END-OF-BUFFER.
+
+(defun beginning-of-buffer (cursor)
+  (let* ((buffer (cluffer:buffer cursor))
+         (first-line (cluffer:find-line buffer 0)))
+    (cluffer:detach-cursor cursor)
+    (cluffer:attach-cursor cursor first-line)))
+
+(defun end-of-buffer (cursor)
+  (let* ((buffer (cluffer:buffer cursor))
+         (line-count (cluffer:line-count buffer))
+         (last-line (cluffer:find-line buffer (1- line-count)))
+         (item-count (cluffer:item-count last-line)))
+    (cluffer:detach-cursor cursor)
+    (cluffer:attach-cursor cursor last-line item-count)))
