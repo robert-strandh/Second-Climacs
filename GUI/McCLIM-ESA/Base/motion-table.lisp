@@ -68,10 +68,7 @@
     (com-beginning-of-buffer :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (let* ((buffer (cluffer:buffer cursor))
-	   (first-line (cluffer:find-line buffer 0)))
-      (cluffer:detach-cursor cursor)
-      (cluffer:attach-cursor cursor first-line))))
+    (base:beginning-of-buffer cursor)))
 
 (esa:set-key '(com-beginning-of-buffer)
 	     'motion-table
@@ -81,12 +78,7 @@
     (com-end-of-buffer :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (let* ((buffer (cluffer:buffer cursor))
-	   (line-count (cluffer:line-count buffer))
-	   (last-line (cluffer:find-line buffer (1- line-count)))
-	   (item-count (cluffer:item-count last-line)))
-      (cluffer:detach-cursor cursor)
-      (cluffer:attach-cursor cursor last-line item-count))))
+    (base:end-of-buffer cursor)))
 
 (esa:set-key '(com-end-of-buffer)
 	     'motion-table
