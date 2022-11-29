@@ -230,3 +230,26 @@
          (item-count (cluffer:item-count last-line)))
     (cluffer:detach-cursor cursor)
     (cluffer:attach-cursor cursor last-line item-count)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; These functions implement the essence of the commands
+;;; FORWARD-WORD and BACKWARD-WORD.
+
+(defun forward-word (cursor)
+  (loop until (or (cluffer:end-of-buffer-p cursor)
+                  (alphanumericp (item-after-cursor cursor)))
+        do (forward-item cursor))
+  (loop until (or (cluffer:end-of-line-p cursor)
+                  (not (characterp (item-after-cursor cursor)))
+                  (not (alphanumericp (item-after-cursor cursor))))
+        do (forward-item cursor)))
+
+(defun backward-word (cursor)
+  (loop until (or (cluffer:beginning-of-buffer-p cursor)
+                  (alphanumericp (item-before-cursor cursor)))
+        do (backward-item cursor))
+  (loop until (or (cluffer:beginning-of-line-p cursor)
+                  (not (characterp (item-before-cursor cursor)))
+                  (not (alphanumericp (item-before-cursor cursor))))
+        do (backward-item cursor)))
