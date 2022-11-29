@@ -253,3 +253,15 @@
                   (not (characterp (item-before-cursor cursor)))
                   (not (alphanumericp (item-before-cursor cursor))))
         do (backward-item cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command
+;;; BACK-TO-INDENTATION.
+
+(defun back-to-indentation (cursor)
+  (cluffer:beginning-of-line cursor)
+  (loop until (or (cluffer:end-of-line-p cursor)
+                  (not (member (cluffer:item-after-cursor cursor)
+                               '(#\Space #\Tab #\Backspace #\Page))))
+        do (cluffer:forward-item cursor)))
