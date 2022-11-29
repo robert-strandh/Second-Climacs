@@ -104,11 +104,7 @@
     (com-back-to-indentation :name t :command-table motion-table)
     ()
   (with-current-cursor (cursor)
-    (cluffer:beginning-of-line cursor)
-    (loop until (or (cluffer:end-of-line-p cursor)
-		    (not (member (cluffer:item-after-cursor cursor)
-				 '(#\Space #\Tab #\Backspace #\Page))))
-	  do (cluffer:forward-item cursor))))
+    (base:back-to-indentation cursor)))
 
 (esa:set-key `(com-back-to-indentation)
 	     'motion-table
