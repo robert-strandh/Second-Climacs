@@ -39,6 +39,8 @@
            #:kill-region
            #:next-line
            #:previous-line
+           #:beginning-of-buffer
+           #:end-of-buffer
            #:mark
            #:climacs-error
            #:mark-not-set))
