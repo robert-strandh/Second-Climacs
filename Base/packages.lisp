@@ -37,6 +37,8 @@
            #:set-the-mark
            #:exchange-cursor-and-mark
            #:kill-region
+           #:next-line
+           #:previous-line
            #:mark
            #:climacs-error
            #:mark-not-set))
