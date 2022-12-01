@@ -18,4 +18,5 @@
                (:file "read-forms")
                (:file "view")
                (:file "set-mode")
-               (:file "find-wad-beginning-line")))
+               (:file "find-wad-beginning-line")
+               (:file "find-wad-containing-position")))
