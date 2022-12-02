@@ -36,3 +36,13 @@
          (let* ((wad (first prefix))
                 (start-line (start-line wad)))
            (<= line-number (+ start-line (height wad)))))))
+
+;;; We do a quick check to see that the suffix is not empty, and that
+;;; the line number of the position we are looking for is at least the
+;;; start line of the first wad of the suffix, i.e., the suffix wad
+;;; that is the closest to the beginning of the buffer.  Recall that
+;;; the first wad on the suffix is an absolute wad.
+(defun wad-might-be-inside-suffix-p (cache line-number)
+  (let ((suffix (suffix cache)))
+    (and (not (null suffix))
+         (>= line-number (start-line (first suffix))))))
