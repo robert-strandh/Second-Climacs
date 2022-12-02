@@ -69,6 +69,21 @@
         when (position-is-inside-wad-p wad line-number column-number)
           return wad))
 
+;;; Helper function.
+(defun traverse-relative-wads
+    (wads line-number column-number reference-line-number)
+  (loop for wad in wads
+        for absolute-start-line
+          = (+ reference-line-number (start-line wad))
+        for relative-line-number
+          = (- line-number absolute-start-line)
+        until (position-is-before-wad-p
+               wad relative-line-number column-number)
+        do (incf reference-line-number (start-line wad))
+        when (position-is-inside-wad-p
+              wad relative-line-number column-number)
+          return (values wad absolute-start-line)))
+
 ;;; Return a top-level wad in the suffix of CACHE that contains the
 ;;; position indicated by LINE-NUMBER and COLUMN-NUMBER.  As a second
 ;;; return value, return the absolute line number of the start line of
@@ -81,19 +96,11 @@
           ((position-is-inside-wad-p (first suffix) line-number column-number)
            (values (first suffix) (start-line (first suffix))))
           (t
-           (loop with rest = (rest suffix)
-                 for wad in rest
-                 for reference-line-number = (start-line (first suffix))
-                   then (+ reference-line-number (start-line wad))
-                 for absolute-start-line
-                   = (+ reference-line-number (start-line wad))
-                 for relative-line-number
-                   = (- line-number absolute-start-line)
-                 until (position-is-before-wad-p
-                        wad relative-line-number column-number)
-                 when (position-is-inside-wad-p
-                       wad relative-line-number column-number)
-                   return (values wad absolute-start-line))))))
+           (traverse-relative-wads
+            (rest suffix)
+            line-number
+            column-number
+            (start-line (first suffix)))))))
 
 ;;; We do a quick check to see that the prefix is not empty, and that
 ;;; the line number of the position we are looking for is at most the
