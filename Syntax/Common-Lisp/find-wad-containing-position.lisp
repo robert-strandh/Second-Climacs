@@ -86,3 +86,29 @@
             line-number
             column-number
             (start-line (first suffix)))))))
+
+;;; Return a list of pairs of the form (N . W) where W is a wad, and N
+;;; is the absolute start line number of W, of wads containing the
+;;; position defined by LINE-NUMBER and COLUMN-NUMBER.  The list is
+;;; ordered from the innermost wad containing the position to the
+;;; top-level wad containing the position.  The empty list is return
+;;; if the position is inside no wad.
+(defun find-wads-containing-position (cache line-number column-number)
+  (let ((result '()))
+    (labels ((traverse-children (children reference-line-number)
+               (multiple-value-bind (wad absolute-start-line)
+                   (traverse-relative-wads
+                    children line-number column-number reference-line-number)
+                 (if (null wad)
+                     (return-from find-wads-containing-position result)
+                     (progn (push (cons absolute-start-line wad) result)
+                            (traverse-children
+                             (children wad) absolute-start-line))))))
+      (let ((wad (find-wad-containing-position-in-prefix
+                  cache line-number column-number)))
+        (if (null wad)
+            (multiple-value-bind (wad absolute-line-number)
+                (find-wad-containing-position-in-suffix
+                 cache line-number column-number)
+              (traverse-children (children wad) absolute-line-number))
+            (traverse-children (children wad) (start-line wad)))))))
