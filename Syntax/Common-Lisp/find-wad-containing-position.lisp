@@ -110,5 +110,11 @@
             (multiple-value-bind (wad absolute-line-number)
                 (find-wad-containing-position-in-suffix
                  cache line-number column-number)
-              (traverse-children (children wad) absolute-line-number))
-            (traverse-children (children wad) (start-line wad)))))))
+              (if (null wad)
+                  nil
+                  (progn
+                    (push (cons absolute-line-number wad) result)
+                    (traverse-children (children wad) absolute-line-number))))
+            (progn
+              (push (cons (start-line wad) wad) result)
+              (traverse-children (children wad) (start-line wad))))))))
