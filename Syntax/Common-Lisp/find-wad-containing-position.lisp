@@ -60,6 +60,15 @@
   (not (or (position-is-before-wad-p wad relative-line-number column-number)
            (position-is-after-wad-p wad relative-line-number column-number))))
 
+;;; Return a top-level wad in the prefix of CACHE that contains the
+;;; position indicated by LINE-NUMBER and COLUMN-NUMBER.  If no wad in
+;;; the prefix contains the position, then return NIL.
+(defun find-wad-containing-position-in-prefix (cache line-number column-number)
+  (loop for wad in (prefix cache)
+        until (position-is-after-wad-p wad line-number column-number)
+        when (position-is-inside-wad-p wad line-number column-number)
+          return wad))
+
 ;;; We do a quick check to see that the prefix is not empty, and that
 ;;; the line number of the position we are looking for is at most the
 ;;; end line of the first wad of the prefix, i.e., the prefix wad that
