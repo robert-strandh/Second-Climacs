@@ -25,3 +25,14 @@
                   (<= column-number (start-column wad)))
              (and (= relative-line-number (+ (start-line wad) (height wad)))
                   (>= column-number (end-column wad)))))))
+
+;;; We do a quick check to see that the prefix is not empty, and that
+;;; the line number of the position we are looking for is at most the
+;;; end line of the first wad of the prefix, i.e., the prefix wad that
+;;; is the furthest away from the beginning of the buffer.
+(defun wad-might-be-inside-prefix-p (cache line-number)
+  (let ((prefix (prefix cache)))
+    (and (not (null prefix))
+         (let* ((wad (first prefix))
+                (start-line (start-line wad)))
+           (<= line-number (+ start-line (height wad)))))))
