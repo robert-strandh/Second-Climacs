@@ -31,6 +31,23 @@
       (and (= relative-line-number (start-line wad))
            (<= column-number (start-column wad)))))
 
+;;; Return true if and only if the position indicated by
+;;; RELATIVE-LINE-NUMBER and COLUMN-NUMBER is entirely after WAD.  If
+;;; WAD is an absolute wad, then RELATIVE-LINE-NUMBER must be the
+;;; absolute line number of the position.  If WAD is a relative wad,
+;;; then RELATIVE-LINE-NUMBER must be the difference between the
+;;; absolute line number of the position, and the start line of the
+;;; wad to which WAD is relative.  The position is after WAD if either
+;;; RELATIVE-LINE-NUMBER is strictly greater than the sum of the start
+;;; line of WAD and the height of WAD, or if RELATIVE-LINE-NUMBER is
+;;; equal to the sum of the start line of WAD and the height of WAD,
+;;; and COLUMN-NUMBER is greater than or equal to the end column of
+;;; WAD.
+(defun position-is-after-wad-p (wad relative-line-number column-number)
+  (or (> relative-line-number (+ (start-line wad) (height wad)))
+      (and (= relative-line-number (+ (start-line wad) (height wad)))
+           (>= column-number (end-column wad)))))
+
 (defun position-is-inside-wad-p
     (wad line-number column-number previous-line-number)
   (let ((relative-line-number
