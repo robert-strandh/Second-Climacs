@@ -15,6 +15,18 @@
 ;;; be both the start line and the end line of the wad, in which case
 ;;; both the last criteria mentioned must be fulfilled.
 
+;;; Return true if and only if the position indicated by
+;;; RELATIVE-LINE-NUMBER and COLUMN-NUMBER is entirely before WAD.  If
+;;; WAD is an absolute wad, then RELATIVE-LINE-NUMBER is the absolute
+;;; line number of the position.  If WAD is a relative wad, then
+;;; RELATIVE-LINE-NUMBER must be the difference between the absolute
+;;; line number of the position, and the line number of the wad to
+;;; which WAD is relative.
+(defun position-is-before-wad-p (wad relative-line-number column-number)
+  (or (< relative-line-number (start-line wad))
+      (and (= relative-line-number (start-line wad))
+           (<= column-number (start-column wad)))))
+
 (defun position-is-inside-wad-p
     (wad line-number column-number previous-line-number)
   (let ((relative-line-number
