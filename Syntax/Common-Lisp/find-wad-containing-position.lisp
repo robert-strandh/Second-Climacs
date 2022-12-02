@@ -48,16 +48,17 @@
       (and (= relative-line-number (+ (start-line wad) (height wad)))
            (>= column-number (end-column wad)))))
 
-(defun position-is-inside-wad-p
-    (wad line-number column-number previous-line-number)
-  (let ((relative-line-number
-          (- line-number (if (relative-p wad) previous-line-number 0))))
-    (not (or (< relative-line-number (start-line wad))
-             (> relative-line-number (+ (start-line wad) (height wad)))
-             (and (= relative-line-number (start-line wad))
-                  (<= column-number (start-column wad)))
-             (and (= relative-line-number (+ (start-line wad) (height wad)))
-                  (>= column-number (end-column wad)))))))
+;;; Return true if and only if the position indicated by
+;;; RELATIVE-LINE-NUMBER and COLUMN-NUMBER is inside WAD.  If WAD is
+;;; an absolute wad, then RELATIVE-LINE-NUMBER must be the absolute
+;;; line number of the position.  If WAD is a relative wad, then
+;;; RELATIVE-LINE-NUMBER must be the difference between the absolute
+;;; line number of the position, and the start line of the wad to
+;;; which WAD is relative.  The position is inside WAD if it is
+;;; neither before WAD nor after WAD.
+(defun position-is-inside-wad-p (wad relative-line-number column-number)
+  (not (or (position-is-before-wad-p wad relative-line-number column-number)
+           (position-is-after-wad-p wad relative-line-number column-number))))
 
 ;;; We do a quick check to see that the prefix is not empty, and that
 ;;; the line number of the position we are looking for is at most the
