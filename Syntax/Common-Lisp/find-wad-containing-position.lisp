@@ -69,6 +69,32 @@
         when (position-is-inside-wad-p wad line-number column-number)
           return wad))
 
+;;; Return a top-level wad in the suffix of CACHE that contains the
+;;; position indicated by LINE-NUMBER and COLUMN-NUMBER.  As a second
+;;; return value, return the absolute line number of the start line of
+;;; the wad that was found.  If no wad in the prefix contains the
+;;; position, then return NIL.
+(defun find-wad-containing-position-in-suffix (cache line-number column-number)
+  (let ((suffix (suffix cache)))
+    (cond ((null suffix)
+           nil)
+          ((position-is-inside-wad-p (first suffix) line-number column-number)
+           (values (first suffix) (start-line (first suffix))))
+          (t
+           (loop with rest = (rest suffix)
+                 for wad in rest
+                 for reference-line-number = (start-line (first suffix))
+                   then (+ reference-line-number (start-line wad))
+                 for absolute-start-line
+                   = (+ reference-line-number (start-line wad))
+                 for relative-line-number
+                   = (- line-number absolute-start-line)
+                 until (position-is-before-wad-p
+                        wad relative-line-number column-number)
+                 when (position-is-inside-wad-p
+                       wad relative-line-number column-number)
+                   return (values wad absolute-start-line))))))
+
 ;;; We do a quick check to see that the prefix is not empty, and that
 ;;; the line number of the position we are looking for is at most the
 ;;; end line of the first wad of the prefix, i.e., the prefix wad that
