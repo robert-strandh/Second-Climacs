@@ -58,16 +58,14 @@
 (defun traverse-relative-wads
     (wads line-number column-number reference-line-number)
   (loop for wad in wads
-        for absolute-start-line
-          = (+ reference-line-number (start-line wad))
         for relative-line-number
-          = (- line-number absolute-start-line)
+          = (- line-number reference-line-number)
         until (position-is-before-wad-p
                wad relative-line-number column-number)
-        do (incf reference-line-number (start-line wad))
         when (position-is-inside-wad-p
               wad relative-line-number column-number)
-          return (values wad absolute-start-line)))
+          return (values wad (+ reference-line-number (start-line wad)))
+        do (incf reference-line-number (start-line wad))))
 
 ;;; Return a top-level wad in the suffix of CACHE that contains the
 ;;; position indicated by LINE-NUMBER and COLUMN-NUMBER.  As a second
