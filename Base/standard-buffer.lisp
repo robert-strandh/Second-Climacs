@@ -118,13 +118,14 @@
           (cluffer:cursor-position cursor)))
 
 ;;; Set the line number and the column number of CURSOR.
-(defun (setf cursor-positions) (cursor line-number column-number)
-  (when (cluffer:cursor-attached-p cursor)
-    (cluffer:detach-cursor cursor))
-  (cluffer:attach-cursor
-   cursor
-   (cluffer:find-line (cluffer:buffer cursor) line-number)
-   column-number))
+(defun set-cursor-positions (cursor line-number column-number)
+  (let ((buffer (cluffer:buffer cursor)))
+    (when (cluffer:cursor-attached-p cursor)
+      (cluffer:detach-cursor cursor))
+    (cluffer:attach-cursor
+     cursor
+     (cluffer:find-line buffer line-number)
+     column-number)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
