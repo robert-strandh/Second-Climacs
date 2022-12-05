@@ -159,16 +159,15 @@
 (defun exchange-cursor-and-mark (cursor)
   (unless (mark-is-set-p cursor)
     (error 'mark-not-set))
-  (let* ((cursor-line (cluffer:line cursor))
-         (cursor-position (cluffer:cursor-position cursor))
-         (buffer (buffer cursor))
-         (mark (mark buffer))
-         (mark-line (cluffer:line mark))
-         (mark-position (cluffer:cursor-position mark)))
-    (cluffer:detach-cursor cursor)
-    (cluffer:detach-cursor mark)
-    (cluffer:attach-cursor cursor mark-line mark-position)
-    (cluffer:attach-cursor mark cursor-line cursor-position)))
+  (let ((mark (find-mark cursor)))
+    (multiple-value-bind (cursor-line-number cursor-column-number)
+        (cursor-positions cursor)
+      (multiple-value-bind (mark-line-number mark-column-number)
+          (cursor-positions mark)
+        (set-cursor-positions
+         cursor mark-line-number mark-column-number)
+        (set-cursor-positions
+         mark cursor-line-number cursor-column-number)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
