@@ -109,6 +109,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Some useful helper functions.
+
+;;; Return the line number and the column number of CURSOR as two
+;;; values.
+(defun cursor-positions (cursor)
+  (values (cluffer:line-number cursor)
+          (cluffer:cursor-position cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; This function implements the essence of the command SET-THE-MARK.
 
 (defun set-the-mark (cursor)
