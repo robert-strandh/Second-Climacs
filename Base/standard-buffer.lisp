@@ -146,6 +146,10 @@
     (cluffer:detach-cursor (mark (buffer cursor)))
     (setf (mark (buffer cursor)) nil)))
 
+;;; Return the mark of the buffer of CURSOR.
+(defun find-mark (cursor)
+  (mark (buffer cursor)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; This function implements the essence of the command
