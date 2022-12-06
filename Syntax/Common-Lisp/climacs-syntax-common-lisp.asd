@@ -1,8 +1,6 @@
 (defsystem "climacs-syntax-common-lisp"
   :depends-on ("second-climacs-base"
-
                "second-climacs-clim-base"
-
                "climacs-syntax-common-lisp-base"
                "climacs-syntax-common-lisp-indentation")
   :serial t
@@ -11,7 +9,6 @@
                (:file "flexichain-folio")
                (:file "cache")
                (:file "analyzer")
-
                (:file "token")
                (:file "client")
                (:file "parse")
@@ -19,4 +16,5 @@
                (:file "view")
                (:file "set-mode")
                (:file "find-wad-beginning-line")
-               (:file "find-wad-containing-position")))
+               (:file "find-wad-containing-position")
+               (:file "motion")))
