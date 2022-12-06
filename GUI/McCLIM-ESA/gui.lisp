@@ -107,12 +107,15 @@
                            collect (base:buffer analyzer))
                      :test #'eq))
 
-(defun climacs ()
+(defun climacs (&key new-process (process-name "Climacs"))
   (let ((frame (clim:make-application-frame
                 'climacs
                 :views '()
                 :buffers '())))
-    (clim:run-frame-top-level frame)))
+    (flet ((run () (clim:run-frame-top-level frame)))
+      (if new-process
+          (clim-sys:make-process #'run :name process-name)
+          (run)))))
 
 (defmethod clim:frame-standard-input ((frame climacs))
   (clim:find-pane-named frame 'minibuffer))
