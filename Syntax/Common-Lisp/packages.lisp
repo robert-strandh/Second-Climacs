@@ -74,4 +74,6 @@
    #:min-column-number
    #:max-column-number
    #:max-line-width
-   #:indent-line))
+   #:indent-line
+
+   #:up-expression))
