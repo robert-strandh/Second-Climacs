@@ -46,4 +46,6 @@
            #:back-to-indentation
            #:mark
            #:climacs-error
-           #:mark-not-set))
+           #:mark-not-set
+           #:cursor-positions
+           #:set-cursor-positions))
