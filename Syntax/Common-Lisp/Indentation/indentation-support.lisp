@@ -254,11 +254,11 @@
   (declare (ignore analyzer))
   (let* ((window (esa:current-window))
          (view (clim:stream-default-view window))
-         (history (second-climacs-clim-base::output-history view))
+         (history (clim-base::output-history view))
          (wad (climacs-syntax-common-lisp::find-wad-beginning-line
                history line-number)))
     (unless (or (null wad) (null (indentation wad)))
-      (second-climacs-clim-base::with-current-cursor (cursor)
+      (clim-base::with-current-cursor (cursor)
         (base:beginning-of-line cursor)
         (let ((start-column (start-column wad))
               (indentation (indentation wad)))
