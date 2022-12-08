@@ -108,6 +108,11 @@
                      :test #'eq))
 
 (defun climacs (&key new-process (process-name "Climacs"))
+  (with-open-file (stream
+                   (uiop:xdg-config-home "second-climacs" "init.lisp")
+                   :if-does-not-exist nil)
+    (unless (null stream)
+      (load stream)))
   (let ((frame (clim:make-application-frame
                 'climacs
                 :views '()
