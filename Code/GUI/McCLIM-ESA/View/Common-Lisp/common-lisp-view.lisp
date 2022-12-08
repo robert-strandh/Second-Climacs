@@ -3,16 +3,16 @@
 (stealth-mixin:define-stealth-mixin
     output-history
     (clim:output-record clim:stream-output-history-mixin)
-  climacs-syntax-common-lisp:cache
+  cl-syntax:cache
   ((%parent :initarg :parent :accessor clim:output-record-parent)))
 
 (defclass common-lisp-view (clim-base:climacs-clim-view)
   ())
 
 (defmethod clim-base:make-climacs-clim-view
-    ((view climacs-syntax-common-lisp:view))
+    ((view cl-syntax:view))
   (let* ((analyzer (base:analyzer view))
-         (cache (climacs-syntax-common-lisp:folio analyzer)))
+         (cache (cl-syntax:folio analyzer)))
     (make-instance 'common-lisp-view :output-history cache
                                      :climacs-view view)))
 
@@ -148,7 +148,7 @@
                   end-line-number
                   end-column-number)
   (cond ((= start-line-number end-line-number)
-         (let ((contents (climacs-syntax-common-lisp:line-contents
+         (let ((contents (cl-syntax:line-contents
                           cache start-line-number)))
            (declare (type string contents))
            (draw-interval pane
@@ -157,7 +157,7 @@
                           start-column-number
                           end-column-number)))
         (t
-         (let ((first (climacs-syntax-common-lisp:line-contents
+         (let ((first (cl-syntax:line-contents
                        cache start-line-number)))
            (declare (type string first))
            (draw-interval pane
@@ -165,7 +165,7 @@
                           first
                           start-column-number
                           (length first)))
-         (let ((last (climacs-syntax-common-lisp:line-contents
+         (let ((last (cl-syntax:line-contents
                       cache end-line-number)))
            (declare (type string last))
            (draw-interval pane
@@ -176,7 +176,7 @@
          (loop for line-number from (1+ start-line-number)
                to (1- end-line-number)
                for contents of-type string
-                  = (climacs-syntax-common-lisp:line-contents
+                  = (cl-syntax:line-contents
                      cache line-number)
                do (draw-interval pane
                                  line-number
@@ -217,13 +217,13 @@
     (draw-area pane cache sl sc el ec)))
 
 (defmethod clim-base:command-table
-    ((view  climacs-syntax-common-lisp:view))
+    ((view  cl-syntax:view))
   (clim:find-command-table 'common-lisp-table))
 
 (stealth-mixin:define-stealth-mixin
     presentation
     (clim:standard-presentation)
-  climacs-syntax-common-lisp:wad
+  cl-syntax:wad
   (;; When this wad is an element of the PREFIX, this slot contains
    ;; the the length of the longest line of all the lines from the
    ;; beginning of the buffer and up to and including the last line of
@@ -252,8 +252,8 @@
 
 (defmethod draw-wad :around (wad start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
-  (let ((indentation (climacs-syntax-common-lisp::indentation wad))
-        (start-column (climacs-syntax-common-lisp::start-column wad)))
+  (let ((indentation (cl-syntax::indentation wad))
+        (start-column (cl-syntax::start-column wad)))
     (unless (or (null indentation) (= indentation start-column))
       (let ((gutter (clim-base:left-gutter pane)))
         (if (< indentation start-column)
@@ -262,35 +262,35 @@
   (call-next-method))
 
 (defmethod draw-wad :around
-    ((wad climacs-syntax-common-lisp:comment-wad)
+    ((wad cl-syntax:comment-wad)
      start-ref pane cache first-line last-line)
   (declare (ignore start-ref pane cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+brown+)
     (call-next-method)))
 
 (defmethod draw-wad :before
-    ((wad climacs-syntax-common-lisp:eof-wad)
+    ((wad cl-syntax:eof-wad)
      start-ref pane cache first-line last-line)
   (declare (ignore first-line last-line))
-  (let ((start-col (climacs-syntax-common-lisp:start-column wad))
-        (end-col (climacs-syntax-common-lisp:end-column wad))
-        (height (climacs-syntax-common-lisp:height wad)))
+  (let ((start-col (cl-syntax:start-column wad))
+        (end-col (cl-syntax:end-column wad))
+        (height (cl-syntax:height wad)))
     (unless (and (zerop height) (= start-col end-col))
       (draw-rectangle pane start-ref start-col (1+ start-col) clim:+orange+))))
 
 (defmethod draw-wad :around
-    ((wad climacs-syntax-common-lisp:error-wad)
+    ((wad cl-syntax:error-wad)
      start-ref pane cache first-line last-line)
   (declare (ignore start-ref pane cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+red+)
     (call-next-method)))
 
 (defun draw-non-token-wad (wad start-ref pane cache first-line last-line)
-  (flet ((start-line (wad) (climacs-syntax-common-lisp:start-line wad))
-         (start-column (wad) (climacs-syntax-common-lisp:start-column wad))
-         (height (wad) (climacs-syntax-common-lisp:height wad))
-         (end-column (wad) (climacs-syntax-common-lisp:end-column wad)))
-    (let ((children (climacs-syntax-common-lisp:children wad))
+  (flet ((start-line (wad) (cl-syntax:start-line wad))
+         (start-column (wad) (cl-syntax:start-column wad))
+         (height (wad) (cl-syntax:height wad))
+         (end-column (wad) (cl-syntax:end-column wad)))
+    (let ((children (cl-syntax:children wad))
           (prev-end-line start-ref)
           (prev-end-column (start-column wad))
           (ref start-ref))
@@ -331,10 +331,10 @@
   (draw-non-token-wad wad start-ref pane cache first-line last-line))
 
 (defmethod draw-wad
-    ((wad climacs-syntax-common-lisp:expression-wad)
+    ((wad cl-syntax:expression-wad)
      start-ref pane (cache output-history) first-line last-line)
-  (let ((expression (climacs-syntax-common-lisp:expression wad)))
-    (if (typep expression 'climacs-syntax-common-lisp:token)
+  (let ((expression (cl-syntax:expression wad)))
+    (if (typep expression 'cl-syntax:token)
         (draw-token-wad
          wad expression start-ref pane cache first-line last-line)
         (draw-non-token-wad
@@ -344,63 +344,63 @@
 ;;; of any lines in the interval.
 (defun max-line-length (folio first-line-number last-line-number)
   (loop for line-number from first-line-number to last-line-number
-        maximize (climacs-syntax-common-lisp:line-length folio line-number)))
+        maximize (cl-syntax:line-length folio line-number)))
 
-(defmethod climacs-syntax-common-lisp:push-to-prefix :before
+(defmethod cl-syntax:push-to-prefix :before
     (cache (wad presentation))
   (with-accessors ((max-line-width-list max-line-width-list)
-                   (start-line climacs-syntax-common-lisp:start-line)
-                   (max-line-width climacs-syntax-common-lisp:max-line-width))
+                   (start-line cl-syntax:start-line)
+                   (max-line-width cl-syntax:max-line-width))
       wad
-    (with-accessors ((prefix climacs-syntax-common-lisp:prefix)) cache
+    (with-accessors ((prefix cl-syntax:prefix)) cache
       (setf max-line-width-list
             (if (null prefix)
                 (max (max-line-length cache 0 (1- start-line))
                      max-line-width)
                 (let* ((first (first prefix))
-                       (end-line (climacs-syntax-common-lisp:end-line first)))
+                       (end-line (cl-syntax:end-line first)))
                   (max (max-line-width-list first)
                        (max-line-length cache (1+ end-line) (1- start-line))
                        max-line-width)))))))
 
-(defmethod climacs-syntax-common-lisp:push-to-suffix :before
+(defmethod cl-syntax:push-to-suffix :before
     (cache (wad presentation))
   (with-accessors ((max-line-width-list max-line-width-list)
-                   (end-line climacs-syntax-common-lisp:end-line)
-                   (max-line-width climacs-syntax-common-lisp:max-line-width))
+                   (end-line cl-syntax:end-line)
+                   (max-line-width cl-syntax:max-line-width))
       wad
-    (with-accessors ((suffix climacs-syntax-common-lisp:suffix)) cache
+    (with-accessors ((suffix cl-syntax:suffix)) cache
       (setf max-line-width-list
             (if (null suffix)
                 (max (max-line-length
                       cache
                       (1+ end-line)
-                      (1- (climacs-syntax-common-lisp:line-count cache)))
+                      (1- (cl-syntax:line-count cache)))
                      max-line-width)
                 (let* ((first (first suffix))
-                       (start-line (climacs-syntax-common-lisp:start-line first)))
+                       (start-line (cl-syntax:start-line first)))
                   (max (max-line-width-list first)
                        (max-line-length cache (1+ end-line) (1- start-line))
                        max-line-width)))))))
 
 (defun adjust-for-rendering (cache last-line)
-  (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
-                   (suffix climacs-syntax-common-lisp:suffix))
+  (with-accessors ((prefix cl-syntax:prefix)
+                   (suffix cl-syntax:suffix))
       cache
     (loop until (or (null suffix)
-                    (> (climacs-syntax-common-lisp:start-line (first suffix))
+                    (> (cl-syntax:start-line (first suffix))
                        last-line))
-          do (climacs-syntax-common-lisp:suffix-to-prefix cache))
+          do (cl-syntax:suffix-to-prefix cache))
     (loop until (or (null prefix)
-                    (<= (climacs-syntax-common-lisp:start-line (first prefix))
+                    (<= (cl-syntax:start-line (first prefix))
                         last-line))
-          do (climacs-syntax-common-lisp:prefix-to-suffix cache))))
+          do (cl-syntax:prefix-to-suffix cache))))
 
 (defgeneric render-empty-cache (cache pane first-line last-line))
 
 (defmethod render-empty-cache ((cache output-history) pane first-line last-line)
-  (let* ((line-count (climacs-syntax-common-lisp:line-count cache))
-         (last-line-contents (climacs-syntax-common-lisp:line-contents
+  (let* ((line-count (cl-syntax:line-count cache))
+         (last-line-contents (cl-syntax:line-contents
                               cache (1- line-count)))
          (end-column-number (length last-line-contents)))
     (draw-filtered-area pane cache
@@ -416,23 +416,23 @@
 ;;; the buffer.  This function is responsible for rendering that
 ;;; whitespace.
 (defun render-trailing-whitespace (cache pane first-line last-line)
-  (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
-                   (suffix climacs-syntax-common-lisp:suffix)
-                   (line-count climacs-syntax-common-lisp:line-count))
+  (with-accessors ((prefix cl-syntax:prefix)
+                   (suffix cl-syntax:suffix)
+                   (line-count cl-syntax:line-count))
       cache
     (unless (null prefix)
       (let ((start-line
-              (climacs-syntax-common-lisp:end-line (first prefix)))
+              (cl-syntax:end-line (first prefix)))
             (start-column
-              (climacs-syntax-common-lisp:end-column (first prefix)))
+              (cl-syntax:end-column (first prefix)))
             (end-line
               (if (null suffix)
                   (1- line-count)
-                  (climacs-syntax-common-lisp:start-line (first suffix))))
+                  (cl-syntax:start-line (first suffix))))
             (end-column
               (if (null suffix)
-                  (climacs-syntax-common-lisp:line-length cache (1- line-count))
-                  (climacs-syntax-common-lisp:start-column (first suffix)))))
+                  (cl-syntax:line-length cache (1- line-count))
+                  (cl-syntax:start-column (first suffix)))))
         (draw-filtered-area pane cache
                             start-line start-column
                             end-line end-column
@@ -443,11 +443,11 @@
 ;;; WAD2.
 (defun render-gap (cache pane wad1 wad2 first-line last-line)
   (let ((start-line
-          (if (null wad1) 0 (climacs-syntax-common-lisp:end-line wad1)))
+          (if (null wad1) 0 (cl-syntax:end-line wad1)))
         (start-column
-          (if (null wad1) 0 (climacs-syntax-common-lisp:end-column wad1)))
-        (end-line (climacs-syntax-common-lisp:start-line wad2))
-        (end-column (climacs-syntax-common-lisp:start-column wad2)))
+          (if (null wad1) 0 (cl-syntax:end-column wad1)))
+        (end-line (cl-syntax:start-line wad2))
+        (end-column (cl-syntax:start-column wad2)))
     (draw-filtered-area pane cache
                         start-line start-column
                         end-line end-column
@@ -456,8 +456,8 @@
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
-  (with-accessors ((prefix climacs-syntax-common-lisp:prefix)
-                   (suffix climacs-syntax-common-lisp:suffix))
+  (with-accessors ((prefix cl-syntax:prefix)
+                   (suffix cl-syntax:suffix))
       cache
     (cond ((and (null prefix) (null suffix))
            (render-empty-cache cache pane first-line last-line))
@@ -465,11 +465,11 @@
            (adjust-for-rendering cache last-line)
            (render-trailing-whitespace cache pane first-line last-line)
            (loop for (wad2 wad1) on prefix
-                 until (< (climacs-syntax-common-lisp:end-line wad2)
+                 until (< (cl-syntax:end-line wad2)
                           first-line)
                  do (draw-wad
                      wad2
-                     (climacs-syntax-common-lisp:start-line wad2)
+                     (cl-syntax:start-line wad2)
                      pane
                      cache
                      first-line
@@ -504,31 +504,31 @@
   (multiple-value-bind (left top right bottom)
       (viewport-area stream)
     (declare (ignore left right))
-    (let* ((line-count (climacs-syntax-common-lisp:line-count cache))
+    (let* ((line-count (cl-syntax:line-count cache))
            (last-line-number (min bottom (1- line-count))))
       (unless (minusp last-line-number)
         (render-cache cache stream top last-line-number)))))
 
 (defun gap-start (history)
-  (let ((prefix (climacs-syntax-common-lisp:prefix history)))
+  (let ((prefix (cl-syntax:prefix history)))
     (if (null prefix)
         0
-        (1+ (climacs-syntax-common-lisp:end-line (first prefix))))))
+        (1+ (cl-syntax:end-line (first prefix))))))
 
 (defun gap-end (history)
-  (let ((suffix (climacs-syntax-common-lisp:suffix history))
-        (line-count (climacs-syntax-common-lisp:line-count history)))
+  (let ((suffix (cl-syntax:suffix history))
+        (line-count (cl-syntax:line-count history)))
     (if (null suffix)
         (1- line-count)
-        (1- (climacs-syntax-common-lisp:start-line (first suffix))))))
+        (1- (cl-syntax:start-line (first suffix))))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let ((pane (clim:output-record-parent history)))
     (multiple-value-bind (width height) (text-style-dimensions pane)
-      (let* ((line-count (climacs-syntax-common-lisp:line-count history))
-             (prefix (climacs-syntax-common-lisp:prefix history))
+      (let* ((line-count (cl-syntax:line-count history))
+             (prefix (cl-syntax:prefix history))
              (gap-start (gap-start history))
-             (suffix (climacs-syntax-common-lisp:suffix history))
+             (suffix (cl-syntax:suffix history))
              (gap-end (gap-end history))
              (total-width (max (max-line-width-list prefix)
                                (max-line-length history gap-start gap-end)
@@ -564,14 +564,14 @@
 
 (defun update-cache (view pane analyzer)
   (declare (ignore view pane))
-  (let* ((cache (climacs-syntax-common-lisp:folio analyzer))
+  (let* ((cache (cl-syntax:folio analyzer))
          (climacs-buffer (base:buffer analyzer))
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
-    (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
-    (climacs-syntax-common-lisp:read-forms analyzer)))
+    (cl-syntax:scavenge cache cluffer-buffer)
+    (cl-syntax:read-forms analyzer)))
 
 (defmethod base:update-view-from-analyzer
-    ((view climacs-syntax-common-lisp:view)
+    ((view cl-syntax:view)
      (pane clim-base:text-pane)
-     (analyzer climacs-syntax-common-lisp:analyzer))
+     (analyzer cl-syntax:analyzer))
   (update-cache view pane analyzer))

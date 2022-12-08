@@ -13,13 +13,13 @@
   (let* ((view (clim:stream-default-view (esa:current-window)))
          (climacs-view (clim-base:climacs-view view))
          (analyzer (base:analyzer climacs-view))
-         (cache (climacs-syntax-common-lisp:folio analyzer))
+         (cache (cl-syntax:folio analyzer))
          (climacs-buffer (base:buffer analyzer))
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
-    (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
-    (climacs-syntax-common-lisp:read-forms analyzer)
+    (cl-syntax:scavenge cache cluffer-buffer)
+    (cl-syntax:read-forms analyzer)
     (clim-base:with-current-cursor (cursor)
-      (climacs-syntax-common-lisp:up-expression cache cursor))))
+      (cl-syntax:up-expression cache cursor))))
 
 (esa:set-key `(com-up-expression)
 	     'common-lisp-table
