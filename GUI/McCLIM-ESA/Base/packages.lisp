@@ -16,4 +16,7 @@
    #:climacs-view
    #:view-name
    #:update-view
-   #:command-table))
+   #:command-table
+   #:left-gutter
+   #:with-current-cursor-and-view
+   #:with-current-cursor))
