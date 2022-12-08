@@ -11,7 +11,7 @@
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
     (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
     (climacs-syntax-common-lisp:read-forms analyzer)
-    (clim-base::with-current-cursor (cursor)
+    (clim-base:with-current-cursor (cursor)
       (climacs-syntax-common-lisp:indent-line
        analyzer (cluffer:line-number cursor)))))
 
