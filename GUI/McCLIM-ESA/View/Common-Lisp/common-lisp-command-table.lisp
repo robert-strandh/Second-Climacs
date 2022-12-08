@@ -18,7 +18,7 @@
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
     (climacs-syntax-common-lisp:scavenge cache cluffer-buffer)
     (climacs-syntax-common-lisp:read-forms analyzer)
-    (second-climacs-clim-base::with-current-cursor (cursor)
+    (clim-base::with-current-cursor (cursor)
       (climacs-syntax-common-lisp:up-expression cache cursor))))
 
 (esa:set-key `(com-up-expression)

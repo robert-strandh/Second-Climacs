@@ -255,7 +255,7 @@
   (let ((indentation (climacs-syntax-common-lisp::indentation wad))
         (start-column (climacs-syntax-common-lisp::start-column wad)))
     (unless (or (null indentation) (= indentation start-column))
-      (let ((gutter (second-climacs-clim-base::left-gutter pane)))
+      (let ((gutter (clim-base::left-gutter pane)))
         (if (< indentation start-column)
             (draw-left-arrow pane gutter start-ref clim:+blue+)
             (draw-right-arrow pane gutter start-ref clim:+blue+)))))
