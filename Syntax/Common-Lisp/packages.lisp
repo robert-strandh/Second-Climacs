@@ -5,7 +5,8 @@
   (:shadow #:package-name #:symbol-name)
   (:local-nicknames (#:reader #:eclector.reader)
                     (#:readtable #:eclector.readtable)
-                    (#:base #:second-climacs-base))
+                    (#:base #:second-climacs-base)
+                    (#:clim-base #:second-climacs-clim-base))
   (:export
    #:folio
    #:line-count
