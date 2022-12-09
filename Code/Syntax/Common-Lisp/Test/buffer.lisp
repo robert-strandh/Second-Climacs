@@ -17,16 +17,16 @@
     buffer))
 
 (defun analyzer-from-buffer (buffer)
-  (let ((cache (make-instance 'climacs-syntax-common-lisp::cache)))
-    (make-instance 'climacs-syntax-common-lisp::analyzer
+  (let ((cache (make-instance 'cl-syntax::cache)))
+    (make-instance 'cl-syntax::analyzer
       :buffer buffer)))
       :folio cache))
 
 (defun forms-from-cache (cache)
-  (append (reverse (mapcar #'climacs-syntax-common-lisp::expression
-			   (climacs-syntax-common-lisp::prefix cache)))
-	  (mapcar #'climacs-syntax-common-lisp::expression
-		  (climacs-syntax-common-lisp::suffix cache))))
+  (append (reverse (mapcar #'cl-syntax::expression
+			   (cl-syntax::prefix cache)))
+	  (mapcar #'cl-syntax::expression
+		  (cl-syntax::suffix cache))))
 
 ;;; Mark a buffer line as modified without really modifying it by
 ;;; inserting an item in the first position and then immediately

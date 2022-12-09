@@ -137,21 +137,21 @@
 ;;; Compare a wad with an absolute location to a node.  The children
 ;;; of the wad have relative locations as usual.
 (defun equal-absolute (wad node)
-  (and (= (climacs-syntax-common-lisp::start-line wad)
+  (and (= (cl-syntax::start-line wad)
 	  (start-line node))
-       (= (climacs-syntax-common-lisp::end-line wad)
+       (= (cl-syntax::end-line wad)
 	  (end-line node))
-       (equal-relative-list (climacs-syntax-common-lisp::children wad)
+       (equal-relative-list (cl-syntax::children wad)
 			    (children node)
 			    (start-line node))))
 
 ;;; Compare a wad with a relative location to a node.
 (defun equal-relative (wad node base)
-  (and (= (climacs-syntax-common-lisp::start-line wad)
+  (and (= (cl-syntax::start-line wad)
 	  (- (start-line node) base))
-       (= (climacs-syntax-common-lisp::height wad)
+       (= (cl-syntax::height wad)
 	  (- (end-line node) (start-line node)))
-       (equal-relative-list (climacs-syntax-common-lisp::children wad)
+       (equal-relative-list (cl-syntax::children wad)
 			    (children node)
 			    (start-line node))))
 
@@ -163,9 +163,9 @@
 			   (+ base (start-line (first nodes))))))
 
 (defun compare-caches (cache test-cache)
-  (let ((prefix (climacs-syntax-common-lisp::prefix cache))
-	(residue (climacs-syntax-common-lisp::residue cache))
-	(suffix (climacs-syntax-common-lisp::suffix cache))
+  (let ((prefix (cl-syntax::prefix cache))
+	(residue (cl-syntax::residue cache))
+	(suffix (cl-syntax::suffix cache))
 	(nodes (nodes test-cache)))
     (assert (= (length nodes)
 	       (+ (length prefix)
@@ -184,7 +184,7 @@
 ;;; Given a node, create a wad with an absolute location.  The
 ;;; children of the wads have relative locations as usual.
 (defun make-absolute (node)
-  (make-instance 'climacs-syntax-common-lisp::wad
+  (make-instance 'cl-syntax::wad
     :start-line (start-line node)
     :height (- (end-line node) (start-line node))
     :children (make-relative-list (children node) (start-line node))
@@ -192,7 +192,7 @@
 
 ;;; Given a node, create a wad with a relative location.
 (defun make-relative (node base)
-  (make-instance 'climacs-syntax-common-lisp::wad
+  (make-instance 'cl-syntax::wad
     :start-line (- (start-line node) base)
     :height (- (end-line node) (start-line node))
     :children (make-relative-list (children node) (start-line node))
@@ -212,14 +212,14 @@
 			       repeat prefix-length
 			       collect (make-absolute node)))
 	 (rest (nthcdr prefix-length (nodes test-cache)))
-	 (cache (make-instance 'climacs-syntax-common-lisp::cache)))
-    (setf (climacs-syntax-common-lisp::prefix cache)
+	 (cache (make-instance 'cl-syntax::cache)))
+    (setf (cl-syntax::prefix cache)
 	  (reverse reverse-prefix))
     (unless (null rest)
       (let* ((suffix-start (start-line (first rest)))
 	     (suffix (cons (make-absolute (first rest))
 			   (make-relative-list (rest rest) suffix-start))))
-	(setf (climacs-syntax-common-lisp::suffix cache) suffix)))
+	(setf (cl-syntax::suffix cache) suffix)))
     cache))
 
 (defun test-translation-and-comparison (n)

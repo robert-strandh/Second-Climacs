@@ -2,17 +2,17 @@
 
 ;;; The CONTENTS slot contains a vector of lines, where each line is a
 ;;; vector of items.
-(defclass vector-folio (climacs-syntax-common-lisp:folio)
+(defclass vector-folio (cl-syntax:folio)
   ((%contents :initarg :contents :accessor contents)))
 
-(defmethod climacs-syntax-common-lisp:line-count
+(defmethod cl-syntax:line-count
     ((folio vector-folio))
   (length (contents folio)))
 
-(defmethod climacs-syntax-common-lisp:line-length
+(defmethod cl-syntax:line-length
     ((folio vector-folio) line-number)
   (length (aref (contents folio) line-number)))
 
-(defmethod climacs-syntax-common-lisp:item
+(defmethod cl-syntax:item
     ((folio vector-folio) line-number item-number)
   (aref (aref (contents folio) line-number) item-number))
