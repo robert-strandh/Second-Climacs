@@ -255,7 +255,7 @@
   (let* ((window (esa:current-window))
          (view (clim:stream-default-view window))
          (history (clim-base::output-history view))
-         (wad (climacs-syntax-common-lisp::find-wad-beginning-line
+         (wad (find-wad-beginning-line
                history line-number)))
     (unless (or (null wad) (null (indentation wad)))
       (clim-base::with-current-cursor (cursor)
