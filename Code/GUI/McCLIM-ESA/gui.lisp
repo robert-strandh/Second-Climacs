@@ -65,7 +65,7 @@
                                            :width 900))
              ;; (view (make-instance 'climacs-syntax-fundamental:view
              ;;        :buffer buffer :cursor cursor))
-             (view (make-instance 'climacs-syntax-common-lisp:view
+             (view (make-instance 'cl-syntax:view
                      :buffer buffer :cursor cursor)))
         (setf (clim:stream-recording-p my-pane) nil)
         (setf (clim:stream-end-of-line-action my-pane) :allow)
