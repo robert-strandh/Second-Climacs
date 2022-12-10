@@ -9,6 +9,7 @@
                (:file "null-analyzer")
                (:file "view")
                (:file "view-class")
+               (:file "view-name")
                (:file "fundamental-view")
                (:file "window")
                (:file "application")
