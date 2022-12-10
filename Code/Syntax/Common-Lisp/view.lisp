@@ -13,5 +13,5 @@
                            :cursor cursor
                            :analyzer analyzer)))
 
-(defmethod clim-base:view-name ((view view))
+(defmethod base:view-name ((view view))
   "Common Lisp")

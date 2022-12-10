@@ -8,5 +8,5 @@
                            :cursor cursor
                            :analyzer analyzer)))
 
-(defmethod second-climacs-clim-base:view-name ((view view))
+(defmethod base:view-name ((view view))
   "Fundamental")
