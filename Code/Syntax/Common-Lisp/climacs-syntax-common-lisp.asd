@@ -1,6 +1,5 @@
 (defsystem "climacs-syntax-common-lisp"
   :depends-on ("second-climacs-base"
-               "second-climacs-clim-base"
                "climacs-syntax-common-lisp-base"
                "climacs-syntax-common-lisp-indentation")
   :serial t
