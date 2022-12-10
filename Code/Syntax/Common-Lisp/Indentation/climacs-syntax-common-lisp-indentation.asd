@@ -1,5 +1,5 @@
 (defsystem "climacs-syntax-common-lisp-indentation"
-  :depends-on ("climacs-syntax-common-lisp-base")
+  :depends-on ("second-climacs-syntax-common-lisp-base")
   :serial t
   :components ((:file "indentation-support")
                (:file "define-indentation-defmacro")
