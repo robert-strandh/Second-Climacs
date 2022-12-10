@@ -8,7 +8,6 @@
   :components ((:file "packages")
                (:file "climacs-clim-view")
                (:file "esa-buffer")
-               (:file "view-name")
                (:file "text-pane")
                (:file "with-current-cursor")
                (:file "insert-table")
