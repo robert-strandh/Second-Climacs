@@ -2,7 +2,8 @@
   :depends-on ("mcclim"
                "second-climacs-base"
                "clouseau"
-               "stealth-mixin")
+               "stealth-mixin"
+               "climacs-syntax-common-lisp")
   :serial t
   :components ((:file "packages")
                (:file "climacs-clim-view")
