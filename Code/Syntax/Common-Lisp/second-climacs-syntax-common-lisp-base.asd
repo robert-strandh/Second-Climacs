@@ -1,4 +1,4 @@
-(defsystem "climacs-syntax-common-lisp-base"
+(defsystem "second-climacs-syntax-common-lisp-base"
   :depends-on ("trivial-gray-streams"
                "cluffer"
                "flexichain"
