@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp-test)
+(cl:in-package #:second-climacs-syntax-common-lisp-test)
 
 ;;; We define a simplified version of the wad.  It is simplified in
 ;;; that it always has absolute line numbers in it, and there are no

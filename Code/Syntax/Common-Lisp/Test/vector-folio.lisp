@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp-test)
+(cl:in-package #:second-climacs-syntax-common-lisp-test)
 
 ;;; The CONTENTS slot contains a vector of lines, where each line is a
 ;;; vector of items.

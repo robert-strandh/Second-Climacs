@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp-test)
+(cl:in-package #:second-climacs-syntax-common-lisp-test)
 
 (defun buffer-from-string (string)
   (let* ((line (make-instance 'cluffer-standard-line:open-line))

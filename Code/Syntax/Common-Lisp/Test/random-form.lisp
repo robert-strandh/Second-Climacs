@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp-test)
+(cl:in-package #:second-climacs-syntax-common-lisp-test)
 
 (defun random-integer ()
   (random 1000000))
