@@ -12,8 +12,7 @@
     (cl-syntax:scavenge cache cluffer-buffer)
     (cl-syntax:read-forms analyzer)
     (clim-base:with-current-cursor (cursor)
-      (cl-syntax:indent-line
-       analyzer (cluffer:line-number cursor)))))
+      (cl-syntax:indent-line cache cursor))))
 
 (esa:set-key `(com-indent-line)
 	     'common-lisp-table
