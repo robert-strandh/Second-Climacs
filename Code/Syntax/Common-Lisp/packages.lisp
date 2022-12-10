@@ -3,10 +3,11 @@
 (defpackage #:climacs-syntax-common-lisp
   (:use #:common-lisp)
   (:shadow #:package-name #:symbol-name)
+  ;; FIXME: Remove this nickname when no longer referred to.
+  (:nicknames #:second-climacs-syntax-common-lisp)
   (:local-nicknames (#:reader #:eclector.reader)
                     (#:readtable #:eclector.readtable)
-                    (#:base #:second-climacs-base)
-                    (#:clim-base #:second-climacs-clim-base))
+                    (#:base #:second-climacs-base))
   (:export
    #:folio
    #:line-count
