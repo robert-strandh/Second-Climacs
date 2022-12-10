@@ -1,7 +1,7 @@
 (defsystem "climacs-syntax-common-lisp"
   :depends-on ("second-climacs-base"
                "second-climacs-syntax-common-lisp-base"
-               "climacs-syntax-common-lisp-indentation")
+               "second-climacs-syntax-common-lisp-indentation")
   :serial t
   :components ((:file "folio")
                (:file "folio-stream")
