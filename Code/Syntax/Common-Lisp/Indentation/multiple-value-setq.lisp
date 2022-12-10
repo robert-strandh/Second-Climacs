@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; MULTIPLE-VALUE-SETQ does not have a body, only a single form.  But
 ;;; we must do something reasonable even if the programmer got the

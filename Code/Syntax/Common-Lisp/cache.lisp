@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; We do not use the line object from Cluffer directly, because the
 ;;; contents of such a line may change after we have asked for it, so

@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; Compute the indentation for a wad representing a single LET or
 ;;; LET* binding.

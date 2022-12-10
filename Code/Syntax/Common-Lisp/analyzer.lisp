@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 (defclass analyzer (folio-stream base:analyzer)
   ())

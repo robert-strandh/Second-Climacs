@@ -2,8 +2,9 @@
 
 (defpackage #:second-climacs-clim-base
   (:use #:common-lisp)
-  (:local-nicknames (#:base #:second-climacs-base)
-                    (#:cl-syntax #:climacs-syntax-common-lisp))
+  (:local-nicknames
+   (#:base #:second-climacs-base)
+   (#:cl-syntax #:second-climacs-syntax-common-lisp))
   (:export
    #:climacs
    #:text-pane

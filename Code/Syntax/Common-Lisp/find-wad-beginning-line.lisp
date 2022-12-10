@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; This function is used by the INDENT-LINE command.  Given a line
 ;;; number, it returns a wad that starts on a particular line number,

@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 (defclass client (eclector.parse-result:parse-result-client)
   ;; TODO it would be nicer not to store the stream in the client like

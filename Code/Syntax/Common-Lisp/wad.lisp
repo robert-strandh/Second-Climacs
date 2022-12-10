@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; A WAD is the result of parsing an expression or some material that
 ;;; is normally skipped, such as a comment or an inactive reader

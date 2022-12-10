@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; A folio stream is a stream that uses a folio as a source for the
 ;;; items to return as a result of reading.

@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; Return true if and only if the position indicated by
 ;;; RELATIVE-LINE-NUMBER and COLUMN-NUMBER is entirely before WAD.  If

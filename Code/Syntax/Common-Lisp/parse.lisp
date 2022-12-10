@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; PARSE-AND-CACHE collects Eclector errors in *ERRORS* during
 ;;; parsing and ADD-CHILDREN adds the resulting ERROR-WADs to the

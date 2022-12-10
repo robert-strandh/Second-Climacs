@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; We indent MAKE-INSTANCE in a special way, because we can then
 ;;; often both save horizontal space and make the form more readable.

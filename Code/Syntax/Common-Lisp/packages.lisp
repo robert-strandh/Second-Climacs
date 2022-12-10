@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:climacs-syntax-common-lisp
+(defpackage #:second-climacs-syntax-common-lisp
   (:use #:common-lisp)
   (:shadow #:package-name #:symbol-name)
   ;; FIXME: Remove this nickname when no longer referred to.

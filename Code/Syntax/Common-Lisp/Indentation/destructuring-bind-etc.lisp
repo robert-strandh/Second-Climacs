@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 (defun compute-indentation-destruturing-bind-etc (wad client)
   (let* ((arguments (rest (children wad)))

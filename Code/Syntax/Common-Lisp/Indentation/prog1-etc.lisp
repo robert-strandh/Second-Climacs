@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 (defun indent-prog1-etc (wad client)
   (compute-indentation-single-distinguished

@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 (defun compute-setf-and-setq-indentation (wad client)
   (flet ((indent-argument (argument indentation)

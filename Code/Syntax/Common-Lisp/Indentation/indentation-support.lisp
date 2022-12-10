@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; This generic function is called on any wad.  It determines what
 ;;; kind of wad it is and either calls some specific indentation

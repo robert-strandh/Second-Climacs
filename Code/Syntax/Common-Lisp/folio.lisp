@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-common-lisp)
+(cl:in-package #:second-climacs-syntax-common-lisp)
 
 ;;; This file contains the definition of a protocol called FOLIO.
 ;;; Conceptually, a folio consists of a certain number of LINEs, each
