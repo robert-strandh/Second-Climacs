@@ -14,7 +14,7 @@
     (format info-pane
             " ~a (~a)"
             (esa-utils:name (esa:current-buffer))
-            (view-name climacs-view))))
+            (base:view-name climacs-view))))
 
 (defclass minibuffer-pane (esa:minibuffer-pane)
   ()
