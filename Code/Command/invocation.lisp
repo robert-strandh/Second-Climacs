@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-command)
+(cl:in-package #:second-climacs-command)
 
 (defclass invocation ()
   ())

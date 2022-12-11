@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-command)
+(cl:in-package #:second-climacs-command)
 
 ;;; A COMMAND consists of two parts:
 ;;;

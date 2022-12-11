@@ -1,5 +1,5 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:climacs-command
+(defpackage #:second-climacs-command
   (:use #:common-lisp)
   (:export))
