@@ -3,16 +3,16 @@
 (stealth-mixin:define-stealth-mixin
     output-history
     (clim:output-record clim:stream-output-history-mixin)
-  climacs-syntax-fundamental:analyzer
+  fundamental-syntax:analyzer
   ((%parent :initarg :parent :accessor clim:output-record-parent)
    (%max-widths-prefix :initform '() :accessor max-widths-prefix)
    (%max-widths-suffix :initform '() :accessor max-widths-suffix)))
 
-(defmethod climacs-syntax-fundamental:push-to-prefix :after
+(defmethod fundamental-syntax:push-to-prefix :after
     ((analyzer output-history) entry)
-  (with-accessors ((prefix climacs-syntax-fundamental:prefix)) analyzer
-    (with-accessors ((contents climacs-syntax-fundamental:contents)
-                     (list-length climacs-syntax-fundamental:list-length))
+  (with-accessors ((prefix fundamental-syntax:prefix)) analyzer
+    (with-accessors ((contents fundamental-syntax:contents)
+                     (list-length fundamental-syntax:list-length))
         entry
       (push (max (if (null (rest prefix))
                      0
@@ -20,15 +20,15 @@
                  (length contents))
             (max-widths-prefix analyzer)))))
 
-(defmethod climacs-syntax-fundamental:pop-from-prefix :after
+(defmethod fundamental-syntax:pop-from-prefix :after
     ((analyzer output-history))
   (pop (max-widths-prefix analyzer)))
 
-(defmethod climacs-syntax-fundamental:push-to-suffix :after
+(defmethod fundamental-syntax:push-to-suffix :after
     ((analyzer output-history) entry)
-  (with-accessors ((suffix climacs-syntax-fundamental:suffix)) analyzer
-    (with-accessors ((contents climacs-syntax-fundamental:contents)
-                     (list-length climacs-syntax-fundamental:list-length))
+  (with-accessors ((suffix fundamental-syntax:suffix)) analyzer
+    (with-accessors ((contents fundamental-syntax:contents)
+                     (list-length fundamental-syntax:list-length))
         entry
       (push (max (if (null (rest suffix))
                      0
@@ -36,7 +36,7 @@
                  (length contents))
             (max-widths-suffix analyzer)))))
 
-(defmethod climacs-syntax-fundamental:pop-from-suffix :after
+(defmethod fundamental-syntax:pop-from-suffix :after
     ((analyzer output-history))
   (pop (max-widths-suffix analyzer)))
 
@@ -44,7 +44,7 @@
   ())
 
 (defmethod clim-base:make-climacs-clim-view
-    ((view climacs-syntax-fundamental:view))
+    ((view fundamental-syntax:view))
   (let ((analyzer (base:analyzer view)))
     (make-instance 'fundamental-view
       :output-history analyzer
@@ -91,39 +91,39 @@
           (clim:draw-text* pane string 0 y)))))
 
 (defun adjust-for-rendering (analyzer last-line)
-  (with-accessors ((prefix climacs-syntax-fundamental:prefix)
-                   (suffix climacs-syntax-fundamental:suffix))
+  (with-accessors ((prefix fundamental-syntax:prefix)
+                   (suffix fundamental-syntax:suffix))
       analyzer
     (loop until (or (null suffix)
-                    (>= (1- (climacs-syntax-fundamental:list-length prefix))
+                    (>= (1- (fundamental-syntax:list-length prefix))
                         last-line))
-          do (climacs-syntax-fundamental:suffix-to-prefix analyzer))
+          do (fundamental-syntax:suffix-to-prefix analyzer))
     (loop until (or (null prefix)
-                    (<= (1- (climacs-syntax-fundamental:list-length prefix))
+                    (<= (1- (fundamental-syntax:list-length prefix))
                         last-line))
-          do (climacs-syntax-fundamental:prefix-to-suffix analyzer))))
+          do (fundamental-syntax:prefix-to-suffix analyzer))))
 
 (defgeneric render (analyzer pane first-line last-line))
 
 (defmethod render ((analyzer output-history) pane first-line last-line)
   (adjust-for-rendering analyzer last-line)
-  (loop with prefix = (climacs-syntax-fundamental:prefix analyzer)
+  (loop with prefix = (fundamental-syntax:prefix analyzer)
         for entry in prefix
-        for line-number = (1- (climacs-syntax-fundamental:list-length entry))
-        for contents = (climacs-syntax-fundamental:contents entry)
+        for line-number = (1- (fundamental-syntax:list-length entry))
+        for contents = (fundamental-syntax:contents entry)
         until (< line-number first-line)
         do (draw-line pane analyzer contents line-number)))
 
 (defun line-count (analyzer)
-  (with-accessors ((prefix climacs-syntax-fundamental:prefix)
-                   (suffix climacs-syntax-fundamental:suffix))
+  (with-accessors ((prefix fundamental-syntax:prefix)
+                   (suffix fundamental-syntax:suffix))
       analyzer
     (+ (if (null prefix)
            0
-           (climacs-syntax-fundamental:list-length (first prefix)))
+           (fundamental-syntax:list-length (first prefix)))
        (if (null suffix)
            0
-           (climacs-syntax-fundamental:list-length (first suffix))))))
+           (fundamental-syntax:list-length (first suffix))))))
 
 (defmethod clim:replay-output-record
     ((analyzer output-history) stream &optional region x-offset y-offset)
@@ -143,8 +143,8 @@
         (render analyzer stream first-line-number last-line-number)))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
-  (with-accessors ((prefix climacs-syntax-fundamental:prefix)
-                   (suffix climacs-syntax-fundamental:suffix))
+  (with-accessors ((prefix fundamental-syntax:prefix)
+                   (suffix fundamental-syntax:suffix))
     history
     (let* ((stream (clim:output-record-parent history))
            (text-style (clim:medium-text-style stream))
@@ -192,14 +192,14 @@
   (declare (ignore view pane))
   (let* ((climacs-buffer (base:buffer analyzer))
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
-    (climacs-syntax-fundamental:scavenge analyzer cluffer-buffer)))
+    (fundamental-syntax:scavenge analyzer cluffer-buffer)))
 
 (defmethod base:update-view-from-analyzer
-    ((view climacs-syntax-fundamental:view)
+    ((view fundamental-syntax:view)
      (pane clim-base:text-pane)
-     (analyzer climacs-syntax-fundamental:analyzer))
+     (analyzer fundamental-syntax:analyzer))
   (update-analyzer view pane analyzer))
 
 (defmethod clim-base:command-table
-    ((view  climacs-syntax-fundamental:view))
+    ((view  fundamental-syntax:view))
   (clim:find-command-table 'fundamental-table))
