@@ -1,4 +1,4 @@
-(defsystem "climacs-syntax-common-lisp"
+(defsystem "second-climacs-syntax-common-lisp"
   :depends-on ("second-climacs-base"
                "second-climacs-syntax-common-lisp-base"
                "second-climacs-syntax-common-lisp-indentation")
