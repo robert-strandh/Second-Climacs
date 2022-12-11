@@ -4,7 +4,7 @@
                "clouseau"
                "stealth-mixin"
                "second-climacs-syntax-fundamental"
-               "climacs-syntax-common-lisp")
+               "second-climacs-syntax-common-lisp")
   :serial t
   :components ((:file "packages")
                (:file "climacs-clim-view")

@@ -1,6 +1,6 @@
 (defsystem "second-climacs-clim-common-lisp-view"
   :depends-on ("second-climacs-clim-base"
-               "climacs-syntax-common-lisp"
+               "second-climacs-syntax-common-lisp"
                "stealth-mixin")
   :serial t
   :components ((:file "packages")
