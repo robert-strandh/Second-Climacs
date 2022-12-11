@@ -63,7 +63,7 @@
              (my-info-pane (clim:make-pane 'info-pane
                                            :master-pane my-pane
                                            :width 900))
-             ;; (view (make-instance 'climacs-syntax-fundamental:view
+             ;; (view (make-instance 'fundamental-syntax:view
              ;;        :buffer buffer :cursor cursor))
              (view (make-instance 'cl-syntax:view
                      :buffer buffer :cursor cursor)))

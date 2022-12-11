@@ -38,7 +38,7 @@
          (first-line (cluffer:find-line cluffer-buffer 0))
          (window (esa:current-window)))
     (when (null view-class)
-      (setf view-class 'climacs-syntax-fundamental:view))
+      (setf view-class 'fundamental-syntax:view))
     (let* ((cursor (make-instance 'base:standard-cursor
                      :buffer buffer))
            (view (make-instance view-class :buffer buffer :cursor cursor)))
