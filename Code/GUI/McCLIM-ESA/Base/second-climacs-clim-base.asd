@@ -3,6 +3,7 @@
                "second-climacs-base"
                "clouseau"
                "stealth-mixin"
+               "climacs-syntax-fundamental"
                "climacs-syntax-common-lisp")
   :serial t
   :components ((:file "packages")
