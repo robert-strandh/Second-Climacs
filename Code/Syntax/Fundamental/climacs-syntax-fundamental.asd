@@ -1,4 +1,4 @@
-(defsystem "climacs-syntax-fundamental"
+(defsystem "second-climacs-syntax-fundamental"
   :depends-on ("cluffer"
                "second-climacs-base")
   :serial t
