@@ -1,4 +1,4 @@
-(defsystem "climacs-command"
+(defsystem "second-climacs-command"
   :depends-on ("acclimation")
   :serial t
   :components ((:file "packages")
