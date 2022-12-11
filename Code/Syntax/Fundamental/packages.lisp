@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:climacs-syntax-fundamental
+(defpackage #:second-climacs-syntax-fundamental
   (:use #:common-lisp)
   (:local-nicknames (#:base #:second-climacs-base))
   (:shadow #:list-length)

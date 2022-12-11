@@ -5,5 +5,5 @@
   (:local-nicknames
    (#:clim-base #:second-climacs-clim-base)
    (#:base #:second-climacs-base)
-   (#:fundamental-syntax #:climacs-syntax-fundamental))
+   (#:fundamental-syntax #:second-climacs-syntax-fundamental))
   (:export #:fundamental-view))

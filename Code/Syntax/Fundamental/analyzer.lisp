@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-fundamental)
+(cl:in-package #:second-climacs-syntax-fundamental)
 
 (defgeneric list-length (list-or-entry)
   (:method ((list null))

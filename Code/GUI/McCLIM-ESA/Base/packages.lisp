@@ -5,7 +5,7 @@
   (:local-nicknames
    (#:base #:second-climacs-base)
    (#:cl-syntax #:second-climacs-syntax-common-lisp)
-   (#:fundamental-syntax #:climacs-syntax-fundamental))
+   (#:fundamental-syntax #:second-climacs-syntax-fundamental))
   (:export
    #:climacs
    #:text-pane

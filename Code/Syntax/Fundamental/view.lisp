@@ -1,4 +1,4 @@
-(cl:in-package #:climacs-syntax-fundamental)
+(cl:in-package #:second-climacs-syntax-fundamental)
 
 (defclass view (base:view) ())
 
