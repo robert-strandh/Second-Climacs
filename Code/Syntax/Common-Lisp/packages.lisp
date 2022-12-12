@@ -78,4 +78,5 @@
    #:max-line-width
    #:indent-line
 
-   #:up-expression))
+   #:up-expression
+   #:forward-expression))
