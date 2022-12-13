@@ -11,6 +11,17 @@
 ;;; list of relative wads.  In that case, REFERENCE-LINE is the
 ;;; absolute line number to which the first wad is relative.
 
+;;; FUNCTION is a function of two arguments, the wad and the absolute
+;;; start line of that wad.
+
+(defun mapwad-from-beginning (function wads reference-line-number)
+  (loop for reference = reference-line-number
+          then absolute-line-number
+        for wad in wads
+        for absolute-line-number
+          = (+ (start-line wad) (if (relative-p wad) reference 0))
+        do (funcall function wad absolute-line-number)))
+
 (defun mapwad (function wads reference-line &key from-end)
   (if from-end
       (mapwad-from-end function wads reference-line)
