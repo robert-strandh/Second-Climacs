@@ -14,6 +14,7 @@
                (:file "read-forms")
                (:file "view")
                (:file "set-mode")
+               (:file "mapwad")
                (:file "find-wad-beginning-line")
                (:file "find-wad-containing-position")
                (:file "motion")))
