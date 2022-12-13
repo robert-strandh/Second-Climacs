@@ -22,6 +22,16 @@
           = (+ (start-line wad) (if (relative-p wad) reference 0))
         do (funcall function wad absolute-line-number)))
 
+(defun mapwad-from-end (function wads reference-line-number)
+  (let ((pairs '()))
+    (mapwad-from-beginning
+     (lambda (wad absolute-line-number)
+       (push (cons wad absolute-line-number) pairs))
+     wads
+     reference-line-number)
+    (loop for (wad . absolute-line-number) in pairs
+          do (funcall function wad absolute-line-number))))
+
 (defun mapwad (function wads reference-line &key from-end)
   (if from-end
       (mapwad-from-end function wads reference-line)
