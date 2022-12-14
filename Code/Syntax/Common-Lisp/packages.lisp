@@ -79,4 +79,5 @@
    #:indent-line
 
    #:up-expression
-   #:forward-expression))
+   #:forward-expression
+   #:backward-expression))
