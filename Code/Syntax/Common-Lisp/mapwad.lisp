@@ -1,15 +1,14 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-;;; There are three possible lists of wads that can be given to us.
-;;; It can be a list of absolute wads, coming from the cache prefix.
-;;; In that case, we want to ignore REFERENCE-LINE altogether and just
-;;; use the absolute line numbers of the wads in the list.  It can be
-;;; a list where the first wad is absolute and the remaining wads are
-;;; relative, coming form the cache suffix.  In that case, we again
-;;; want to ignore REFERENCE-LINE, and use the absolute line of the
-;;; first wad as a reference for the remaining wads.  Or it can be a
-;;; list of relative wads.  In that case, REFERENCE-LINE is the
-;;; absolute line number to which the first wad is relative.
+;;; MAPWAD calls a function for each wad in a list of wads given as
+;;; argument.  A wad in the list can be relative or absolute.  If a
+;;; wad is absolute, then the START-LINE of that wad is absolute.  If
+;;; a wad is relative, then the START-LINE of that wad is relative to
+;;; some reference.  If the first wad of the list of wads that was
+;;; passed as an argument is a relative wad, then the START-LINE of
+;;; that wad is relative to REFERENCE-LINE-NUMBER.  Otherwise, it is
+;;; relative to the absolute start line of the previous wad in the
+;;; list.
 
 ;;; FUNCTION is a function of two arguments, the wad and the absolute
 ;;; start line of that wad.
