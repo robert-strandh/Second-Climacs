@@ -17,4 +17,5 @@
                (:file "mapwad")
                (:file "find-wad-beginning-line")
                (:file "find-wad-containing-position")
-               (:file "motion")))
+               (:file "motion")
+               (:file "regions")))
