@@ -65,24 +65,31 @@
          (end-column wad)))))
 
 (defun forward-non-top-level-expression (parent-wad line-number cursor)
-  (multiple-value-bind (cursor-line-number cursor-column-number)
-      (base:cursor-positions cursor)
-    (loop for reference = line-number
-            then (+ reference (start-line child))
-          for child in (children parent-wad)
-          when (position-is-before-wad-p
-                child
-                (- cursor-line-number reference)
-                cursor-column-number)
-            do (base:set-cursor-positions
-                cursor
-                (+ reference (start-line child) (height child))
-                (end-column child))
-               (return)
-          finally ;; We come here when every child has been examined and
-                  ;; no child starts after the cursor, so there is no
-                  ;; child to forward over.
-                  (error 'no-following-expression))))
+  (if (or (typep parent-wad 'no-expression-wad)
+          (atom (expression parent-wad)))
+      ;; We position the cursor at the end of the wad.
+      (base:set-cursor-positions
+       cursor
+       (+ line-number (height parent-wad))
+       (end-column parent-wad))
+      (multiple-value-bind (cursor-line-number cursor-column-number)
+          (base:cursor-positions cursor)
+        (loop for reference = line-number
+                then (+ reference (start-line child))
+              for child in (children parent-wad)
+              when (position-is-before-wad-p
+                    child
+                    (- cursor-line-number reference)
+                    cursor-column-number)
+                do (base:set-cursor-positions
+                    cursor
+                    (+ reference (start-line child) (height child))
+                    (end-column child))
+                   (return)
+              finally ;; We come here when every child has been examined and
+                      ;; no child starts after the cursor, so there is no
+                      ;; child to forward over.
+                      (error 'no-following-expression)))))
 
 (defun forward-expression (cache cursor)
   (multiple-value-bind (cursor-line-number cursor-column-number)
