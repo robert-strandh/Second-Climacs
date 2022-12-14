@@ -97,21 +97,14 @@
                         (error 'no-following-expression))))))
 
 (defun forward-top-level-expression (cache cursor)
-  (multiple-value-bind (cursor-line-number cursor-column-number)
-      (base:cursor-positions cursor)
-    (let ((prefix (prefix cache))
-          (suffix (suffix cache)))
-      (cond ((null prefix)
-             (if (null suffix)
-                 (error 'no-following-expression)
-                 (forward-top-level-expression-in-suffix suffix cursor)))
-            ((null suffix)
-             (forward-top-level-expression-in-prefix prefix cursor))
-            ((position-is-after-wad-p
-              (first prefix) cursor-line-number cursor-column-number)
-             (forward-top-level-expression-in-suffix suffix cursor))
-            (t
-             (forward-top-level-expression-in-prefix prefix cursor))))))
+  (adjust-prefix-and-suffix-to-surround-cursor cache cursor)
+  (if (null (suffix cache))
+      (error 'no-following-expression)
+      (let ((wad (first (suffix cache))))
+        (base:set-cursor-positions
+         cursor
+         (+ (start-line wad) (height wad))
+         (end-column wad)))))
 
 (defun forward-non-top-level-expression (parent-wad line-number cursor)
   (multiple-value-bind (cursor-line-number cursor-column-number)
