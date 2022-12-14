@@ -119,3 +119,20 @@
           (destructuring-bind (new-line-number . wad)
               (first lines-and-wads)
             (forward-non-top-level-expression wad new-line-number cursor))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command
+;;; BACKWARD-EXPRESSION.
+
+(defun backward-expression (cache cursor)
+  (multiple-value-bind (cursor-line-number cursor-column-number)
+      (base:cursor-positions cursor)
+    (let ((lines-and-wads
+            (find-wads-containing-position
+             cache cursor-line-number cursor-column-number)))
+      (if (null lines-and-wads)
+          (backward-top-level-expression cache cursor)
+          (destructuring-bind (new-line-number . wad)
+              (first lines-and-wads)
+            (backward-non-top-level-expression wad new-line-number cursor))))))
