@@ -15,6 +15,16 @@
       (and (= line-number-a line-number-b)
            (< item-number-a item-number-b))))
 
+;;; Return true if and only if the position indicated by the absolute
+;;; line number LINE-NUMBER-1 and the column number COLUMN-NUMBER-1 is
+;;; less than or equal to the position indicated by the absolute line
+;;; number LINE-NUMBER-2 and the column number COLUMN-NUMBER-2.
+(defun position-less-or-equal
+    (line-number-1 column-number-1 line-number-2 column-number-2)
+  (or (< line-number-1 line-number-2)
+      (and (= line-number-1 line-number-2)
+           (<= column-number-1 column-number-2))))
+
 ;;; Return true if and only if the start position of WAD is strictly
 ;;; less than the position indicated by LINE-NUMBER and ITEM-NUMBER.
 (defun wad-starts-before-position-p (wad line-number item-number)
