@@ -22,6 +22,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Helper function.  It makes sure that every wad in the prefix
+;;; precedes the cursor and that every wad in the suffix follows the
+;;; cursor.  It is assumed that the cursor is positioned at the top
+;;; level, so that it is not inside any wad.
+
+(defun adjust-prefix-and-suffix-to-surround-cursor (cache cursor)
+  (multiple-value-bind (cursor-line-number cursor-column-number)
+      (base:cursor-positions cursor)
+    (loop until (null (prefix cache))
+          while (position-less-or-equal
+                 cursor-line-number
+                 cursor-column-number
+                 (start-line (first (prefix cache)))
+                 (start-column (first (prefix cache))))
+          do (push-to-suffix cache (pop-from-prefix cache)))
+    (loop until (null (suffix cache))
+          while (position-less
+                 (start-line (first (suffix cache)))
+                 (start-column (first (suffix cache)))
+                 cursor-line-number
+                 cursor-column-number)
+          do (push-to-prefix cache (pop-from-suffix cache)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; This function implements the essence of the command
 ;;; FORWARD-EXPRESSION.
 
@@ -124,6 +149,49 @@
 ;;;
 ;;; This function implements the essence of the command
 ;;; BACKWARD-EXPRESSION.
+
+(define-condition no-preceding-expression (base:climacs-error)
+  ()
+  (:report "No preceding expression"))
+
+(defun backward-top-level-expression (cache cursor)
+  (adjust-prefix-and-suffix-to-surround-cursor cache cursor)
+  (if (null (prefix cache))
+      (error 'no-preceding-expression)
+      (let ((wad (first (prefix cache))))
+        (base:set-cursor-positions
+         cursor (start-line wad) (start-column wad)))))
+
+(defun backward-non-top-level-expression (parent-wad line-number cursor)
+  (if (or (typep parent-wad 'no-expression-wad)
+          (atom (expression parent-wad)))
+      ;; We position the cursor at the beginning of the wad.
+      (base:set-cursor-positions
+       cursor line-number (start-column parent-wad))
+      (multiple-value-bind (cursor-line-number cursor-column-number)
+          (base:cursor-positions cursor)
+        (let ((predecessor nil)
+              (predecessor-line-number nil))
+          (block found
+            (mapwad (lambda (wad absolute-line-number)
+                      (when (position-less-or-equal
+                             cursor-line-number cursor-column-number
+                             absolute-line-number (start-column wad))
+                        ;; We found the first wad that follows the
+                        ;; cursor position.
+                        (return-from found))
+                      ;; WAD is is still before the cursor, so prepare
+                      ;; for a new iteration.
+                      (setf predecessor wad
+                            predecessor-line-number absolute-line-number))
+                    (children parent-wad)
+                    line-number))
+          (if (null predecessor)
+              (error 'no-preceding-expression)
+              (base:set-cursor-positions
+               cursor
+               predecessor-line-number
+               (start-column predecessor)))))))
 
 (defun backward-expression (cache cursor)
   (multiple-value-bind (cursor-line-number cursor-column-number)
