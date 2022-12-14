@@ -42,3 +42,21 @@
 (esa:set-key `(com-forward-expression)
 	     'common-lisp-table
 	     '((#\f :meta :control)))
+
+(clim:define-command
+    (com-backward-expression :name t :command-table common-lisp-table)
+    ()
+  (let* ((view (clim:stream-default-view (esa:current-window)))
+         (climacs-view (clim-base:climacs-view view))
+         (analyzer (base:analyzer climacs-view))
+         (cache (cl-syntax:folio analyzer))
+         (climacs-buffer (base:buffer analyzer))
+         (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
+    (cl-syntax:scavenge cache cluffer-buffer)
+    (cl-syntax:read-forms analyzer)
+    (clim-base:with-current-cursor (cursor)
+      (cl-syntax:backward-expression cache cursor))))
+
+(esa:set-key `(com-backward-expression)
+	     'common-lisp-table
+	     '((#\b :meta :control)))
