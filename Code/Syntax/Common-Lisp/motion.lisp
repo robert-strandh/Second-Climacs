@@ -54,48 +54,6 @@
   ()
   (:report "No following expression"))
 
-(defun forward-top-level-expression-in-prefix (prefix cursor)
-  (multiple-value-bind (cursor-line-number cursor-column-number)
-      (base:cursor-positions cursor)
-    (loop for (wad previous) on prefix
-          when (or (null previous)
-                   (position-is-after-wad-p
-                    previous cursor-line-number cursor-column-number))
-            do (base:set-cursor-positions
-                cursor
-                (+ (start-line wad) (height wad))
-                (end-column wad))
-               (return))))
-
-(defun forward-top-level-expression-in-suffix (suffix cursor)
-  (multiple-value-bind (cursor-line-number cursor-column-number)
-      (base:cursor-positions cursor)
-    (let ((first (first suffix)))
-      (if (position-is-before-wad-p
-           first cursor-line-number cursor-column-number)
-          ;; We found our wad to forward over.
-          (base:set-cursor-positions
-           cursor
-           (+ (start-line first) (height first)) (end-column first))
-          ;; If not, we must traverse the relative wads in the rest of
-          ;; the suffix.
-          (loop for reference = (start-line first)
-                  then (+ reference (start-line wad))
-                for wad in (rest suffix)
-                when (position-is-before-wad-p
-                      wad
-                      (- cursor-line-number reference)
-                      cursor-column-number)
-                  do (base:set-cursor-positions
-                      cursor
-                      (+ reference (start-line wad) (height wad))
-                      (end-column wad))
-                     (return)
-                finally ;; We come here when every wad has been
-                        ;; examined and no wad starts after the
-                        ;; cursor, so there is no wad to forward over.
-                        (error 'no-following-expression))))))
-
 (defun forward-top-level-expression (cache cursor)
   (adjust-prefix-and-suffix-to-surround-cursor cache cursor)
   (if (null (suffix cache))
