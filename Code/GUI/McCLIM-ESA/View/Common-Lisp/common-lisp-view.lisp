@@ -562,8 +562,8 @@
   ;; For now, do nothing.
   nil)
 
-(defun update-cache (view pane analyzer)
-  (declare (ignore view pane))
+(defun update-cache (view analyzer)
+  (declare (ignore view))
   (let* ((cache (cl-syntax:folio analyzer))
          (climacs-buffer (base:buffer analyzer))
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
@@ -572,6 +572,5 @@
 
 (defmethod base:update-view-from-analyzer
     ((view cl-syntax:view)
-     (pane clim-base:text-pane)
      (analyzer cl-syntax:analyzer))
-  (update-cache view pane analyzer))
+  (update-cache view analyzer))

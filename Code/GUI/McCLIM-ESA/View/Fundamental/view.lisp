@@ -188,17 +188,16 @@
   ;; For now, do nothing.
   nil)
 
-(defun update-analyzer (view pane analyzer)
-  (declare (ignore view pane))
+(defun update-analyzer (view analyzer)
+  (declare (ignore view))
   (let* ((climacs-buffer (base:buffer analyzer))
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
     (fundamental-syntax:scavenge analyzer cluffer-buffer)))
 
 (defmethod base:update-view-from-analyzer
     ((view fundamental-syntax:view)
-     (pane clim-base:text-pane)
      (analyzer fundamental-syntax:analyzer))
-  (update-analyzer view pane analyzer))
+  (update-analyzer view analyzer))
 
 (defmethod clim-base:command-table
     ((view  fundamental-syntax:view))
