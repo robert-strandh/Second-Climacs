@@ -37,6 +37,7 @@
            #:views
            #:set-the-mark
            #:exchange-cursor-and-mark
+           #:move-region-to-vector
            #:kill-region
            #:next-line
            #:previous-line
