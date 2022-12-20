@@ -66,3 +66,18 @@
 (esa:set-key `(com-mark-expression)
 	     'common-lisp-table
 	     '((#\Space :meta :control)))
+
+(clim:define-command
+    (com-exchange-expressions :name t :command-table common-lisp-table)
+    ()
+  (let* ((view (clim:stream-default-view (esa:current-window)))
+         (climacs-view (clim-base:climacs-view view))
+         (analyzer (base:analyzer climacs-view))
+         (cache (cl-syntax:folio analyzer)))
+    (base:update-view climacs-view)
+    (clim-base:with-current-cursor (cursor)
+      (cl-syntax:exchange-expressions cache cursor))))
+
+(esa:set-key `(com-exchange-expressions)
+	     'common-lisp-table
+	     '((#\t :meta :control)))
