@@ -81,4 +81,5 @@
    #:up-expression
    #:forward-expression
    #:backward-expression
-   #:mark-expression))
+   #:mark-expression
+   #:exchange-expressions))
