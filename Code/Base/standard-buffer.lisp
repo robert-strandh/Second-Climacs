@@ -187,6 +187,14 @@
   (and (not (cursor-< cursor1 cursor2))
        (not (cursor-< cursor2 cursor1))))
 
+(defun move-region-to-vector (cursor1 cursor2)
+  (assert (or (cursor-< cursor1 cursor2) (cursor-= cursor1 cursor2)))
+  (loop with result = (make-array 0 :adjustable t :fill-pointer t)
+        until (cursor-= cursor1 cursor2)
+        do (vector-push-extend (item-after-cursor cursor1) result)
+           (delete-item cursor1)
+        finally (return result)))
+
 (defun kill-region (cursor)
   (unless (mark-is-set-p cursor)
     (error 'mark-not-set))
