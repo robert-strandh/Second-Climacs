@@ -229,15 +229,7 @@
         (no-following-expression (condition)
           (ensure-cursors-detached)
           (error condition)))
-      ;; Come here if everything went well.  Before positioning C2 and
-      ;; C3, we make sure that CURSOR is not exactly at the end of the
-      ;; preceding expression not exactly at the beginning of the
-      ;; following expression.  That way, we can freely insert at
-      ;; those positions without risking that CURSOR will move as
-      ;; well.
-      (base:insert-item cursor #\Space)
-      (base:insert-item cursor #\Space)
-      (base:backward-item cursor)
+      ;; Come here if everything went well.
       ;; We put C2 at the end of the expression we moved backward
       ;; over.
       (copy-cursor-positions c1 c2)
@@ -252,7 +244,4 @@
         (loop for item across preceding-expression
               do (base:insert-item c3 item))
         (loop for item across following-expression
-              do (base:insert-item c1 item)))
-      ;; Remove the additional spaces we inserted.
-      (base:erase-item cursor)
-      (base:delete-item cursor))))
+              do (base:insert-item c1 item))))))
