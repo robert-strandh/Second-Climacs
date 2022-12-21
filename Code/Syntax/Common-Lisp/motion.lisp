@@ -64,6 +64,17 @@
          (+ (start-line wad) (height wad))
          (end-column wad)))))
 
+(defun cursor-is-inside-atomic-wad-p (cache cursor)
+  (multiple-value-bind (cursor-line-number cursor-column-number)
+      (base:cursor-positions cursor)
+    (let ((lines-and-wads
+            (find-wads-containing-position
+             cache cursor-line-number cursor-column-number)))
+      (and (not (null lines-and-wads))
+           (let ((first-wad (cdr (first lines-and-wads))))
+             (or (typep first-wad 'no-expression-wad)
+                 (atom (expression first-wad))))))))
+
 (defun forward-non-top-level-expression (parent-wad line-number cursor)
   (if (or (typep parent-wad 'no-expression-wad)
           (atom (expression parent-wad)))
@@ -186,9 +197,11 @@
     (detach-if-attached c3)
     (detach-if-attached c4)))
 
-;;; FIXME: This function currently does does not work when the cursor
-;;; is inside an atomic expression.
 (defun exchange-expressions (cache cursor)
+  ;; If the cursor is inside an atomic wad, we first move
+  ;; forward over that expression.
+  (when (cursor-is-inside-atomic-wad-p cache cursor)
+    (forward-expression cache cursor))
   (let ((c1 (new-cursor))
         (c2 (new-cursor))
         (c3 (new-cursor))
