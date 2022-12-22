@@ -201,10 +201,15 @@
   (let ((mark (mark (buffer cursor))))
     (when (cursor-< mark cursor)
       (exchange-cursor-and-mark cursor))
+    (add-kill-ring-region)
+    (add-kill-ring-line)
     (loop until (cursor-= cursor mark)
-          do (cluffer-emacs:delete-item cursor))
+          do (let ((item (item-after-cursor cursor)))
+               (if (eql item #\Newline)
+                   (add-kill-ring-line)
+                   (add-kill-ring-item item)))
+             (cluffer-emacs:delete-item cursor))
     (unset-the-mark cursor)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
