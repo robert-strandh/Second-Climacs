@@ -262,3 +262,22 @@
               (first (last lines-and-wads))
             (base:set-cursor-positions
              cursor new-line-number (start-column wad)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command
+;;; END-OF-TOP-LEVEL-EXPRESSIONS.
+
+(defun end-of-top-level-expression (cache cursor)
+  (multiple-value-bind (line-number column-number)
+      (base:cursor-positions cursor)
+    (let ((lines-and-wads
+            (find-wads-containing-position cache line-number column-number)))
+      (if (null lines-and-wads)
+          (forward-expression cache cursor)
+          (destructuring-bind (new-line-number . wad)
+              (first (last lines-and-wads))
+            (base:set-cursor-positions
+             cursor
+             (+ new-line-number (height wad))
+             (end-column wad)))))))
