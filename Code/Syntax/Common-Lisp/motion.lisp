@@ -245,3 +245,20 @@
               do (base:insert-item c3 item))
         (loop for item across following-expression
               do (base:insert-item c1 item))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command
+;;; BEGINNING-OF-TOP-LEVEL-EXPRESSIONS.
+
+(defun beginning-of-top-level-expression (cache cursor)
+  (multiple-value-bind (line-number column-number)
+      (base:cursor-positions cursor)
+    (let ((lines-and-wads
+            (find-wads-containing-position cache line-number column-number)))
+      (if (null lines-and-wads)
+          (backward-expression cache cursor)
+          (destructuring-bind (new-line-number . wad)
+              (first (last lines-and-wads))
+            (base:set-cursor-positions
+             cursor new-line-number (start-column wad)))))))
