@@ -82,4 +82,5 @@
    #:forward-expression
    #:backward-expression
    #:mark-expression
-   #:exchange-expressions))
+   #:exchange-expressions
+   #:beginning-of-top-level-expression))
