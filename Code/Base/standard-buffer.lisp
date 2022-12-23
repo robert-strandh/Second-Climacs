@@ -213,6 +213,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; This function implements the essence of the command UNKILL
+
+(defun unkill (cursor)
+  (if (kill-ring-is-empty-p)
+      (error 'kill-ring-is-empty)
+      (flet ((insert-line (line)
+               (loop for item across line
+                     do (insert-item cursor item))))
+        (let ((last (last-element *kill-ring*)))
+          (loop for i from 0 below (1- (length last))
+                do (insert-line (aref last i))
+                   (insert-item cursor #\Newline))
+          (insert-line (last-element last))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; These functions implement the essence of the commands
 ;;; NEXT-LINE and PREVIOUS-LINE.
 
