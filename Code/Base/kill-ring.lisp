@@ -15,6 +15,10 @@
 (defun add-kill-ring-region ()
   (vector-push-extend (make-empty-adjustable-vector) *kill-ring*))
 
+;;; Return true if and only if the kill ring is empty.
+(defun kill-ring-is-empty-p ()
+  (zerop (fill-pointer *kill-ring*)))
+
 ;;; Find the last element of a vector with fill pointer, i.e., the
 ;;; element immediately preceding the fill pointer.
 (defun last-element (vector)
