@@ -39,6 +39,7 @@
            #:exchange-cursor-and-mark
            #:move-region-to-vector
            #:kill-region
+           #:unkill
            #:next-line
            #:previous-line
            #:beginning-of-buffer
