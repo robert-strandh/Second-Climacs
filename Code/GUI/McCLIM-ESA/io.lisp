@@ -46,3 +46,9 @@
       (push view (base:views frame))
       (detach-view window)
       (attach-view window view))))
+
+;;; For some reason, write-file gives a string rather than a pathname
+;;; to the default method of this generic function.
+(defmethod esa-io:check-buffer-writability
+    (application-frame (pathname string) (buffer base:standard-buffer))
+  t)
