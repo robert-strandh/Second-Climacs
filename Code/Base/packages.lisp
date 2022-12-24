@@ -51,5 +51,4 @@
            #:climacs-error
            #:mark-not-set
            #:cursor-positions
-           #:set-cursor-positions
-           #:write-buffer))
+           #:set-cursor-positions))

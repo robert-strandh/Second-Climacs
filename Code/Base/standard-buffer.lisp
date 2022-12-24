@@ -317,17 +317,3 @@
                   (not (member (cluffer:item-after-cursor cursor)
                                '(#\Space #\Tab #\Backspace #\Page))))
         do (cluffer:forward-item cursor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; This function implements the essence of the command WRITE-BUFFER.
-
-(defun write-buffer (buffer stream)
-  (let ((cursor (make-instance 'cluffer-standard-line:right-sticky-cursor))
-        (first-line (cluffer:find-line buffer 0)))
-    (cluffer:attach-cursor cursor first-line)
-    (loop until (cluffer:end-of-buffer-p cursor)
-          do (let ((item (item-after-cursor cursor)))
-               (when (characterp item)
-                 (write-char item stream)))
-             (forward-item cursor))))
