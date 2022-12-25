@@ -154,3 +154,9 @@
          (climacs-clim-view (clim:stream-default-view pane))
          (climacs-view (climacs-view climacs-clim-view)))
     (command-table climacs-view)))
+
+(defmethod clim:frame-exit :around ((frame climacs))
+  (with-current-cursor (cursor)
+    (when (esa-buffer:needs-saving (base:buffer cursor))
+      (format *trace-output* "Buffer needs saving~%")))
+  (call-next-method))
