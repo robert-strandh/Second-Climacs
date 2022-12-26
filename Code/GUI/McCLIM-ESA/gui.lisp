@@ -125,11 +125,11 @@
 (defmethod clim:frame-standard-input ((frame climacs))
   (clim:find-pane-named frame 'minibuffer))
 
-(defmethod clim:redisplay-frame-panes :around ((frame climacs) &key force-p)
+(defmethod clim:redisplay-frame-panes :after ((frame climacs) &key force-p)
   (declare (ignore force-p))
-  (let ((pane (clim:find-pane-named frame 'stuff)))
-    (clim:with-output-buffered (pane)
-      (call-next-method))))
+  (let* ((pane (clim:find-pane-named clim:*application-frame* 'stuff))
+         (clim-view (clim:stream-default-view pane)))
+    (update-view pane clim-view)))
 
 (defmethod clim:execute-frame-command :around ((frame climacs) command)
   (handler-case
