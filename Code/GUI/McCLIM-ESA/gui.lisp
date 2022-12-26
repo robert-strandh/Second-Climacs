@@ -157,6 +157,13 @@
 
 (defmethod clim:frame-exit :around ((frame climacs))
   (with-current-cursor (cursor)
-    (when (esa-buffer:needs-saving (base:buffer cursor))
-      (format *trace-output* "Buffer needs saving~%")))
+    (let ((buffer (base:buffer cursor)))
+      (when (and (esa-buffer:needs-saving buffer)
+                 (handler-case
+                     (clim:accept 'boolean
+                                  :prompt (format nil "Save buffer?"))
+                   (error () (progn (clim:beep)
+                                    (esa:display-message "Invalid answer")
+                                    (return-from clim:frame-exit nil)))))
+        (esa-io:save-buffer buffer))))
   (call-next-method))
