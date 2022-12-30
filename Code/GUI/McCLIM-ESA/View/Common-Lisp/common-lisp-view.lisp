@@ -500,7 +500,6 @@
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
-  ;; (break)
   (clear-viewport stream)
   (multiple-value-bind (left top right bottom)
       (viewport-area stream)
