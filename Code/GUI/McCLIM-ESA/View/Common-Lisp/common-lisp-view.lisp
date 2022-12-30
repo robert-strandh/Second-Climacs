@@ -485,7 +485,7 @@
 (defun viewport-area (pane)
   (multiple-value-bind (left top right bottom)
       (clim:bounding-rectangle*
-       (clim:pane-viewport-region (clim:sheet-parent pane)))
+       (clim:pane-viewport-region pane))
     (multiple-value-bind (width height) (text-style-dimensions pane)
       (values (floor left width) (floor top height)
               (ceiling right width) (ceiling bottom height)))))
@@ -493,13 +493,14 @@
 (defun clear-viewport (pane)
   (multiple-value-bind (left top right bottom)
       (clim:bounding-rectangle*
-       (clim:pane-viewport-region (clim:sheet-parent pane)))
+       (clim:pane-viewport-region (and)pane))
     (clim:medium-clear-area (clim:sheet-medium pane)
                             left top right bottom)))
 
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
+  ;; (break)
   (clear-viewport stream)
   (multiple-value-bind (left top right bottom)
       (viewport-area stream)
