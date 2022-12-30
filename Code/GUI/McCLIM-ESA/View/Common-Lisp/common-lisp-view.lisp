@@ -493,7 +493,7 @@
 (defun clear-viewport (pane)
   (multiple-value-bind (left top right bottom)
       (clim:bounding-rectangle*
-       (clim:pane-viewport-region (and)pane))
+       (clim:pane-viewport-region pane))
     (clim:medium-clear-area (clim:sheet-medium pane)
                             left top right bottom)))
 
