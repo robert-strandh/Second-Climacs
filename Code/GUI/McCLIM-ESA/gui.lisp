@@ -21,6 +21,12 @@
   (:default-initargs
    :height 20 :max-height 20 :min-height 20))
 
+(defun make-gutter-pane ()
+  (clim:make-pane 'clim:application-pane
+                  :background clim:+gray+
+                  :max-width 12
+                  :width 12))
+
 (defun make-climacs-pane (gutter)
   (clim:make-pane 'text-pane
                   :name 'stuff
@@ -55,10 +61,7 @@
         (base:make-empty-standard-buffer-and-cursor)
       (setf (esa-buffer:filepath buffer)
             (first (directory ".")))
-      (let* ((gutter (clim:make-pane 'clim:application-pane
-                                     :background clim:+gray+
-                                     :max-width 12
-                                     :width 12))
+      (let* ((gutter (make-gutter-pane))
              (my-pane (make-climacs-pane gutter))
              (my-info-pane (clim:make-pane 'info-pane
                                            :master-pane my-pane
