@@ -25,7 +25,8 @@
   (clim:make-pane 'clim:application-pane
                   :background clim:+gray+
                   :max-width 12
-                  :width 12))
+                  :width 12
+                  :display-time nil))
 
 (defun make-climacs-pane (gutter)
   (clim:make-pane 'text-pane
