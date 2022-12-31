@@ -20,7 +20,9 @@
         (start (cl-syntax:start-column wad))
         (end (cl-syntax:end-column wad))
         (height (cl-syntax:height wad)))
-    (unless (or (null pos) (not (zerop height)))
+    (unless (or (null pos)
+                (not (zerop height))
+                (= pos start))
       (draw-rectangle pane start-ref start (+ start pos 1) clim:+pink+)
       (draw-rectangle pane start-ref (+ start pos 1) end clim:+red+))))
 
