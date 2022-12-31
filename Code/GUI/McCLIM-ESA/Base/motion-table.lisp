@@ -136,3 +136,10 @@
   (with-current-cursor (cursor)
     (unless (base:search-forward cursor string)
       (esa:display-message "No match"))))
+
+(clim:define-command
+    (com-search-backward :name t :command-table motion-table)
+    ((string 'string))
+  (with-current-cursor (cursor)
+    (unless (base:search-backward cursor string)
+      (esa:display-message "No match"))))
