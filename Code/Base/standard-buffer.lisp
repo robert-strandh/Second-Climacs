@@ -156,18 +156,21 @@
 ;;; This function implements the essence of the command
 ;;; EXCHANGE-CURSOR-AND-MARK.
 
+(defun exchange-cursor-positions (cursor1 cursor2)
+  (multiple-value-bind (cursor1-line-number cursor1-column-number)
+      (cursor-positions cursor1)
+    (multiple-value-bind (cursor2-line-number cursor2-column-number)
+        (cursor-positions cursor2)
+      (set-cursor-positions
+       cursor1 cursor2-line-number cursor2-column-number)
+      (set-cursor-positions
+       cursor2 cursor1-line-number cursor1-column-number))))
+
 (defun exchange-cursor-and-mark (cursor)
   (unless (mark-is-set-p cursor)
     (error 'mark-not-set))
   (let ((mark (find-mark cursor)))
-    (multiple-value-bind (cursor-line-number cursor-column-number)
-        (cursor-positions cursor)
-      (multiple-value-bind (mark-line-number mark-column-number)
-          (cursor-positions mark)
-        (set-cursor-positions
-         cursor mark-line-number mark-column-number)
-        (set-cursor-positions
-         mark cursor-line-number cursor-column-number)))))
+    (exchange-cursor-positions cursor mark)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
