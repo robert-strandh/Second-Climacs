@@ -129,3 +129,10 @@
 (esa:set-key `(com-exchange-cursor-and-mark)
 	     'motion-table
 	     '((#\x :control) (#\x :control)))
+
+(clim:define-command
+    (com-search-forward :name t :command-table motion-table)
+    ((string 'string))
+  (with-current-cursor (cursor)
+    (unless (base:search-forward cursor string)
+      (esa:display-message "No match"))))
