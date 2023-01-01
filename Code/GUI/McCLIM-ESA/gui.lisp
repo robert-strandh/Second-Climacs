@@ -20,9 +20,13 @@
             (esa-utils:name (esa:current-buffer))
             (base:view-name climacs-view))))
 
+(defparameter *minibuffer-pane-text-style*
+  (clim:make-text-style :fix :roman 14))
+
 (defclass minibuffer-pane (esa:minibuffer-pane)
   ()
   (:default-initargs
+   :text-style *minibuffer-pane-text-style*
    :height 20 :max-height 20 :min-height 20))
 
 (defun make-gutter-pane ()
