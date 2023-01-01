@@ -60,6 +60,14 @@
           pane)
     (setf (clim:stream-default-view pane) climacs-clim-view)))
 
+;;; We define our own HRACK-PANE as a subclass of the one provided by
+;;; CLIM.  We do this so that we can define an :AFTER method on
+;;; CLIM:NOTE-SHEET-TRANSFORMATION-CHANGED, specialized to this new
+;;; class.  This :AFTER method is used to detect scrolling, and we
+;;; then check whether the cursor is outside the viewport, in which
+;;; case we move the cursor.
+(defclass hrack-pane (clim:hrack-pane) ())
+
 (clim:define-application-frame climacs (esa:esa-frame-mixin
                                         clim:standard-application-frame
                                         base:application)
@@ -89,7 +97,9 @@
         (attach-view my-pane view)
         (clim:vertically ()
           (clim:scrolling (:height 700)
-            (clim:horizontally ()
+            (clim:make-pane 'hrack-pane
+                            :contents (list gutter my-pane))
+            #+(or)(clim:horizontally ()
               gutter
               my-pane))
           my-info-pane))))
