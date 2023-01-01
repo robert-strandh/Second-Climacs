@@ -1,9 +1,13 @@
 (cl:in-package #:second-climacs-clim-base)
 
+(defparameter *info-pane-text-style*
+  (clim:make-text-style :fix :roman 14))
+
 (defclass info-pane (esa:info-pane)
   ()
   (:default-initargs
    :height 20 :max-height 20 :min-height 20
+   :text-style *info-pane-text-style*
    :display-function 'display-info
    :incremental-redisplay t))
 
