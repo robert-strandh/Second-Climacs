@@ -98,10 +98,7 @@
         (clim:vertically ()
           (clim:scrolling (:height 700)
             (clim:make-pane 'hrack-pane
-                            :contents (list gutter my-pane))
-            #+(or)(clim:horizontally ()
-              gutter
-              my-pane))
+                            :contents (list gutter my-pane)))
           my-info-pane))))
    (minibuffer (clim:make-pane 'minibuffer-pane :width 900)))
   (:layouts
