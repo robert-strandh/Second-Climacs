@@ -107,6 +107,11 @@
               minibuffer)))
   (:top-level (esa:esa-top-level)))
 
+(defmethod clim:note-sheet-transformation-changed :after
+    ((pane hrack-pane))
+  (let ((pane (esa:current-window)))
+    (second-climacs-clim-view-common-lisp:move-cursor-to-viewport pane)))
+
 (defmethod clim:adopt-frame :after (frame-manager (frame climacs))
   (declare (ignore frame-manager))
   (let* ((pane (clim:find-pane-named frame 'stuff))
