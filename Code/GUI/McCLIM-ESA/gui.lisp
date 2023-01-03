@@ -55,9 +55,9 @@
 (defun attach-view (pane view)
   (assert (not (pane-has-attached-view-p pane)))
   (base:expose-view view pane)
-  (let ((climacs-clim-view (make-climacs-clim-view view)))
-    (setf (clim:output-record-parent (output-history climacs-clim-view))
-          pane)
+  (let* ((climacs-clim-view (make-climacs-clim-view view))
+         (history (output-history climacs-clim-view)))
+    (reinitialize-instance history :stream pane)
     (setf (clim:stream-default-view pane) climacs-clim-view)))
 
 ;;; We define our own HRACK-PANE as a subclass of the one provided by
