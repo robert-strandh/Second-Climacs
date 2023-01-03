@@ -550,6 +550,9 @@
        :height y2))
     (clim:replay history pane)))
 
+(defmethod clim:output-record-count ((record output-history))
+  0)
+
 (defmethod clim:map-over-output-records-containing-position
     (function
      (history output-history)
