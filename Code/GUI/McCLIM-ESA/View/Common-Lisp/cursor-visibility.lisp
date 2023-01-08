@@ -13,7 +13,7 @@
          (cursor-column-number (cluffer:cursor-position cursor)))
     (multiple-value-bind (left top right bottom)
         (viewport-area pane)
-      (unless (and (<= top cursor-line-number bottom)
+      (unless (and (<= (1+ top) cursor-line-number (- bottom 2))
                    (<= left cursor-column-number right))
         (scroll-extent pane
                        (max 0 (- cursor-column-number
