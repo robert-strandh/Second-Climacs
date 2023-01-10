@@ -105,7 +105,13 @@
                                                       '())
                                      extra-initargs)))
       (etypecase reason
-        ((cons (eql :line-comment))    (make-it 'semicolon-comment-wad))
+        ((cons (eql :line-comment))
+         (let ((result (make-it 'semicolon-comment-wad)))
+           ;; Eclector returns the beginning of the following line as
+           ;; the end of the comment.  But we want it to be the end of
+           ;; the same line.  But I don't know how to do it correctly
+           ;; (yet).
+           result))
         ((eql :block-comment)          (make-it 'block-comment-wad))
         ((eql :reader-macro)           (make-it 'reader-macro-wad))
         ((eql *read-suppress*)         (make-it 'read-suppress-wad))
