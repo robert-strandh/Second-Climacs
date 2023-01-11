@@ -671,7 +671,12 @@ Comments can be checked for spelling errors.
   is not positioned inside an atomic expression, and there is no
   expression immediately before it, an error message will be displayed
   in the minibuffer.
-\item \texttt{Beginning of top-level expression}
+\item \texttt{Beginning of top-level expression} (C-M-a) Move the
+  cursor to the beginning of the top-level expression it is contained
+  in.  If the cursor is already at the top level, move to the beginning
+  of the preceding top-level expression.  If the cursor is already at
+  the top level and there is no preceding expression, an error message
+  will be displayed in the minibuffer.
 \item \texttt{End of top-level expression}
 \item \texttt{Exchange expressions}
 \item \texttt{Up expression} (C-M-u) Move the cursor to the beginning
