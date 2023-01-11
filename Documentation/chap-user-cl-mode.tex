@@ -660,8 +660,8 @@ Comments can be checked for spelling errors.
   is is positioned immediately after that atomic expression.  Notice
   that comments count as expressions for this command.  If the cursor
   is not positioned inside an atomic expression, and there is no
-  expression immediately after it, an error will be displayed in the
-  minibuffer.
+  expression immediately after it, an error message will be displayed
+  in the minibuffer.
 \item \texttt{Backward expression} (C-M-b).  If the cursor is
   positioned between two expressions, then it will be moved so that it
   is positioned immediately before the expression to the left.  If the
@@ -669,12 +669,15 @@ Comments can be checked for spelling errors.
   is is positioned immediately before that atomic expression.  Notice
   that comments count as expressions for this command.  If the cursor
   is not positioned inside an atomic expression, and there is no
-  expression immediately before it, an error will be displayed in the
-  minibuffer.
+  expression immediately before it, an error message will be displayed
+  in the minibuffer.
 \item \texttt{Beginning of top-level expression}
 \item \texttt{End of top-level expression}
 \item \texttt{Exchange expressions}
-\item \texttt{Up expression}
+\item \texttt{Up expression} (C-M-u) Move the cursor to the beginning
+  of the expression that the cursor is immediately contained in.  If
+  the cursor is at the top level, an error message will be displayed
+  in the minibuffer.
 \item \texttt{Down expression}
 \item \texttt{Indent line}
 \item \texttt{Indent region}
