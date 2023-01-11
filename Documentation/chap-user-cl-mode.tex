@@ -653,13 +653,24 @@ Comments can be checked for spelling errors.
 \section{Commands}
 
 \begin{itemize}
-\item \texttt{Forward expression} (C-M-f).  If the cursor is positioned
-  between two expressions, then it will be moved so that it is
-  positioned immediately after the expression to the right.  If the
+\item \texttt{Forward expression} (C-M-f).  If the cursor is
+  positioned between two expressions, then it will be moved so that it
+  is positioned immediately after the expression to the right.  If the
   cursor is inside an atomic expression, then it will be moved so that
   is is positioned immediately after that atomic expression.  Notice
-  that comments count as expressions for this command.
-\item \texttt{Backward expression}
+  that comments count as expressions for this command.  If the cursor
+  is not positioned inside an atomic expression, and there is no
+  expression immediately after it, an error will be displayed in the
+  minibuffer.
+\item \texttt{Backward expression} (C-M-b).  If the cursor is
+  positioned between two expressions, then it will be moved so that it
+  is positioned immediately before the expression to the left.  If the
+  cursor is inside an atomic expression, then it will be moved so that
+  is is positioned immediately before that atomic expression.  Notice
+  that comments count as expressions for this command.  If the cursor
+  is not positioned inside an atomic expression, and there is no
+  expression immediately before it, an error will be displayed in the
+  minibuffer.
 \item \texttt{Beginning of expression}
 \item \texttt{End of expression}
 \item \texttt{Beginning of top-level expression}
