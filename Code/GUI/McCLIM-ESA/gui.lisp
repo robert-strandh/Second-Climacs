@@ -72,6 +72,7 @@
                                         clim:standard-application-frame
                                         base:application)
   ()
+  (:menu-bar nil)
   (:panes
    (window
     (multiple-value-bind (buffer cursor)
