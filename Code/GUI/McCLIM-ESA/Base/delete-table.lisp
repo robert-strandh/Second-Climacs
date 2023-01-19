@@ -6,8 +6,7 @@
     (com-delete-item :name t :command-table delete-table)
     ()
   (with-current-cursor (cursor)
-    (base:delete-item cursor)
-    (setf (esa-buffer:needs-saving (base:buffer cursor)) t)))
+    (base:delete-item cursor)))
 
 (esa:set-key `(com-delete-item)
 	     'delete-table
