@@ -65,14 +65,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function UPDATE-VIEW.
+;;; Generic function UPDATE-VIEW.
 ;;;
 ;;; This function is called in order to update the view passed as an
 ;;; argument.  All it does is to trampoline to
 ;;; UPDATE-VIEW-FROM-ANALYZER, passing it the view, the window of the
 ;;; view, and the analyzer of the view.
 
-(defun update-view (view)
+(defgeneric update-view (view))
+
+(defmethod update-view ((view view))
   (update-view-from-analyzer view (analyzer view)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
