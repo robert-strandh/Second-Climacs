@@ -4,6 +4,7 @@
                "stealth-mixin")
   :serial t
   :components ((:file "packages")
+               (:file "utilities")
                (:file "common-lisp-view")
                (:file "token-drawing")
                (:file "cursor-visibility")
