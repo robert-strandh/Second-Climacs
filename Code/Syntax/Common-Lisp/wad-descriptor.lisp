@@ -57,5 +57,27 @@
    ;; wad descriptor is the last child of its parent, then this slot
    ;; contains NIL.
    (%next-sibling
+    :initform nil
     :initarg :next-sibling
-    :reader next-sibling)))
+    :accessor next-sibling)))
+
+(defun develop-children (wad-descriptor)
+  (loop with previous = nil
+        with wad = (wad wad-descriptor)
+        for child in (children wad)
+        for start-line = (start-line child)
+        for reference = (start-line-number wad-descriptor)
+          then (+ reference start-line)
+        for child-descriptor
+          = (make-instance 'wad-descriptor
+              :wad child
+              :start-line-number (+ reference start-line)
+              :start-column-number (start-column child)
+              :end-line-number (+ reference start-line (height child))
+              :end-column-number (end-column child)
+              :parent wad-descriptor
+              :previous-sibling previous)
+        do (if (null previous)
+               (setf (first-child wad-descriptor) child-descriptor)
+               (setf (next-sibling previous) child-descriptor))
+           (setf previous child-descriptor)))
