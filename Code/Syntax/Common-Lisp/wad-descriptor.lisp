@@ -108,3 +108,17 @@
     (if (null (suffix cache))
         nil
         (first (suffix cache)))))
+
+(defun position-is-inside-interval-p
+    (position-line-number
+     position-column-number
+     interval-start-line-number
+     interval-start-column-number
+     interval-end-line-number
+     interval-end-column-number)
+  (and (or (> position-line-number interval-start-line-number)
+           (and (= position-line-number interval-start-line-number)
+                (> position-column-number interval-start-column-number)))
+       (or (< position-line-number interval-end-line-number)
+           (and (= position-line-number interval-end-line-number)
+                (< position-column-number interval-end-column-number)))))
