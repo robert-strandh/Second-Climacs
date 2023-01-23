@@ -49,6 +49,7 @@
    ;; described by this wad descriptor is the first child of its
    ;; parent, then this slot contains NIL.
    (%previous-sibling
+    :initform nil
     :initarg :previous-sibling
     :reader previous-sibling)
    ;; This slot can contain another wad descriptor which is then the
@@ -176,3 +177,72 @@
     :start-column-number (start-column wad)
     :end-line-number (+ (start-line wad) (height wad))
     :end-column-number (end-column wad)))
+
+;;; Given a cursor, return four values.  The first value is wad
+;;; descriptor of the atomic wad in which the cursor is located, or
+;;; NIL if the cursor is not inside an atomic wad.  The second value
+;;; is the wad descriptor of the parent of the wad in which the cursor
+;;; is located, or NIL if the cursor is not inside a wad (so it is at
+;;; the top level.  The third and fourth values are the descriptors of
+;;; the wads immediately before and immediately after the cursor.  If
+;;; the cursor is inside an atomic wad, these values are the wad
+;;; descriptors of the previous and the next siblings of that atomic
+;;; wad.  If the cursor is not inside an atomic wad, these values are
+;;; the wad descriptors of the wad immediately before and the wad
+;;; immediately after the cursor.  If no corresponding sibling wad
+;;; exists, the value is NIL.
+(defun compute-wad-descriptors (cache cursor)
+  (let* ((top-level-wad (find-top-level-wad-containing-cursor cache cursor))
+         (prefix (prefix cache))
+         (suffix (suffix cache))
+         (prefix-wad-descriptor
+           (if (null prefix)
+               nil
+               (make-wad-descriptor-from-wad (first prefix))))
+         (suffix-wad-descriptor
+           (if (null suffix)
+               nil
+               (make-wad-descriptor-from-wad (first suffix)))))
+    (if (null top-level-wad)
+        (progn (unless (null prefix-wad-descriptor)
+                 (reinitialize-instance prefix-wad-descriptor
+                   :next-sibling suffix-wad-descriptor))
+               (unless (null suffix-wad-descriptor)
+                 (reinitialize-instance suffix-wad-descriptor
+                   :previous-sibling prefix-wad-descriptor))
+               (values nil nil prefix-wad-descriptor suffix-wad-descriptor))
+        (let ((previous-sibling
+                (if (null (rest prefix))
+                    nil
+                    (make-wad-descriptor-from-wad (second prefix)))))
+          (unless (null previous-sibling)
+            (reinitialize-instance previous-sibling
+              :next-sibling prefix-wad-descriptor)
+            (reinitialize-instance prefix-wad-descriptor
+              :previous-sibling previous-sibling))
+          (unless (null suffix-wad-descriptor)
+            (reinitialize-instance suffix-wad-descriptor
+              :previous-sibling prefix-wad-descriptor)
+            (reinitialize-instance prefix-wad-descriptor
+              :next-sibling suffix-wad-descriptor))
+          (let ((wad-descriptor prefix-wad-descriptor)
+                (parent nil)
+                (previous-sibling previous-sibling)
+                (next-sibling suffix-wad-descriptor))
+            (loop until (or (null wad-descriptor)
+                            (typep (wad wad-descriptor) 'no-expression-wad)
+                            (atom (expression (wad wad-descriptor))))
+                  do (develop-children wad-descriptor)
+                     (multiple-value-bind (previous current next)
+                         (siblings (first-child wad-descriptor) cursor)
+                       (setf parent wad-descriptor
+                             wad-descriptor current
+                             previous-sibling previous
+                             next-sibling next))
+                  finally (return (values wad-descriptor
+                                          parent
+                                          previous-sibling
+                                          next-sibling))))))))
+                                   
+                
+          
