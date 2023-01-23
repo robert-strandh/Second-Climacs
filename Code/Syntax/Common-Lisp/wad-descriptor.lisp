@@ -28,7 +28,7 @@
     :reader end-column-number)
    ;; The parent is another wad descriptor.
    (%parent
-    :initarg parent
+    :initarg :parent
     :reader parent)
    ;; This slot can contain another wad descriptor, which is then a
    ;; descriptor for the first child of the wad described by this wad
