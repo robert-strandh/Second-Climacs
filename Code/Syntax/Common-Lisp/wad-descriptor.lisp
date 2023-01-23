@@ -83,9 +83,10 @@
            (setf previous child-descriptor)))
 
 ;;; Return the top-level wad that contains the cursor, and make sure
-;;; that that wad is the first wad of the suffix.  If the cursor is
+;;; that that wad is the first wad of the prefix.  If the cursor is
 ;;; not contained in any wad, i.e., it is at the top level, then
-;;; return NIL.
+;;; return NIL, and make sure that every wad of the prefix precedes
+;;; the cursor, and every wad of the suffix succeeds the cursor.
 (defun find-top-level-wad-containing-cursor (cache cursor)
   (multiple-value-bind (cursor-line-number cursor-column-number)
       (base:cursor-positions cursor)
@@ -93,14 +94,14 @@
                     (position-is-after-wad-p
                      (first (prefix cache))
                      cursor-line-number
+                     cursor-column-number)
+                    (position-is-inside-wad-p
+                     (first (prefix cache))
+                     cursor-line-number
                      cursor-column-number))
           do (push-to-suffix cache (pop-from-prefix cache)))
     (loop until (or (null (suffix cache))
                     (position-is-before-wad-p
-                     (first (suffix cache))
-                     cursor-line-number
-                     cursor-column-number)
-                    (position-is-inside-wad-p
                      (first (suffix cache))
                      cursor-line-number
                      cursor-column-number))
