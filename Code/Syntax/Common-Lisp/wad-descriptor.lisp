@@ -62,6 +62,15 @@
     :initarg :next-sibling
     :accessor next-sibling)))
 
+(defmethod print-object ((object wad-descriptor) stream)
+  (print-unreadable-object (object stream :type t)
+    (format stream
+            "start-line: ~a start column: ~a end-line: ~a end-column: ~a"
+            (start-line-number object)
+            (start-column-number object)
+            (end-line-number object)
+            (end-column-number object))))
+
 (defun develop-children (wad-descriptor)
   (loop with previous = nil
         with wad = (wad wad-descriptor)
