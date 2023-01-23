@@ -166,3 +166,13 @@
                                         (next-sibling child))))
                        (t nil))
               finally (return (values previous nil nil))))))
+
+;;; Given an absolute wad, return a wad descriptor with the wad and
+;;; the interval initialized.
+(defun make-wad-descriptor-from-wad (wad)
+  (make-instance 'wad-descriptor
+    :wad wad
+    :start-line-number (start-line wad)
+    :start-column-number (start-column wad)
+    :end-line-number (+ (start-line wad) (height wad))
+    :end-column-number (end-column wad)))
