@@ -116,7 +116,11 @@
                      cursor-line-number
                      cursor-column-number))
           do (push-to-prefix cache (pop-from-suffix cache)))
-    (if (null (prefix cache))
+    (if (or (null (prefix cache))
+            (position-is-after-wad-p
+             (first (prefix cache))
+             cursor-line-number
+             cursor-column-number))
         nil
         (first (prefix cache)))))
 
