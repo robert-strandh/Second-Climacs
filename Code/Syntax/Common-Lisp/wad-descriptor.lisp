@@ -116,9 +116,9 @@
                      cursor-line-number
                      cursor-column-number))
           do (push-to-prefix cache (pop-from-suffix cache)))
-    (if (null (suffix cache))
+    (if (null (prefix cache))
         nil
-        (first (suffix cache)))))
+        (first (prefix cache)))))
 
 (defun position-is-inside-interval-p
     (position-line-number
