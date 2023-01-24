@@ -19,4 +19,5 @@
                (:file "find-wad-beginning-line")
                (:file "find-wad-containing-position")
                (:file "motion")
-               (:file "regions")))
+               (:file "regions")
+               (:file "fill-paragraph")))
