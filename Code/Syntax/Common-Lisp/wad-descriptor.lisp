@@ -149,11 +149,11 @@
 
 ;;; Given the first child of a wad descriptor (which may be NIL) and a
 ;;; cursor, return three values.  If the cursor is inside one of the
-;;; children, say C, then return the left sibling C, C, and the right
-;;; sibling of C (or NIL when the sibling does not exist).  Otherwise
-;;; return the wad descriptor immediately preceding the cursor, NIL,
-;;; and the wad descriptor immediately following the cursor (or NIL
-;;; when it doesn't exist).
+;;; children, say C, then return the left sibling of C, C, and the
+;;; right sibling of C (or NIL when the sibling does not exist).
+;;; Otherwise return the wad descriptor immediately preceding the
+;;; cursor, NIL, and the wad descriptor immediately following the
+;;; cursor (or NIL when it doesn't exist).
 (defun siblings (first-child cursor)
   (multiple-value-bind (cursor-line-number cursor-column-number)
       (base:cursor-positions cursor)
@@ -167,7 +167,7 @@
                          cursor-column-number
                          (start-line-number child)
                          (start-column-number child))
-                        (return (values nil nil (next-sibling child))))
+                        (return (values previous nil child)))
                        ((position-is-inside-interval-p
                          cursor-line-number
                          cursor-column-number
@@ -256,6 +256,3 @@
                                           parent
                                           previous-sibling
                                           next-sibling))))))))
-                                   
-                
-          
