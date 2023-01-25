@@ -25,6 +25,9 @@
                         finally (return wd)))))
         (let ((wad-descriptors
                 (loop for wd = first then (next-sibling wd)
-                      while (candidate-p (next-sibling wd))
+                      while (candidate-p wd)
                       collect wd)))
-          (format *trace-output* "~s~%" wad-descriptors))))))
+          (loop with ignore = (format *trace-output* "~%")
+                for wad-descriptor in wad-descriptors
+                do (format *trace-output* "~s: ~s~%"
+                           wad-descriptor (wad wad-descriptor))))))))
