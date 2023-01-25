@@ -75,9 +75,9 @@
   (loop with previous = nil
         with wad = (wad wad-descriptor)
         for child in (children wad)
-        for start-line = (start-line child)
         for reference = (start-line-number wad-descriptor)
           then (+ reference start-line)
+        for start-line = (start-line child)
         for child-descriptor
           = (make-instance 'wad-descriptor
               :wad child
