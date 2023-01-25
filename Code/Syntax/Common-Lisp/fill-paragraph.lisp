@@ -1,6 +1,27 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
+(define-condition not-in-comment (base:climacs-error)
+  ()
+  (:report "Not in comment"))
+
 (defun fill-paragraph (cache cursor)
   (multiple-value-bind (current parent previous next)
       (compute-wad-descriptors cache cursor)
-    (declare (ignore current parent previous next))))
+    (declare (ignore parent))
+    (let ((first
+            (if (null current)
+                (if (null previous)
+                    (if (null next)
+                        (error 'not-in-comment)
+                        next)
+                    (loop for wd = previous then (previous-sibling wd)
+                          until (null (previous-sibling wd))
+                          finally (return wd)))
+                (loop for wd = current then (previous-sibling wd)
+                      until (null (previous-sibling wd))
+                      finally (return wd)))))
+      (let ((wad-descriptors
+              (loop for wd = first then (next-sibling wd)
+                    until (null (next-sibling wd))
+                    collect wd)))
+        (format *trace-output* "~s~%" wad-descriptors)))))
