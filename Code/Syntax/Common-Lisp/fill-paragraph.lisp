@@ -11,24 +11,26 @@
 (defun fill-paragraph (cache cursor)
   (multiple-value-bind (current parent previous next)
       (compute-wad-descriptors cache cursor)
-    (declare (ignore parent))
-    (let ((first
-            (if (not (fill-paragraph-candidate-p current))
-                (if (not (fill-paragraph-candidate-p previous))
-                    (if (not (fill-paragraph-candidate-p next))
-                        (error 'not-in-comment)
-                        next)
-                    (loop for wd = previous then (previous-sibling wd)
-                          while (fill-paragraph-candidate-p (previous-sibling wd))
-                          finally (return wd)))
-                (loop for wd = current then (previous-sibling wd)
-                      while (fill-paragraph-candidate-p (previous-sibling wd))
-                      finally (return wd)))))
-      (let ((wad-descriptors
-              (loop for wd = first then (next-sibling wd)
-                    while (fill-paragraph-candidate-p wd)
-                    collect wd)))
-        (loop with ignore = (format *trace-output* "~%")
-              for wad-descriptor in wad-descriptors
-              do (format *trace-output* "~s: ~s~%"
-                         wad-descriptor (wad wad-descriptor)))))))
+    (declare (ignore previous))
+    (let ((cursor-line-number (cluffer:line-number cursor)))
+      (when (or
+             ;; If the cursor is inside an atomic wad, but that wad is
+             ;; not a semicolon comment wad, then it is an error.
+             (and (not (null current))
+                  (not (typep (wad current) 'semicolon-comment-wad)))
+             ;; The other possibility for an error is that the current
+             ;; wad is NIL, and either the next wad is not a semicolon
+             ;; comment wad, or it is a semicolon comment wad, but it is
+             ;; on a different line from the cursor.
+             (and (null current)
+                  (or (not (fill-paragraph-candidate-p next))
+                      (not (= cursor-line-number
+                              (start-line-number next))))))
+        (error 'not-in-comment)))
+    (if (null parent)
+        (if (null current)
+            (fill-paragraph-top-level cache next)
+            (fill-paragraph-top-level cache current))
+        (if (null current)
+            (fill-paragraph-non-top-level cache next)
+            (fill-paragraph-non-top-level cache current)))))
