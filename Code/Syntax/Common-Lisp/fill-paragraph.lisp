@@ -8,6 +8,30 @@
   (and (not (null wad-descriptor))
        (typep (wad wad-descriptor) 'semicolon-comment-wad)))
 
+(defun fill-paragraph-top-level (cache wad-descriptor)
+  (declare (ignore cache wad-descriptor)))
+
+(defun fill-paragraph-non-top-level (wad-descriptor)
+  (let ((start wad-descriptor))
+    ;; Find the first semicolon comment wad to be involved in this
+    ;; operation.
+    (loop for previous = (previous-sibling start)
+          while (and (fill-paragraph-candidate-p previous)
+                     (= (1- (start-line-number start))
+                        (start-line-number previous)))
+          do (setf start previous))
+    ;; Collect the wad descriptors involved.
+    (let ((wad-descriptors (list start)))
+      (loop for current = (first wad-descriptors)
+            for next = (next-sibling current)
+            while (and (fill-paragraph-candidate-p next)
+                       (= (1+ (start-line-number current))
+                          (start-line-number next)))
+            do (push next wad-descriptors))
+      (loop with ignore = (format *trace-output* "~%")
+            for wad-descriptor in wad-descriptors
+            do (format *trace-output* "~s~%" wad-descriptor)))))
+
 (defun fill-paragraph (cache cursor)
   (multiple-value-bind (current parent previous next)
       (compute-wad-descriptors cache cursor)
@@ -32,5 +56,5 @@
             (fill-paragraph-top-level cache next)
             (fill-paragraph-top-level cache current))
         (if (null current)
-            (fill-paragraph-non-top-level cache next)
-            (fill-paragraph-non-top-level cache current)))))
+            (fill-paragraph-non-top-level next)
+            (fill-paragraph-non-top-level current)))))
