@@ -196,9 +196,9 @@
 ;;; NIL if the cursor is not inside an atomic wad.  The second value
 ;;; is the wad descriptor of the parent of the wad in which the cursor
 ;;; is located, or NIL if the cursor is not inside a wad (so it is at
-;;; the top level.  The third and fourth values are the descriptors of
-;;; the wads immediately before and immediately after the cursor.  If
-;;; the cursor is inside an atomic wad, these values are the wad
+;;; the top level).  The third and fourth values are the descriptors
+;;; of the wads immediately before and immediately after the cursor.
+;;; If the cursor is inside an atomic wad, these values are the wad
 ;;; descriptors of the previous and the next siblings of that atomic
 ;;; wad.  If the cursor is not inside an atomic wad, these values are
 ;;; the wad descriptors of the wad immediately before and the wad
