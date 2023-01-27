@@ -9,7 +9,30 @@
        (typep (wad wad-descriptor) 'semicolon-comment-wad)))
 
 (defun fill-paragraph-top-level (cache wad-descriptor)
-  (declare (ignore cache wad-descriptor)))
+  (unless (null wad-descriptor)
+    (push-to-suffix cache (pop-from-prefix cache)))
+  ;; Now, the wad indicated by the cursor is always the first wad on
+  ;; the suffix.
+  (with-accessors ((prefix prefix) (suffix suffix)) cache
+    (loop until (or (null prefix)
+                    (not (typep (first prefix) 'semicolon-comment-wad))
+                    (< (start-line (first prefix))
+                       (1- (start-line (first suffix)))))
+          do (push-to-suffix cache (pop-from-prefix cache)))
+    ;; Now, all the wads we are interested in are on the suffix.
+    (let ((wad-descriptors
+            (list (make-wad-descriptor-from-wad (first suffix)))))
+      (push-to-prefix cache (pop-from-suffix cache))
+      (loop until (or (null suffix)
+                      (not (typep (first suffix) 'semicolon-comment-wad))
+                      (> (start-line (first suffix))
+                         (1+ (start-line (first prefix)))))
+            do (push (make-wad-descriptor-from-wad (first suffix))
+                     wad-descriptors)
+               (push-to-prefix cache (pop-from-suffix cache)))
+      (loop with ignore = (format *trace-output* "~%")
+            for wad-descriptor in wad-descriptors
+            do (format *trace-output* "~s~%" wad-descriptor)))))
 
 (defun fill-paragraph-non-top-level (wad-descriptor)
   (let ((start wad-descriptor))
@@ -52,9 +75,7 @@
                               (start-line-number next))))))
         (error 'not-in-comment)))
     (if (null parent)
-        (if (null current)
-            (fill-paragraph-top-level cache next)
-            (fill-paragraph-top-level cache current))
+        (fill-paragraph-top-level cache current)
         (if (null current)
             (fill-paragraph-non-top-level next)
             (fill-paragraph-non-top-level current)))))
