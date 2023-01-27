@@ -100,29 +100,30 @@
 (defun find-top-level-wad-containing-cursor (cache cursor)
   (multiple-value-bind (cursor-line-number cursor-column-number)
       (base:cursor-positions cursor)
-    (loop until (or (null (prefix cache))
-                    (position-is-after-wad-p
-                     (first (prefix cache))
-                     cursor-line-number
-                     cursor-column-number)
-                    (position-is-inside-wad-p
-                     (first (prefix cache))
-                     cursor-line-number
-                     cursor-column-number))
-          do (push-to-suffix cache (pop-from-prefix cache)))
-    (loop until (or (null (suffix cache))
-                    (position-is-before-wad-p
-                     (first (suffix cache))
-                     cursor-line-number
-                     cursor-column-number))
-          do (push-to-prefix cache (pop-from-suffix cache)))
-    (if (or (null (prefix cache))
-            (position-is-after-wad-p
-             (first (prefix cache))
-             cursor-line-number
-             cursor-column-number))
-        nil
-        (first (prefix cache)))))
+    (with-accessors ((prefix prefix) (suffix suffix)) cache
+      (loop until (or (null prefix)
+                      (position-is-after-wad-p
+                       (first prefix)
+                       cursor-line-number
+                       cursor-column-number)
+                      (position-is-inside-wad-p
+                       (first prefix)
+                       cursor-line-number
+                       cursor-column-number))
+            do (push-to-suffix cache (pop-from-prefix cache)))
+      (loop until (or (null suffix)
+                      (position-is-before-wad-p
+                       (first suffix)
+                       cursor-line-number
+                       cursor-column-number))
+            do (push-to-prefix cache (pop-from-suffix cache)))
+      (if (or (null prefix)
+              (position-is-after-wad-p
+               (first prefix)
+               cursor-line-number
+               cursor-column-number))
+          nil
+          (first prefix)))))
 
 (defun position-is-inside-interval-p
     (position-line-number
