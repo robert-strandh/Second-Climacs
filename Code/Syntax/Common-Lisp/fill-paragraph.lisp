@@ -17,7 +17,9 @@
     (loop until (or (null prefix)
                     (not (typep (first prefix) 'semicolon-comment-wad))
                     (< (start-line (first prefix))
-                       (1- (start-line (first suffix)))))
+                       (1- (start-line (first suffix))))
+                    (/= (semicolon-count (first prefix))
+                        (semicolon-count (first suffix))))
           do (push-to-suffix cache (pop-from-prefix cache)))
     ;; Now, all the wads we are interested in are on the suffix.
     (let ((wad-descriptors
@@ -26,7 +28,9 @@
       (loop until (or (null suffix)
                       (not (typep (first suffix) 'semicolon-comment-wad))
                       (> (start-line (first suffix))
-                         (1+ (start-line (first prefix)))))
+                         (1+ (start-line (first prefix))))
+                      (/= (semicolon-count (first prefix))
+                          (semicolon-count (first suffix))))
             do (push (make-wad-descriptor-from-wad (first suffix))
                      wad-descriptors)
                (push-to-prefix cache (pop-from-suffix cache)))
