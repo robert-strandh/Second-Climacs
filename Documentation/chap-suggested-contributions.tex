@@ -5,8 +5,21 @@
 \begin{itemize}
 \item Multiple windows.  We think multiple windows should be handled
   at the level of \mcclim{}.
+\item Magit clone.  Magit is an Emacs contribution for managing GIT
+  from Emacs.  We think that \sysname{} is not the right place for an
+  interface to GIT, which we think instead should be created as a
+  separate \clim{} application.
 \end{itemize}
 
 \section{Spell checker}
+
+A spell checker is not directly part of \sysname{} but it is a very
+valuable tool to have.  It should be created as a separate library
+with well defined protocols so that it can be used on the contents of
+a \sysname{} buffer, or part of one.
+
+In order to prepare for the use in a grammar checker, it might be
+desirable to have words stored with additional attributes such as
+singular/plural form, verb tense, part of speech, etc.
 
 \section{Grammar checker}
