@@ -90,6 +90,10 @@
   (with-current-cursor (cursor)
     (base:forward-word cursor)))
 
+(esa:set-key `(com-forward-word)
+	     'motion-table
+	     '((#\f :meta)))
+
 (clim:define-command
     (com-backward-word :name t :command-table motion-table)
     ()
