@@ -4,11 +4,35 @@
   ()
   (:report "Not in comment"))
 
+(defun collect-words (wad-descriptors buffer)
+  (loop with words = '()
+        with word = (make-array 0 :fill-pointer t
+                                  :adjustable t
+                                  :element-type 'character)
+        for wad-descriptor in wad-descriptors
+        for wad = (wad wad-descriptor)
+        for semicolon-count = (semicolon-count wad)
+        for start-column = (start-column-number wad-descriptor)
+        for line-number = (start-line-number wad-descriptor)
+        for line = (cluffer:find-line buffer line-number)
+        for length = (cluffer:item-count line)
+        do (loop for index from (+ start-column semicolon-count)
+                   below length
+                 for item = (cluffer:item-at-position line index)
+                 do (if (eql item #\Space)
+                        (unless (zerop (fill-pointer word))
+                          (push (copy-seq word) words)
+                          (setf (fill-pointer word) 0))
+                        (vector-push-extend item word))
+                 finally (push (copy-seq word) words)
+                         (setf (fill-pointer word) 0))
+           finally (return (nreverse words))))
+
 (defun fill-paragraph-candidate-p (wad-descriptor)
   (and (not (null wad-descriptor))
        (typep (wad wad-descriptor) 'semicolon-comment-wad)))
 
-(defun fill-paragraph-top-level (cache wad-descriptor)
+(defun fill-paragraph-top-level (cache wad-descriptor buffer)
   (unless (null wad-descriptor)
     (push-to-suffix cache (pop-from-prefix cache)))
   ;; Now, the wad indicated by the cursor is always the first wad on
@@ -36,9 +60,11 @@
                (push-to-prefix cache (pop-from-suffix cache)))
       (loop with ignore = (format *trace-output* "~%")
             for wad-descriptor in wad-descriptors
-            do (format *trace-output* "~s~%" wad-descriptor)))))
+            do (format *trace-output* "~s~%" wad-descriptor))
+      (format *trace-output* "~s"
+              (collect-words (reverse wad-descriptors) buffer)))))
 
-(defun fill-paragraph-non-top-level (wad-descriptor)
+(defun fill-paragraph-non-top-level (wad-descriptor buffer)
   (let ((start wad-descriptor))
     ;; Find the first semicolon comment wad to be involved in this
     ;; operation.
@@ -57,7 +83,9 @@
             do (push next wad-descriptors))
       (loop with ignore = (format *trace-output* "~%")
             for wad-descriptor in wad-descriptors
-            do (format *trace-output* "~s~%" wad-descriptor)))))
+            do (format *trace-output* "~s~%" wad-descriptor))
+      (format *trace-output* "~s"
+              (collect-words (reverse wad-descriptors) buffer)))))
 
 (defun fill-paragraph (cache cursor)
   (multiple-value-bind (current parent previous next)
@@ -78,8 +106,9 @@
                       (not (= cursor-line-number
                               (start-line-number next))))))
         (error 'not-in-comment)))
-    (if (null parent)
-        (fill-paragraph-top-level cache current)
-        (if (null current)
-            (fill-paragraph-non-top-level next)
-            (fill-paragraph-non-top-level current)))))
+    (let ((buffer (cluffer:buffer cursor)))
+      (if (null parent)
+          (fill-paragraph-top-level cache current buffer)
+          (if (null current)
+              (fill-paragraph-non-top-level next buffer)
+              (fill-paragraph-non-top-level current buffer))))))
