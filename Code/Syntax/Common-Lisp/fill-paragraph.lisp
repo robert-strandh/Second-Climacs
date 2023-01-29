@@ -28,6 +28,13 @@
                          (setf (fill-pointer word) 0))
            finally (return (nreverse words))))
 
+(defun fill-paragraph-using-wad-descriptors (wad-descriptors buffer)
+  (loop with ignore = (format *trace-output* "~%")
+        for wad-descriptor in wad-descriptors
+            do (format *trace-output* "~s~%" wad-descriptor))
+  (format *trace-output* "~s"
+          (collect-words wad-descriptors buffer)))
+
 (defun fill-paragraph-candidate-p (wad-descriptor)
   (and (not (null wad-descriptor))
        (typep (wad wad-descriptor) 'semicolon-comment-wad)))
@@ -58,11 +65,7 @@
             do (push (make-wad-descriptor-from-wad (first suffix))
                      wad-descriptors)
                (push-to-prefix cache (pop-from-suffix cache)))
-      (loop with ignore = (format *trace-output* "~%")
-            for wad-descriptor in wad-descriptors
-            do (format *trace-output* "~s~%" wad-descriptor))
-      (format *trace-output* "~s"
-              (collect-words (reverse wad-descriptors) buffer)))))
+      (fill-paragraph-using-wad-descriptors (reverse wad-descriptors) buffer))))
 
 (defun fill-paragraph-non-top-level (wad-descriptor buffer)
   (let ((start wad-descriptor))
@@ -81,11 +84,7 @@
                        (= (1+ (start-line-number current))
                           (start-line-number next)))
             do (push next wad-descriptors))
-      (loop with ignore = (format *trace-output* "~%")
-            for wad-descriptor in wad-descriptors
-            do (format *trace-output* "~s~%" wad-descriptor))
-      (format *trace-output* "~s"
-              (collect-words (reverse wad-descriptors) buffer)))))
+      (fill-paragraph-using-wad-descriptors (reverse wad-descriptors) buffer))))
 
 (defun fill-paragraph (cache cursor)
   (multiple-value-bind (current parent previous next)
