@@ -50,6 +50,8 @@
            #:mark
            #:climacs-error
            #:mark-not-set
+           #:cursor-<
+           #:cursor-=
            #:cursor-positions
            #:set-cursor-positions
            #:search-forward
