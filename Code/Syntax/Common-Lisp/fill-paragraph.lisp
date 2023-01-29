@@ -28,16 +28,48 @@
                          (setf (fill-pointer word) 0))
            finally (return (nreverse words))))
 
+(defparameter *fill-column* 72)
+
 (defun fill-paragraph-using-wad-descriptors (wad-descriptors buffer cursor)
-  (base:set-cursor-positions
-   cursor
-   (start-line-number (first wad-descriptors))
-   (start-column-number (first wad-descriptors)))
-  (loop with ignore = (format *trace-output* "~%")
-        for wad-descriptor in wad-descriptors
-            do (format *trace-output* "~s~%" wad-descriptor))
-  (format *trace-output* "~s"
-          (collect-words wad-descriptors buffer)))
+  (let* ((first (first wad-descriptors))
+         (start-line-number (start-line-number first))
+         (start-column-number (start-column-number first))
+         (semicolon-count (semicolon-count (wad first)))
+         (last (first (last wad-descriptors)))
+         (end-cursor (make-instance 'base:standard-cursor :buffer buffer))
+         (words (collect-words wad-descriptors buffer)))
+    (base:set-cursor-positions cursor start-line-number start-column-number)
+    (cluffer:attach-cursor
+     end-cursor
+     (cluffer:find-line buffer (end-line-number last))
+     (end-column-number last))
+    (loop until (base:cursor-= cursor end-cursor)
+          do (base:delete-item cursor))
+    (cluffer:detach-cursor end-cursor)
+    (flet ((insert-word (word)
+             (base:insert-item cursor #\Space)
+             (loop for char across word
+                   do (base:insert-item cursor char)))
+           (indent ()
+             (loop repeat start-column-number
+                   do (base:insert-item cursor #\Space)))
+           (insert-semicolons ()
+             (loop repeat semicolon-count
+                   do (base:insert-item cursor #\;))))
+      (insert-semicolons)
+      (insert-word (first words))
+      (loop for word in (rest words)
+            do (when (>= (+ (cluffer:cursor-position cursor) (length word))
+                         *fill-column*)
+                 (base:insert-item cursor #\Newline)
+                 (indent)
+                 (insert-semicolons))
+               (insert-word word))
+      (base:insert-item cursor #\Newline)
+      (base:set-cursor-positions
+       cursor
+       (start-line-number first)
+       (start-column-number first)))))
 
 (defun fill-paragraph-candidate-p (wad-descriptor)
   (and (not (null wad-descriptor))
