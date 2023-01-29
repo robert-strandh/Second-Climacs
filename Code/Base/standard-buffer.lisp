@@ -7,8 +7,8 @@
   ((%cluffer-buffer :initarg :cluffer-buffer :reader cluffer-buffer)
    ;; We emulate Emacs a bit, in that we have a distinguished cursor
    ;; called the mark, and that is used (together with the cursor) to
-   ;; define what a REGION of the buffer is.  When the slot contains
-   ;; NIL, it means that the marks is not set.
+   ;; define what a REGION of the buffer is. When the slot contains NIL,
+   ;; it means that the marks is not set.
    (%mark :initform nil :accessor mark)))
 
 ;;; A STANDARD-CURSOR is a subclass of a Cluffer RIGHT-STICKY-CURSOR.
