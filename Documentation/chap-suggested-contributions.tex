@@ -13,13 +13,10 @@
 
 \section{Spell checker}
 
-A spell checker is not directly part of \sysname{} but it is a very
-valuable tool to have.  It should be created as a separate library
-with well defined protocols so that it can be used on the contents of
-a \sysname{} buffer, or part of one.
-
-In order to prepare for the use in a grammar checker, it might be
-desirable to have words stored with additional attributes such as
-singular/plural form, verb tense, part of speech, etc.
+This task consists of integrating an existing spell checker%
+\footnote{https://github.com/robert-strandh/Spell}
+into \sysname{}.  The parser for \commonlisp{} comments should consult
+the spell checker, and indicate incorrectly spelled words with some
+graphical hint such as color.
 
 \section{Grammar checker}
