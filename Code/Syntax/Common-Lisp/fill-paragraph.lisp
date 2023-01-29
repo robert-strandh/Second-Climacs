@@ -28,7 +28,11 @@
                          (setf (fill-pointer word) 0))
            finally (return (nreverse words))))
 
-(defun fill-paragraph-using-wad-descriptors (wad-descriptors buffer)
+(defun fill-paragraph-using-wad-descriptors (wad-descriptors buffer cursor)
+  (base:set-cursor-positions
+   cursor
+   (start-line-number (first wad-descriptors))
+   (start-column-number (first wad-descriptors)))
   (loop with ignore = (format *trace-output* "~%")
         for wad-descriptor in wad-descriptors
             do (format *trace-output* "~s~%" wad-descriptor))
@@ -39,7 +43,7 @@
   (and (not (null wad-descriptor))
        (typep (wad wad-descriptor) 'semicolon-comment-wad)))
 
-(defun fill-paragraph-top-level (cache wad-descriptor buffer)
+(defun fill-paragraph-top-level (cache wad-descriptor buffer cursor)
   (unless (null wad-descriptor)
     (push-to-suffix cache (pop-from-prefix cache)))
   ;; Now, the wad indicated by the cursor is always the first wad on
@@ -65,9 +69,10 @@
             do (push (make-wad-descriptor-from-wad (first suffix))
                      wad-descriptors)
                (push-to-prefix cache (pop-from-suffix cache)))
-      (fill-paragraph-using-wad-descriptors (reverse wad-descriptors) buffer))))
+      (fill-paragraph-using-wad-descriptors
+       (reverse wad-descriptors) buffer cursor))))
 
-(defun fill-paragraph-non-top-level (wad-descriptor buffer)
+(defun fill-paragraph-non-top-level (wad-descriptor buffer cursor)
   (let ((start wad-descriptor))
     ;; Find the first semicolon comment wad to be involved in this
     ;; operation.
@@ -84,7 +89,8 @@
                        (= (1+ (start-line-number current))
                           (start-line-number next)))
             do (push next wad-descriptors))
-      (fill-paragraph-using-wad-descriptors (reverse wad-descriptors) buffer))))
+      (fill-paragraph-using-wad-descriptors
+       (reverse wad-descriptors) buffer cursor))))
 
 (defun fill-paragraph (cache cursor)
   (multiple-value-bind (current parent previous next)
@@ -107,7 +113,7 @@
         (error 'not-in-comment)))
     (let ((buffer (cluffer:buffer cursor)))
       (if (null parent)
-          (fill-paragraph-top-level cache current buffer)
+          (fill-paragraph-top-level cache current buffer cursor)
           (if (null current)
-              (fill-paragraph-non-top-level next buffer)
-              (fill-paragraph-non-top-level current buffer))))))
+              (fill-paragraph-non-top-level next buffer cursor)
+              (fill-paragraph-non-top-level current buffer cursor))))))
