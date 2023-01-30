@@ -54,16 +54,6 @@
   ()
   (:report "No following expression"))
 
-(defun forward-top-level-expression (cache cursor)
-  (adjust-prefix-and-suffix-to-surround-cursor cache cursor)
-  (if (null (suffix cache))
-      (error 'no-following-expression)
-      (let ((wad (first (suffix cache))))
-        (base:set-cursor-positions
-         cursor
-         (+ (start-line wad) (height wad))
-         (end-column wad)))))
-
 (defun cursor-is-inside-atomic-wad-p (cache cursor)
   (multiple-value-bind (cursor-line-number cursor-column-number)
       (base:cursor-positions cursor)
@@ -75,44 +65,17 @@
              (or (typep first-wad 'no-expression-wad)
                  (atom (expression first-wad))))))))
 
-(defun forward-non-top-level-expression (parent-wad line-number cursor)
-  (if (or (typep parent-wad 'no-expression-wad)
-          (atom (expression parent-wad)))
-      ;; We position the cursor at the end of the wad.
-      (base:set-cursor-positions
-       cursor
-       (+ line-number (height parent-wad))
-       (end-column parent-wad))
-      (multiple-value-bind (cursor-line-number cursor-column-number)
-          (base:cursor-positions cursor)
-        (loop for reference = line-number
-                then (+ reference (start-line child))
-              for child in (children parent-wad)
-              when (position-is-before-wad-p
-                    child
-                    (- cursor-line-number reference)
-                    cursor-column-number)
-                do (base:set-cursor-positions
-                    cursor
-                    (+ reference (start-line child) (height child))
-                    (end-column child))
-                   (return)
-              finally ;; We come here when every child has been examined and
-                      ;; no child starts after the cursor, so there is no
-                      ;; child to forward over.
-                      (error 'no-following-expression)))))
-
 (defun forward-expression (cache cursor)
-  (multiple-value-bind (cursor-line-number cursor-column-number)
-      (base:cursor-positions cursor)
-    (let ((lines-and-wads
-            (find-wads-containing-position
-             cache cursor-line-number cursor-column-number)))
-      (if (null lines-and-wads)
-          (forward-top-level-expression cache cursor)
-          (destructuring-bind (new-line-number . wad)
-              (first lines-and-wads)
-            (forward-non-top-level-expression wad new-line-number cursor))))))
+  (multiple-value-bind (current parent previous next)
+      (compute-wad-descriptors cache cursor)
+    (declare (ignore parent previous))
+    (if (null current)
+        (if (null next)
+            (error 'no-following-expression)
+            (base:set-cursor-positions
+             cursor (end-line-number next) (end-column-number next)))
+        (base:set-cursor-positions
+         cursor (end-line-number current) (end-column-number current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
