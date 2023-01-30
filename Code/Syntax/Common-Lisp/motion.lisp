@@ -86,56 +86,17 @@
   ()
   (:report "No preceding expression"))
 
-(defun backward-top-level-expression (cache cursor)
-  (adjust-prefix-and-suffix-to-surround-cursor cache cursor)
-  (if (null (prefix cache))
-      (error 'no-preceding-expression)
-      (let ((wad (first (prefix cache))))
-        (base:set-cursor-positions
-         cursor (start-line wad) (start-column wad)))))
-
-(defun backward-non-top-level-expression (parent-wad line-number cursor)
-  (if (or (typep parent-wad 'no-expression-wad)
-          (atom (expression parent-wad)))
-      ;; We position the cursor at the beginning of the wad.
-      (base:set-cursor-positions
-       cursor line-number (start-column parent-wad))
-      (multiple-value-bind (cursor-line-number cursor-column-number)
-          (base:cursor-positions cursor)
-        (let ((predecessor nil)
-              (predecessor-line-number nil))
-          (block found
-            (mapwad (lambda (wad absolute-line-number)
-                      (when (position-less-or-equal
-                             cursor-line-number cursor-column-number
-                             absolute-line-number (start-column wad))
-                        ;; We found the first wad that follows the
-                        ;; cursor position.
-                        (return-from found))
-                      ;; WAD is is still before the cursor, so prepare
-                      ;; for a new iteration.
-                      (setf predecessor wad
-                            predecessor-line-number absolute-line-number))
-                    (children parent-wad)
-                    line-number))
-          (if (null predecessor)
-              (error 'no-preceding-expression)
-              (base:set-cursor-positions
-               cursor
-               predecessor-line-number
-               (start-column predecessor)))))))
-
 (defun backward-expression (cache cursor)
-  (multiple-value-bind (cursor-line-number cursor-column-number)
-      (base:cursor-positions cursor)
-    (let ((lines-and-wads
-            (find-wads-containing-position
-             cache cursor-line-number cursor-column-number)))
-      (if (null lines-and-wads)
-          (backward-top-level-expression cache cursor)
-          (destructuring-bind (new-line-number . wad)
-              (first lines-and-wads)
-            (backward-non-top-level-expression wad new-line-number cursor))))))
+  (multiple-value-bind (current parent previous next)
+      (compute-wad-descriptors cache cursor)
+    (declare (ignore parent next))
+    (if (null current)
+        (if (null previous)
+            (error 'no-following-expression)
+            (base:set-cursor-positions
+             cursor (start-line-number previous) (start-column-number previous)))
+        (base:set-cursor-positions
+         cursor (start-line-number current) (start-column-number current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
