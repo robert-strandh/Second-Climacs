@@ -4,7 +4,7 @@
     output-history
     (clim:output-record clim:stream-output-history-mixin)
   cl-syntax:cache
-  ((%parent :initarg :parent :accessor clim:output-record-parent)))
+  ())
 
 (defclass common-lisp-view (clim-base:climacs-clim-view)
   ())
@@ -483,26 +483,23 @@
 ;;; returned: The column and the line of the upper-left corner and the
 ;;; column and the line of the lower-right corner.
 (defun viewport-area (pane)
-  (multiple-value-bind (left top right bottom)
-      (clim:bounding-rectangle*
-       (clim:pane-viewport-region pane))
-    (multiple-value-bind (width height) (text-style-dimensions pane)
-      (values (floor left width) (floor top height)
-              (ceiling right width) (ceiling bottom height)))))
+  (let ((region (clim:pane-viewport-region pane)))
+    (clim:with-bounding-rectangle* (left top right bottom) region
+      (multiple-value-bind (width height) (text-style-dimensions pane)
+        (values (floor left width) (floor top height)
+                (ceiling right width) (ceiling bottom height))))))
 
 (defun clear-viewport (pane)
-  (multiple-value-bind (left top right bottom)
-      (clim:bounding-rectangle*
-       (clim:pane-viewport-region pane))
-    (clim:medium-clear-area (clim:sheet-medium pane)
-                            left top right bottom)))
+  (let ((region (clim:pane-viewport-region pane)))
+    (clim:with-bounding-rectangle* (left top right bottom) region
+      (clim:medium-clear-area (clim:sheet-medium pane)
+                              left top right bottom))))
 
 (defmethod clim:replay-output-record
     ((cache output-history) stream &optional region x-offset y-offset)
   (declare (ignore x-offset y-offset region))
   (clear-viewport stream)
-  (multiple-value-bind (left top right bottom)
-      (viewport-area stream)
+  (multiple-value-bind (left top right bottom) (viewport-area stream)
     (declare (ignore left right))
     (let* ((line-count (cl-syntax:line-count cache))
            (last-line-number (min bottom (1- line-count))))
@@ -523,7 +520,7 @@
         (1- (cl-syntax:start-line (first suffix))))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
-  (let ((pane (clim:output-record-parent history)))
+  (let ((pane (climi::output-history-stream history)))
     (multiple-value-bind (width height) (text-style-dimensions pane)
       (let* ((line-count (cl-syntax:line-count history))
              (prefix (cl-syntax:prefix history))
@@ -542,13 +539,16 @@
 (defmethod clim-base:update-view (pane (view common-lisp-view))
   (let ((history (clim:stream-output-history pane)))
     (base:update-view (clim-base:climacs-view view))
-    (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
-      (declare (ignore x1 y1))
-      (clim:change-space-requirements
-       (clim:output-record-parent history)
-       :width x2
-       :height y2))
+    (let ((stream (climi::output-history-stream history)))
+      (clim:with-bounding-rectangle* (:x2 x2 :y2 y2) history
+        (clim:change-space-requirements stream :width x2 :height y2)))
     (clim:replay history pane)))
+
+(defmethod clim:output-record-parent ((record output-history))
+  nil)
+
+(defmethod clim:output-record-count ((record output-history))
+  0)
 
 (defmethod clim:map-over-output-records-containing-position
     (function

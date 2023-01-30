@@ -55,9 +55,9 @@
 (defun attach-view (pane view)
   (assert (not (pane-has-attached-view-p pane)))
   (base:expose-view view pane)
-  (let ((climacs-clim-view (make-climacs-clim-view view)))
-    (setf (clim:output-record-parent (output-history climacs-clim-view))
-          pane)
+  (let* ((climacs-clim-view (make-climacs-clim-view view))
+         (history (output-history climacs-clim-view)))
+    (reinitialize-instance history :stream pane)
     (setf (clim:stream-default-view pane) climacs-clim-view)))
 
 ;;; We define our own HRACK-PANE as a subclass of the one provided by
@@ -138,10 +138,7 @@
                    :if-does-not-exist nil)
     (unless (null stream)
       (load stream)))
-  (let ((frame (clim:make-application-frame
-                'climacs
-                :views '()
-                :buffers '())))
+  (let ((frame (clim:make-application-frame 'climacs)))
     (flet ((run () (clim:run-frame-top-level frame)))
       (if new-process
           (clim-sys:make-process #'run :name process-name)
