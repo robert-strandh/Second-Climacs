@@ -9,16 +9,16 @@
   (:report "Already at top level"))
 
 (defun up-expression (cache cursor)
-  (multiple-value-bind (line-number column-number)
-      (base:cursor-positions cursor)
-    (let ((lines-and-wads
-            (find-wads-containing-position cache line-number column-number)))
-      (if (null lines-and-wads)
-          (error 'already-at-top-level)
-          (destructuring-bind (new-line-number . wad)
-              (first lines-and-wads)
+  (multiple-value-bind (current parent previous next)
+      (compute-wad-descriptors cache cursor)
+    (declare (ignore previous next))
+    (if (null current)
+        (if (null parent)
+            (error 'already-at-top-level)
             (base:set-cursor-positions
-             cursor new-line-number (start-column wad)))))))
+             cursor (start-line-number parent) (start-column-number parent)))
+        (base:set-cursor-positions
+         cursor (start-line-number current) (start-column-number current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
