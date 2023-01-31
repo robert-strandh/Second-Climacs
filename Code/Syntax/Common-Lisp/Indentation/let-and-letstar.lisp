@@ -27,7 +27,7 @@
   (let ((expression (expression wad)))
     (when (and (consp expression)
                (proper-list-p expression))
-        ;; We indent every remaining child as the first one.
+      ;; We indent every remaining child as the first one.
       (let* ((children (children wad))
              (first-child (first children))
              (start-column (start-column first-child))
