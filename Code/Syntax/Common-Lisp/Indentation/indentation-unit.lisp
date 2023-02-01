@@ -23,6 +23,9 @@
       0
       (height wad)))
 
+(defun wads-are-on-different-lines-p (wad1 wad2)
+  (/= (effective-height wad1) (start-line wad2)))
+
 (defun compute-indentation-units (wads)
   (if (null wads)
       '()
