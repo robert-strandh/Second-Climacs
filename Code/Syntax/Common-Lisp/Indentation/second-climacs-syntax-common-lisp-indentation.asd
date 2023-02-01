@@ -17,4 +17,5 @@
                (:file "defun")
                (:file "destructuring-bind-etc")
                (:file "make-instance-etc")
-               (:file "defclass")))
+               (:file "defclass")
+               (:file "defmethod")))
