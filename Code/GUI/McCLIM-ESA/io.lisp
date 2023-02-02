@@ -37,6 +37,7 @@
          (cluffer-buffer (base:cluffer-buffer buffer))
          (first-line (cluffer:find-line cluffer-buffer 0))
          (window (esa:current-window)))
+    (clim:window-clear (left-gutter window))
     (when (null view-class)
       (setf view-class 'fundamental-syntax:view))
     (let* ((cursor (make-instance 'base:standard-cursor
