@@ -165,9 +165,9 @@
       (multiple-value-bind (mark-line-number mark-column-number)
           (cursor-positions mark)
         (set-cursor-positions
-         cursor mark-line-number mark-column-number)
+          cursor mark-line-number mark-column-number)
         (set-cursor-positions
-         mark cursor-line-number cursor-column-number)))))
+          mark cursor-line-number cursor-column-number)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
