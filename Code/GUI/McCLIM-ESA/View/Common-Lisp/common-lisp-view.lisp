@@ -94,6 +94,16 @@
              6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
        :closed t :filled t :ink ink)))
 
+(defun draw-gray-rectangle (pane gutter line-number)
+  (multiple-value-bind (middle h1 h2)
+      (arrow-y-coordinates pane line-number)
+    (declare (ignore h1))
+    (clim:draw-rectangle*
+     gutter
+     0 (+ middle h2) 12 (- middle h2)
+     :filled t
+     :ink clim:+gray+)))
+
 (defun draw-cursor (pane x y height)
   (clim:draw-rectangle* pane (1- x) (- y height) (+ x 2) y
                         :ink clim:+blue+))
@@ -253,12 +263,16 @@
 (defmethod draw-wad :around (wad start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
   (let ((indentation (cl-syntax::indentation wad))
-        (start-column (cl-syntax::start-column wad)))
-    (unless (or (null indentation) (= indentation start-column))
-      (let ((gutter (clim-base:left-gutter pane)))
-        (if (< indentation start-column)
-            (draw-left-arrow pane gutter start-ref clim:+blue+)
-            (draw-right-arrow pane gutter start-ref clim:+blue+)))))
+        (start-column (cl-syntax::start-column wad))
+        (gutter (clim-base:left-gutter pane)))
+    (cond ((null indentation)
+           nil)
+          ((= indentation start-column)
+           (draw-gray-rectangle pane gutter start-ref))
+          ((< indentation start-column)
+           (draw-left-arrow pane gutter start-ref clim:+blue+))
+          (t
+           (draw-right-arrow pane gutter start-ref clim:+blue+))))
   (call-next-method))
 
 (defmethod draw-wad :around
