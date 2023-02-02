@@ -63,15 +63,6 @@
          (compute-child-indentations current-wad client)
          (go form)))))
 
-(defun assign-indentation-of-wads-in-unit
-    (indentation-unit indentation)
-  ;; Always assign indentation of the first wad in the unit.
-  (setf (indentation (first indentation-unit)) indentation)
-  (loop for (wad1 wad2) on indentation-unit
-        until (null wad2)
-        when (wads-are-on-different-lines-p wad1 wad2)
-          do (setf (indentation wad2) indentation)))
-
 (defmethod compute-sub-form-indentations
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:defmethod))) client)
   (let* ((indentation-units
