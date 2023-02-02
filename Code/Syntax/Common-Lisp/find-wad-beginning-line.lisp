@@ -21,7 +21,7 @@
                        (start-line child))
             when (<= absolute-line-number
                      line-number
-                     (+ absolute-line-number (height child)))
+                     (+ absolute-line-number (effective-height child)))
               return (search-wad child absolute-line-number line-number))))
 
 (defun find-wad-beginning-line (cache line-number)
@@ -30,5 +30,5 @@
   (loop for wad in (reverse (prefix cache))
         when (<= (start-line wad)
                  line-number
-                 (+ (start-line wad) (height wad)))
+                 (+ (start-line wad) (effective-height wad)))
           return (search-wad wad (start-line wad) line-number)))
