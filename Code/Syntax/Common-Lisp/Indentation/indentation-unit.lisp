@@ -1,20 +1,44 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-;;; An indentation unit is a list of wads that are consecutive in the
-;;; buffer, such that only the first wad in the list starts a line.
-;;; Every other wad W in the list is preceded by a wad V such that the
-;;; last line of V is the first line of W.  If the first wad in the
-;;; list is an EXPRESSION-WAD W, then the indentation of W is
-;;; determined by its parent wad.  If the first wad in the list is a
-;;; NO-EXPRESSION-WAD W, but a subsequent indentation unit starts with
-;;; an EXPRESSION-WAD V, then the indentation of W is the same as the
-;;; indentation of V.  If the first wad in the list is a
-;;; NO-EXPRESSION-WAD W, but there is no subsequent indentation unit
-;;; starts with an EXPRESSION-WAD, then the indentation of W is the
-;;; same as if it were an EXPRESSION-WAD, so determined by the parent
-;;; wad.  The indentation of a wad W, other than the fist,in an
-;;; indentation unit, is computed independently, so determined only by
-;;; the start column of W.
+;;; Indentation is computed only for wads that start a line.
+
+;;; An indentation unit is a list of some sub-sequence of the child
+;;; wads of some expression wad.  The children of an expression wad
+;;; are divided into non-overlapping indentation units that together
+;;; contain every such child.
+;;;
+;;; If some indentation unit U contains an EXPRESSION-WAD, then let W
+;;; be the first such wad in U.  Then there is no wad following W in U
+;;; that starts a line.  For an expression wad V following W in U, its
+;;; children have their indentations computed only relative to the
+;;; start column of V.  Wads preceding W in U may either start a line,
+;;; or not.  Those that start a line have their indentation computed
+;;; according to the rule for W, and the rule for W is determined by:
+;;;
+;;;   * the operator of the parent wad of W,
+;;;   * the number and nature of the expression wads preceding it in
+;;;     the list of siblings, and
+;;;   * sometimes by the nature of W itself.
+;;;
+;;; An example of the last possibility is that the indentation of a
+;;; declaration or a documentation string in the body of a function
+;;; may be computed differently from a form in that body.
+;;;
+;;; If some indentation unit U does not contain an EXPRESSION-WAD,
+;;; then it is the last indentation unit in the list of indentation
+;;; units computed for the children of some expression wad.  The
+;;; computation of the indentation for the wads of U that start a line
+;;; is determined by:
+;;;
+;;;   * the operator of the parent wad of W, and
+;;;   * the number and nature of the expression wads preceding it in
+;;;     the list of siblings.
+;;;   
+;;; Here, since no expression wad exists, some default rule must be
+;;; applied.  For example, in the body of a function, if no
+;;; declaration and no documentation string precedes U, then the
+;;; default rule could be to compute the indentation as if a body form
+;;; followed.
 
 ;;; This function is required because semicolon comment wads actually
 ;;; have a height of 1.
