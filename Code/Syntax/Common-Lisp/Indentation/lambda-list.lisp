@@ -80,8 +80,6 @@
            ;; Come here when the current wad ought to represent an
            ;; optional parameter.  We try to determine whether we have
            ;; an optional form to indent.
-           (when (wad-represents-lambda-list-keyword-p current-wad)
-             (go lambda-list-keyword))
            (maybe-assign-indentation 3 3)
            (when (typep current-wad 'expression-wad)
              (let* ((expression (expression current-wad))
@@ -97,9 +95,21 @@
                      (compute-child-indentations
                       init-form-wad client))))))
            (next)
+           (when (wad-represents-lambda-list-keyword-p current-wad)
+             (go lambda-list-keyword))
            (go &optional)
          &rest
          &body
+           ;; Come here when the current wad ought to represent a
+           ;; &REST or a &BODY parameter.  The thing is that in a
+           ;; macro lambda list or a destructuring lambda list, such a
+           ;; parameter can be another lambda list.
+           (maybe-assign-indentation 3 3)
+           (indent-lambda-list current-wad client)
+           (next)
+           (when (wad-represents-lambda-list-keyword-p current-wad)
+             (go lambda-list-keyword))
+           (go &rest)
          &whole
          &environment
          &key
