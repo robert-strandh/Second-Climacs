@@ -80,24 +80,24 @@
            ;; Come here when the current wad ought to represent an
            ;; optional parameter.  We try to determine whether we have
            ;; an optional form to indent.
-           (if (wad-represents-lambda-list-keyword-p current-wad)
-               (go lambda-list-keyword)
-               (progn (maybe-assign-indentation 3 3)
-                      (when (typep current-wad 'expression-wad)
-                        (let* ((expression (expression current-wad))
-                               (children (children current-wad)))
-                          (when (consp expression)
-                            ;; We try to find an expression wad that
-                            ;; follows the first child
-                            (let ((init-form-wad
-                                    (find-if (lambda (x)
-                                               (typep x 'expression-wad))
-                                             (rest children))))
-                              (unless (null init-form-wad)
-                                (compute-child-indentations
-                                 init-form-wad client))))))
-                      (next)
-                      (go &optional)))
+           (when (wad-represents-lambda-list-keyword-p current-wad)
+             (go lambda-list-keyword))
+           (maybe-assign-indentation 3 3)
+           (when (typep current-wad 'expression-wad)
+             (let* ((expression (expression current-wad))
+                    (children (children current-wad)))
+               (when (consp expression)
+                 ;; We try to find an expression wad that
+                 ;; follows the first child
+                 (let ((init-form-wad
+                         (find-if (lambda (x)
+                                    (typep x 'expression-wad))
+                                  (rest children))))
+                   (unless (null init-form-wad)
+                     (compute-child-indentations
+                      init-form-wad client))))))
+           (next)
+           (go &optional)
          &rest
          &body
          &whole
