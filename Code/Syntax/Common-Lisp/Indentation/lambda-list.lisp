@@ -112,6 +112,17 @@
            (go &rest)
          &whole
          &environment
+           ;; Come here when the current wad ought to represent a
+           ;; &WHOLE or an &ENVIRONMENT parameter.  These lambda-list
+           ;; keywords should be followed by a single variable, but it
+           ;; is not the purpose of the indentation code to varify
+           ;; such things, so we just act as if they can be followed
+           ;; by more than one variable.
+           (maybe-assign-indentation 3 3)
+           (next)
+           (when (wad-represents-lambda-list-keyword-p current-wad)
+             (go lambda-list-keyword))
+           (go &whole)
          &key
          &allow-other-keys
          &aux)))))
