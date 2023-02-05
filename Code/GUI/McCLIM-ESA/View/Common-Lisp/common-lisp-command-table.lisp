@@ -14,8 +14,8 @@
     (cl-syntax:up-expression cache cursor)))
 
 (esa:set-key `(com-up-expression)
-	     'common-lisp-table
-	     '((#\u :meta :control)))
+             'common-lisp-table
+             '((#\u :meta :control)))
 
 (clim:define-command
     (com-forward-expression :name t :command-table common-lisp-table)
@@ -24,8 +24,8 @@
     (cl-syntax:forward-expression cache cursor)))
 
 (esa:set-key `(com-forward-expression)
-	     'common-lisp-table
-	     '((#\f :meta :control)))
+             'common-lisp-table
+             '((#\f :meta :control)))
 
 (clim:define-command
     (com-backward-expression :name t :command-table common-lisp-table)
@@ -34,8 +34,8 @@
     (cl-syntax:backward-expression cache cursor)))
 
 (esa:set-key `(com-backward-expression)
-	     'common-lisp-table
-	     '((#\b :meta :control)))
+             'common-lisp-table
+             '((#\b :meta :control)))
 
 (clim:define-command
     (com-mark-expression :name t :command-table common-lisp-table)
@@ -44,8 +44,8 @@
     (cl-syntax:mark-expression cache cursor)))
 
 (esa:set-key `(com-mark-expression)
-	     'common-lisp-table
-	     '((#\Space :meta :control)))
+             'common-lisp-table
+             '((#\Space :meta :control)))
 
 (clim:define-command
     (com-exchange-expressions :name t :command-table common-lisp-table)
@@ -54,8 +54,8 @@
     (cl-syntax:exchange-expressions cache cursor)))
 
 (esa:set-key `(com-exchange-expressions)
-	     'common-lisp-table
-	     '((#\t :meta :control)))
+             'common-lisp-table
+             '((#\t :meta :control)))
 
 (clim:define-command
     (com-beginning-of-top-level-expression
@@ -65,8 +65,8 @@
     (cl-syntax:beginning-of-top-level-expression cache cursor)))
 
 (esa:set-key `(com-beginning-of-top-level-expression)
-	     'common-lisp-table
-	     '((#\a :meta :control)))
+             'common-lisp-table
+             '((#\a :meta :control)))
 
 (clim:define-command
     (com-end-of-top-level-expression
@@ -76,8 +76,8 @@
     (cl-syntax:end-of-top-level-expression cache cursor)))
 
 (esa:set-key `(com-end-of-top-level-expression)
-	     'common-lisp-table
-	     '((#\e :meta :control)))
+             'common-lisp-table
+             '((#\e :meta :control)))
 
 (clim:define-command
     (com-fill-paragraph
@@ -87,5 +87,5 @@
     (cl-syntax:fill-paragraph cache cursor)))
 
 (esa:set-key `(com-fill-paragraph)
-	     'common-lisp-table
-	     '((#\q :meta)))
+             'common-lisp-table
+             '((#\q :meta)))
