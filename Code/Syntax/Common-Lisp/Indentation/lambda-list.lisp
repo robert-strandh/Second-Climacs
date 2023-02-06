@@ -124,6 +124,30 @@
              (go lambda-list-keyword))
            (go &whole)
          &key
+           ;; Come here when the current wad ought to represent a &KEY
+           ;; parameter.  We are mainly interested in whether there is
+           ;; an INIT-FORM that should have its indentation computed.
+           (maybe-assign-indentation 3 3)
+           (when (typep current-wad 'expression-wad)
+             (let ((expression (expression current-wad)))
+               (when (and (consp expression)
+                          (consp (rest expression)))
+                 (let ((pos (position-if
+                             (lambda (x) (typep x 'expression-wad))
+                             (children current-wad))))
+                   (unless (null pos)
+                     (let ((init-form-wad
+                             (find-if
+                              (lambda (x) (typep x 'expression-wad))
+                              (children current-wad)
+                              :start (1+ pos))))
+                       (unless (null init-form-wad)
+                         (compute-child-indentations
+                          init-form-wad client))))))))
+           (next)
+           (when (wad-represents-lambda-list-keyword-p current-wad)
+             (go lambda-list-keyword))
+           (go &key)
          &allow-other-keys
          &aux)))))
 
