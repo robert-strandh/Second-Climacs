@@ -51,6 +51,7 @@
                      (first (children current-wad))
                      'declare))
            (maybe-assign-indentation 3 2)
+           ;; FIXME: compute indentation of declaration here.
            (next)
            (go declaration-or-documentation-or-form))
        documentation-or-form
