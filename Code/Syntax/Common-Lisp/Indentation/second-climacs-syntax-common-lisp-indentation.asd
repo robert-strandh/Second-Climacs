@@ -3,6 +3,7 @@
   :serial t
   :components ((:file "indentation-unit")
                (:file "indentation-support")
+               (:file "declare")
                (:file "define-indentation-defmacro")
                (:file "let-and-letstar")
                (:file "setf-and-setq")
