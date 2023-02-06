@@ -82,3 +82,8 @@
         until (null wad2)
         when (wads-are-on-different-lines-p wad1 wad2)
           do (setf (indentation wad2) indentation)))
+
+(defun assign-indentation-of-wads-in-units (indentation-units indentations)
+  (loop for indentation-unit in indentation-units
+        for indentation in indentations
+        do (assign-indentation-of-wads-in-unit indentation-unit indentation)))
