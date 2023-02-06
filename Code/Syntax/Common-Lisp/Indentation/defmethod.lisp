@@ -70,7 +70,5 @@
            (compute-indentation-units (children wad)))
          (indentations
            (compute-defmethod-indentations indentation-units client)))
-    (loop for indentation-unit in indentation-units
-          for indentation in indentations
-          do (assign-indentation-of-wads-in-unit
-              indentation-unit indentation))))
+    (assign-indentation-of-wads-in-units
+     indentation-units indentations)))
