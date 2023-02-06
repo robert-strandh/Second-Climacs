@@ -60,8 +60,8 @@
            (next))
        form 
          (maybe-assign-indentation 2 2)
-         (next)
          (compute-child-indentations current-wad client)
+         (next)
          (go form)))))
 
 (defmethod compute-sub-form-indentations
