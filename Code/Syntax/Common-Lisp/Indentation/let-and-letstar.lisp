@@ -1,5 +1,54 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
+;;; Compute the indentation for a single LET binding.  This function
+;;; is called only when the binding represents a CONS cell.
+(defun new-compute-binding-indentations (indentation-units client)
+  (let ((indentations (list 1))
+        (current-unit '())
+        (remaining-units indentation-units)
+        (current-wad nil)
+        (seen-expression-wad-p nil))
+    (flet ((next ()
+             (setf current-wad nil)
+             (loop until (typep current-wad 'expression-wad)
+                   do (when (null current-unit)
+                        (setf seen-expression-wad-p nil)
+                        (if (null remaining-units)
+                            (return-from new-compute-binding-indentations
+                              (reverse indentations))
+                            (setf current-unit
+                                  (pop remaining-units))))
+                      (setf current-wad (pop current-unit))))
+           (maybe-assign-indentation (indentation next-default)
+             (unless seen-expression-wad-p
+               (setf seen-expression-wad-p t)
+               (setf (first indentations) indentation)
+               (push next-default indentations))))
+      (tagbody
+         (next)
+         ;; The current wad represents the variable introduced by the
+         ;; binding.  But it is not the role of the indentation code
+         ;; to verify the nature of this wad.  Here, we just assume
+         ;; that there are no sub-indentation to be computed in this
+         ;; wad.
+         (maybe-assign-indentation 3 1)
+         (next)
+         ;; Come here when the current wad represents the
+         ;; initialization form for the variable being bound.  This
+         ;; expression is a form, so we compute the indentation that
+         ;; way.
+         (maybe-assign-indentation 1 3)
+         (compute-child-indentations current-wad client)
+         (next)
+       extraneous-stuff
+         ;; We shouldn't really be here, because if we are, there was
+         ;; more than one child expression wad of the binding, so the
+         ;; binding is malformed.  So it doesn't really matter what we
+         ;; do.
+         (maybe-assign-indentation 1 1)
+         (next)
+         (go extraneous-stuff)))))
+
 ;;; Compute the indentation for a wad representing a single LET or
 ;;; LET* binding.
 (defgeneric compute-binding-indentation (wad client))
