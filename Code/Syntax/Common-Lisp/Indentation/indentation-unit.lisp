@@ -87,3 +87,33 @@
   (loop for indentation-unit in indentation-units
         for indentation in indentations
         do (assign-indentation-of-wads-in-unit indentation-unit indentation)))
+
+(defmacro define-indentation-automaton (name &body body)
+  (let ((indentation-units-variable (gensym))
+        (current-unit-variable (gensym))
+        (indentations-variable (gensym))
+        (remaining-units-variable (gensym))
+        (seen-expression-wad-p-variable (gensym)))
+    `(defun ,name (,indentation-units-variable client)
+       (let ((,indentations-variable (list 1))
+             (,current-unit-variable '())
+             (,remaining-units-variable indentation-units)
+             (current-wad nil)
+             (,seen-expression-wad-p-variable nil))
+         (flet ((next ()
+                  (setf current-wad nil)
+                  (loop until (typep current-wad 'expression-wad)
+                        do (when (null ,current-unit-variable)
+                        (setf seen-expression-wad-p nil)
+                        (if (null remaining-units)
+                            (return-from ,name
+                              (reverse ,indentations-variable))
+                            (setf ,current-unit-variable
+                                  (pop ,remaining-units-variable))))
+                      (setf current-wad (pop current-unit))))
+                (maybe-assign-indentation (indentation next-default)
+                  (unless seen-expression-wad-p
+                    (setf seen-expression-wad-p t)
+                    (setf (first ,indentations-variable) indentation)
+                    (push next-default ,indentations-variable))))
+           ,@body)))))
