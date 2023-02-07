@@ -7,6 +7,23 @@
 (defgeneric compute-declaration-specifier-indentation
     (wad pawn client))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; DECLARATION declaration specifier.
+
+(define-indentation-automaton compute-declaration-indentations
+  (tagbody
+     (next)
+     ;; The current wad must be the symbol DECLARATION, or else we
+     ;; would not be here.
+     (maybe-assign-indentation 1 3)
+     (next)
+     ;; The current wad represents a name.
+   name
+     (maybe-assign-indentation 3 3)
+     (next)
+     (go name)))
+
 (defun compute-declaration-indentations (indentation-units client)
   (declare (ignore indentation-units client)))
 
