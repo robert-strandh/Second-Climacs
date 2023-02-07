@@ -95,6 +95,7 @@
         (remaining-units-variable (gensym))
         (seen-expression-wad-p-variable (gensym)))
     `(defun ,name (,indentation-units-variable client)
+       (declare (ignorable client))
        (let ((,indentations-variable (list 1))
              (,current-unit-variable '())
              (,remaining-units-variable ,indentation-units-variable)
