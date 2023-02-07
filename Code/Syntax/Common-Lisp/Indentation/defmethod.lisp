@@ -37,7 +37,7 @@
      (when (stringp (expression current-wad))
        (maybe-assign-indentation 3 2)
        (next))
-   form 
+   form
      (maybe-assign-indentation 2 2)
      (compute-child-indentations current-wad client)
      (next)
