@@ -26,7 +26,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND and OR type specifiers.
+;;; Type specifiers AND, OR, NOT, CONS.
+;;;
+;;; While some of these type specifiers take a bounded number of
+;;; arguments, we still treat them as if they can take an arbitrary
+;;; number, because it is not the purpose of the indentation code to
+;;; detect syntax violations like this.
 
 (define-indentation-automaton compute-type-and/or-indentations
   (tagbody
@@ -52,6 +57,22 @@
 
 (defmethod compute-type-specifier-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:or))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-ignore-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+(defmethod compute-type-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:not))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-ignore-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+(defmethod compute-type-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:cons))) client)
   (let* ((indentation-units
            (compute-indentation-units (children wad)))
          (indentations
