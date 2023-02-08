@@ -7,6 +7,26 @@
 (defgeneric compute-declaration-specifier-indentation
     (wad pawn client))
 
+;;; This method is applicable when the caller specifies NIL for the
+;;; pawn, meaning that we do not know the nature of the wad att all,
+;;; only that it ought to be a declaration specifier.  It could be an
+;;; atomic wad, in which case it should not have its indentation
+;;; computed at all.  Or it could be a compound wad, but with an
+;;; unknown declaration identifier, in which case we also do not
+;;; compute its indentation.
+(defmethod compute-declaration-specifier-indentation (wad (pawn null) client)
+  (when (typep wad 'expression-wad)
+    (let ((expression (expression wad)))
+      (when (consp expression)
+        (compute-declaration-specifier-indentation
+         wad (first expression) client)))))
+
+;;; This method is applicable when we are given a pawn, but there is
+;;; no more specific method applicable, meaning we have not defined a
+;;; method for this particular pawn.  So we do nothing.
+(defmethod compute-declaration-specifier-indentation (wad (pawn pawn) client)
+  nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; DECLARATION declaration specifier.
