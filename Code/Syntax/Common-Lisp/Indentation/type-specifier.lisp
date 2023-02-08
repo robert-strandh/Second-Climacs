@@ -5,6 +5,19 @@
 ;;; compute the indentation of the sub-expressions of that expression.
 (defgeneric compute-type-specifier-indentation (wad pawn client))
 
+;;; This method is applicable when the caller specifies NIL for the
+;;; pawn, meaning that we do not know the nature of the wad att all,
+;;; only that it ought to be a type specifier.  It could be an atomic
+;;; wad, in which case it should not have its indentation computed at
+;;; all.  Or it could be a compound wad, but with an unknown type
+;;; identifier, in which case we also do not compute its indentation.
+(defmethod compute-type-specifier-indentation (wad (pawn null) client)
+  (when (typep wad 'expression-wad)
+    (let ((expression (expression wad)))
+      (when (consp expression)
+        (compute-type-specifier-indentation
+         wad (first expression) client)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; AND and OR type specifiers.
