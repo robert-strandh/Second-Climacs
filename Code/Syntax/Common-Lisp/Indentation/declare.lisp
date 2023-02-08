@@ -208,3 +208,44 @@
          (indentations
            (compute-special-indentations indentation-units client)))
     (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; TYPE and FTYPE declaration specifiers.
+
+(define-indentation-automaton compute-type-indentations
+  (tagbody
+     (next)
+     ;; The current wad must be the symbol TYPE or the symbol
+     ;; FTYPE, or else we would not be here.
+     (maybe-assign-indentation 1 3)
+     (next)
+     ;; The current wad represents a type specifier.
+     (maybe-assign-indentation 4 2)
+     (compute-type-specifier-indentation current-wad nil client)
+     next
+     ;; The current wad represents a name.
+   name-or-function-name
+     ;; We don't bother to recursively compute the indentation of an
+     ;; argument of the form (SETF <name>), because it would be useful
+     ;; only when <name> is on a different line from the one SETF is
+     ;; on, and we think that is unlikely.
+     (maybe-assign-indentation 2 2)
+     (next)
+     (go name-or-function-name)))
+
+(defmethod compute-declaration-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:type))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-type-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+(defmethod compute-declaration-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:ftype))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-type-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
