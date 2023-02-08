@@ -132,9 +132,9 @@
      ;; The current wad represents a name.
    function-name
      ;; We don't bother to recursively compute the indentation of an
-     ;; argument of the form (FUNCTION <fn>), because it would be
-     ;; useful only when <fn> is on a different line from the one
-     ;; FUNCTION is on, and we think that is unlikely.
+     ;; argument of the form (SETF <name>), because it would be useful
+     ;; only when <name> is on a different line from the one SETF is
+     ;; on, and we think that is unlikely.
      (maybe-assign-indentation 3 3)
      (next)
      (go function-name)))
@@ -153,4 +153,33 @@
            (compute-indentation-units (children wad)))
          (indentations
            (compute-inline-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; OPTIMIZE declaration specifiers.
+
+(define-indentation-automaton compute-optimize-indentations
+  (tagbody
+     (next)
+     ;; The current wad must be the symbol OPTIMIZE, or else we would
+     ;; not be here.
+     (maybe-assign-indentation 1 3)
+     (next)
+     ;; The current wad represents an optimize quality.
+   quality
+     ;; We don't bother to recursively compute the indentation of an
+     ;; argument of the form (<quality> <n>), because it would be
+     ;; useful only when <n> is on a different line from the one
+     ;; <quality> is on, and we think that is unlikely.
+     (maybe-assign-indentation 3 3)
+     (next)
+     (go quality)))
+
+(defmethod compute-declaration-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:optimize))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-optimize-indentations indentation-units client)))
     (assign-indentation-of-wads-in-units indentation-units indentations)))
