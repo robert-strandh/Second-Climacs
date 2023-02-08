@@ -183,3 +183,28 @@
          (indentations
            (compute-optimize-indentations indentation-units client)))
     (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SPECIAL declaration specifiers.
+
+(define-indentation-automaton compute-special-indentations
+  (tagbody
+     (next)
+     ;; The current wad must be the symbol SPECIAL, or else we would
+     ;; not be here.
+     (maybe-assign-indentation 1 3)
+     (next)
+     ;; The current wad represents a symbol naming a special variable.
+   symbol
+     (maybe-assign-indentation 3 3)
+     (next)
+     (go symbol)))
+
+(defmethod compute-declaration-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:special))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-special-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
