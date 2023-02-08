@@ -117,3 +117,40 @@
          (indentations
            (compute-ignore-indentations indentation-units client)))
     (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INLINE and NOTINLINE declaration specifiers.
+
+(define-indentation-automaton compute-inline-indentations
+  (tagbody
+     (next)
+     ;; The current wad must be the symbol INLINE or the symbol
+     ;; NOTINLINE, or else we would not be here.
+     (maybe-assign-indentation 1 3)
+     (next)
+     ;; The current wad represents a name.
+   function-name
+     ;; We don't bother to recursively compute the indentation of an
+     ;; argument of the form (FUNCTION <fn>), because it would be
+     ;; useful only when <fn> is on a different line from the one
+     ;; FUNCTION is on, and we think that is unlikely.
+     (maybe-assign-indentation 3 3)
+     (next)
+     (go function-name)))
+
+(defmethod compute-declaration-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:inline))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-inline-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+(defmethod compute-declaration-specifier-indentation
+    (wad (pawn (eql (intern-pawn '#:common-lisp '#:notinline))) client)
+  (let* ((indentation-units
+           (compute-indentation-units (children wad)))
+         (indentations
+           (compute-inline-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
