@@ -18,6 +18,12 @@
         (compute-type-specifier-indentation
          wad (first expression) client)))))
 
+;;; This method is applicable when we are given a pawn, but there is
+;;; no more specific method applicable, meaning we have not defined a
+;;; method for this particular pawn.  So we do nothing.
+(defmethod compute-type-specifier-indentation (wad (pawn pawn) client)
+  nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; AND and OR type specifiers.
