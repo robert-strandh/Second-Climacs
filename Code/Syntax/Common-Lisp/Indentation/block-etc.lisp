@@ -7,14 +7,14 @@
    (lambda (indentation wads)
      (indent-body indentation wads client))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:block))) client)
   (indent-block-etc wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:return-from))) client)
   (indent-block-etc wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:the))) client)
   (indent-block-etc wad client))

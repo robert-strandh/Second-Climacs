@@ -31,18 +31,18 @@
    (lambda (indentation wads)
      (indent-body indentation wads client))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:flet))) client)
   (indent-flet-etc wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:labels))) client)
   (indent-flet-etc wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:macrolet))) client)
   (indent-flet-etc wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:lambda))) client)
   (indent-flet-etc wad client))

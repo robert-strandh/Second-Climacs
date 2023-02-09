@@ -44,6 +44,6 @@
                         (go body-wads)))
            out))))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:locally))) client)
   (indent-locally wad client))

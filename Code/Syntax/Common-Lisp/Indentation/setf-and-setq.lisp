@@ -26,14 +26,14 @@
                     do (indent-argument argument (+ indentation additional))
                        (setf additional (- 2 additional)))))))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:setf))) client)
   (compute-setf-and-setq-indentation wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:setq))) client)
   (compute-setf-and-setq-indentation wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:psetf))) client)
   (compute-setf-and-setq-indentation wad client))

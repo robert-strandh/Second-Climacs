@@ -39,10 +39,10 @@
                  (compute-child-indentations (first (last argument)) client))
                (setf additional (- 2 additional))))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:make-instance))) client)
   (indent-make-instance-etc wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:reinitialize-instance))) client)
   (indent-make-instance-etc wad client))

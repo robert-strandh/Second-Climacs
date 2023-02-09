@@ -97,12 +97,6 @@
 ;;; CDR slot.
 (defparameter *pawns* (make-hash-table :test #'equal))
 
-;;; The generic function called in order to compute the relative
-;;; indentation of the children of WAD.  Each method defines an EQL
-;;; specializer on the PAWN parameter.  Client code should specialize
-;;; on its own CLIENT class.
-(defgeneric compute-sub-form-indentations (wad pawn client))
-
 ;;; This generic function is called in order to determine the
 ;;; indentation of a line that is located after the last sub-wad in
 ;;; WAD.  Each method defines an EQL specializer on the PAWN
@@ -137,7 +131,7 @@
                                     (name token))))
               (if (null pawn)
                   (indent-default-function-call wad client)
-                  (compute-sub-form-indentations wad pawn client)))
+                  (compute-form-indentation wad pawn client)))
             (indent-default-function-call wad client)))
       (indent-default-function-call wad client)))
 

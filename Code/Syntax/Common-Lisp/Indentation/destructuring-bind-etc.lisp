@@ -17,10 +17,10 @@
                        (compute-child-indentations w client)))))
     (indent-body body-indentation body-wads client)))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:destructuring-bind))) client)
   (compute-indentation-destruturing-bind-etc wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:multiple-value-bind))) client)
   (compute-indentation-destruturing-bind-etc wad client))

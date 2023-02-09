@@ -8,7 +8,7 @@
               unless (zerop (start-line child))
                 do (setf (indentation child) column))))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:eval-when))) client)
   (compute-indentation-single-distinguished
    wad

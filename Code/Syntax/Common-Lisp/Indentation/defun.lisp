@@ -1,6 +1,6 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:defun))) client)
   (let* ((arguments (rest (children wad)))
          (name-indentation (+ (start-column wad) 6))

@@ -12,12 +12,11 @@
      ;; wad.
      (maybe-assign-indentation 3 1)
      (next)
-     ;; Come here when the current wad represents the
-     ;; initialization form for the variable being bound.  This
-     ;; expression is a form, so we compute the indentation that
-     ;; way.
+     ;; Come here when the current wad represents the initialization
+     ;; form for the variable being bound.  This expression should be
+     ;; a form, so we compute the indentation that way.
      (maybe-assign-indentation 1 3)
-     (compute-child-indentations current-wad client)
+     (compute-form-indentation current-wad nil client)
      (next)
    extraneous-stuff
      ;; We shouldn't really be here, because if we are, there was
@@ -70,10 +69,10 @@
    (lambda (indentation wads)
      (indent-body indentation wads client))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:let))) client)
   (compute-let-and-letstar-indentation wad client))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:let*))) client)
   (compute-let-and-letstar-indentation wad client))

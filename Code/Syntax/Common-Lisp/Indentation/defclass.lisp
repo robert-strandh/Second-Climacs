@@ -36,6 +36,6 @@
                   (when (typep last 'expression-wad)
                     (indent-slots (children last) client)))))))))))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:defclass))) client)
   (indent-defclass wad client))

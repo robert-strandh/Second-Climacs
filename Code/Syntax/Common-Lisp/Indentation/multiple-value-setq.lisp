@@ -11,7 +11,7 @@
                      arguments indentation fun)))
     (indent-body (+ (start-column wad) 2) body-wads client)))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:multiple-value-setq))) client)
   (indent-multiple-value-setq wad client))
 

@@ -43,7 +43,7 @@
      (next)
      (go form)))
 
-(defmethod compute-sub-form-indentations
+(defmethod compute-form-indentation
     (wad (pawn (eql (intern-pawn '#:common-lisp '#:defmethod))) client)
   (let* ((indentation-units
            (compute-indentation-units (children wad)))
