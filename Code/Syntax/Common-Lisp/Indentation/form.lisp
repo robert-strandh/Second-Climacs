@@ -30,6 +30,7 @@
    argument
      (maybe-assign-indentation 3 3)
      (compute-form-indentation current-wad nil client)
+     (next)
      (go argument)))
 
 ;;; This method is applicable when we are given either something that
