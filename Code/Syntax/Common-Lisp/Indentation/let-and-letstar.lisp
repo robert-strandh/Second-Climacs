@@ -1,8 +1,7 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-;;; Compute the indentation for a single LET binding.  This function
-;;; is called only when the binding represents a CONS cell.
-(define-indentation-automaton new-compute-binding-indentations
+;;; Compute the indentations for a single LET binding.
+(define-indentation-automaton compute-binding-indentations
   (tagbody
      (next)
      ;; The current wad represents the variable introduced by the
@@ -27,40 +26,45 @@
      (next)
      (go extraneous-stuff)))
 
-;;; Compute the indentation for a wad representing a single LET or
-;;; LET* binding.
-(defgeneric compute-binding-indentation (wad client))
+(defun compute-binding-indentation (wad client)
+  (let* ((indentation-units (compute-indentation-units (children wad)))
+         (indentations
+           (compute-binding-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
 
-(defmethod compute-binding-indentation (wad client)
-  (let ((expression (expression wad)))
-    (when (and (consp expression)
-               (proper-list-p expression))
-      (let* ((children (children wad))
-             (first-child (first children))
-             (start-column (start-column first-child))
-             (remaining-children (rest children)))
-        ;; We indent every remaining child as the first one, plus 2
-        ;; columns.
-        (loop for child in remaining-children
-              unless (zerop (start-line child))
-                do (setf (indentation child) (+ start-column 2))
-              do (compute-child-indentations child client))))))
+;;; Compute the indentations for a list of LET bindings. 
+(define-indentation-automaton compute-bindings-indentations
+  (tagbody
+     (next)
+   binding
+     (maybe-assign-indentation 1 1)
+     (compute-binding-indentation current-wad client)))
 
-;;; Compute the indentation for a wad representing a list of LET or
-;;; LET* bindings.
-(defgeneric compute-binding-indentations (wad client))
+(defun compute-bindings-indentation (wad client)
+  (let* ((indentation-units (compute-indentation-units (children wad)))
+         (indentations
+           (compute-bindings-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
 
-(defmethod compute-binding-indentations (wad client)
-  (unless (null (children wad))
-    (let ((column (start-column (first (children wad))))
-          (indentation-units
-            (compute-indentation-units (children wad))))
-      (loop for indentation-unit in indentation-units
-            do (assign-indentation-of-wads-in-unit
-                indentation-unit column)
-               (loop for wad in indentation-unit
-                     when (typep wad 'expression-wad)
-                       do (compute-binding-indentation wad client))))))
+(define-indentation-automaton compute-let-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 4 1)
+     (next)
+     ;; The current wad ought to represent the list of bindings.
+     (maybe-assign-indentation 2 4)
+     (compute-bindings-indentation current-wad client)
+     (next)
+   declaration-or-form
+     (when (and (consp (expression current-wad))
+                (wad-represents-symbol-p
+                 (first (children current-wad))
+                 'declare))
+       (maybe-assign-indentation 3 2)
+       (compute-declare-indentation current-wad client)
+       (next)
+       (go declaration-or-form))))
 
 (defun compute-let-and-letstar-indentation (wad client)
   (compute-indentation-single-distinguished
@@ -69,10 +73,8 @@
    (lambda (indentation wads)
      (indent-body indentation wads client))))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:let))) client)
-  (compute-let-and-letstar-indentation wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:let) compute-let-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:let*))) client)
-  (compute-let-and-letstar-indentation wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:let*) compute-let-indentations)
