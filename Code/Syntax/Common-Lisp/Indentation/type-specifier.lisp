@@ -55,34 +55,14 @@
      (next)
      (go type-specifier)))
 
-(defmethod compute-type-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:and))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-ignore-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-type-specifier-indentation-method
+    ('#:common-lisp '#:and) compute-type-and-etc-indentations)
 
-(defmethod compute-type-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:or))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-ignore-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-type-specifier-indentation-method
+    ('#:common-lisp '#:or) compute-type-and-etc-indentations)
 
-(defmethod compute-type-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:not))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-ignore-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-type-specifier-indentation-method
+    ('#:common-lisp '#:not) compute-type-and-etc-indentations)
 
-(defmethod compute-type-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:cons))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-ignore-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-type-specifier-indentation-method
+    ('#:common-lisp '#:cons) compute-type-and-etc-indentations)
