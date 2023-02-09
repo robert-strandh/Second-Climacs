@@ -42,11 +42,10 @@
 ;;; number, because it is not the purpose of the indentation code to
 ;;; detect syntax violations like this.
 
-(define-indentation-automaton compute-type-and/or-indentations
+(define-indentation-automaton compute-type-and-etc-indentations
   (tagbody
      (next)
-     ;; The current wad must be the symbol AND or the symbol OR, or
-     ;; else we would not be here.
+     ;; The current wad must be the type identifier.
      (maybe-assign-indentation 1 3)
      (next)
      ;; The remaining wads represent type specifiers.
