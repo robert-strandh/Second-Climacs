@@ -235,3 +235,25 @@
          (indentations
            (compute-shorthand-indentations indentation-units client)))
     (assign-indentation-of-wads-in-units indentation-units indentations)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Indentation for the DECLARE expression.
+
+(define-indentation-automaton compute-declare-indentations
+  (tagbody
+     (next)
+     ;; The current wad represents the symbol DECLARE.
+     (maybe-assign-indentation 1 3)
+     (next)
+   declaration-specifier
+     (maybe-assign-indentation 3 3)
+     (compute-declaration-specifier-indentation current-wad nil client)
+     (next)
+     (go declaration-specifier)))
+
+(defun compute-declare-indentation (wad client)
+  (let* ((indentation-units (compute-indentation-units (children wad)))
+         (indentations
+           (compute-declare-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
