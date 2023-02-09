@@ -5,6 +5,7 @@
                (:file "indentation-support")
                (:file "type-specifier")
                (:file "declare")
+               (:file "form")
                (:file "let-and-letstar")
                (:file "setf-and-setq")
                (:file "eval-when")
