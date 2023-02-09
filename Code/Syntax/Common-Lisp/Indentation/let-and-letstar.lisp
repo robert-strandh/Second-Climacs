@@ -38,7 +38,9 @@
      (next)
    binding
      (maybe-assign-indentation 1 1)
-     (compute-binding-indentation current-wad client)))
+     (compute-binding-indentation current-wad client)
+     (next)
+     (go binding)))
 
 (defun compute-bindings-indentation (wad client)
   (let* ((indentation-units (compute-indentation-units (children wad)))
