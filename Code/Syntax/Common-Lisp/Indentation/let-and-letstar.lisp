@@ -66,13 +66,6 @@
        (next)
        (go declaration-or-form))))
 
-(defun compute-let-and-letstar-indentation (wad client)
-  (compute-indentation-single-distinguished
-   wad
-   (lambda (wad) (compute-binding-indentations wad client))
-   (lambda (indentation wads)
-     (indent-body indentation wads client))))
-
 (define-form-indentation-method
     ('#:common-lisp '#:let) compute-let-indentations)
 
