@@ -208,3 +208,30 @@
 
 (define-declaration-specifier-indentation-method
     ('#:common-lisp '#:ftype) compute-type-indentations)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Shorthand type declarations.
+
+(define-indentation-automaton compute-shorthand-indentations
+  (tagbody
+     (next)
+     ;; The current wad is assumed to be a type specifier.
+     (maybe-assign-indentation 1 3)
+     (compute-type-specifier-indentation current-wad nil client)
+     (next)
+     ;; The current wad should represent a name.
+   name
+     (maybe-assign-indentation 3 3)
+     (next)
+     (go name)))
+
+;;; This method is applicable when we are given something other than a
+;;; pawn.  We then assume that we are dealing with the shorthand type
+;;; declaration.
+
+(defmethod compute-declaration-specifier-indentation (wad pawn client)
+  (let* ((indentation-units (compute-indentation-units (children wad)))
+         (indentations
+           (compute-shorthand-indentations indentation-units client)))
+    (assign-indentation-of-wads-in-units indentation-units indentations)))
