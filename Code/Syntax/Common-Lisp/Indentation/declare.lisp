@@ -27,6 +27,15 @@
 (defmethod compute-declaration-specifier-indentation (wad (pawn pawn) client)
   nil)
 
+;;; This macro is used to define a typical indentation method that
+;;; computes indentation units and calls an automaton function.
+(defmacro define-declaration-specifier-indentation-method (pawn automaton)
+  `(defmethod compute-type-specifier-indentation
+       (wad (pawn (eql (intern-pawn ,@pawn))) client)
+     (let* ((indentation-units (compute-indentation-units (children wad)))
+            (indentations (,automaton indentation-units client)))
+       (assign-indentation-of-wads-in-units indentation-units indentations))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; DECLARATION declaration specifier.
@@ -44,13 +53,8 @@
      (next)
      (go name)))
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:declaration))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-declaration-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:declaration) compute-declaration-indentations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -73,13 +77,8 @@
      (next)
      (go name-or-function-name)))
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:dynamic-extent))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-dynamic-extent-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:dynamic-extent) compute-dynamic-extent-indentations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -102,21 +101,11 @@
      (next)
      (go name-or-function-name)))
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:ignore))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-ignore-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:ignore) compute-ignore-indentations)
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:ignorable))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-ignore-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:ignorable) compute-ignore-indentations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -139,21 +128,11 @@
      (next)
      (go function-name)))
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:inline))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-inline-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:inline) compute-inline-indentations)
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:notinline))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-inline-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:notinline) compute-inline-indentations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -176,13 +155,8 @@
      (next)
      (go quality)))
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:optimize))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-optimize-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:optimize) compute-optimize-indentations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -201,13 +175,8 @@
      (next)
      (go symbol)))
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:special))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-special-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:special) compute-special-indentations)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -234,18 +203,8 @@
      (next)
      (go name-or-function-name)))
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:type))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-type-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:type) compute-type-indentations)
 
-(defmethod compute-declaration-specifier-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:ftype))) client)
-  (let* ((indentation-units
-           (compute-indentation-units (children wad)))
-         (indentations
-           (compute-type-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+(define-declaration-specifier-indentation-method
+    ('#:common-lisp '#:ftype) compute-type-indentations)
