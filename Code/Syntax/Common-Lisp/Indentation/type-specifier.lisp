@@ -24,6 +24,14 @@
 (defmethod compute-type-specifier-indentation (wad (pawn pawn) client)
   nil)
 
+;;; This macro is used to define a typical indentation method that
+;;; computes indentation units and calls an automaton function.
+(defmacro define-type-specifier-indentation-method (pawn automaton)
+  `(defmethod compute-type-specifier-indentation (wad ,pawn client)
+     (let* ((indentation-units (compute-indentation-units (children wad)))
+            (indentations (,automaton indentation-units client)))
+       (assign-indentation-of-wads-in-units indentation-units indentations))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Type specifiers AND, OR, NOT, CONS.
