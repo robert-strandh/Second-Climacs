@@ -76,8 +76,8 @@
 
 (defun assign-indentation-of-wads-in-unit
     (indentation-unit indentation)
-  ;; Always assign indentation of the first wad in the unit.
-  (setf (indentation (first indentation-unit)) indentation)
+  (unless (zerop (start-line (first indentation-unit)))
+    (setf (indentation (first indentation-unit)) indentation))
   (loop for (wad1 wad2) on indentation-unit
         until (null wad2)
         when (wads-are-on-different-lines-p wad1 wad2)
