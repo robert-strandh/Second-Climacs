@@ -10,6 +10,7 @@
                (:file "setf-and-setq")
                (:file "eval-when")
                (:file "prog1-etc")
+               (:file "prog2")
                (:file "block-etc")
                (:file "locally")
                (:file "tagbody")
