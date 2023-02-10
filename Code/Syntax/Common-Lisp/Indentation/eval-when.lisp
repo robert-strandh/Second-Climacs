@@ -1,17 +1,21 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defun indent-situations (wad)
-  (let ((children (children wad)))
-    (unless (null children)
-      (let ((column (start-column (first children))))
-        (loop for child in (rest children)
-              unless (zerop (start-line child))
-                do (setf (indentation child) column))))))
+(define-indentation-automaton compute-eval-when-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+     ;; The current wad ought to represent the list of situations.  We
+     ;; think it is unlikely that situations will be separated by
+     ;; newlines, so we do nothing special for this list.
+     (maybe-assign-indentation 4 2)
+     (next)
+   form
+     (maybe-assign-indentation 2 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go form)))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:eval-when))) client)
-  (compute-indentation-single-distinguished
-   wad
-   #'indent-situations
-   (lambda (indentation wads)
-     (indent-body indentation wads client))))
+(define-form-indentation-method
+    ('#:common-lisp '#:eval-when) compute-eval-when-indentations)
