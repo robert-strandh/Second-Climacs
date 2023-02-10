@@ -1,20 +1,24 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defun indent-block-etc (wad client)
-  (compute-indentation-single-distinguished
-   wad
-   #'identity
-   (lambda (indentation wads)
-     (indent-body indentation wads client))))
+(define-indentation-automaton compute-block-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+     ;; The current wad ought to be the block name.  We don't do
+     ;; anything in particular with it.
+     (maybe-assign-indentation 4 2)
+     (next)
+   form
+     ;; We should now be among the remaining forms.
+     (maybe-assign-indentation 2 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go form)))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:block))) client)
-  (indent-block-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:block) compute-block-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:return-from))) client)
-  (indent-block-etc wad client))
-
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:the))) client)
-  (indent-block-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:multiple-value-return-from) compute-block-indentations)
