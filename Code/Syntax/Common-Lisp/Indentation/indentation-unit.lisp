@@ -74,8 +74,7 @@
         (push (reverse current-indentation-unit) result)
         (reverse result))))
 
-(defun assign-indentation-of-wads-in-unit
-    (indentation-unit indentation)
+(defun assign-indentation-of-wads-in-unit (indentation-unit indentation)
   (unless (zerop (start-line (first indentation-unit)))
     (setf (indentation (first indentation-unit)) indentation))
   (loop for (wad1 wad2) on indentation-unit
