@@ -1,39 +1,31 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defun compute-setf-and-setq-indentation (wad client)
-  (flet ((indent-argument (argument indentation)
-           (loop for wad in argument
-                 unless (zerop (start-line wad))
-                   do (setf (indentation wad) indentation))
-           (when (typep (first (last argument)) 'expression-wad)
-             (compute-child-indentations (first (last argument)) client))))
-    (let ((arguments (split-wads (rest (children wad)))))
-      (unless (null arguments)
-        (let* ((first (first (first arguments)))
-               (indentation (if (zerop (start-line first))
-                                (start-column first)
-                                (+ (start-column wad) 2))))
-          (if (<= (length arguments) 2)
-              ;; When there are only two arguments or fewer, indent
-              ;; all arguments the same.
-              (loop for argument in arguments
-                    do (indent-argument argument indentation))
-              ;; When there are more than two arguments, indent the
-              ;; value arguments a bit more than the variable
-              ;; arguments.
-              (loop with additional = 0
-                    for argument in arguments
-                    do (indent-argument argument (+ indentation additional))
-                       (setf additional (- 2 additional)))))))))
+(define-indentation-automaton compute-setq-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 2)
+     (next)
+   place
+     ;; We indent a place as a form, because in general, it can take
+     ;; the shape of a form.
+     (maybe-assign-indentation 2 4)
+     (compute-form-indentation current-wad nil client)
+     (next)
+   form
+     (maybe-assign-indentation 4 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go place)))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:setf))) client)
-  (compute-setf-and-setq-indentation wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:setq) compute-setq-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:setq))) client)
-  (compute-setf-and-setq-indentation wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:setf) compute-setq-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:psetf))) client)
-  (compute-setf-and-setq-indentation wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:psetq) compute-setq-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:psetf) compute-setq-indentations)
