@@ -37,16 +37,12 @@
 ;;; is not a pawn, or a pawn that has no method associated with it. So
 ;;; we indent the form as a function call.
 (defmethod compute-form-indentation (wad pawn client)
-  (let* ((indentation-units (compute-indentation-units (children wad)))
-         (indentations
-           (compute-function-call-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+  (compute-and-assign-indentations
+   client wad compute-function-call-indentations))
 
 ;;; This macro is used to define a typical indentation method that
 ;;; computes indentation units and calls an automaton function.
 (defmacro define-form-indentation-method (pawn automaton)
   `(defmethod compute-form-indentation
        (wad (pawn (eql (intern-pawn ,@pawn))) client)
-     (let* ((indentation-units (compute-indentation-units (children wad)))
-            (indentations (,automaton indentation-units client)))
-       (assign-indentation-of-wads-in-units indentation-units indentations))))
+     (compute-and-assign-indentations client wad ,automaton)))

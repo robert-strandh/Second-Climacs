@@ -32,9 +32,7 @@
 (defmacro define-declaration-specifier-indentation-method (pawn automaton)
   `(defmethod compute-type-specifier-indentation
        (wad (pawn (eql (intern-pawn ,@pawn))) client)
-     (let* ((indentation-units (compute-indentation-units (children wad)))
-            (indentations (,automaton indentation-units client)))
-       (assign-indentation-of-wads-in-units indentation-units indentations))))
+     (compute-and-assign-indentations client wad ,automaton)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -231,10 +229,7 @@
 ;;; declaration.
 
 (defmethod compute-declaration-specifier-indentation (wad pawn client)
-  (let* ((indentation-units (compute-indentation-units (children wad)))
-         (indentations
-           (compute-shorthand-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+  (compute-and-assign-indentations client wad compute-shorthand-indentations))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -253,7 +248,4 @@
      (go declaration-specifier)))
 
 (defun compute-declare-indentation (wad client)
-  (let* ((indentation-units (compute-indentation-units (children wad)))
-         (indentations
-           (compute-declare-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+  (compute-and-assign-indentations client wad compute-declare-indentations))

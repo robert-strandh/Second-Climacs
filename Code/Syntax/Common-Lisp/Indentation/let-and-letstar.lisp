@@ -27,10 +27,7 @@
      (go extraneous-stuff)))
 
 (defun compute-binding-indentation (wad client)
-  (let* ((indentation-units (compute-indentation-units (children wad)))
-         (indentations
-           (compute-binding-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+  (compute-and-assign-indentations client wad compute-binding-indentations))
 
 ;;; Compute the indentations for a list of LET bindings. 
 (define-indentation-automaton compute-bindings-indentations
@@ -43,19 +40,16 @@
      (go binding)))
 
 (defun compute-bindings-indentation (wad client)
-  (let* ((indentation-units (compute-indentation-units (children wad)))
-         (indentations
-           (compute-bindings-indentations indentation-units client)))
-    (assign-indentation-of-wads-in-units indentation-units indentations)))
+  (compute-and-assign-indentations client wad compute-bindings-indentations))
 
 (define-indentation-automaton compute-let-indentations
   (tagbody
      (next)
      ;; The current wad is the operator.
-     (maybe-assign-indentation 4 1)
+     (maybe-assign-indentation 1 4)
      (next)
      ;; The current wad ought to represent the list of bindings.
-     (maybe-assign-indentation 2 4)
+     (maybe-assign-indentation 4 2)
      (compute-bindings-indentation current-wad client)
      (next)
    declaration-or-form
@@ -66,7 +60,11 @@
        (maybe-assign-indentation 3 2)
        (compute-declare-indentation current-wad client)
        (next)
-       (go declaration-or-form))))
+       (go declaration-or-form))
+   form
+     (maybe-assign-indentation 2 2)
+     (next)
+     (go form)))
 
 (define-form-indentation-method
     ('#:common-lisp '#:let) compute-let-indentations)
