@@ -63,6 +63,7 @@
        (go declaration-or-form))
    form
      (maybe-assign-indentation 2 2)
+     (compute-form-indentation current-wad nil client)
      (next)
      (go form)))
 
