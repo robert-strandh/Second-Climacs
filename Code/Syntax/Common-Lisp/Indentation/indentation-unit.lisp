@@ -118,3 +118,8 @@
                     (setf (first ,indentations-variable) indentation)
                     (push next-default ,indentations-variable))))
            ,@body)))))
+
+(defmacro compute-and-assign-indentations (client wad automaton)
+  `(let* ((indentation-units (compute-indentation-units (children ,wad)))
+          (indentations (,automaton indentation-units ,client)))
+     (assign-indentation-of-wads-in-units indentation-units indentations)))
