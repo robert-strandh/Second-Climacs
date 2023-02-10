@@ -82,10 +82,13 @@
         when (wads-are-on-different-lines-p wad1 wad2)
           do (setf (indentation wad2) indentation)))
 
-(defun assign-indentation-of-wads-in-units (indentation-units indentations)
+(defun assign-indentation-of-wads-in-units
+    (indentation-units relative-indentations wad-column-number)
   (loop for indentation-unit in indentation-units
-        for indentation in indentations
-        do (assign-indentation-of-wads-in-unit indentation-unit indentation)))
+        for relative-indentation in relative-indentations
+        for absolute-indentation = (+ relative-indentation wad-column-number)
+        do (assign-indentation-of-wads-in-unit
+            indentation-unit absolute-indentation)))
 
 (defmacro define-indentation-automaton (name &body body)
   (let ((indentation-units-variable (gensym))
@@ -120,5 +123,7 @@
 
 (defmacro compute-and-assign-indentations (client wad automaton)
   `(let* ((indentation-units (compute-indentation-units (children ,wad)))
-          (indentations (,automaton indentation-units ,client)))
-     (assign-indentation-of-wads-in-units indentation-units indentations)))
+          (indentations (,automaton indentation-units ,client))
+          (wad-column-number (start-column ,wad)))
+     (assign-indentation-of-wads-in-units
+      indentation-units indentations wad-column-number)))
