@@ -50,7 +50,19 @@
   (clim:with-drawing-options (pane :ink clim:+brown+)
     (call-next-method)))
 
+(defmethod draw-wad :around ((wad cl-syntax:ignored-wad)
+                             start-ref pane cache first-line last-line)
+  (declare (ignore start-ref cache first-line last-line))
+  (clim:with-drawing-options (pane :ink clim:+gray50+)
+    (call-next-method)))
+
 ;;; Token wads
+
+(defmethod draw-token-wad :around (wad (token cl-syntax:numeric-token)
+                                   start-ref pane cache first-line last-line)
+  (declare (ignore wad start-ref cache first-line last-line))
+  (clim:with-drawing-options (pane :ink clim:+dark-blue+)
+    (call-next-method)))
 
 (defmethod draw-token-wad :around
     (wad (token cl-syntax:existing-symbol-token)
@@ -100,6 +112,13 @@
                         first-line last-line)))
 
 ;;; Non-token wads
+
+(defmethod draw-non-token-wad :around ((wad cl-syntax:expression-wad)
+                                       start-ref pane cache first-line last-line)
+  (typecase (cl-syntax:expression wad)
+    (string (clim:with-drawing-options (pane :ink clim:+dark-goldenrod+)
+              (call-next-method)))
+    (t      (call-next-method))))
 
 (defmethod draw-non-token-wad (wad start-ref pane cache first-line last-line)
   (flet ((start-line (wad) (cl-syntax:start-line wad))
