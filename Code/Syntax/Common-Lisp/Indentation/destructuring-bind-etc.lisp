@@ -1,26 +1,38 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defun compute-indentation-destruturing-bind-etc (wad client)
-  (let* ((arguments (rest (children wad)))
-         (lambda-list-indentation (+ (start-column wad) 6))
-         (values-form-indentation (+ (start-column wad) 4))
-         (body-indentation (+ (start-column wad) 2))
-         (remaining (compute-distinguished-indentation
-                     arguments
-                     lambda-list-indentation
-                     (lambda (w)
-                       (compute-lambda-list-indentation w client))))
-         (body-wads (compute-distinguished-indentation
-                     remaining
-                     values-form-indentation
-                     (lambda (w)
-                       (compute-child-indentations w client)))))
-    (indent-body body-indentation body-wads client)))
+(define-indentation-automaton compute-destructuring-bind-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 6)
+     (next)
+     ;; The current wad ought to be the lambda list.
+     (maybe-assign-indentation 6 4)
+     (compute-lambda-list-indentation current-wad client)
+     (next)
+     ;; The current wad ought to be the distinguished form.
+     (maybe-assign-indentation 4 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+   declaration-or-form
+     (when (and (consp (expression current-wad))
+                (wad-represents-symbol-p
+                 (first (children current-wad))
+                 'declare))
+       (maybe-assign-indentation 3 2)
+       (compute-declare-indentation current-wad client)
+       (next)
+       (go declaration-or-form))
+   form
+     (maybe-assign-indentation 2 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go form)))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:destructuring-bind))) client)
-  (compute-indentation-destruturing-bind-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:destructuring-bind)
+  compute-destructuring-bind-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:multiple-value-bind))) client)
-  (compute-indentation-destruturing-bind-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:multiple-value-bind)
+  compute-destructuring-bind-indentations)
