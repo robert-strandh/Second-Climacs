@@ -32,7 +32,7 @@
     :reader parent)
    ;; This slot can contain another wad descriptor, which is then a
    ;; descriptor for the first child of the wad described by this wad
-   ;; descriptor.  Or it can contain NIL if the the wad described by
+   ;; descriptor.  Or it can contain NIL if the wad described by
    ;; this wad descriptor does not have any children.  Finally, it can
    ;; contain the symbol T which means that wad descriptors for the
    ;; children of the wad described by this wad descriptor have not
@@ -71,26 +71,33 @@
             (end-line-number object)
             (end-column-number object))))
 
+(defmethod first-child :before ((object wad-descriptor))
+  (when (eq (slot-value object '%first-child) 't)
+    (develop-children object)))
+
 (defun develop-children (wad-descriptor)
-  (loop with previous = nil
-        with wad = (wad wad-descriptor)
-        for child in (children wad)
-        for reference = (start-line-number wad-descriptor)
-          then (+ reference start-line)
-        for start-line = (start-line child)
-        for child-descriptor
-          = (make-instance 'wad-descriptor
-              :wad child
-              :start-line-number (+ reference start-line)
-              :start-column-number (start-column child)
-              :end-line-number (+ reference start-line (height child))
-              :end-column-number (end-column child)
-              :parent wad-descriptor
-              :previous-sibling previous)
-        do (if (null previous)
-               (setf (first-child wad-descriptor) child-descriptor)
-               (setf (next-sibling previous) child-descriptor))
-           (setf previous child-descriptor)))
+  (let* ((wad (wad wad-descriptor))
+         (children (children wad)))
+    (if (null children)
+        (setf (first-child wad-descriptor) nil)
+        (loop with previous = nil
+              for child in children
+              for reference = (start-line-number wad-descriptor)
+              then (+ reference start-line)
+              for start-line = (start-line child)
+              for child-descriptor
+                 = (make-instance 'wad-descriptor
+                                  :wad child
+                                  :start-line-number (+ reference start-line)
+                                  :start-column-number (start-column child)
+                                  :end-line-number (+ reference start-line (height child))
+                                  :end-column-number (end-column child)
+                                  :parent wad-descriptor
+                                  :previous-sibling previous)
+              do (if (null previous)
+                     (setf (first-child wad-descriptor) child-descriptor)
+                     (setf (next-sibling previous) child-descriptor))
+                 (setf previous child-descriptor)))))
 
 ;;; Return the top-level wad that contains the cursor, and make sure
 ;;; that that wad is the first wad of the prefix.  If the cursor is
