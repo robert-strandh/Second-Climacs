@@ -1,45 +1,21 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:tagbody))) client)
-  (let* ((arguments (rest (children wad)))
-         (first-expression-wad (find-if (lambda (wad)
-                                          (typep wad 'expression-wad))
-                                        arguments)))
-    (unless (null arguments)
-      (let* ((first-argument (first arguments))
-             (column (if (zerop (start-line first-argument))
-                         (if (atom (expression first-expression-wad))
-                             (start-column first-argument)
-                             (- (start-column first-argument) 2))
-                         (+ (start-column wad) 2))))
-        (flet ((maybe-set-indentation (wad-to-indent column)
-                 (unless (zerop (start-line wad-to-indent))
-                   (setf (indentation wad-to-indent) column))))
-          (let* ((items (reverse arguments))
-                 (item (pop items)))
-            (tagbody
-               (when (and (typep item 'expression-wad)
-                          (consp (expression item)))
-                 (go statement))
-             tag
-               (unless (zerop (start-column item))
-                 (maybe-set-indentation item column))
-               (if (null items)
-                   (go out)
-                   (progn (setf item (pop items))
-                          (if (and (typep item 'expression-wad)
-                                   (consp (expression item)))
-                              (go statement)
-                              (go tag))))
-             statement
-               (unless (zerop (start-column item))
-                 (maybe-set-indentation item (+ column 2)))
-               (if (null items)
-                   (go out)
-                   (progn (setf item (pop items))
-                          (if (and (typep item 'expression-wad)
-                                   (atom (expression item)))
-                              (go tag)
-                              (go statement))))
-             out)))))))
+(define-indentation-automaton compute-tagbody-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+   tag-or-form
+     (if (atom (expression current-wad))
+         ;; We have a label.
+         (maybe-assign-indentation 2 4)
+         ;; We have a form.
+         (progn
+           (maybe-assign-indentation 4 4)
+           (compute-form-indentation current-wad nil client)))
+     (next)
+     (go tag-or-form)))
+
+(define-form-indentation-method
+    ('#:common-lisp '#:tagbody) compute-tagbody-indentations)
