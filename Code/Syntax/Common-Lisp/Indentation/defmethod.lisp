@@ -22,7 +22,7 @@
        (go method-qualifier-or-lambda-list))
      ;; The current wad is the lambda list.
      (maybe-assign-indentation 4 2)
-     (indent-lambda-list current-wad client)
+     (compute-lambda-list-indentation current-wad client)
      (next)
    declaration-or-documentation-or-form
      (when (and (consp (expression current-wad))

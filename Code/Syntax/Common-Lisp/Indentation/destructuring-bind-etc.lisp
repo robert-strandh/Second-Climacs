@@ -9,7 +9,7 @@
                      arguments
                      lambda-list-indentation
                      (lambda (w)
-                       (indent-lambda-list w client))))
+                       (compute-lambda-list-indentation w client))))
          (body-wads (compute-distinguished-indentation
                      remaining
                      values-form-indentation

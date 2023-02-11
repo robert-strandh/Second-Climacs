@@ -6,7 +6,7 @@
   (when (and (typep wad 'expression-wad)
              (consp (children wad)))
     (let* ((fun (lambda (w)
-                  (indent-lambda-list w client)))
+                  (compute-lambda-list-indentation w client)))
            (arguments (rest (children wad)))
            (indentation (+ (start-column wad) 4))
            ;; We start by computing the indentation for the the

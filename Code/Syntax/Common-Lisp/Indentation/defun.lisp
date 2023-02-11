@@ -12,5 +12,5 @@
                      remaining
                      lambda-list-indentation
                      (lambda (w)
-                       (indent-lambda-list w client)))))
+                       (compute-lambda-list-indentation w client)))))
     (indent-body body-indentation body-wads client)))
