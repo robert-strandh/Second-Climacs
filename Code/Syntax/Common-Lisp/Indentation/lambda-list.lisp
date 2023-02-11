@@ -84,7 +84,7 @@
        ;; macro lambda list or a destructuring lambda list, such a
        ;; parameter can be another lambda list.
        (maybe-assign-indentation 3 3)
-       (indent-lambda-list current-wad client)
+       (compute-lambda-list-indentation current-wad client)
        (next)
        (when (wad-represents-lambda-list-keyword-p current-wad)
          (go lambda-list-keyword))
@@ -128,10 +128,22 @@
          (go lambda-list-keyword))
        (go &key)
      &allow-other-keys
-     &aux)))
+       ;; Come here when the current wad represents something
+       ;; following &ALLOW-OTHER-KEYS.
+       (when (wad-represents-lambda-list-keyword-p current-wad)
+         (go lambda-list-keyword))
+       ;; There shouldn't be anything here, but there is, so we indent
+       ;; it.
+       (maybe-assign-indentation 3 3)
+       (next)
+       (go &allow-other-keys)
+     &aux
+       ;; Come here when we should have an AUX "parameter".
+       (maybe-assign-indentation 3 3)
+       (compute-binding-indentation current-wad client)
+       (next)
+       (go &aux))))
 
-(defgeneric indent-lambda-list (wad client))
-
-;;; For now, we don't do anything sophisticated about lambda lists.  
-(defmethod indent-lambda-list (wad client)
-  (indent-simple-list wad))
+(defun compute-lambda-list-indentation (wad client)
+  (compute-and-assign-indentations
+   client wad compute-lambda-list-indentations))
