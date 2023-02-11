@@ -1,16 +1,33 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:defun))) client)
-  (let* ((arguments (rest (children wad)))
-         (name-indentation (+ (start-column wad) 6))
-         (lambda-list-indentation (+ (start-column wad) 4))
-         (body-indentation (+ (start-column wad) 2))
-         (remaining (compute-distinguished-indentation
-                     arguments name-indentation #'identity))
-         (body-wads (compute-distinguished-indentation
-                     remaining
-                     lambda-list-indentation
-                     (lambda (w)
-                       (compute-lambda-list-indentation w client)))))
-    (indent-body body-indentation body-wads client)))
+(define-indentation-automaton compute-defun-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+     ;; The current wad ought to be the lambda list.
+     (maybe-assign-indentation 4 2)
+     (compute-lambda-list-indentation current-wad client)
+     (next)
+   declaration-or-documentation-or-form
+     (when (and (consp (expression current-wad))
+                (wad-represents-symbol-p
+                 (first (children current-wad))
+                 'declare))
+       (maybe-assign-indentation 3 2)
+       (compute-declare-indentation current-wad client)
+       (next)
+       (go declaration-or-documentation-or-form))
+   documentation-or-form
+     (when (stringp (expression current-wad))
+       (maybe-assign-indentation 3 2)
+       (next))
+   form
+     (maybe-assign-indentation 2 2)
+     (compute-child-indentations current-wad client)
+     (next)
+     (go form)))
+
+(define-form-indentation-method
+    ('#:common-lisp '#:defun) compute-defun-indentations)
