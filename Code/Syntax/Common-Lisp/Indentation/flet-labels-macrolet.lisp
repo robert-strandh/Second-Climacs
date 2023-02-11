@@ -1,48 +1,86 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defgeneric indent-local-function-definition (wad client))
+(define-indentation-automaton compute-local-function-indentations
+  (tagbody 
+     (next)
+     ;; The current wad ought to be the name.
+     (maybe-assign-indentation 1 4)
+     (next)
+     ;; The current wad ought to be the lambda list.
+     (maybe-assign-indentation 4 2)
+     (compute-lambda-list-indentation current-wad client)
+     (next)
+   declaration-or-documentation-or-form
+     (when (and (consp (expression current-wad))
+                (wad-represents-symbol-p
+                 (first (children current-wad))
+                 'declare))
+       (maybe-assign-indentation 3 2)
+       (compute-declare-indentation current-wad client)
+       (next)
+       (go declaration-or-documentation-or-form))
+   documentation-or-form
+     (when (stringp (expression current-wad))
+       (maybe-assign-indentation 3 2)
+       (next))
+   form
+     (maybe-assign-indentation 2 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go form)))
 
-(defmethod indent-local-function-definition (wad client)
-  (when (and (typep wad 'expression-wad)
-             (consp (children wad)))
-    (let* ((fun (lambda (w)
-                  (compute-lambda-list-indentation w client)))
-           (arguments (rest (children wad)))
-           (indentation (+ (start-column wad) 4))
-           ;; We start by computing the indentation for the the
-           ;; lambda list.
-           (body-wads (compute-distinguished-indentation
-                       arguments indentation fun)))
-      (indent-body (+ (start-column wad) 2) body-wads client))))
+(defun compute-local-function-indentation (wad client)
+  (compute-and-assign-indentations
+   client wad compute-local-function-indentations))
 
-(defgeneric indent-local-function-definitions (wad client))
+(define-indentation-automaton compute-local-functions-indentations
+  (tagbody
+     (next)
+   local-function
+     (maybe-assign-indentation 1 1)
+     (compute-local-function-indentation current-wad client)
+     (next)
+     (go local-function)))
 
-(defmethod indent-local-function-definitions (wad client)
-  (when (and (typep wad 'expression-wad)
-             (consp (children wad)))
-    (indent-list wad
-                 (lambda (w)
-                   (indent-local-function-definition w client)))))
+(defun compute-local-functions-indentation (wad client)
+  (compute-and-assign-indentations
+   client wad compute-local-functions-indentations))
 
-(defun indent-flet-etc (wad client)
-  (compute-indentation-single-distinguished
-   wad
-   (lambda (wad) (indent-local-function-definitions wad client))
-   (lambda (indentation wads)
-     (indent-body indentation wads client))))
+(define-indentation-automaton compute-flet-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+     ;; The current wad ought to be the list of local function
+     ;; definitions.
+     (maybe-assign-indentation 4 2)
+     (compute-local-functions-indentation current-wad client)
+     (next)
+   declaration-or-documentation-or-form
+     (when (and (consp (expression current-wad))
+                (wad-represents-symbol-p
+                 (first (children current-wad))
+                 'declare))
+       (maybe-assign-indentation 3 2)
+       (compute-declare-indentation current-wad client)
+       (next)
+       (go declaration-or-documentation-or-form))
+   documentation-or-form
+     (when (stringp (expression current-wad))
+       (maybe-assign-indentation 3 2)
+       (next))
+   form
+     (maybe-assign-indentation 2 2)
+     (compute-child-indentations current-wad client)
+     (next)
+     (go form)))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:flet))) client)
-  (indent-flet-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:flet) compute-flet-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:labels))) client)
-  (indent-flet-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:labels) compute-flet-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:macrolet))) client)
-  (indent-flet-etc wad client))
-
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:lambda))) client)
-  (indent-flet-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:macrolet) compute-flet-indentations)
