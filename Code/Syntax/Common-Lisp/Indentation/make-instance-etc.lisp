@@ -19,30 +19,34 @@
 ;;;     (case ...
 ;;;           ...))
 
-(defun indent-make-instance-etc (wad client)
-  (let ((arguments (split-wads (rest (children wad)))))
-    (unless (null arguments)
-      ;; First handle the distinguished argument.
-      (let ((distinguished (first arguments)))
-        (align-or-indent distinguished (+ (start-column wad) 4))
-        (let ((distinguished-expression (first (last distinguished))))
-          (when (typep distinguished-expression 'expression-wad)
-            (compute-child-indentations distinguished-expression client))))
-      ;; Next, indent the keyword/value pairs.
-      (loop with indentation = (+ (start-column wad) 2)
-            with additional = 0
-            for argument in (rest arguments)
-            do (loop for wad in argument
-                     unless (zerop (start-line wad))
-                       do (setf (indentation wad) (+ indentation additional)))
-               (when (typep (first (last argument)) 'expression-wad)
-                 (compute-child-indentations (first (last argument)) client))
-               (setf additional (- 2 additional))))))
+(define-indentation-automaton compute-make-instance-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+     ;; The current wad ought to be the form that computes the class
+     ;; or the instance argument.
+     (maybe-assign-indentation 4 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+   initarg
+     ;; The current wad ought to be a form that computes an
+     ;; initialization argument.
+     (maybe-assign-indentation 2 4)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     ;; The current wad ought to be a form that computes the value of
+     ;; the initialization argument.
+     (maybe-assign-indentation 4 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go initarg)))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:make-instance))) client)
-  (indent-make-instance-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:make-instance)
+  compute-make-instance-indentations)
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:reinitialize-instance))) client)
-  (indent-make-instance-etc wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:reinitialize-instance)
+  compute-make-instance-indentations)
