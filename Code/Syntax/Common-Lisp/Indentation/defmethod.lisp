@@ -30,7 +30,7 @@
                  (first (children current-wad))
                  'declare))
        (maybe-assign-indentation 3 2)
-       ;; FIXME: compute indentation of declaration here.
+       (compute-declare-indentation current-wad client)
        (next)
        (go declaration-or-documentation-or-form))
    documentation-or-form
