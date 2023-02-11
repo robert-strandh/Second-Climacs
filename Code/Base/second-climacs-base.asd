@@ -3,6 +3,7 @@
                "cluffer-emacs-compatibility")
   :serial t
   :components ((:file "packages")
+               (:file "kill-ring")
                (:file "buffer")
                (:file "standard-buffer")
                (:file "analyzer")
@@ -13,6 +14,5 @@
                (:file "fundamental-view")
                (:file "window")
                (:file "application")
-               (:file "kill-ring")
                (:file "search")
                (:file "conditions")))

@@ -288,23 +288,33 @@
 ;;; These functions implement the essence of the commands
 ;;; FORWARD-WORD and BACKWARD-WORD.
 
+(defun apply-to-cursor-until (cursor action cursor-predicate item-key item-predicate)
+  (loop until (or (funcall cursor-predicate cursor)
+                  (funcall item-predicate (funcall item-key cursor)))
+        do (funcall action cursor)))
+
+(defun %act-over-word (cursor action cursor-predicate
+                       &key (item-key #'item-after-cursor))
+  (apply-to-cursor-until cursor action cursor-predicate item-key
+                         #'alphanumericp)
+  (apply-to-cursor-until cursor action cursor-predicate item-key
+                         (lambda (item)
+                           (or (not (characterp item))
+                               (not (alphanumericp item))))))
+
 (defun forward-word (cursor)
-  (loop until (or (cluffer:end-of-buffer-p cursor)
-                  (alphanumericp (item-after-cursor cursor)))
-        do (forward-item cursor))
-  (loop until (or (cluffer:end-of-line-p cursor)
-                  (not (characterp (item-after-cursor cursor)))
-                  (not (alphanumericp (item-after-cursor cursor))))
-        do (forward-item cursor)))
+  (%act-over-word cursor #'forward-item #'cluffer:end-of-buffer-p))
 
 (defun backward-word (cursor)
-  (loop until (or (cluffer:beginning-of-buffer-p cursor)
-                  (alphanumericp (item-before-cursor cursor)))
-        do (backward-item cursor))
-  (loop until (or (cluffer:beginning-of-line-p cursor)
-                  (not (characterp (item-before-cursor cursor)))
-                  (not (alphanumericp (item-before-cursor cursor))))
-        do (backward-item cursor)))
+  (%act-over-word cursor #'backward-item #'cluffer:beginning-of-buffer-p
+                  :item-key #'item-before-cursor))
+
+(defun delete-word (cursor)
+  (%act-over-word cursor #'delete-item #'cluffer:end-of-buffer-p))
+
+(defun erase-word (cursor)
+  (%act-over-word cursor #'erase-item #'cluffer:beginning-of-buffer-p
+                  :item-key #'item-before-cursor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

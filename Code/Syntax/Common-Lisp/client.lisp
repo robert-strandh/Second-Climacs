@@ -72,49 +72,62 @@
 (defmethod eclector.base:make-source-range ((client client) (start t) (end t))
   (cons start end))
 
-(defmethod eclector.parse-result:make-expression-result
-    ((client client) (result t) (children t) (source t))
-  (destructuring-bind ((start-line . start-column) . (end-line . end-column)) source
-    (make-wad 'expression-wad :start-line     start-line
+(defun make-result-wad (class stream source children
+                        &rest extra-initargs &key &allow-other-keys)
+  (destructuring-bind ((start-line . start-column) . (end-line . end-column))
+      source
+    (let* ((line-number    (current-line-number stream))
+           (max-line-width (compute-max-line-width
+                            stream start-line line-number '())))
+      (apply #'make-wad class :start-line     start-line
                               :height         (- end-line start-line)
                               :start-column   start-column
                               :end-column     end-column
                               :relative-p     nil
-                              :max-line-width (compute-max-line-width
-                                               (stream* client)
-                                               start-line
-                                               (current-line-number (stream* client))
-                                               children)
+                              :max-line-width max-line-width
                               :children       children
-                              :expression     result)))
+                              extra-initargs))))
 
 (defmethod eclector.parse-result:make-skipped-input-result
     ((client client) (stream t) (reason t) (source t))
-  (destructuring-bind ((start-line . start-column) . (end-line . end-column)) source
-    (flet ((make-it (class &rest extra-initargs)
-             (apply #'make-wad class :start-line     start-line
-                                     :height         (- end-line start-line)
-                                     :start-column   start-column
-                                     :end-column     end-column
-                                     :relative-p     nil
-                                     :children       '()
-                                     :max-line-width (compute-max-line-width
-                                                      stream
-                                                      start-line
-                                                      (current-line-number stream)
-                                                      '())
-                                     extra-initargs)))
-      (etypecase reason
-        ((cons (eql :line-comment))
-         (let ((result (make-it 'semicolon-comment-wad
-                                :semicolon-count (cdr reason))))
-           ;; Eclector returns the beginning of the following line as
-           ;; the end of the comment.  But we want it to be the end of
-           ;; the same line.  But I don't know how to do it correctly
-           ;; (yet).
-           result))
-        ((eql :block-comment)          (make-it 'block-comment-wad))
-        ((eql :reader-macro)           (make-it 'reader-macro-wad))
-        ((eql *read-suppress*)         (make-it 'read-suppress-wad))
-        ((cons (eql :sharpsign-plus))  (make-it 'sharpsign-plus-wad  :expression (cdr reason)))
-        ((cons (eql :sharpsign-minus)) (make-it 'sharpsign-minus-wad :expression (cdr reason)))))))
+  (flet ((make-it (class &rest extra-initargs)
+           (apply #'make-result-wad class stream source '() extra-initargs)))
+    (etypecase reason
+      ((cons (eql :line-comment))
+       (let ((result (make-it 'semicolon-comment-wad
+                              :semicolon-count (cdr reason))))
+         ;; Eclector returns the beginning of the following line as
+         ;; the end of the comment.  But we want it to be the end of
+         ;; the same line.  But I don't know how to do it correctly
+         ;; (yet).
+         result))
+      ((eql :block-comment)          (make-it 'block-comment-wad))
+      ((eql :reader-macro)           (make-it 'reader-macro-wad))
+      ((eql *read-suppress*)         (make-it 'read-suppress-wad))
+      ((cons (eql :sharpsign-plus))  (make-it 'sharpsign-plus-wad  :expression (cdr reason)))
+      ((cons (eql :sharpsign-minus)) (make-it 'sharpsign-minus-wad :expression (cdr reason))))))
+
+(defmethod eclector.parse-result:make-expression-result
+    ((client client) (result t) (children t) (source t))
+  (make-result-wad 'expression-wad (stream* client) source children
+                   :expression result))
+
+(defmethod eclector.parse-result:make-expression-result
+    ((client   client)
+     (result   (eql eclector.parse-result:**definition**))
+     (children t)
+     (source   t))
+  (let ((object (nth-value 1 (eclector.reader:labeled-object-state
+                              client children))))
+    (make-result-wad 'labeled-object-definition-wad (stream* client) source '()
+                     :expression object)))
+
+(defmethod eclector.parse-result:make-expression-result
+    ((client   client)
+     (result   (eql eclector.parse-result:**reference**))
+     (children t)
+     (source   t))
+  (let ((object (nth-value 1 (eclector.reader:labeled-object-state
+                              client children))))
+    (make-result-wad 'labeled-object-reference-wad (stream* client) source '()
+                     :expression object)))
