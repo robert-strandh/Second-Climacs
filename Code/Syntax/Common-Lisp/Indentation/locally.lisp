@@ -1,49 +1,25 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defun indent-locally (wad client)
-  (let ((arguments (rest (children wad))))
-    (unless (null arguments)
-      (let* ((argument (pop arguments))
-             (declaration-indentation (start-column argument))
-             (body-indentation (+ (start-column wad) 2)))
-        (flet ((maybe-set-indentation (wad-to-indent column)
-                 (unless (or (zerop (start-line wad-to-indent))
-                             (eq wad-to-indent (second (children wad))))
-                   (setf (indentation wad-to-indent) column))))
-          (unless (zerop (start-line argument))
-            (setf (indentation argument) (+ (start-column wad) 4)))
-          (tagbody
-             (if (typep argument 'expression-wad)
-                 (go declaration-wads)
-                 (go preceding-declarations))
-           preceding-declarations
-             ;; ARGUMENT is a NON-EXPRESSION-WAD preceding declaration.
-             (maybe-set-indentation argument declaration-indentation)
-             (if (null arguments)
-                 (go out)
-                 (progn (setf argument (pop arguments))
-                        (if (typep argument 'expression-wad)
-                            (go declaration-wads)
-                            (go preceding-declarations))))
-           declaration-wads
-             (maybe-set-indentation argument declaration-indentation)
-             (if (null arguments)
-                 (go out)
-                 (progn (setf argument (pop arguments))
-                        (if (first-child-wad-represents-symbol-p
-                             argument 'declare)
-                            (go declaration-wads)
-                            (go body-wads))))
-           body-wads
-             (maybe-set-indentation argument body-indentation)
-             (when (typep argument 'expression-wad)
-               (compute-child-indentations argument client))
-             (if (null arguments)
-                 (go out)
-                 (progn (setf argument (pop arguments))
-                        (go body-wads)))
-           out))))))
+(define-indentation-automaton compute-locally-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+   declaration-or-form
+     (when (and (consp (expression current-wad))
+                (wad-represents-symbol-p
+                 (first (children current-wad))
+                 'declare))
+       (maybe-assign-indentation 4 2)
+       (compute-declare-indentation current-wad client)
+       (next)
+       (go declaration-or-form))
+   form
+     (maybe-assign-indentation 2 2)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go form)))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:locally))) client)
-  (indent-locally wad client))
+(define-form-indentation-method
+    ('#:common-lisp '#:locally) compute-locally-indentations)
