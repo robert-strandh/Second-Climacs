@@ -103,8 +103,8 @@
 ;;; This function implements the essence of the command
 ;;; EXCHANGE-EXPRESSIONS.
 
-(defun new-cursor ()
-  (make-instance 'cluffer-standard-line:right-sticky-cursor))
+(defun new-cursor (buffer)
+  (make-instance 'base:standard-cursor :buffer buffer))
 
 (defun copy-cursor-positions (from-cursor to-cursor)
   (cluffer:attach-cursor
@@ -112,63 +112,55 @@
    (cluffer:line from-cursor)
    (cluffer:cursor-position from-cursor)))
 
-(defun detach-attached-cursors (c1 c2 c3 c4)
+(defun detach-attached-cursors (&rest cursors)
   (flet ((detach-if-attached (cursor)
            (when (cluffer:cursor-attached-p cursor)
              (cluffer:detach-cursor cursor))))
-    (detach-if-attached c1)
-    (detach-if-attached c2)
-    (detach-if-attached c3)
-    (detach-if-attached c4)))
+    (mapc #'detach-if-attached cursors)))
 
 (defun exchange-expressions (cache cursor)
   ;; If the cursor is inside an atomic wad, we first move
   ;; forward over that expression.
   (when (cursor-is-inside-atomic-wad-p cache cursor)
     (forward-expression cache cursor))
-  (let ((c1 (new-cursor))
-        (c2 (new-cursor))
-        (c3 (new-cursor))
-        (c4 (new-cursor)))
-    (flet ((ensure-cursors-detached ()
-             (detach-attached-cursors c1 c2 c3 c4)))
-      ;; We first try to position C1 before the preceding expression.
-      (copy-cursor-positions cursor c1)
-      ;; Try to move backward over the preceding expression.  It is
-      ;; possible that this operation might fail if there is no
-      ;; preceding expression.  If that happens, we handle the error,
-      ;; restore everything, and re-signal the condition.
-      (handler-case (backward-expression cache c1)
-        (no-preceding-expression (condition)
-          (ensure-cursors-detached)
-          (error condition)))
-      ;; Next, we try to position C4 at the end of the following
-      ;; expression.
-      (copy-cursor-positions cursor c4)
-      ;; Try to move forward over the next expression.  It is possible
-      ;; that this operation might fail if there is no next
-      ;; expression.  If that happens, we handle the error, restore
-      ;; everything, and re-signal the condition.
-      (handler-case (forward-expression cache c4)
-        (no-following-expression (condition)
-          (ensure-cursors-detached)
-          (error condition)))
-      ;; Come here if everything went well.
-      ;; We put C2 at the end of the expression we moved backward
-      ;; over.
-      (copy-cursor-positions c1 c2)
-      (forward-expression cache c2)
-      ;; We put C3 at the beginning of the expression we moved forward
-      ;; over.
-      (copy-cursor-positions c4 c3)
-      (backward-expression cache c3)
-      ;; Swap the contents of the two regions.
-      (let ((preceding-expression (base:move-region-to-vector c1 c2))
-            (following-expression (base:move-region-to-vector c3 c4)))
-        (loop for item across preceding-expression
-              do (base:insert-item c3 item))
-        (loop for item across following-expression
-              do (base:insert-item c1 item))))))
+  (let ((c1 (new-cursor (base:buffer cursor)))
+        (c2 (new-cursor (base:buffer cursor)))
+        (c3 (new-cursor (base:buffer cursor)))
+        (c4 (new-cursor (base:buffer cursor))))
+    (unwind-protect
+         (progn
+           ;; We first try to position C1 before the preceding expression.
+           (copy-cursor-positions cursor c1)
+           ;; Try to move backward over the preceding expression.  It is
+           ;; possible that this operation might fail if there is no
+           ;; preceding expression.  If that happens, we handle the error,
+           ;; restore everything, and re-signal the condition.
+           (backward-expression cache c1)
+           ;; Next, we try to position C4 at the end of the following
+           ;; expression.
+           (copy-cursor-positions cursor c4)
+           ;; Try to move forward over the next expression.  It is possible
+           ;; that this operation might fail if there is no next
+           ;; expression.  If that happens, we handle the error, restore
+           ;; everything, and re-signal the condition.
+           (forward-expression cache c4)
+           ;; Come here if everything went well.
+           ;; We put C2 at the end of the expression we moved backward
+           ;; over.
+           (copy-cursor-positions c1 c2)
+           (forward-expression cache c2)
+           ;; We put C3 at the beginning of the expression we moved forward
+           ;; over.
+           (copy-cursor-positions c4 c3)
+           (backward-expression cache c3)
+           ;; Swap the contents of the two regions.
+           (let ((preceding-expression (base:move-region-to-vector c1 c2))
+                 (following-expression (base:move-region-to-vector c3 c4)))
+             (loop for item across preceding-expression
+                   do (base:insert-item c3 item))
+             (loop for item across following-expression
+                   do (base:insert-item c1 item))))
+      (detach-attached-cursors c1 c2 c3 c4))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
