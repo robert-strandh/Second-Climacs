@@ -56,6 +56,27 @@
   (clim:with-drawing-options (pane :ink clim:+gray50+)
     (call-next-method)))
 
+(flet ((draw-underline (pane line-number wad)
+         (multiple-value-bind (style-width style-height ascent) (text-style-dimensions pane)
+           (let* ((start-column (cl-syntax:start-column wad))
+                  (end-column (cl-syntax:end-column wad))
+                  (x (* start-column style-width))
+                  (y (+ ascent (* line-number style-height)))
+                  (width (* style-width (- end-column start-column))))
+             (clim:draw-line* pane x (+ y 2) (+ x width) (+ y 2))))))
+
+  (defmethod draw-wad :around ((wad cl-syntax:labeled-object-definition-wad)
+                               start-ref pane cache first-line last-line)
+    (declare (ignore cache first-line last-line))
+    (call-next-method)
+    (draw-underline pane start-ref wad))
+
+  (defmethod draw-wad :around ((wad cl-syntax:labeled-object-reference-wad)
+                               start-ref pane cache first-line last-line)
+    (declare (ignore cache first-line last-line))
+    (call-next-method)
+    (draw-underline pane start-ref wad)))
+
 ;;; Token wads
 
 (defmethod draw-token-wad :around (wad (token cl-syntax:numeric-token)

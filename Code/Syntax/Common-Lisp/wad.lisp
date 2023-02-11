@@ -83,6 +83,12 @@
 (defclass expression-wad (wad)
   ((%expression :initarg :expression :accessor expression)))
 
+(defclass labeled-object-definition-wad (expression-wad)
+  ())
+
+(defclass labeled-object-reference-wad (expression-wad)
+  ())
+
 (defclass no-expression-wad (wad)
   ())
 

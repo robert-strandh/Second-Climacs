@@ -26,6 +26,8 @@
    ;; Wads
    #:wad
    #:expression-wad
+   #:labeled-object-definition-wad
+   #:labeled-object-reference-wad
    #:no-expression-wad
    #:skipped-wad
    #:comment-wad

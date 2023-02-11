@@ -111,3 +111,23 @@
     ((client client) (result t) (children t) (source t))
   (make-result-wad 'expression-wad (stream* client) source children
                    :expression result))
+
+(defmethod eclector.parse-result:make-expression-result
+    ((client   client)
+     (result   (eql eclector.parse-result:**definition**))
+     (children t)
+     (source   t))
+  (let ((object (nth-value 1 (eclector.reader:labeled-object-state
+                              client children))))
+    (make-result-wad 'labeled-object-definition-wad (stream* client) source '()
+                     :expression object)))
+
+(defmethod eclector.parse-result:make-expression-result
+    ((client   client)
+     (result   (eql eclector.parse-result:**reference**))
+     (children t)
+     (source   t))
+  (let ((object (nth-value 1 (eclector.reader:labeled-object-state
+                              client children))))
+    (make-result-wad 'labeled-object-reference-wad (stream* client) source '()
+                     :expression object)))
