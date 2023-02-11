@@ -46,6 +46,8 @@
            #:end-of-buffer
            #:forward-word
            #:backward-word
+           #:delete-word
+           #:erase-word
            #:back-to-indentation
            #:mark
            #:climacs-error

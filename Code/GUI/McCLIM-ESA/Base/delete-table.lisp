@@ -22,6 +22,24 @@
 	     'delete-table
 	     '((#\Backspace)))
 
+(clim:define-command (com-delete-word :name t :command-table delete-table)
+    ()
+  (with-current-cursor (cursor)
+    (base:delete-word cursor)))
+
+(esa:set-key `(com-delete-word)
+             'delete-table
+             '((#\d :meta)))
+
+(clim:define-command (com-erase-word :name t :command-table delete-table)
+    ()
+  (with-current-cursor (cursor)
+    (handler-bind ((error #'invoke-debugger)) (base:erase-word cursor))))
+
+(esa:set-key `(com-erase-word)
+             'delete-table
+             '((#\Backspace :meta)))
+
 (clim:define-command
     (com-kill-line :name t :command-table delete-table)
     ()
