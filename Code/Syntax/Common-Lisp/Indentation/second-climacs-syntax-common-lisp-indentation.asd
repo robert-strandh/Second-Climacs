@@ -18,6 +18,7 @@
                (:file "lambda-list")
                (:file "flet-labels-macrolet")
                (:file "defun")
+               (:file "the")
                (:file "destructuring-bind-etc")
                (:file "make-instance-etc")
                (:file "defclass")
