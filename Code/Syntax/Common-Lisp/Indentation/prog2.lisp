@@ -25,3 +25,6 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:prog2) compute-prog2-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:progv) compute-prog2-indentations)
