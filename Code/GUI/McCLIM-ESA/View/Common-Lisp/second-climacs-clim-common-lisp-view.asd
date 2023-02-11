@@ -6,7 +6,7 @@
   :components ((:file "packages")
                (:file "utilities")
                (:file "common-lisp-view")
-               (:file "token-drawing")
+               (:file "wad-drawing")
                (:file "cursor-visibility")
                (:file "common-lisp-command-table")
                (:file "indentation")))
