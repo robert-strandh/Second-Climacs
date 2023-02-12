@@ -90,9 +90,9 @@
         do (assign-indentation-of-wads-in-unit
             indentation-unit absolute-indentation)))
 
-(defmacro with-indentation-automaton (name &body body)
-  (let ((indentation-units-variable (gensym))
-        (current-unit-variable (gensym))
+(defmacro with-indentation-automaton
+    ((name indentation-units-variable) &body body)
+  (let ((current-unit-variable (gensym))
         (indentations-variable (gensym))
         (remaining-units-variable (gensym))
         (seen-expression-wad-p-variable (gensym)))
