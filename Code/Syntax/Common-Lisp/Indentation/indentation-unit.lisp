@@ -90,6 +90,35 @@
         do (assign-indentation-of-wads-in-unit
             indentation-unit absolute-indentation)))
 
+(defmacro with-indentation-automaton (name &body body)
+  (let ((indentation-units-variable (gensym))
+        (current-unit-variable (gensym))
+        (indentations-variable (gensym))
+        (remaining-units-variable (gensym))
+        (seen-expression-wad-p-variable (gensym)))
+    `(let ((,indentations-variable (list 1))
+           (,current-unit-variable '())
+           (,remaining-units-variable ,indentation-units-variable)
+           (current-wad nil)
+           (,seen-expression-wad-p-variable nil))
+       (flet ((next ()
+                (setf current-wad nil)
+                (loop until (typep current-wad 'expression-wad)
+                      do (when (null ,current-unit-variable)
+                           (setf ,seen-expression-wad-p-variable nil)
+                           (if (null ,remaining-units-variable)
+                               (return-from ,name
+                                 (reverse ,indentations-variable))
+                               (setf ,current-unit-variable
+                                     (pop ,remaining-units-variable))))
+                         (setf current-wad (pop ,current-unit-variable))))
+              (maybe-assign-indentation (indentation next-default)
+                (unless ,seen-expression-wad-p-variable
+                  (setf ,seen-expression-wad-p-variable t)
+                  (setf (first ,indentations-variable) indentation)
+                  (push next-default ,indentations-variable))))
+         ,@body))))
+
 (defmacro define-indentation-automaton (name &body body)
   (let ((indentation-units-variable (gensym))
         (current-unit-variable (gensym))
