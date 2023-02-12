@@ -31,3 +31,6 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:defun) compute-defun-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:defmacro) compute-defun-indentations)
