@@ -14,7 +14,8 @@
 (defmethod compute-form-indentation (wad (pawn null) client)
   (when (typep wad 'expression-wad)
     (let ((expression (expression wad)))
-      (when (consp expression)
+      (when (and (consp expression)
+                 (not (null (first expression))))
         (compute-form-indentation
          wad (first expression) client)))))
 
