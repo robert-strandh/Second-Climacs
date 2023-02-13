@@ -152,6 +152,7 @@
 
 (defun indent-line (cache cursor)
   (let* ((line-number (cluffer:line-number cursor))
+         (position (cluffer:cursor-position cursor))
          (wad (find-wad-beginning-line cache line-number)))
     (unless (or (null wad) (null (indentation wad)))
       (base:beginning-of-line cursor)
@@ -161,9 +162,8 @@
               do (base:delete-item cursor))
         (loop repeat (- indentation start-column)
               do (base:insert-item cursor #\Space))
-        (loop while (eql (base:item-after-cursor cursor)
-                         #\Space)
-              do (base:forward-item cursor))))))
+        (setf (cluffer:cursor-position cursor)
+              (+ position (- indentation start-column)))))))
 
 ;;; Take a list of wads.  Use the column of the first one to align all
 ;;; the remaining ones that are on the beginning of a line.
