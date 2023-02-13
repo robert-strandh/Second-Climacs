@@ -39,7 +39,7 @@
        (next))
    form
      (maybe-assign-indentation 2 2)
-     (compute-child-indentations current-wad client)
+     (compute-form-indentation current-wad nil client)
      (next)
      (go form)))
 
