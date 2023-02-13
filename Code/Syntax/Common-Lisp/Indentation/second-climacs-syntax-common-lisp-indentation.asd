@@ -22,4 +22,5 @@
                (:file "defun")
                (:file "make-instance-etc")
                (:file "defclass")
-               (:file "defmethod")))
+               (:file "defmethod")
+               (:file "case")))
