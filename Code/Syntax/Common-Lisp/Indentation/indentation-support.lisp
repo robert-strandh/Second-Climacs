@@ -135,22 +135,6 @@
             (indent-default-function-call wad client)))
       (indent-default-function-call wad client)))
 
-(defun indent-body (column body-wads client)
-  (loop for wad in body-wads
-        unless (zerop (start-line wad))
-          do (setf (indentation wad) column)
-        do (compute-child-indentations wad client)))
-
-(defun indent-up-to-and-including-expression (column wads client)
-  (loop for remaining on wads
-        for wad = (first remaining)
-        unless (zerop (start-line wad))
-          do (setf (indentation wad) column)
-        when (typep wad 'expression-wad)
-          do (compute-binding-indentations wad client)
-             (loop-finish)
-        finally (return (rest remaining))))
-
 (defun wad-represents-symbol-p (wad symbol)
   (and (typep wad 'expression-wad)
        (let ((expression (expression wad)))
@@ -180,19 +164,6 @@
         (loop while (eql (base:item-after-cursor cursor)
                          #\Space)
               do (base:forward-item cursor))))))
-
-;;; Take a list of wads and split it into wad groups, and return a
-;;; list of those wad groups.  A wad group is a list of wads.  Each
-;;; wad group, except possibly the last one, contains exactly one
-;;; expression wad as its last element.  The last wad group may
-;;; contain only non-expression wads.
-(defun split-wads (wads)
-  (loop with remaining = wads
-        until (null remaining)
-        collect (loop for first = (pop remaining)
-                      collect first
-                      until (or (null remaining)
-                                (typep first 'expression-wad)))))
 
 ;;; Take a list of wads.  Use the column of the first one to align all
 ;;; the remaining ones that are on the beginning of a line.
