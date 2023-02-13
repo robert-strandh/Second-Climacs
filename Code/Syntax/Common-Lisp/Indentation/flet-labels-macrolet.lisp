@@ -29,22 +29,15 @@
      (next)
      (go form)))
 
+;;; Compute the indentation of a single local function definition.
 (defun compute-local-function-indentation (wad client)
   (compute-and-assign-indentations
    client wad compute-local-function-indentations))
 
-(define-indentation-automaton compute-local-functions-indentations
-  (tagbody
-     (next)
-   local-function
-     (maybe-assign-indentation 1 1)
-     (compute-local-function-indentation current-wad client)
-     (next)
-     (go local-function)))
-
+;;; Compute the indentation of a uniform list of local function
+;;; definitions.
 (defun compute-local-functions-indentation (wad client)
-  (compute-and-assign-indentations
-   client wad compute-local-functions-indentations))
+  (compute-list-indentation wad client #'compute-local-function-indentation))
 
 (define-indentation-automaton compute-flet-indentations
   (tagbody
