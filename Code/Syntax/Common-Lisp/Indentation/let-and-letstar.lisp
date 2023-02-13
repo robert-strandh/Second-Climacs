@@ -26,21 +26,13 @@
      (next)
      (go extraneous-stuff)))
 
+;;; Compute the indentation of a single LET binding.
 (defun compute-binding-indentation (wad client)
   (compute-and-assign-indentations client wad compute-binding-indentations))
 
-;;; Compute the indentations for a list of LET bindings. 
-(define-indentation-automaton compute-bindings-indentations
-  (tagbody
-     (next)
-   binding
-     (maybe-assign-indentation 1 1)
-     (compute-binding-indentation current-wad client)
-     (next)
-     (go binding)))
-
+;;; Compute the indentation of a list of LET bindings.
 (defun compute-bindings-indentation (wad client)
-  (compute-and-assign-indentations client wad compute-bindings-indentations))
+  (compute-list-indentation wad client #'compute-binding-indentation))
 
 (define-indentation-automaton compute-let-indentations
   (tagbody
