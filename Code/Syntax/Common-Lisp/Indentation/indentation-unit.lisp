@@ -132,3 +132,18 @@
           (wad-column-number (start-column ,wad)))
      (assign-indentation-of-wads-in-units
       indentation-units indentations wad-column-number)))
+
+;;; This function computes the indentation of a uniform list of items,
+;;; where each item should be indented according to
+;;; COMPUTE-ELEMENT-INDENTATION.
+(defun compute-list-indentation (wad client compute-element-indentation)
+  (flet ((automaton (indentation-units client)
+           (with-indentation-automaton (automaton indentation-units)
+             (tagbody
+                (next)
+              element
+                (maybe-assign-indentation 1 1)
+                (funcall compute-element-indentation current-wad client)
+                (next)
+                (go element)))))
+    (compute-and-assign-indentations client wad automaton)))
