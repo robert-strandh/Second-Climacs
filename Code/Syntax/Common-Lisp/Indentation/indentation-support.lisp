@@ -166,63 +166,6 @@
          (and (consp children)
               (wad-represents-symbol-p (first children) symbol)))))
 
-;;; Many standard forms have a distinguished expression as their first
-;;; argument.  If the distinguished expression is on the same line as
-;;; the operator, then no particular indentation is imposed, but if it
-;;; is on a line by itself. it is indented DELTA-INDENTATION compared
-;;; to the START-COLUMN of WAD.  The distinguished expression may be
-;;; preceded by an arbitrary number of NON-EXPRESSION-WADs.  The first
-;;; wad determines the indentation, whether it is an expression wad or
-;;; not, so that all the NON-EXPRESSION-WADs and the distinguished
-;;; expression wad are aligned.  This function returns a list of the
-;;; wads that remain after the distinguished expression wad.  If there
-;;; is no expression wad among the children, or if there are no more
-;;; wads after the first one, then the empty list is returned.  The
-;;; parameter DISTINGUISHED-EXPRESSION-INDENT-FUNCTION is a function
-;;; that is applied to the distinguished expression.  We need this
-;;; parameter, because there is great variation as to the nature of
-;;; the distinguished expression, and how it should be indented.
-(defun compute-distinguished-indentation
-    (arguments indentation indent-function)
-  (if (null arguments)
-      '()
-      (destructuring-bind (first . remaining) arguments
-        (let ((distinguished-indentation (start-column first)))
-          (unless (zerop (start-line first))
-            (setf (indentation first) indentation))
-          (if (typep first 'expression-wad)
-              (progn (funcall indent-function first)
-                     remaining)
-              (loop for (argument . rest) on remaining
-                    unless (zerop (start-line argument))
-                      do (setf (indentation argument)
-                               distinguished-indentation)
-                    when (typep argument 'expression-wad)
-                      do (funcall indent-function argument)
-                         (loop-finish)
-                    finally (return rest)))))))
-
-;;; Many Common Lisp operators have a first argument that is
-;;; distinguished in some way, followed by one or more expression that
-;;; are part of a sequence of similar expressions.  If the
-;;; distinguished argument starts on the same line as the operator, no
-;;; indentation is imposed on it.  If it starts on a separate line, it
-;;; is indented by 4 positions, compared to the parent expression.
-;;; The remaining expressions are indented by 2 position, compared to
-;;; the parent expression.  This computation needs two parameters,
-;;; namely a function that determines how the distinguished argument
-;;; is to be recursively indented, and a function that determines how
-;;; the remaining expressions are to be indented.
-(defun compute-indentation-single-distinguished
-    (wad compute-distinguished-indentation compute-remaining-indentation)
-  (let ((remaining-wads (compute-distinguished-indentation
-                         (rest (children wad))
-                         (+ (start-column wad) 4)
-                         compute-distinguished-indentation)))
-    (funcall compute-remaining-indentation
-             (+ (start-column wad) 2)
-             remaining-wads)))
-
 (defun indent-line (cache cursor)
   (let* ((line-number (cluffer:line-number cursor))
          (wad (find-wad-beginning-line cache line-number)))
