@@ -181,22 +181,6 @@
                          #\Space)
               do (base:forward-item cursor))))))
 
-;;; Given a list of wads, extract all the wads up to and including the
-;;; first expression wad.  Return those wads as a list in reverse
-;;; order, i.e. the expression wad is the first wad on the list.  As a
-;;; second return argument, return the remaining wads in the original
-;;; list.  If there is no expression wad in the original list of wads,
-;;; then the first wad in the first list returned will not be an
-;;; expression wad and the second list returned will be empty.  If the
-;;; original list of wads is empty, two empty lists will be returned.
-(defun extract-up-to-expression-wad (wads)
-  (let ((first-result '())
-        (second-result wads))
-    (loop until (null second-result)
-          do (push (pop second-result) first-result)
-          until (typep (first first-result) 'expression-wad)
-          finally (return (values first-result second-result)))))
-
 ;;; Take a list of wads and split it into wad groups, and return a
 ;;; list of those wad groups.  A wad group is a list of wads.  Each
 ;;; wad group, except possibly the last one, contains exactly one
