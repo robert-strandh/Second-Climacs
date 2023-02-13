@@ -166,27 +166,6 @@
          (and (consp children)
               (wad-represents-symbol-p (first children) symbol)))))
 
-(defun indent-list (wad element-indent-function)
-  (let ((children (children wad)))
-    (unless (null children)
-      (destructuring-bind (first . rest) children
-        (when (typep first 'expression-wad)
-          (funcall element-indent-function first))
-        (loop for child in rest
-              unless (zerop (start-line child))
-                do (setf (indentation child)
-                         (start-column first ))
-              when (typep child 'expression-wad)
-                do (funcall element-indent-function child))))))
-
-(defun indent-simple-list (wad)
-  (let ((children (children wad)))
-    (unless (null children)
-      (loop for child in (rest children)
-            unless (zerop (start-line child))
-              do (setf (indentation child)
-                       (start-column (first children)))))))
-
 ;;; Many standard forms have a distinguished expression as their first
 ;;; argument.  If the distinguished expression is on the same line as
 ;;; the operator, then no particular indentation is imposed, but if it
