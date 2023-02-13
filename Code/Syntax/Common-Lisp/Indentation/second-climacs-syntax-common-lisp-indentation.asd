@@ -23,4 +23,5 @@
                (:file "make-instance-etc")
                (:file "defclass")
                (:file "defmethod")
-               (:file "case")))
+               (:file "case")
+               (:file "cond")))
