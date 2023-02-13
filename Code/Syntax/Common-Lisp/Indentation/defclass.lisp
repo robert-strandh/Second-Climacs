@@ -1,41 +1,112 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defun indent-slot (wad client)
-  )
+(define-indentation-automaton compute-slot-specifier-indentations
+  (tagbody
+     (next)
+     ;; The current wad ought to be the slot name.
+     (maybe-assign-indentation 1 3)
+     (next)
+   slot-option
+     ;; The current wad ought to be a slot-option name.  We indent the
+     ;; slot-option name by 2 positions compared to the slot name.
+     (maybe-assign-indentation 3 5)
+     ;; Most slot options have a name or a form as its value, and it
+     ;; won't hurt to compute the indentation of a name as if it were
+     ;; a form.  One option, though, is different, namely :TYPE, which
+     ;; takes a type specifier as a value, and we would like to indent
+     ;; that type specifier as such.
+     (let ((slot-option-name-wad current-wad))
+       (next)
+       (maybe-assign-indentation 5 3)
+       (if (wad-represents-symbol-p slot-option-name-wad :type)
+           (compute-type-specifier-indentation current-wad nil client)
+           (compute-form-indentation current-wad nil client))
+       (next)
+       (go slot-option))))
 
-;;; SLOTS is a list of wads, some of which may be expression wads and
-;;; some of which may be wads of some other type.  An expression wad
-;;; in the list then represents a single slot specifier.
-(defun indent-slots (wads client)
-  ;; It is possible that the list of slots is empty.  In that case, do
-  ;; nothing.
-  (unless (null wads)
-    ;; Start by aligning every wad in the list that starts on its own
-    ;; line with the first one.
-    (align-with-first wads)
-    ;; Then, for each expression wad in the list, compute the
-    ;; indentation according to the rules of a single slot specifier.
-    (loop for wad in wads
-          when (typep wad 'expression-wad)
-            do (indent-slot wad client))))
+;;; Compute the indentation of a single slot specifier.
+(defun compute-slot-specifier-indentation (wad client)
+  (compute-and-assign-indentations
+   client wad compute-slot-specifier-indentations))
 
-(defun indent-defclass (wad client)
-  (let ((arguments (split-wads (rest (children wad)))))
-    (unless (null arguments)
-      (destructuring-bind (class-name . remaining) arguments
-        (align-or-indent class-name (+ (start-column wad) 4))
-        (unless (null remaining)
-          (destructuring-bind (superclasses . remaining) remaining
-            (align-or-indent superclasses (+ (start-column wad) 4))
-            (unless (null remaining)
-              (destructuring-bind (slots . options) remaining
-                ;; FIXME: indent options.
-                (declare (ignore options))
-                (align-or-indent slots (+ (start-column wad) 2))
-                (let ((last (first (last slots))))
-                  (when (typep last 'expression-wad)
-                    (indent-slots (children last) client)))))))))))
+;;; Compute the indentation of a list of slot specifiers.
+(defun compute-slot-specifiers-indentation (wad client)
+  (compute-list-indentation
+   wad client #'compute-slot-specifier-indentation))
 
-(defmethod compute-form-indentation
-    (wad (pawn (eql (intern-pawn '#:common-lisp '#:defclass))) client)
-  (indent-defclass wad client))
+(defgeneric compute-class-option-indentation (wad pawn client))
+
+(defmethod compute-class-option-indentation (wad pawn client)
+  nil)
+
+;;; This method is applicable when the caller specifies NIL for the
+;;; pawn, meaning that we do not know the nature of the wad att all,
+;;; only that it ought to be a class option.  It could be an atomic
+;;; wad, in which case it should not have its indentation computed at
+;;; all.  Or it could be a compound wad, but with an unknown
+;;; class-option name, in which case we also do not compute its
+;;; indentation.
+(defmethod compute-class-option-indentation (wad (pawn null) client)
+  (when (typep wad 'expression-wad)
+    (let ((expression (expression wad)))
+      (when (and (consp expression)
+                 (not (null (first expression))))
+        (compute-class-option-indentation wad (first expression) client)))))
+
+;;; This method is applicable when we are given a pawn, but there is
+;;; no more specific method applicable, meaning we have not defined a
+;;; method for this particular pawn.  So we do nothing.
+(defmethod compute-class-option-indentation (wad (pawn pawn) client)
+  nil)
+
+(define-indentation-automaton compute-defclass-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the operator.
+     (maybe-assign-indentation 1 4)
+     (next)
+     ;; The current wad ought to be the class name.
+     (maybe-assign-indentation 6 4)
+     (next)
+     ;; The current wad ought to be the list of superclasses.
+     (maybe-assign-indentation 4 2)
+     (compute-list-indentation current-wad client (constantly nil))
+     (next)
+     ;; The current wad ought to be the list of slot specifiers.
+     (maybe-assign-indentation 2 4)
+     (compute-slot-specifiers-indentation current-wad client)
+     (next)
+   class-option
+     (maybe-assign-indentation 4 4)
+     (compute-class-option-indentation current-wad nil client)
+     (next)
+     (go class-option)))
+
+(define-form-indentation-method
+    ('#:common-lisp '#:defclass)  compute-defclass-indentations)
+
+;;; This macro is used to define a typical indentation method that
+;;; computes indentation units and calls an automaton function.
+(defmacro define-class-option-indentation-method (pawn automaton)
+  `(defmethod compute-class-option-specifier-indentation
+       (wad (pawn (eql (intern-pawn ,@pawn))) client)
+     (compute-and-assign-indentations client wad ,automaton)))
+
+(define-indentation-automaton compute-default-initargs-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the symbol :DEFAULT-INITARGS.
+     (maybe-assign-indentation 1 3)
+     (next)
+   initarg-name
+     ;; The current wad ought to be the name of an initarg.
+     (maybe-assign-indentation 3 5)
+     (next)
+     ;; The current wad ought to be the value form of an initarg.
+     (maybe-assign-indentation 5 3)
+     (compute-form-indentation current-wad nil client)
+     (next)
+     (go initarg-name)))
+
+(define-class-option-indentation-method
+    ('#:keyword '#:default-initargs) compute-default-initargs-indentations)
