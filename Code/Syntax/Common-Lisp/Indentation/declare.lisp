@@ -30,7 +30,7 @@
 ;;; This macro is used to define a typical indentation method that
 ;;; computes indentation units and calls an automaton function.
 (defmacro define-declaration-specifier-indentation-method (pawn automaton)
-  `(defmethod compute-type-specifier-indentation
+  `(defmethod compute-declaration-specifier-indentation
        (wad (pawn (eql (intern-pawn ,@pawn))) client)
      (compute-and-assign-indentations client wad ,automaton)))
 
