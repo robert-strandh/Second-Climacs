@@ -24,4 +24,5 @@
                (:file "defclass")
                (:file "defmethod")
                (:file "case")
+               (:file "typecase")
                (:file "cond")))
