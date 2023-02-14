@@ -465,7 +465,7 @@
     (let ((stream (climi::output-history-stream history)))
       (clim:with-bounding-rectangle* (:x2 x2 :y2 y2) history
         (clim:change-space-requirements stream :width x2 :height y2))
-      (clim:window-clear (clim-base:left-gutter stream)))
+      #+(or)(clim:window-clear (clim-base:left-gutter stream)))
     (clim:replay history pane)))
 
 (defmethod clim:output-record-parent ((record output-history))
