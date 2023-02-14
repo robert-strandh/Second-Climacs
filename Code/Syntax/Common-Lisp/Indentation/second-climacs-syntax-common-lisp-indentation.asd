@@ -25,4 +25,5 @@
                (:file "defmethod")
                (:file "case")
                (:file "typecase")
-               (:file "cond")))
+               (:file "cond")
+               (:file "assert")))
