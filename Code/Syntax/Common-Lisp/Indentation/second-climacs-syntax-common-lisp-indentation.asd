@@ -27,4 +27,5 @@
                (:file "typecase")
                (:file "cond")
                (:file "assert")
-               (:file "check-type")))
+               (:file "check-type")
+               (:file "defgeneric")))
