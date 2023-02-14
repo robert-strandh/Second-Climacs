@@ -238,7 +238,8 @@
 (define-indentation-automaton compute-declare-indentations
   (tagbody
      (next)
-     ;; The current wad represents the symbol DECLARE.
+     ;; The current wad represents the symbol DECLARE or the symbol
+     ;; DECLAIM.
      (maybe-assign-indentation 1 3)
      (next)
    declaration-specifier
@@ -249,3 +250,6 @@
 
 (defun compute-declare-indentation (wad client)
   (compute-and-assign-indentations client wad compute-declare-indentations))
+
+(define-form-indentation-method
+    ('#:common-lisp '#:declaim) compute-declare-indentations)
