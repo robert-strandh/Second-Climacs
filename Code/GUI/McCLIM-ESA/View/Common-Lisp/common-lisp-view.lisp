@@ -79,30 +79,36 @@
 (defun draw-left-arrow (pane gutter line-number ink)
   (multiple-value-bind (middle h1 h2)
       (arrow-y-coordinates pane line-number)
-    (clim:draw-polygon*
-     gutter
-     (list 12 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 0 middle
-           6 (- middle h2) 6 (- middle h1) 12 (- middle h1))
-     :closed t :filled t :ink ink)))
+    (clim:with-output-recording-options
+        (gutter :record nil :draw t)
+      (clim:draw-polygon*
+       gutter
+       (list 12 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 0 middle
+             6 (- middle h2) 6 (- middle h1) 12 (- middle h1))
+       :closed t :filled t :ink ink))))
 
 (defun draw-right-arrow (pane gutter line-number ink)
   (multiple-value-bind (middle h1 h2)
       (arrow-y-coordinates pane line-number)
-    (clim:draw-polygon*
-     gutter
-     (list 0 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 12 middle
-           6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
-     :closed t :filled t :ink ink)))
+    (clim:with-output-recording-options
+        (gutter :record nil :draw t)
+      (clim:draw-polygon*
+       gutter
+       (list 0 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 12 middle
+             6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
+       :closed t :filled t :ink ink))))
 
 (defun draw-gray-rectangle (pane gutter line-number)
   (multiple-value-bind (middle h1 h2)
       (arrow-y-coordinates pane line-number)
     (declare (ignore h1))
-    (clim:draw-rectangle*
-     gutter
-     0 (+ middle h2) 12 (- middle h2)
-     :filled t
-     :ink clim:+gray+)))
+    (clim:with-output-recording-options
+        (gutter :record nil :draw t)
+      (clim:draw-rectangle*
+       gutter
+       0 (+ middle h2) 12 (- middle h2)
+       :filled t
+       :ink clim:+gray+))))
 
 (defun draw-cursor (pane x y height)
   (clim:draw-rectangle* pane (1- x) (- y height) (+ x 2) y
@@ -474,7 +480,8 @@
     (base:update-view (clim-base:climacs-view view))
     (let ((stream (climi::output-history-stream history)))
       (clim:with-bounding-rectangle* (:x2 x2 :y2 y2) history
-        (clim:change-space-requirements stream :width x2 :height y2)))
+        (clim:change-space-requirements stream :width x2 :height y2))
+      (clim:window-clear (clim-base:left-gutter stream)))
     (clim:replay history pane)))
 
 (defmethod clim:output-record-parent ((record output-history))
