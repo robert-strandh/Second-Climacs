@@ -26,4 +26,5 @@
                (:file "case")
                (:file "typecase")
                (:file "cond")
-               (:file "assert")))
+               (:file "assert")
+               (:file "check-type")))
