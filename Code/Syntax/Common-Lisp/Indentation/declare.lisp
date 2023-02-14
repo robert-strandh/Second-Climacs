@@ -253,3 +253,20 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:declaim) compute-declare-indentations)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Indentation for the PROCLAIM expression.
+
+(define-indentation-automaton compute-proclaim-indentations
+  (tagbody
+     (next)
+     ;; The current wad represents the symbol PROCLAIM.
+     (maybe-assign-indentation 1 3)
+     (next)
+   declaration-specifier
+     (maybe-assign-indentation 3 3)
+     (compute-declaration-specifier-indentation current-wad nil client)))
+
+(define-form-indentation-method
+    ('#:common-lisp '#:proclaim) compute-proclaim-indentations)
