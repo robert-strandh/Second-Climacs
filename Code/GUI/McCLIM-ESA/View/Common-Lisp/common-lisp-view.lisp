@@ -98,18 +98,6 @@
              6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
        :closed t :filled t :ink ink))))
 
-(defun draw-gray-rectangle (pane gutter line-number)
-  (multiple-value-bind (middle h1 h2)
-      (arrow-y-coordinates pane line-number)
-    (declare (ignore h1))
-    (clim:with-output-recording-options
-        (gutter :record nil :draw t)
-      (clim:draw-rectangle*
-       gutter
-       0 (+ middle h2) 12 (- middle h2)
-       :filled t
-       :ink clim:+gray+))))
-
 (defun draw-cursor (pane x y height)
   (clim:draw-rectangle* pane (1- x) (- y height) (+ x 2) y
                         :ink clim:+blue+))
@@ -272,7 +260,7 @@
     (cond ((null indentation)
            nil)
           ((= indentation start-column)
-           (draw-gray-rectangle pane gutter start-ref))
+           nil)
           ((< indentation start-column)
            (draw-left-arrow pane gutter start-ref clim:+blue+))
           (t
