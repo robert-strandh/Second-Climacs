@@ -79,20 +79,20 @@
 (defun draw-left-arrow (pane gutter line-number ink)
   (multiple-value-bind (middle h1 h2)
       (arrow-y-coordinates pane line-number)
-      (clim:draw-polygon*
-       gutter
-       (list 12 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 0 middle
-             6 (- middle h2) 6 (- middle h1) 12 (- middle h1))
-       :closed t :filled t :ink ink)))
+    (clim:draw-polygon*
+     gutter
+     (list 12 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 0 middle
+           6 (- middle h2) 6 (- middle h1) 12 (- middle h1))
+     :closed t :filled t :ink ink)))
 
 (defun draw-right-arrow (pane gutter line-number ink)
   (multiple-value-bind (middle h1 h2)
       (arrow-y-coordinates pane line-number)
-      (clim:draw-polygon*
-       gutter
-       (list 0 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 12 middle
-             6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
-       :closed t :filled t :ink ink)))
+    (clim:draw-polygon*
+     gutter
+     (list 0 (+ middle h1) 6 (+ middle h1) 6 (+ middle h2) 12 middle
+           6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
+     :closed t :filled t :ink ink)))
 
 (defun draw-gray-rectangle (pane gutter line-number)
   (multiple-value-bind (middle h1 h2)
