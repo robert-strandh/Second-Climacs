@@ -77,3 +77,6 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:macrolet) compute-flet-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:lambda) compute-local-function-indentations)
