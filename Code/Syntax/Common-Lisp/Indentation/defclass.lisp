@@ -85,6 +85,9 @@
 (define-form-indentation-method
     ('#:common-lisp '#:defclass)  compute-defclass-indentations)
 
+(define-form-indentation-method
+    ('#:common-lisp '#:define-condition)  compute-defclass-indentations)
+
 ;;; This macro is used to define a typical indentation method that
 ;;; computes indentation units and calls an automaton function.
 (defmacro define-class-option-indentation-method (pawn automaton)
@@ -110,3 +113,17 @@
 
 (define-class-option-indentation-method
     ('#:keyword '#:default-initargs) compute-default-initargs-indentations)
+
+(define-indentation-automaton compute-report-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the symbol :REPORT.
+     (maybe-assign-indentation 1 3)
+     (next)
+     ;; The current wad can be a string, a symbol, or a lambda
+     ;; expression.  In either case, we can indent it as a form.
+     (maybe-assign-indentation 3 3)
+     (compute-form-indentation current-wad nil client)))
+
+(define-class-option-indentation-method
+    ('#:keyword '#:report) compute-report-indentations)
