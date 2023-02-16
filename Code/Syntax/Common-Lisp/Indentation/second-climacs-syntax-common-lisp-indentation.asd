@@ -28,4 +28,5 @@
                (:file "cond")
                (:file "assert")
                (:file "check-type")
-               (:file "defgeneric")))
+               (:file "defgeneric")
+               (:file "do-dostar")))
