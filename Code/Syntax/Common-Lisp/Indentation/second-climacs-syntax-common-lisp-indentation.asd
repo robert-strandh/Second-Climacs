@@ -29,4 +29,5 @@
                (:file "assert")
                (:file "check-type")
                (:file "defgeneric")
-               (:file "do-dostar")))
+               (:file "do-dostar")
+               (:file "dolist-dotimes")))
