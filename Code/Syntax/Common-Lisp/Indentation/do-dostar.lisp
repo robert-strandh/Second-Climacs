@@ -9,7 +9,13 @@
      ;; The current wad represents the list of variable bindings.
      (maybe-assign-indentation 4 4)
      (compute-list-indentation
-      current-wad client #'compute-do-binding-indentation)
+      current-wad client
+      (lambda (wad client)
+        ;; Do we need to check whether WAD is atomic?
+        (compute-list-indentation
+         wad client
+         (lambda (wad client)
+           (compute-form-indentation wad nil client)))))
      (next)
      ;; The current wad represents the end test.
      (maybe-assign-indentation 4 4)
