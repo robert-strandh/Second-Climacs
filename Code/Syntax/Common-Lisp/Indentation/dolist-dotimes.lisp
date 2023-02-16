@@ -39,3 +39,12 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:dotimes) compute-dolist-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:do-symbols) compute-dolist-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:do-external-symbols) compute-dolist-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:do-all-symbols) compute-dolist-indentations)
