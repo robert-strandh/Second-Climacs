@@ -25,6 +25,15 @@
       (lambda (wad client)
         (compute-form-indentation wad nil client)))
      (next)
+   tag-or-form-or-declaration
+     (when (and (consp (expression current-wad))
+                (wad-represents-symbol-p
+                 (first (children current-wad))
+                 'declare))
+       (maybe-assign-indentation 3 4)
+       (compute-declare-indentation current-wad client)
+       (next)
+       (go tag-or-form-or-declaration))
    tag-or-form
      (if (atom (expression current-wad))
          ;; We have a label.
