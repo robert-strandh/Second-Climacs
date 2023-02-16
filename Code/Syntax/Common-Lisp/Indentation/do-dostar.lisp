@@ -8,7 +8,8 @@
      (next)
      ;; The current wad represents the list of variable bindings.
      (maybe-assign-indentation 4 4)
-     (compute-do-bindings-indentation current-wad client)
+     (compute-list-indentation
+      current-wad client #'compute-do-binding-indentation)
      (next)
      ;; The current wad represents the end test.
      (maybe-assign-indentation 4 4)
