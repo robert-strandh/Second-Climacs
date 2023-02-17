@@ -53,3 +53,9 @@
 (define-form-indentation-method
     ('#:common-lisp '#:with-input-from-tring)
   compute-with-input-from-string-indentations)
+
+;;; WITH-OUTPUT-TO-STRING can probably be indented the same way as
+;;; WITH-INPUT-FROM-STRING.
+(define-form-indentation-method
+    ('#:common-lisp '#:with-output-to-tring)
+  compute-with-input-from-string-indentations)
