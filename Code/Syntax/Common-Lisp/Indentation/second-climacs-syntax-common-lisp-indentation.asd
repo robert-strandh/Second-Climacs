@@ -30,4 +30,5 @@
                (:file "check-type")
                (:file "defgeneric")
                (:file "do-dostar")
-               (:file "dolist-dotimes")))
+               (:file "dolist-dotimes")
+               (:file "with-input-from-string")))
