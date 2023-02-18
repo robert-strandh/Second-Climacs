@@ -5,16 +5,6 @@
 ;;; indentation of the sub-expressions of that expression.
 (defgeneric compute-form-indentation (wad pawn client))
 
-;;; This generic function is called on any wad.  It determines what
-;;; kind of wad it is and either calls some specific indentation
-;;; function, or some default one.
-(defgeneric compute-child-indentations (wad client))
-
-;;; By default, we do nothing.
-(defmethod compute-child-indentations (wad client)
-  (declare (ignore wad client))
-  nil)
-
 ;;; This function is called when we have a simple form, and we have no
 ;;; particular information about the operator, i.e. either the
 ;;; operator is a LAMBDA expression, a symbol that is know to be the
@@ -125,20 +115,6 @@
          (symbol-name (string symbol-name-designator))
          (key (cons package-name symbol-name)))
     (gethash key *pawns*)))
-
-(defmethod compute-child-indentations ((wad expression-wad) client)
-  (if (simple-form-p wad)
-      (let ((first-child (first (children wad))))
-        (if (and (typep first-child 'expression-wad)
-                 (typep (expression first-child) 'symbol-token))
-            (let* ((token (expression first-child))
-                   (pawn (find-pawn (package-name token)
-                                    (name token))))
-              (if (null pawn)
-                  (indent-default-function-call wad client)
-                  (compute-form-indentation wad pawn client)))
-            (indent-default-function-call wad client)))
-      (indent-default-function-call wad client)))
 
 (defun wad-represents-symbol-p (wad symbol)
   (and (typep wad 'expression-wad)
