@@ -32,4 +32,5 @@
                (:file "do-dostar")
                (:file "dolist-dotimes")
                (:file "with-input-from-string")
-               (:file "defconstant")))
+               (:file "defconstant")
+               (:file "define-modify-macro")))
