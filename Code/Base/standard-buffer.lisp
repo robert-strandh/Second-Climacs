@@ -87,9 +87,9 @@
 (defun make-empty-standard-buffer-and-cursor ()
   (let* ((line (make-instance 'cluffer-standard-line:closed-line))
          (buffer (make-instance 'cluffer-standard-buffer:buffer
-                                :initial-line line))
+                   :initial-line line))
          (standard-buffer (make-instance 'standard-buffer
-                                         :cluffer-buffer buffer))
+                            :cluffer-buffer buffer))
          (cursor (make-instance 'standard-cursor :buffer standard-buffer)))
     (cluffer:attach-cursor cursor line)
     (values standard-buffer cursor)))
