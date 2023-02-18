@@ -123,5 +123,5 @@
                         (unless (every #'relative-p children)
                           (make-relative children (start-line wad))))))))
          (rec wad))
-       (compute-child-indentations wad nil)
+       (compute-form-indentation wad nil client)
        (push-to-prefix (folio analyzer) wad)))))
