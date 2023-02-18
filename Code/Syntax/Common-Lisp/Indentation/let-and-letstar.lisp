@@ -9,22 +9,13 @@
      ;; to verify the nature of this wad.  Here, we just assume
      ;; that there are no sub-indentation to be computed in this
      ;; wad.
-     (maybe-assign-indentation 3 1)
+     (maybe-assign-indentation 1 3)
      (next)
      ;; Come here when the current wad represents the initialization
      ;; form for the variable being bound.  This expression should be
      ;; a form, so we compute the indentation that way.
-     (maybe-assign-indentation 1 3)
-     (compute-form-indentation current-wad nil client)
-     (next)
-   extraneous-stuff
-     ;; We shouldn't really be here, because if we are, there was
-     ;; more than one child expression wad of the binding, so the
-     ;; binding is malformed.  So it doesn't really matter what we
-     ;; do.
-     (maybe-assign-indentation 1 1)
-     (next)
-     (go extraneous-stuff)))
+     (maybe-assign-indentation 3 3)
+     (compute-form-indentation current-wad nil client)))
 
 ;;; Compute the indentation of a single LET binding.
 (defun compute-binding-indentation (wad client)
