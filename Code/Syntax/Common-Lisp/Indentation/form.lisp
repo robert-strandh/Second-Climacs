@@ -25,21 +25,6 @@
             (indent-default-function-call wad client)))
       (indent-default-function-call wad client)))
 
-(define-indentation-automaton compute-function-call-indentations
-  (tagbody
-     (next)
-     ;; The current wad is the operator.
-     (maybe-assign-indentation 1 3)
-     ;; We indent the operator as if it were a form.  That way, we can
-     ;; capture the case where the operator is a lambda expression.
-     (compute-form-indentation current-wad nil client)
-     (next)
-   argument
-     (maybe-assign-indentation 3 3)
-     (compute-form-indentation current-wad nil client)
-     (next)
-     (go argument)))
-
 ;;; This method is applicable when we are given either something that
 ;;; is not a pawn, or a pawn that has no method associated with it. So
 ;;; we indent the form as a function call.
