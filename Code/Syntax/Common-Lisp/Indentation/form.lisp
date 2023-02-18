@@ -44,8 +44,7 @@
 ;;; is not a pawn, or a pawn that has no method associated with it. So
 ;;; we indent the form as a function call.
 (defmethod compute-form-indentation (wad pawn client)
-  (compute-and-assign-indentations
-   client wad compute-function-call-indentations))
+  (indent-default-function-call wad client))
 
 ;;; This macro is used to define a typical indentation method that
 ;;; computes indentation units and calls an automaton function.
