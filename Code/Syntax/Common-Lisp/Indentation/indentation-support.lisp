@@ -42,7 +42,7 @@
                 ;; set the indentation so that it aligns with the
                 ;; start column of the first child of the wad.
                 do (setf (indentation child) first-child-start-column)
-              do (compute-child-indentations child client))))))
+              do (compute-form-indentation child nil client))))))
 
 ;;; We define a form to be SIMPLE if and only if it is a proper list,
 ;;; and if the elements of the list correspond exactly to the
