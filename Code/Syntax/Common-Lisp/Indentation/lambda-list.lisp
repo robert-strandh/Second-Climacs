@@ -71,8 +71,7 @@
                                 (typep x 'expression-wad))
                               (rest children))))
                (unless (null init-form-wad)
-                 (compute-child-indentations
-                  init-form-wad client))))))
+                 (compute-form-indentation init-form-wad nil client))))))
        (next)
        (when (wad-represents-lambda-list-keyword-p current-wad)
          (go lambda-list-keyword))
@@ -121,8 +120,7 @@
                           (children current-wad)
                           :start (1+ pos))))
                    (unless (null init-form-wad)
-                     (compute-child-indentations
-                      init-form-wad client))))))))
+                     (compute-form-indentation init-form-wad nil client))))))))
        (next)
        (when (wad-represents-lambda-list-keyword-p current-wad)
          (go lambda-list-keyword))
