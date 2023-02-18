@@ -123,9 +123,9 @@
     (when (cluffer:cursor-attached-p cursor)
       (cluffer:detach-cursor cursor))
     (cluffer:attach-cursor
-     cursor
-     (cluffer:find-line buffer line-number)
-     column-number)))
+      cursor
+      (cluffer:find-line buffer line-number)
+      column-number)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
