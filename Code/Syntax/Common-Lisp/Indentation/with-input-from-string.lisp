@@ -33,7 +33,7 @@
      (next)
      ;; The current wad ought to be the distinguished arguments.
      (maybe-assign-indentation 4 2)
-     (compute-with-input-to-string-arguments-indentation current-wad client)
+     (compute-with-input-from-string-arguments-indentation current-wad client)
      (next)
    declaration-or-form
      (when (and (consp (expression current-wad))
