@@ -13,11 +13,18 @@
 ;;; case we compute the indentation as if the form is a function call.
 (defmethod compute-form-indentation (wad (pawn null) client)
   (when (typep wad 'expression-wad)
-    (let ((expression (expression wad)))
-      (when (and (consp expression)
-                 (not (null (first expression))))
-        (compute-form-indentation
-         wad (first expression) client)))))
+    (if (simple-form-p wad)
+        (let ((first-child (first (children wad))))
+          (if (and (typep first-child 'expression-wad)
+                   (typep (expression first-child) 'symbol-token))
+              (let* ((token (expression first-child))
+                     (pawn (find-pawn (package-name token)
+                                      (name token))))
+                (if (null pawn)
+                    (indent-default-function-call wad client)
+                    (compute-form-indentation wad pawn client)))
+              (indent-default-function-call wad client)))
+        (indent-default-function-call wad client))))
 
 (define-indentation-automaton compute-function-call-indentations
   (tagbody
