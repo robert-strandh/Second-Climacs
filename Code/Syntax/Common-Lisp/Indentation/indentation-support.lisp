@@ -1,5 +1,10 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
+;;; As usual, we don't really compute the indentation of the
+;;; expression itself, in this case the form.  Instead, we compute the
+;;; indentation of the sub-expressions of that expression.
+(defgeneric compute-form-indentation (wad pawn client))
+
 ;;; This generic function is called on any wad.  It determines what
 ;;; kind of wad it is and either calls some specific indentation
 ;;; function, or some default one.
