@@ -19,3 +19,9 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:defconstant) compute-defconstant-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:defvar) compute-defconstant-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:defparameter) compute-defconstant-indentations)
