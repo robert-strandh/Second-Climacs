@@ -25,3 +25,6 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:defparameter) compute-defconstant-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:define-symbol-macro) compute-defconstant-indentations)
