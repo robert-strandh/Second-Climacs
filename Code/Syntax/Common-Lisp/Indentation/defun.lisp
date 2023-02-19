@@ -40,3 +40,6 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:define-compiler-macro) compute-defun-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:deftype) compute-defun-indentations)
