@@ -33,4 +33,5 @@
                (:file "dolist-dotimes")
                (:file "with-input-from-string")
                (:file "defconstant")
-               (:file "define-modify-macro")))
+               (:file "define-modify-macro")
+               (:file "defsetf")))
