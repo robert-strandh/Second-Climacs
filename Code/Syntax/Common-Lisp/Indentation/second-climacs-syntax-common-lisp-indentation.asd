@@ -36,4 +36,5 @@
                (:file "define-modify-macro")
                (:file "defsetf")
                (:file "with-slots")
-               (:file "defpackage")))
+               (:file "defpackage")
+               (:file "prog-progstar")))
