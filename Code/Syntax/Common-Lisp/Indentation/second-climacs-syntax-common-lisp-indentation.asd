@@ -35,4 +35,5 @@
                (:file "defconstant")
                (:file "define-modify-macro")
                (:file "defsetf")
-               (:file "with-slots")))
+               (:file "with-slots")
+               (:file "defpackage")))
