@@ -46,18 +46,21 @@
 ;;; all.  Or it could be a compound wad, but with an unknown
 ;;; class-option name, in which case we also do not compute its
 ;;; indentation.
-;;; FIXME: we need to access the pawn.
-(defmethod compute-class-option-indentation (wad (pawn null) client)
-  (when (typep wad 'expression-wad)
-    (let ((expression (expression wad)))
-      (when (and (consp expression)
-                 (not (null (first expression))))
-        (compute-class-option-indentation wad (first expression) client)))))
+(defmethod compute-class-option-indentation
+    ((wad expression-wad) (pawn null) client)
+  (when (simple-form-p wad)
+    (let ((first-child (first (children wad))))
+      (when (and (typep first-child 'expression-wad)
+                 (typep (expression first-child) 'symbol-token))
+        (let* ((token (expression first-child))
+               (pawn (find-pawn (package-name token) (name token))))
+          (unless (null pawn)
+            (compute-class-option-indentation wad pawn client)))))))
 
-;;; This method is applicable when we are given a pawn, but there is
-;;; no more specific method applicable, meaning we have not defined a
-;;; method for this particular pawn.  So we do nothing.
-(defmethod compute-class-option-indentation (wad (pawn pawn) client)
+;;; This method is applicable when we are given either something that
+;;; is not a pawn, or a pawn that has no method associated with it.
+;;; So we do nothing.
+(defmethod compute-class-option-indentation (wad pawn client)
   nil)
 
 (define-indentation-automaton compute-defclass-indentations
