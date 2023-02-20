@@ -43,3 +43,6 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:deftype) compute-defun-indentations)
+
+(define-form-indentation-method
+    ('#:common-lisp '#:define-setf-expander) compute-defun-indentations)
