@@ -46,6 +46,7 @@
 ;;; all.  Or it could be a compound wad, but with an unknown
 ;;; class-option name, in which case we also do not compute its
 ;;; indentation.
+;;; FIXME: we need to access the pawn.
 (defmethod compute-class-option-indentation (wad (pawn null) client)
   (when (typep wad 'expression-wad)
     (let ((expression (expression wad)))
