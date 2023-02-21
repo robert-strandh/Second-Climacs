@@ -56,6 +56,33 @@
 (define-form-indentation-method
     ('#:common-lisp '#:defpackage)  compute-defpackage-indentations)
 
+(define-indentation-automaton compute-shadow-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the option name.
+     (maybe-assign-indentation 1 3)
+     (next)
+   symbol-name
+     ;; The current wad ought to be a string designator.
+     (maybe-assign-indentation 3 3)
+     (next)
+     (go symbol-name)))
+
+(define-indentation-automaton compute-shadowing-import-from-indentations
+  (tagbody
+     (next)
+     ;; The current wad is the option name.
+     (maybe-assign-indentation 1 5)
+     (next)
+     ;; The current wad ought to be a package designator.
+     (maybe-assign-indentation 5 3)
+     (next)
+   symbol-name
+     ;; The current wad ought to be a string designator.
+     (maybe-assign-indentation 3 3)
+     (next)
+     (go symbol-name)))
+
 ;;; This macro is used to define a typical indentation method that
 ;;; computes indentation units and calls an automaton function.
 (defmacro define-defpackage-option-indentation-method (pawn automaton)
@@ -71,7 +98,7 @@
   compute-shadowing-import-from-indentations)
 
 (define-defpackage-option-indentation-method
-    ('#:keyword '#:export) compute-export-indentations)
+    ('#:keyword '#:export) compute-shadow-indentations)
 
 (define-defpackage-option-indentation-method
-    ('#:keyword '#:intern) compute-intern-indentations)
+    ('#:keyword '#:intern) compute-shadow-indentations)
