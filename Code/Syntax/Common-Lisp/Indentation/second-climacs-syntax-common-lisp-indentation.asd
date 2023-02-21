@@ -37,4 +37,5 @@
                (:file "defsetf")
                (:file "with-slots")
                (:file "defpackage")
-               (:file "prog-progstar")))
+               (:file "prog-progstar")
+               (:file "handler-case")))
