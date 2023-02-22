@@ -39,4 +39,5 @@
                (:file "defpackage")
                (:file "prog-progstar")
                (:file "handler-case")
-               (:file "handler-bind")))
+               (:file "handler-bind")
+               (:file "print-unreadable-object")))
