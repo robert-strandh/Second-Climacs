@@ -175,3 +175,28 @@
                           (+ start-ref (height wad))
                           (end-column wad)
                           first-line last-line))))
+
+(defun wad-is-incomplete-p (wad)
+  (loop for child in (cl-syntax:children wad)
+          thereis (or (and (typep child 'cl-syntax:error-wad)
+                           (typep (cl-syntax::condition* child)
+                                  'eclector.reader:unterminated-list))
+                      (wad-is-incomplete-p child))))
+
+(defmethod draw-non-token-wad :after
+    ((wad cl-syntax:expression-wad) start-ref pane cache first-line last-line)
+  (let* ((expression (cl-syntax:expression wad))
+         (clim-view (clim:stream-default-view pane))
+         (climacs-view (clim-base:climacs-view clim-view))
+         (cursor (base:cursor climacs-view))
+         (cursor-line-number (cluffer:line-number cursor))
+         (cursor-column-number (cluffer:cursor-position cursor)))
+    (when (and (consp expression)
+               (= (+ start-ref (cl-syntax:height wad)) cursor-line-number)
+               (= (cl-syntax:end-column wad) cursor-column-number))
+      (unless (wad-is-incomplete-p wad)
+        (let ((wad-start-column (cl-syntax:start-column wad)))
+          (clim:with-text-face (pane :bold)
+            (draw-area pane cache
+                       start-ref wad-start-column
+                       start-ref (1+ wad-start-column))))))))
