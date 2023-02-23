@@ -39,12 +39,11 @@
      ;; The current wad ought to be the package name.
      (maybe-assign-indentation 4 2)
      (next)
-     ;; The current wad ought to be the list of options.
+   option
      (maybe-assign-indentation 2 2)
-     (compute-list-indentation
-      current-wad client
-      (lambda (wad client)
-        (compute-defpackage-option-indentation wad nil client)))))
+     (compute-defpackage-option-indentation current-wad nil client)
+     (next)
+     (go option)))
 
 (define-form-indentation-method
     ('#:common-lisp '#:defpackage) compute-defpackage-indentations)
@@ -79,7 +78,7 @@
 ;;; This macro is used to define a typical indentation method that
 ;;; computes indentation units and calls an automaton function.
 (defmacro define-defpackage-option-indentation-method (pawn automaton)
-  `(defmethod compute-defpackage-option-specifier-indentation
+  `(defmethod compute-defpackage-option-indentation
        (wad (pawn (eql (intern-pawn ,@pawn))) client)
      (compute-and-assign-indentations client wad ,automaton)))
 
