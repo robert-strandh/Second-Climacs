@@ -36,25 +36,18 @@
      ;; The current wad is the operator.
      (maybe-assign-indentation 1 4)
      (next)
-     ;; The current wad ought to be the class name.
-     (maybe-assign-indentation 6 4)
-     (next)
-     ;; The current wad ought to be the list of superclasses.
+     ;; The current wad ought to be the package name.
      (maybe-assign-indentation 4 2)
-     (compute-list-indentation current-wad client (constantly nil))
      (next)
-     ;; The current wad ought to be the list of slot specifiers.
-     (maybe-assign-indentation 2 4)
-     (compute-slot-specifiers-indentation current-wad client)
-     (next)
-   class-option
-     (maybe-assign-indentation 4 4)
-     (compute-defpackage-option-indentation current-wad nil client)
-     (next)
-     (go class-option)))
+     ;; The current wad ought to be the list of options.
+     (maybe-assign-indentation 2 2)
+     (compute-list-indentation
+      current-wad client
+      (lambda (wad client)
+        (compute-defpackage-option-indentation wad nil client)))))
 
 (define-form-indentation-method
-    ('#:common-lisp '#:defpackage)  compute-defpackage-indentations)
+    ('#:common-lisp '#:defpackage) compute-defpackage-indentations)
 
 (define-indentation-automaton compute-shadow-indentations
   (tagbody
