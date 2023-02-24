@@ -1,7 +1,8 @@
 (defsystem "second-climacs-syntax-common-lisp"
   :depends-on ("second-climacs-base"
                "second-climacs-syntax-common-lisp-base"
-               "second-climacs-syntax-common-lisp-indentation")
+               "second-climacs-syntax-common-lisp-indentation"
+               "utilities.print-tree")
   :serial t
   :components ((:file "folio")
                (:file "folio-stream")
@@ -20,4 +21,5 @@
                (:file "find-wad-containing-position")
                (:file "motion")
                (:file "regions")
-               (:file "fill-paragraph")))
+               (:file "fill-paragraph")
+               (:file "debug")))
