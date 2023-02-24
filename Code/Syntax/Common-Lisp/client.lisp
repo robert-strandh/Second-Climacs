@@ -88,19 +88,53 @@
                               :children       children
                               extra-initargs))))
 
+(defun make-word-wads (stream source column-offset)
+  (destructuring-bind ((start-line . start-column) . (end-line . end-column))
+      source
+    (declare (ignore end-line end-column))
+    (let* ((cache             (folio stream))
+           (contents          (line-contents cache start-line))
+           (word              (make-array 0 :element-type 'character
+                                            :adjustable   t
+                                            :fill-pointer 0))
+           (word-start-colunn (+ start-column column-offset))
+           (words             '()))
+      (flet ((terminatingp (character)
+               (member character '(#\Space #\Newline
+                                   #\. #\? #\! #\: #\, #\; #\( #\))))
+             (commit (column)
+               (when (plusp (length word))
+                 (let ((source (cons (cons start-line word-start-colunn)
+                                     (cons start-line column)))
+                       (foundp (spell:english-lookup word)))
+                   (push (make-result-wad 'word-wad stream source '()
+                                          :misspelled (not foundp))
+                         words)))
+               (setf (fill-pointer word) 0
+                     word-start-colunn   (1+ column))))
+        (loop for column from start-column below (length contents)
+              for character = (aref contents column)
+              if (not (terminatingp character))
+                do (vector-push-extend character word)
+              else
+                do (commit column)
+              finally (commit column))
+        (nreverse words)))))
+
 (defmethod eclector.parse-result:make-skipped-input-result
     ((client client) (stream t) (reason t) (source t))
   (flet ((make-it (class &rest extra-initargs)
            (apply #'make-result-wad class stream source '() extra-initargs)))
     (etypecase reason
       ((cons (eql :line-comment))
-       (let ((result (make-it 'semicolon-comment-wad
-                              :semicolon-count (cdr reason))))
-         ;; Eclector returns the beginning of the following line as
-         ;; the end of the comment.  But we want it to be the end of
-         ;; the same line.  But I don't know how to do it correctly
-         ;; (yet).
-         result))
+       ;; Eclector returns the beginning of the following line as the
+       ;; end of the comment.  But we want it to be the end of the
+       ;; same line.  But I don't know how to do it correctly (yet).
+       (let* ((semicolon-count (cdr reason))
+              (words           (make-word-wads stream source semicolon-count)))
+         (make-result-wad 'semicolon-comment-wad
+                          stream source words
+                          :semicolon-count semicolon-count)))
       ((eql :block-comment)          (make-it 'block-comment-wad))
       ((eql :reader-macro)           (make-it 'reader-macro-wad))
       ((eql *read-suppress*)         (make-it 'read-suppress-wad))

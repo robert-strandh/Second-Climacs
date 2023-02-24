@@ -2,7 +2,8 @@
   :depends-on ("second-climacs-base"
                "second-climacs-syntax-common-lisp-base"
                "second-climacs-syntax-common-lisp-indentation"
-               "utilities.print-tree")
+               "spell" ; for spell checking in comments
+               "utilities.print-tree") ; for debugging
   :serial t
   :components ((:file "folio")
                (:file "folio-stream")
