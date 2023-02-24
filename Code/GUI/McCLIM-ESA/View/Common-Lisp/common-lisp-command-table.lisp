@@ -97,7 +97,9 @@
     (declare (ignore cursor))
     (let ((wad (cl-syntax:first-top-level-wad cache)))
       (terpri *trace-output*)
-      (cl-syntax:print-wad-tree wad *trace-output*))))
+      (if (null wad)
+          (format *trace-output* "--no wads--~%")
+          (cl-syntax:print-wad-tree wad *trace-output*)))))
 
 (esa:set-key `(com-print-wad-tree)
              'common-lisp-table
