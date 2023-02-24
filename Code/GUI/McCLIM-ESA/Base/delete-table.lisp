@@ -70,5 +70,14 @@
     (base:unkill cursor)))
 
 (esa:set-key `(com-unkill)
-	     'delete-table
-	     '((#\y :control)))
+             'delete-table
+             '((#\y :control)))
+
+(clim:define-command (com-delete-indentation
+                      :name          t
+                      :command-table delete-table)
+    ()
+  (with-current-cursor (cursor)
+    (base:delete-indentation cursor)))
+
+(esa:set-key `(com-delete-indentation) 'delete-table '((#\^ :meta)))

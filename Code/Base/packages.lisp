@@ -49,6 +49,7 @@
            #:delete-word
            #:erase-word
            #:back-to-indentation
+           #:delete-indentation
            #:mark
            #:climacs-error
            #:mark-not-set

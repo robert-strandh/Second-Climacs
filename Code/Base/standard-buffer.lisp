@@ -327,3 +327,18 @@
                   (not (member (cluffer:item-after-cursor cursor)
                                '(#\Space #\Tab #\Backspace #\Page))))
         do (cluffer:forward-item cursor)))
+
+(defun delete-indentation (cursor)
+  ;; Join current and previous lines.
+  (beginning-of-line cursor)
+  (erase-item cursor)
+  ;; Replace all whitespace on the joined line before and after the
+  ;; cursor with a single space.
+  (loop for item = (item-before-cursor cursor)
+        while (member item '(#\Space #\Tab))
+        do (erase-item cursor))
+  (loop for item = (item-after-cursor cursor)
+        while (member item '(#\Space #\Tab))
+        do (delete-item cursor))
+  (insert-item cursor #\Space)
+  (backward-item cursor))
