@@ -56,6 +56,18 @@
   (clim:with-drawing-options (pane :ink clim:+gray50+)
     (call-next-method)))
 
+(defmethod draw-wad :around ((wad cl-syntax::word-wad)
+                             start-ref pane cache first-line last-line)
+  (declare (ignore cache first-line last-line))
+  (if (cl-syntax:misspelled wad)
+      (clim:surrounding-output-with-border (pane :shape :underline
+                                                 :ink            clim:+orange+
+                                                 :padding        2
+                                                 :line-thickness 2
+                                                 :line-dashes    '(4 4))
+        (call-next-method))
+      (call-next-method)))
+
 (flet ((draw-underline (pane line-number wad)
          (multiple-value-bind (style-width style-height ascent) (text-style-dimensions pane)
            (let* ((start-column (cl-syntax:start-column wad))

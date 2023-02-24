@@ -33,6 +33,8 @@
    #:comment-wad
    #:block-command-wad
    #:semicolon-comment-wad
+   #:word-wad
+   #:misspelled
    #:ignored-wad
    #:sharpsign-wad
    #:sharpsign-plus-wad

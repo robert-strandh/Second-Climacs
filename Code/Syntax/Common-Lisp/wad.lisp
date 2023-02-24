@@ -110,6 +110,10 @@
    ;; of the comment.
    (%semicolon-count :initarg :semicolon-count :reader semicolon-count)))
 
+(defclass word-wad (skipped-wad)
+  ((%misspelled :initarg :misspelled
+                :reader  misspelled)))
+
 (defclass ignored-wad (skipped-wad)
   ())
 
