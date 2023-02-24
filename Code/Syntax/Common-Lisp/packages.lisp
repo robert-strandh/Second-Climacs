@@ -87,4 +87,6 @@
    #:exchange-expressions
    #:beginning-of-top-level-expression
    #:end-of-top-level-expression
-   #:fill-paragraph))
+   #:fill-paragraph
+
+   #:print-wad-tree))
