@@ -89,4 +89,5 @@
    #:end-of-top-level-expression
    #:fill-paragraph
 
-   #:print-wad-tree))
+   #:print-wad-tree
+   #:first-top-level-wad))
