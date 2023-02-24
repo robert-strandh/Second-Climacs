@@ -29,15 +29,6 @@
                      last-line)
   (draw-non-token-wad wad start-ref pane cache first-line last-line))
 
-(defmethod draw-wad :before ((wad cl-syntax:eof-wad)
-                             start-ref pane cache first-line last-line)
-  (declare (ignore first-line last-line))
-  (let ((start-col (cl-syntax:start-column wad))
-        (end-col (cl-syntax:end-column wad))
-        (height (cl-syntax:height wad)))
-    (unless (and (zerop height) (= start-col end-col))
-      (draw-rectangle pane start-ref start-col (1+ start-col) clim:+orange+))))
-
 (defmethod draw-wad :around ((wad cl-syntax:error-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore start-ref cache first-line last-line))
