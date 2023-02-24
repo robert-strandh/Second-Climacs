@@ -89,3 +89,16 @@
 (esa:set-key `(com-fill-paragraph)
              'common-lisp-table
              '((#\q :meta)))
+
+(clim:define-command
+    (com-print-wad-tree :name t :command-table common-lisp-table)
+    ()
+  (with-current-cursor-and-cache (cursor cache)
+    (declare (ignore cursor))
+    (let ((wad (cl-syntax:first-top-level-wad cache)))
+      (terpri *trace-output*)
+      (cl-syntax:print-wad-tree wad *trace-output*))))
+
+(esa:set-key `(com-print-wad-tree)
+             'common-lisp-table
+             '((#\w :meta :control)))
