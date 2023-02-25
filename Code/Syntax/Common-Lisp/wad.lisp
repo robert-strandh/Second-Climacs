@@ -136,9 +136,6 @@
   ((%condition :initarg :condition
                :reader  condition*)))
 
-(defclass eof-wad (wad)
-  ())
-
 (defgeneric relative-to-absolute (wad offset)
   (:method ((p wad) offset)
     (assert (relative-p p))

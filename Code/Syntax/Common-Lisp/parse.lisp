@@ -21,9 +21,7 @@
                                            :start-line     line
                                            :start-column   column
                                            :height         0
-                                           :end-column     (if (typep condition 'end-of-file)
-                                                               column
-                                                               (1+ column))
+                                           :end-column     column
                                            :relative-p     nil
                                            :condition      condition)
                       *errors*)))
@@ -73,8 +71,10 @@
                                             (assert (not (relative-p wad)))
                                             t)
                                            (t
-                                            (warn "Dropping ~A (~A); parent ~A"
-                                                  child (class-name (class-of (condition* child))) wad)
+                                            (warn "Dropping ~A (~A)~&  parent         ~A~&  previous child ~A"
+                                                  child (class-name (class-of (condition* child)))
+                                                  wad
+                                                  last-child)
                                             nil))
                                collect child)))
     (reinitialize-instance wad :children children*)))

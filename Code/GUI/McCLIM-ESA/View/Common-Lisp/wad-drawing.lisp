@@ -29,21 +29,6 @@
                      last-line)
   (draw-non-token-wad wad start-ref pane cache first-line last-line))
 
-(defmethod draw-wad :before ((wad cl-syntax:eof-wad)
-                             start-ref pane cache first-line last-line)
-  (declare (ignore first-line last-line))
-  (let ((start-col (cl-syntax:start-column wad))
-        (end-col (cl-syntax:end-column wad))
-        (height (cl-syntax:height wad)))
-    (unless (and (zerop height) (= start-col end-col))
-      (draw-rectangle pane start-ref start-col (1+ start-col) clim:+orange+))))
-
-(defmethod draw-wad :around ((wad cl-syntax:error-wad)
-                             start-ref pane cache first-line last-line)
-  (declare (ignore start-ref cache first-line last-line))
-  (clim:with-drawing-options (pane :ink clim:+red+)
-    (call-next-method)))
-
 (defmethod draw-wad :around ((wad cl-syntax:comment-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore start-ref cache first-line last-line))
@@ -56,7 +41,7 @@
   (clim:with-drawing-options (pane :ink clim:+gray50+)
     (call-next-method)))
 
-(defmethod draw-wad :around ((wad cl-syntax::word-wad)
+(defmethod draw-wad :around ((wad cl-syntax:word-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
   (if (cl-syntax:misspelled wad)
@@ -134,15 +119,9 @@
 
 (defmethod draw-token-wad
     (wad token start-ref pane (cache output-history) first-line last-line)
-  (let* ((start-column (cl-syntax:start-column wad))
-         (end-column (cl-syntax:end-column wad))
-         (height (cl-syntax:height wad)))
-    (draw-filtered-area pane cache
-                        start-ref
-                        start-column
-                        (+ start-ref height)
-                        end-column
-                        first-line last-line)))
+  ;; Call DRAW-NON-TOKEN-WAD (the name should probably change) instead
+  ;; of DRAW-FILTERED-AREA in case WAD has children.
+  (draw-non-token-wad wad start-ref pane cache first-line last-line))
 
 ;;; Non-token wads
 
@@ -167,7 +146,7 @@
             for height     = (height child)
             until (> (+ ref start-line) last-line)
             do (incf ref start-line)
-               ;; Ensure that only at least partially visible wad are
+               ;; Ensure that only at least partially visible wads are
                ;; passed to DRAW-FILTERED-AREA and DRAW-WAD.
                (when (or (<= first-line ref            last-line)      ; start visible
                          (<= first-line (+ ref height) last-line)      ; end visible

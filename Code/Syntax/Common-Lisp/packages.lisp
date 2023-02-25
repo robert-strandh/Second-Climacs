@@ -42,7 +42,6 @@
    #:read-suppress-wad
    #:reader-macro-wad
    #:error-wad
-   #:eof-wad
    #:start-line
    #:height
    #:end-line
