@@ -26,7 +26,10 @@
 ;;; order to capture the absolute start line.
 (defvar *drawn-error-wads* '())
 
-(defmethod render-cache :around ((cache output-history) pane first-line last-line)
+(defmethod render-cache :around ((cache output-history)
+                                 pane
+                                 first-line
+                                 last-line)
   (let ((*drawn-error-wads* '()))
     (call-next-method)
     (let* ((error-wads     (nreverse *drawn-error-wads*))
@@ -96,11 +99,13 @@
             :for y          =   (* start-line height)
             :for baseline   =   ascent
             :do (clim:with-translation (gutter 0 y)
-                  (clim:draw-rectangle* gutter 0 0 (+ width 1) height :ink clim:+red+)
+                  (clim:draw-rectangle* gutter 0 0 (+ width 1) height
+                                        :ink clim:+red+)
                   (when (> count 1)
                     (let ((label (princ-to-string count)))
-                      (clim:draw-text* gutter label 1 baseline :text-size :smaller
-                                                               :align-y   :baseline))))))))
+                      (clim:draw-text* gutter label 1 baseline
+                                       :text-size :smaller
+                                       :align-y   :baseline))))))))
 
 ;;; Wad decorations
 
@@ -118,28 +123,36 @@
            (x            (* start-column width)))
       (draw-error-decoration stream x y start-column end-column width))))
 
-(defun draw-error-decoration (stream x y start-column end-column character-width)
-  (let ((column-count (- end-column start-column)))
+(defun draw-error-decoration
+    (stream x y start-column end-column character-width)
+  (let ((line-height  (nth-value 1 (text-style-dimensions stream)))
+        (column-count (- end-column start-column)))
     (if (plusp column-count)
-        (let ((width (* character-width column-count)))
-          (clim:draw-line* stream x (+ y 2) (+ x width) (+ y 2)
-                           :line-thickness 2 :ink clim:+red+))
-        (clim:draw-polygon* stream (vector x y (+ x 4) (+ y 4) (- x 4) (+ y 4))
-                            :ink clim:+red+))))
+        (let ((thickness (* 1/8 line-height))
+              (width     (* character-width column-count)))
+          (clim:draw-line* stream x (+ y thickness) (+ x width) (+ y thickness)
+                           :line-thickness thickness :ink clim:+red+))
+        (let* ((size   (* 1/4 line-height))
+               (points (vector x y
+                               (+ x size) (+ y size)
+                               (- x size) (+ y size))))
+          (clim:draw-polygon* stream points :ink clim:+red+)))))
 
 ;;; Error annotations
 
 (defun format-error-annotations (stream error-wad-clusters)
-  (let* ((clim-view    (clim:stream-default-view stream)) ; TODO get the cursor in some other way
+  ;; TODO get the cursor in some other way
+  (let* ((clim-view    (clim:stream-default-view stream))
          (climacs-view (clim-base:climacs-view clim-view))
          (cursor       (base:cursor climacs-view)))
-    (multiple-value-bind (cursor-line cursor-column) (base:cursor-positions cursor)
+    (multiple-value-bind (cursor-line cursor-column)
+        (base:cursor-positions cursor)
       (loop :for cluster    :in error-wad-clusters
             :for error-wad  =   (first cluster)
             :for wad        =   (wad error-wad)
             :for start-line =   (start-line error-wad)
             :when (and (= start-line cursor-line)
-                       (<= (cl-syntax::start-column wad)
+                       (<= (cl-syntax:start-column wad)
                            cursor-column
                            (end-column error-wad)))
               :do (format-error-cluster-annotation stream cluster)))))
@@ -157,6 +170,11 @@
                                  error-wad-cluster)))
       (format-error-conditions-annotation stream x y conditions))))
 
+;;; Use "tints" so that the background and border of the annotation
+;;; work for different pane backgrounds.
+(defvar *pink-tint* (clim:compose-in clim:+pink+ (clim:make-opacity .5)))
+(defvar *salmon-tint* (clim:compose-in clim:+salmon+ (clim:make-opacity .5)))
+
 (defun format-error-conditions-annotation (stream x y conditions)
   (clim:with-bounding-rectangle* (:width width :x2 x2)
       (clim:region-intersection
@@ -167,12 +185,9 @@
       (setf (clim:stream-cursor-position stream) (values x y))
       (let* ((pane-background (clim:pane-background stream))
              (background      (clim:compose-over
-                               (clim:compose-in clim:+pink+ (clim:make-opacity .5))
-                               pane-background))
+                               *pink-tint* pane-background))
              (border          (clim:compose-over
-                               (clim:compose-in clim:+salmon+ (clim:make-opacity .5))
-                               pane-background)))
-        (print (clim:pane-viewport-region stream) *trace-output*)
+                               *salmon-tint* pane-background)))
         (clim:surrounding-output-with-border (stream :shape      :rounded
                                                      :radius     3
                                                      :background background
@@ -186,7 +201,7 @@
                 (when (> (length conditions) 1)
                   (write-string "• " stream))
                 (let ((x (clim:stream-cursor-position stream)))
-                  (clime:with-temporary-margins (stream :left  `(:absolute ,x)
-                                                        :right `(:absolute ,width))
+                  (clime:with-temporary-margins
+                      (stream :left `(:absolute ,x) :right `(:absolute ,width))
                     (clim:with-end-of-line-action (stream :wrap*)
                       (princ condition stream))))))))
