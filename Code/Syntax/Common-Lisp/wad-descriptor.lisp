@@ -71,9 +71,26 @@
             (end-line-number object)
             (end-column-number object))))
 
+(defmethod items ((object wad-descriptor) (buffer t))
+  (loop with start-line  =    (start-line-number object)
+        with end-line    =    (end-line-number object)
+        for line-index   from start-line to end-line
+        for line         =    (cluffer:find-line buffer line-index)
+        for start-column =    (start-column-number object) then 0
+        for end-column   =    (if (= line-index end-line)
+                                  (end-column-number object)
+                                  (cluffer:item-count line))
+        nconc (loop for column from start-column below end-column
+                    collect (cluffer:item-at-position line column))))
+
 (defmethod first-child :before ((object wad-descriptor))
   (when (eq (slot-value object '%first-child) 't)
     (develop-children object)))
+
+(defmethod children ((object wad-descriptor))
+  (loop for child = (first-child object) then (next-sibling child)
+        while child
+        collect child))
 
 (defun develop-children (wad-descriptor)
   (let* ((wad (wad wad-descriptor))
@@ -192,6 +209,7 @@
 ;;; Given an absolute wad, return a wad descriptor with the wad and
 ;;; the interval initialized.
 (defun make-wad-descriptor-from-wad (wad)
+  (assert (not (relative-p wad)))
   (make-instance 'wad-descriptor
     :wad wad
     :start-line-number (start-line wad)
