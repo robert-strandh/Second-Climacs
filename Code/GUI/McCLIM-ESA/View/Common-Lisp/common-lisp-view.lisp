@@ -460,15 +460,16 @@
   nil)
 
 (defmethod clim-base:update-view (pane (view common-lisp-view))
-  (let ((history (clim:stream-output-history pane))
-        (gutter (clim-base:left-gutter pane)))
-    (base:update-view (clim-base:climacs-view view))
-    (let ((stream (climi::output-history-stream history)))
-      (clim:with-bounding-rectangle* (:x2 x2 :y2 y2) history
-        (clim:change-space-requirements stream :width x2 :height y2))
-      (clim:clear-output-record (clim:stream-output-history gutter))
-      (clim:window-erase-viewport gutter))
-    (clim:replay history pane)))
+  (clim-internals::with-output-buffered (pane)
+    (let ((history (clim:stream-output-history pane))
+          (gutter (clim-base:left-gutter pane)))
+      (base:update-view (clim-base:climacs-view view))
+      (let ((stream (climi::output-history-stream history)))
+        (clim:with-bounding-rectangle* (:x2 x2 :y2 y2) history
+          (clim:change-space-requirements stream :width x2 :height y2))
+        (clim:clear-output-record (clim:stream-output-history gutter))
+        (clim:window-erase-viewport gutter))
+      (clim:replay history pane))))
 
 (defmethod clim:output-record-parent ((record output-history))
   nil)
