@@ -117,7 +117,10 @@
                   (setf ,seen-expression-wad-p-variable t)
                   (setf (first ,indentations-variable) indentation)
                   (push next-default ,indentations-variable))))
-         ,@body))))
+         (progn ,@body)
+         ;; If we come here, it's that we didn't process all wads.
+         (return-from ,name
+           (reverse ,indentations-variable))))))
 
 (defmacro define-indentation-automaton (name &body body)
   (let ((indentation-units-variable (gensym)))
