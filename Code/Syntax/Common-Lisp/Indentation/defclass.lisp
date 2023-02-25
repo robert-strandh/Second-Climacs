@@ -95,7 +95,7 @@
 ;;; This macro is used to define a typical indentation method that
 ;;; computes indentation units and calls an automaton function.
 (defmacro define-class-option-indentation-method (pawn automaton)
-  `(defmethod compute-class-option-specifier-indentation
+  `(defmethod compute-class-option-indentation
        (wad (pawn (eql (intern-pawn ,@pawn))) client)
      (compute-and-assign-indentations client wad ,automaton)))
 
