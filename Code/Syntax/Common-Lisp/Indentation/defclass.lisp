@@ -77,11 +77,11 @@
      (compute-list-indentation current-wad client (constantly nil))
      (next)
      ;; The current wad ought to be the list of slot specifiers.
-     (maybe-assign-indentation 2 4)
+     (maybe-assign-indentation 2 2)
      (compute-slot-specifiers-indentation current-wad client)
      (next)
    class-option
-     (maybe-assign-indentation 4 4)
+     (maybe-assign-indentation 2 2)
      (compute-class-option-indentation current-wad nil client)
      (next)
      (go class-option)))
