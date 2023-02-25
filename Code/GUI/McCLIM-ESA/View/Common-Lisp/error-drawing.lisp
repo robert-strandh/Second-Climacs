@@ -125,13 +125,18 @@
 
 (defun draw-error-decoration
     (stream x y start-column end-column character-width)
-  (let ((column-count (- end-column start-column)))
+  (let ((line-height  (nth-value 1 (text-style-dimensions stream)))
+        (column-count (- end-column start-column)))
     (if (plusp column-count)
-        (let ((width (* character-width column-count)))
-          (clim:draw-line* stream x (+ y 2) (+ x width) (+ y 2)
-                           :line-thickness 2 :ink clim:+red+))
-        (clim:draw-polygon* stream (vector x y (+ x 4) (+ y 4) (- x 4) (+ y 4))
-                            :ink clim:+red+))))
+        (let ((thickness (* 1/8 line-height))
+              (width     (* character-width column-count)))
+          (clim:draw-line* stream x (+ y thickness) (+ x width) (+ y thickness)
+                           :line-thickness thickness :ink clim:+red+))
+        (let* ((size   (* 1/4 line-height))
+               (points (vector x y
+                               (+ x size) (+ y size)
+                               (- x size) (+ y size))))
+          (clim:draw-polygon* stream points :ink clim:+red+)))))
 
 ;;; Error annotations
 
