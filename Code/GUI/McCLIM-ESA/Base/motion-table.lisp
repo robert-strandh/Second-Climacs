@@ -9,8 +9,8 @@
     (base:forward-item cursor)))
 
 (esa:set-key `(com-forward-item)
-	     'motion-table
-	     '((#\f :control)))
+             'motion-table
+             '((#\f :control)))
 
 (clim:define-command
     (com-backward-item :name t :command-table motion-table)
@@ -19,8 +19,8 @@
     (base:backward-item cursor)))
 
 (esa:set-key `(com-backward-item)
-	     'motion-table
-	     '((#\b :control)))
+             'motion-table
+             '((#\b :control)))
 
 (clim:define-command
     (com-beginning-of-line :name t :command-table motion-table)
@@ -29,8 +29,8 @@
     (base:beginning-of-line cursor)))
 
 (esa:set-key `(com-beginning-of-line)
-	     'motion-table
-	     '((#\a :control)))
+             'motion-table
+             '((#\a :control)))
 
 (clim:define-command
     (com-end-of-line :name t :command-table motion-table)
@@ -39,8 +39,8 @@
     (base:end-of-line cursor)))
 
 (esa:set-key `(com-end-of-line)
-	     'motion-table
-	     '((#\e :control)))
+             'motion-table
+             '((#\e :control)))
 
 (defvar *target-column*)
 
@@ -51,8 +51,8 @@
     (base:next-line cursor)))
 
 (esa:set-key '(com-next-line)
-	     'motion-table
-	     '((#\n :control)))
+             'motion-table
+             '((#\n :control)))
 
 (clim:define-command
     (com-previous-line :name t :command-table motion-table)
@@ -61,8 +61,8 @@
     (base:previous-line cursor)))
 
 (esa:set-key '(com-previous-line)
-	     'motion-table
-	     '((#\p :control)))
+             'motion-table
+             '((#\p :control)))
 
 (clim:define-command
     (com-beginning-of-buffer :name t :command-table motion-table)
@@ -71,8 +71,8 @@
     (base:beginning-of-buffer cursor)))
 
 (esa:set-key '(com-beginning-of-buffer)
-	     'motion-table
-	     '((#\< :meta)))
+             'motion-table
+             '((#\< :meta)))
 
 (clim:define-command
     (com-end-of-buffer :name t :command-table motion-table)
@@ -81,8 +81,8 @@
     (base:end-of-buffer cursor)))
 
 (esa:set-key '(com-end-of-buffer)
-	     'motion-table
-	     '((#\> :meta)))
+             'motion-table
+             '((#\> :meta)))
 
 (clim:define-command
     (com-forward-word :name t :command-table motion-table)
@@ -91,8 +91,8 @@
     (base:forward-word cursor)))
 
 (esa:set-key `(com-forward-word)
-	     'motion-table
-	     '((#\f :meta)))
+             'motion-table
+             '((#\f :meta)))
 
 (clim:define-command
     (com-backward-word :name t :command-table motion-table)
@@ -101,8 +101,8 @@
     (base:backward-word cursor)))
 
 (esa:set-key `(com-backward-word)
-	     'motion-table
-	     '((#\b :meta)))
+             'motion-table
+             '((#\b :meta)))
 
 (clim:define-command
     (com-back-to-indentation :name t :command-table motion-table)
@@ -111,8 +111,8 @@
     (base:back-to-indentation cursor)))
 
 (esa:set-key `(com-back-to-indentation)
-	     'motion-table
-	     '((#\m :meta)))
+             'motion-table
+             '((#\m :meta)))
 
 (clim:define-command
     (com-set-the-mark :name t :command-table motion-table)
@@ -121,8 +121,8 @@
     (base:set-the-mark cursor)))
 
 (esa:set-key `(com-set-the-mark)
-	     'motion-table
-	     '((#\Space :control)))
+             'motion-table
+             '((#\Space :control)))
 
 (clim:define-command
     (com-exchange-cursor-and-mark :name t :command-table motion-table)
@@ -131,8 +131,8 @@
     (base:exchange-cursor-and-mark cursor)))
 
 (esa:set-key `(com-exchange-cursor-and-mark)
-	     'motion-table
-	     '((#\x :control) (#\x :control)))
+             'motion-table
+             '((#\x :control) (#\x :control)))
 
 (clim:define-command
     (com-search-forward :name t :command-table motion-table)

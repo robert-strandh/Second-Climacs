@@ -9,8 +9,8 @@
     (base:delete-item cursor)))
 
 (esa:set-key `(com-delete-item)
-	     'delete-table
-	     '((#\d :control)))
+             'delete-table
+             '((#\d :control)))
 
 (clim:define-command
     (com-erase-item :name t :command-table delete-table)
@@ -19,8 +19,8 @@
     (base:erase-item cursor)))
 
 (esa:set-key `(com-erase-item)
-	     'delete-table
-	     '((#\Backspace)))
+             'delete-table
+             '((#\Backspace)))
 
 (clim:define-command (com-delete-word :name t :command-table delete-table)
     ()
@@ -45,13 +45,13 @@
     ()
   (with-current-cursor (cursor)
     (if (cluffer:end-of-line-p cursor)
-	(base:delete-item cursor)
-	(loop until (cluffer:end-of-line-p cursor)
-	      do (base:delete-item cursor)))))
+        (base:delete-item cursor)
+        (loop until (cluffer:end-of-line-p cursor)
+              do (base:delete-item cursor)))))
 
 (esa:set-key `(com-kill-line)
-	     'delete-table
-	     '((#\k :control)))
+             'delete-table
+             '((#\k :control)))
 
 (clim:define-command
     (com-kill-region :name t :command-table delete-table)
@@ -60,8 +60,8 @@
     (base:kill-region cursor)))
 
 (esa:set-key `(com-kill-region)
-	     'delete-table
-	     '((#\w :control)))
+             'delete-table
+             '((#\w :control)))
 
 (clim:define-command
     (com-unkill :name t :command-table delete-table)
