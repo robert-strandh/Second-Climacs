@@ -58,4 +58,9 @@
            #:cursor-positions
            #:set-cursor-positions
            #:search-forward
-           #:search-backward))
+           #:search-backward
+
+           #:whitespacep
+           #:punctuationp
+           #:insert-words-fill
+           #:fill-words))
