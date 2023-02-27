@@ -80,15 +80,12 @@
              '((#\e :meta :control)))
 
 (clim:define-command
-    (com-fill-paragraph
-     :name t :command-table common-lisp-table)
+    (com-fill-paragraph :name t :command-table common-lisp-table)
     ()
   (with-current-cursor-and-cache (cursor cache)
     (cl-syntax:fill-paragraph cache cursor)))
 
-(esa:set-key `(com-fill-paragraph)
-             'common-lisp-table
-             '((#\q :meta)))
+(esa:set-key `(com-fill-paragraph) 'common-lisp-table '((#\q :meta)))
 
 (clim:define-command
     (com-print-wad-tree :name t :command-table common-lisp-table)

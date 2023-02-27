@@ -88,37 +88,55 @@
                               :children       children
                               extra-initargs))))
 
-(defun make-word-wads (stream source column-offset)
+(defun make-word-wads (stream source
+                       &key (start-column-offset 0)
+                            (end-column-offset   0 end-column-offset-p))
   (destructuring-bind ((start-line . start-column) . (end-line . end-column))
       source
-    (declare (ignore end-line end-column))
     (let* ((cache             (folio stream))
-           (contents          (line-contents cache start-line))
            (word              (make-array 0 :element-type 'character
                                             :adjustable   t
                                             :fill-pointer 0))
-           (word-start-colunn (+ start-column column-offset))
+           (word-start-column (+ start-column start-column-offset))
            (words             '()))
       (flet ((terminatingp (character)
-               (member character '(#\Space #\Newline
-                                   #\. #\? #\! #\: #\, #\; #\( #\))))
-             (commit (column)
+               (let ((spacep       (base:whitespacep character))
+                     (punctuationp (base:punctuationp character)))
+                 (values (or spacep punctuationp) punctuationp)))
+             (commit (line column checkp)
                (when (plusp (length word))
-                 (let ((source (cons (cons start-line word-start-colunn)
-                                     (cons start-line column)))
-                       (foundp (spell:english-lookup word)))
+                 (let ((source      (cons (cons line word-start-column)
+                                          (cons line column)))
+                       (misspelledp (when checkp
+                                      (not (spell:english-lookup word)))))
                    (push (make-result-wad 'word-wad stream source '()
-                                          :misspelled (not foundp))
+                                          :misspelled misspelledp)
                          words)))
                (setf (fill-pointer word) 0
-                     word-start-colunn   (1+ column))))
-        (loop for column from start-column below (length contents)
-              for character = (aref contents column)
-              if (not (terminatingp character))
-                do (vector-push-extend character word)
-              else
-                do (commit column)
-              finally (commit column))
+                     word-start-column   column)))
+        (loop for line     from start-line to (if (zerop end-column)
+                                                  (1- end-line)
+                                                  end-line)
+              for contents =    (line-contents cache line)
+              do (loop with end-column = (if (and (= line end-line)
+                                                  end-column-offset-p)
+                                             (+ end-column end-column-offset)
+                                             (length contents))
+                       for column from word-start-column below end-column
+                       for character = (aref contents column)
+                       for (terminatingp punctuationp)
+                          = (multiple-value-list (terminatingp character))
+                       do (cond ((not terminatingp)
+                                 (vector-push-extend character word))
+                                (punctuationp
+                                 (commit line column t)
+                                 (vector-push-extend character word)
+                                 (commit line (1+ column) nil))
+                                (t
+                                 (commit line column t)
+                                 (incf word-start-column)))
+                       finally (commit line column t))
+                 (setf word-start-column 0))
         (nreverse words)))))
 
 (defmethod eclector.parse-result:make-skipped-input-result
@@ -131,15 +149,23 @@
        ;; end of the comment.  But we want it to be the end of the
        ;; same line.  But I don't know how to do it correctly (yet).
        (let* ((semicolon-count (cdr reason))
-              (words           (make-word-wads stream source semicolon-count)))
-         (make-result-wad 'semicolon-comment-wad
-                          stream source words
+              (words           (make-word-wads
+                                stream source
+                                :start-column-offset semicolon-count)))
+         (make-result-wad 'semicolon-comment-wad stream source words
                           :semicolon-count semicolon-count)))
-      ((eql :block-comment)          (make-it 'block-comment-wad))
-      ((eql :reader-macro)           (make-it 'reader-macro-wad))
-      ((eql *read-suppress*)         (make-it 'read-suppress-wad))
-      ((cons (eql :sharpsign-plus))  (make-it 'sharpsign-plus-wad  :expression (cdr reason)))
-      ((cons (eql :sharpsign-minus)) (make-it 'sharpsign-minus-wad :expression (cdr reason))))))
+      ((eql :block-comment)
+       (let ((words (make-word-wads stream source :start-column-offset 2
+                                                  :end-column-offset   -2)))
+         (make-result-wad 'block-comment-wad stream source words)))
+      ((eql :reader-macro)
+       (make-it 'reader-macro-wad))
+      ((eql *read-suppress*)
+       (make-it 'read-suppress-wad))
+      ((cons (eql :sharpsign-plus))
+       (make-it 'sharpsign-plus-wad  :expression (cdr reason)))
+      ((cons (eql :sharpsign-minus))
+       (make-it 'sharpsign-minus-wad :expression (cdr reason))))))
 
 (defmethod eclector.parse-result:make-expression-result
     ((client client) (result t) (children t) (source t))
@@ -151,17 +177,20 @@
      (result   (eql eclector.parse-result:**definition**))
      (children t)
      (source   t))
-  (let ((object (nth-value 1 (eclector.reader:labeled-object-state
-                              client children))))
-    (make-result-wad 'labeled-object-definition-wad (stream* client) source '()
-                     :expression object)))
+  (multiple-value-bind (state object parse-result)
+      (reader:labeled-object-state client children)
+    (declare (ignore state))
+    (let ((stream   (stream* client))
+          (children (list parse-result)))
+      (make-result-wad 'labeled-object-definition-wad stream source children
+                       :expression object))))
 
 (defmethod eclector.parse-result:make-expression-result
     ((client   client)
      (result   (eql eclector.parse-result:**reference**))
      (children t)
      (source   t))
-  (let ((object (nth-value 1 (eclector.reader:labeled-object-state
-                              client children))))
-    (make-result-wad 'labeled-object-reference-wad (stream* client) source '()
+  (let ((object (nth-value 1 (reader:labeled-object-state client children)))
+        (stream (stream* client)))
+    (make-result-wad 'labeled-object-reference-wad stream source '()
                      :expression object)))

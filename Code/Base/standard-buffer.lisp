@@ -342,3 +342,51 @@
         do (delete-item cursor))
   (insert-item cursor #\Space)
   (backward-item cursor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Filling
+
+(defun whitespacep (character)
+  (member character '(#\Space #\Newline)))
+
+(defun punctuationp (character)
+  (member character '(#\. #\? #\! #\: #\, #\; #\( #\) #\" #\-)))
+
+(defparameter *fill-column* 72)
+
+(defun insert-items (cursor items)
+  (map nil (alexandria:curry #'insert-item cursor) items))
+
+(defun insert-words-fill (cursor words &key prefix
+                                            suffix
+                                            per-line-prefix
+                                            (fill-column    *fill-column*))
+  (flet ((insert-word (word)
+           (unless (and (= (length word) 1)
+                        (let ((first (aref word 0)))
+                          (or (whitespacep first) (punctuationp first))))
+             (insert-item cursor #\Space))
+           (insert-items cursor word)))
+    (loop for word in words
+          for firstp = t then nil
+          do (cond (firstp
+                    (insert-items cursor prefix))
+                   ((>= (+ (cluffer:cursor-position cursor) (length word))
+                        fill-column)
+                    (insert-item cursor #\Newline)
+                    (insert-items cursor per-line-prefix)))
+             (insert-word word))
+    (insert-item cursor #\Newline)
+    (insert-items cursor suffix)))
+
+(defun fill-words (start-cursor end-cursor words
+                   &rest args &key prefix suffix per-line-prefix fill-column)
+  (declare (ignore suffix per-line-prefix fill-column))
+  (multiple-value-bind (start-line-number start-column-number)
+      (cursor-positions start-cursor)
+    (loop until (cursor-= start-cursor end-cursor)
+          do (delete-item start-cursor))
+    (apply #'insert-words-fill start-cursor words args)
+    (let ((final-column (+ start-column-number (length prefix))))
+      (set-cursor-positions start-cursor start-line-number final-column))))
