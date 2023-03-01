@@ -40,4 +40,5 @@
                (:file "prog-progstar")
                (:file "handler-case")
                (:file "handler-bind")
+               (:file "restart-case")
                (:file "print-unreadable-object")))
