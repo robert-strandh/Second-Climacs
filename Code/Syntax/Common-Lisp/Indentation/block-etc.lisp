@@ -19,6 +19,3 @@
 
 (define-form-indentation-method
     ('#:common-lisp '#:block) compute-block-indentations)
-
-(define-form-indentation-method
-    ('#:common-lisp '#:multiple-value-return-from) compute-block-indentations)
