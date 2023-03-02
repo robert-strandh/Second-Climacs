@@ -81,3 +81,9 @@
     (base:delete-indentation cursor)))
 
 (esa:set-key `(com-delete-indentation) 'delete-table '((#\^ :meta)))
+
+(clim:define-command
+    (com-delete-trailing-spaces :name t :command-table delete-table)
+    ()
+  (with-current-cursor (cursor)
+    (base:delete-trailing-spaces cursor)))
