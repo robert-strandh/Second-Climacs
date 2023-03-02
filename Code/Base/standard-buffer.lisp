@@ -390,3 +390,21 @@
     (apply #'insert-words-fill start-cursor words args)
     (let ((final-column (+ start-column-number (length prefix))))
       (set-cursor-positions start-cursor start-line-number final-column))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function implements the essence of the command
+;;; DELETE-TRAILING-SPACES.
+
+(defun delete-trailing-spaces (cursor)
+  (let* ((buffer (buffer cursor))
+         (new-cursor (make-instance 'standard-cursor
+                       :buffer buffer))
+         (line (cluffer:find-line buffer 0)))
+    (cluffer:attach-cursor new-cursor line 0)
+    (end-of-line new-cursor)
+    (loop until (end-of-buffer new-cursor)
+          do (loop while (and (not (cluffer:beginning-of-line-p new-cursor))
+                              (eql (item-before-cursor new-cursor) #\Space))
+                   do (erase-item new-cursor)))
+    (cluffer:detach-cursor new-cursor)))
