@@ -63,4 +63,5 @@
            #:whitespacep
            #:punctuationp
            #:insert-words-fill
-           #:fill-words))
+           #:fill-words
+           #:delete-trailing-spaces))
