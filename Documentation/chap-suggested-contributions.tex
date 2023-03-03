@@ -18,3 +18,16 @@ An existing spell checker library%
 information about part of speach.  This information can be used as a
 basis for a grammar checker than can then be used to check the grammar
 of comments and documentation strings.
+
+\section{Alternative \commonlisp{} parser}
+
+Some people dislike the fact that the current parser parses to the end
+of the buffer when there is a an opening parenthesis too many, or a
+double quote with no corresponding closing quote.  This contribution
+would consider an alternative parsing strategy where a heuristic is
+used to determine what a top-level form is.  For example, an entirely
+blank line followed by a character in column $0$ could be considered
+the beginning of a top-level form, no matter the shape of the
+preceding top-level form.  The parser could then consider such a blank
+line as the end of the buffer, and thus restrict any errors to a
+single top-level form.
