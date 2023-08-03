@@ -150,7 +150,7 @@
           (push-to-residue cache wad)))))
 
 (defun handle-modified-line (cache line-number)
-  (let* ((line         (flx:element* (contents cache) line-number))
+  (let* ((line         (flx:element* (lines cache) line-number))
          (cluffer-line (cluffer-line line))
          (string       (coerce (cluffer:items cluffer-line) 'string)))
     (setf (characters line) string))
@@ -172,7 +172,7 @@
 ;;; results that are not affected by such modifications.
 (defun scavenge (cache buffer)
   (let ((cache-initialized-p nil))
-    (with-accessors ((lines contents)
+    (with-accessors ((lines lines)
                      (line-counter line-counter))
         cache
       (setf line-counter 0)
@@ -232,11 +232,11 @@
 ;;; of FOLIO.
 
 (defmethod line-length ((folio cache) line-number)
-  (length (characters (flx:element* (contents folio) line-number))))
+  (length (characters (flx:element* (lines folio) line-number))))
 
 (defmethod item ((folio cache) line-number item-number)
-  (aref (characters (flx:element* (contents folio) line-number))
+  (aref (characters (flx:element* (lines folio) line-number))
         item-number))
 
 (defmethod line-contents ((folio cache) line-number)
-  (characters (flx:element* (contents folio) line-number)))
+  (characters (flx:element* (lines folio) line-number)))
