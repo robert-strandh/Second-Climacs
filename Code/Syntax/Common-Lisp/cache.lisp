@@ -17,8 +17,11 @@
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~s" (characters object))))
 
-(defclass cache (flexichain-folio)
-  ((%prefix :initform '() :accessor prefix)
+(defclass cache (folio)
+  ((%lines :initform (make-instance 'flx:standard-flexichain)
+           :initarg :lines
+           :reader lines)
+   (%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
    (%worklist :initform '() :accessor worklist)
