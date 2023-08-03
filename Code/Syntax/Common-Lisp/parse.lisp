@@ -129,4 +129,4 @@
                           (make-relative children (start-line wad))))))))
          (rec wad))
        (compute-form-indentation wad nil client)
-       (push-to-prefix (folio analyzer) wad)))))
+       (push-to-prefix (cache analyzer) wad)))))
