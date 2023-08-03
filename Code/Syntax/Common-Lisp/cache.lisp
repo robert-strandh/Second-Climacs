@@ -18,9 +18,7 @@
     (format stream "~s" (characters object))))
 
 (defclass cache (folio)
-  ((%lines :initform (make-instance 'flx:standard-flexichain)
-           :initarg :lines
-           :reader lines)
+  ((%lines :initform (make-instance 'flx:standard-flexichain) :reader lines)
    (%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
