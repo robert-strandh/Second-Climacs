@@ -150,7 +150,7 @@
           (push-to-residue cache wad)))))
 
 (defun handle-modified-line (cache line-number)
-  (let* ((line         (flexichain:element* (contents cache) line-number))
+  (let* ((line         (flx:element* (contents cache) line-number))
          (cluffer-line (cluffer-line line))
          (string       (coerce (cluffer:items cluffer-line) 'string)))
     (setf (contents line) string))
@@ -182,7 +182,7 @@
                    (ensure-update-initialized cache)))
                ;; Line deletion
                (delete-cache-line ()
-                 (flexichain:delete* lines line-counter)
+                 (flx:delete* lines line-counter)
                  (handle-deleted-line cache line-counter))
                (remove-deleted-lines (line)
                  ;; Look at cache lines starting at LINE-COUNTER. Delete
@@ -190,7 +190,7 @@
                  ;; associated cluffer line. Those lines correspond to
                  ;; deleted lines between the previously processed line
                  ;; and LINE.
-                 (loop for cache-line = (flexichain:element* lines line-counter)
+                 (loop for cache-line = (flx:element* lines line-counter)
                        for cluffer-line = (cluffer-line cache-line)
                        until (eq line cluffer-line)
                        do (delete-cache-line)))
@@ -207,7 +207,7 @@
                  (let* ((string (coerce (cluffer:items line) 'string))
                         (temp   (make-instance 'line :cluffer-line line
                                                      :contents     string)))
-                   (flexichain:insert* lines line-counter temp))
+                   (flx:insert* lines line-counter temp))
                  (handle-inserted-line cache line-counter)
                  (incf line-counter))
                (sync (line)
@@ -223,7 +223,7 @@
         ;; Remove trailing cache lines after the last
         ;; skipped/modified/... cache line, that no longer correspond
         ;; to existing lines in the cluffer buffer.
-        (loop while (< line-counter (flexichain:nb-elements lines))
+        (loop while (< line-counter (flx:nb-elements lines))
               do (delete-cache-line)))))
   (finish-scavenge cache))
 
@@ -231,11 +231,11 @@
 ;;; of FOLIO.
 
 (defmethod line-length ((folio cache) line-number)
-  (length (contents (flexichain:element* (contents folio) line-number))))
+  (length (contents (flx:element* (contents folio) line-number))))
 
 (defmethod item ((folio cache) line-number item-number)
-  (aref (contents (flexichain:element* (contents folio) line-number))
+  (aref (contents (flx:element* (contents folio) line-number))
         item-number))
 
 (defmethod line-contents ((folio cache) line-number)
-  (contents (flexichain:element* (contents folio) line-number)))
+  (contents (flx:element* (contents folio) line-number)))
