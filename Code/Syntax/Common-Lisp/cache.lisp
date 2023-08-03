@@ -231,12 +231,15 @@
 ;;; Methods that make an instance of CACHE behave like an instance
 ;;; of FOLIO.
 
-(defmethod line-length ((folio cache) line-number)
-  (length (characters (flx:element* (lines folio) line-number))))
+(defmethod line-count ((cache cache))
+  (flx:nb-elements (lines cache)))
 
-(defmethod item ((folio cache) line-number item-number)
-  (aref (characters (flx:element* (lines folio) line-number))
+(defmethod line-length ((cache cache) line-number)
+  (length (characters (flx:element* (lines cache) line-number))))
+
+(defmethod item ((cache cache) line-number item-number)
+  (aref (characters (flx:element* (lines cache) line-number))
         item-number))
 
-(defmethod line-contents ((folio cache) line-number)
-  (characters (flx:element* (lines folio) line-number)))
+(defmethod line-contents ((cache cache) line-number)
+  (characters (flx:element* (lines cache) line-number)))
