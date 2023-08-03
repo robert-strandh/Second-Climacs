@@ -13,8 +13,5 @@
 (defmethod line-length ((folio flexichain-folio) line-number)
   (length (flx:element* (lines folio) line-number)))
 
-(defmethod line-lines ((folio flexichain-folio) line-number)
-  (flx:element* (lines folio) line-number))
-
 (defmethod item ((folio flexichain-folio) line-number item-number)
   (aref (flx:element* (lines folio) line-number) item-number))
