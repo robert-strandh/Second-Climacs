@@ -19,8 +19,8 @@
 (defun analyzer-from-buffer (buffer)
   (let ((cache (make-instance 'cl-syntax::cache)))
     (make-instance 'cl-syntax::analyzer
-      :buffer buffer)))
-      :folio cache))
+      :buffer buffer
+      :folio cache)))
 
 (defun forms-from-cache (cache)
   (append (reverse (mapcar #'cl-syntax::expression
