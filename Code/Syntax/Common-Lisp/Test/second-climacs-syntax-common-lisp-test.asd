@@ -3,8 +3,6 @@
                "split-sequence")
   :serial t
   :components ((:file "packages")
-               (:file "vector-folio")
-               (:file "folio")
                (:file "cache-invalidation")
                (:file "random-form")
                (:file "buffer")))
