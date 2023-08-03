@@ -7,7 +7,6 @@
   :serial t
   :components ((:file "folio")
                (:file "folio-stream")
-               (:file "flexichain-folio")
                (:file "cache")
                (:file "analyzer")
                (:file "token")
