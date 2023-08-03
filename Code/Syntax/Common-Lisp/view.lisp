@@ -8,6 +8,7 @@
 (defmethod initialize-instance :after ((instance view) &key buffer cursor)
   (let* ((cache (make-instance 'cache))
          (analyzer (make-instance 'analyzer
+                     :cache cache
                      :folio cache
                      :buffer buffer)))
     (reinitialize-instance instance
