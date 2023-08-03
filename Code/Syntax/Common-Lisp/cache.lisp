@@ -9,13 +9,13 @@
 ;;; asked for it.
 (defclass line ()
   ((%cluffer-line :initarg :cluffer-line :reader cluffer-line)
-   (%contents :initarg  :contents
-              :type     string
-              :accessor contents)))
+   (%characters :initarg  :characters
+                :type     string
+                :accessor characters)))
 
 (defmethod print-object ((object line) stream)
   (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s" (contents object))))
+    (format stream "~s" (characters object))))
 
 (defclass cache (flexichain-folio)
   ((%prefix :initform '() :accessor prefix)
@@ -153,7 +153,7 @@
   (let* ((line         (flx:element* (contents cache) line-number))
          (cluffer-line (cluffer-line line))
          (string       (coerce (cluffer:items cluffer-line) 'string)))
-    (setf (contents line) string))
+    (setf (characters line) string))
   (loop until (next-wad-is-beyond-line-p cache line-number)
         do (process-next-wad cache line-number)))
 
@@ -205,8 +205,9 @@
                (create (line)
                  (ensure-cache-initialized)
                  (let* ((string (coerce (cluffer:items line) 'string))
-                        (temp   (make-instance 'line :cluffer-line line
-                                                     :contents     string)))
+                        (temp (make-instance 'line
+                                :cluffer-line line
+                                :characters string)))
                    (flx:insert* lines line-counter temp))
                  (handle-inserted-line cache line-counter)
                  (incf line-counter))
@@ -231,11 +232,11 @@
 ;;; of FOLIO.
 
 (defmethod line-length ((folio cache) line-number)
-  (length (contents (flx:element* (contents folio) line-number))))
+  (length (characters (flx:element* (contents folio) line-number))))
 
 (defmethod item ((folio cache) line-number item-number)
-  (aref (contents (flx:element* (contents folio) line-number))
+  (aref (characters (flx:element* (contents folio) line-number))
         item-number))
 
 (defmethod line-contents ((folio cache) line-number)
-  (contents (flx:element* (contents folio) line-number)))
+  (characters (flx:element* (contents folio) line-number)))
