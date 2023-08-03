@@ -1,7 +1,7 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
 (defclass analyzer (folio-stream base:analyzer)
-  ())
+  ((%cache :initarg :cache :reader cache)))
 
 (defmethod print-object ((object analyzer) stream)
   (print-unreadable-object (object stream :type t :identity t)
@@ -37,7 +37,7 @@
 ;;; NIL.  If there are cached wads that entirely precede the current
 ;;; stream position, then remove them.
 (defun cached-wad (analyzer)
-  (let ((cache (folio analyzer)))
+  (let ((cache (cache analyzer)))
     (with-accessors ((residue residue) (suffix suffix)) cache
       (loop while (and (not (null residue))
                        (or (< (start-line (first residue))
