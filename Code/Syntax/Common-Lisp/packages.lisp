@@ -6,6 +6,7 @@
   (:local-nicknames (#:reader #:eclector.reader)
                     (#:readtable #:eclector.readtable)
                     (#:base #:second-climacs-base)
+                    (#:gs #:trivial-gray-streams)
                     (#:flx #:flexichain))
   (:export
    #:folio
