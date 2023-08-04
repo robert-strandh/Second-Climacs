@@ -9,7 +9,7 @@
 ;;; the other containing strings.  The sequence containing strings is
 ;;; then used as an input to the parser.
 
-(defclass cache (folio)
+(defclass cache ()
   (;; This slot contains the Cluffer buffer that is being analyzed by
    ;; this cache instance.
    (%cluffer-buffer :initarg :cluffer-buffer :reader cluffer-buffer)
