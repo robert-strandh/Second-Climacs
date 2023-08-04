@@ -9,7 +9,6 @@
                     (#:gs #:trivial-gray-streams)
                     (#:flx #:flexichain))
   (:export
-   #:folio
    #:line-count
    #:line-length
    #:line-contents
