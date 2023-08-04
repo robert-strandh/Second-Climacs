@@ -263,11 +263,11 @@
            (draw-right-arrow pane gutter start-ref clim:+blue+))))
   (call-next-method))
 
-;;; Given a folio and an interval of lines, return the maxium length
+;;; Given a cache and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
-(defun max-line-length (folio first-line-number last-line-number)
+(defun max-line-length (cache first-line-number last-line-number)
   (loop for line-number from first-line-number to last-line-number
-        maximize (cl-syntax:line-length folio line-number)))
+        maximize (cl-syntax:line-length cache line-number)))
 
 (defmethod cl-syntax:push-to-prefix :before
     (cache (wad presentation))
