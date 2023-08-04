@@ -251,6 +251,10 @@
 (defmethod line-length ((cache cache) line-number)
   (length (flx:element* (lines cache) line-number)))
 
+;;; Given a cache, a line number an item number within that line,
+;;; return the item at that position in that line.
+(defgeneric item (folio line-number item-number))
+
 (defmethod item ((cache cache) line-number item-number)
   (aref (flx:element* (lines cache) line-number) item-number))
 

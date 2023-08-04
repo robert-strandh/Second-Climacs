@@ -8,7 +8,3 @@
 
 ;;; The base class for all folios.
 (defclass folio () ())
-
-;;; Given a folio, a line number an item number within that line,
-;;; return the item at that position in that line.
-(defgeneric item (folio line-number item-number))
