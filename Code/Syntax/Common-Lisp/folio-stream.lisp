@@ -1,10 +1,7 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-;;; A folio stream is a stream that uses a folio as a source for the
-;;; items to return as a result of reading.
 (defclass folio-stream (gs:fundamental-character-input-stream)
-  ((%folio :initarg :folio :reader folio)
-   (%lines :initarg :lines :reader lines)
+  ((%lines :initarg :lines :reader lines)
    (%current-line-number :initform 0 :accessor current-line-number)
    (%current-item-number :initform 0 :accessor current-item-number)))
 
