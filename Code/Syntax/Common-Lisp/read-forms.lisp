@@ -1,7 +1,7 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
 (defun read-forms (analyzer)
-  (with-accessors ((cache folio)
+  (with-accessors ((cache cache)
                    (current-line-number current-line-number)
                    (current-item-number current-item-number))
       analyzer
