@@ -22,6 +22,10 @@
    ;; first top-level wad on the suffix has an absolute line number.
    ;; All the others have relative line numbers.
    (%suffix :initform '() :accessor suffix)
+   ;; The residue is normally empty.  The SCAVENGE phase puts orphan
+   ;; wads that are still valid on the residue, and these are used by
+   ;; the READ-FORMS phase to avoid reading characters when the result
+   ;; is known.
    (%residue :initform '() :accessor residue)
    (%worklist :initform '() :accessor worklist)
    ;; The time stamp passed to and returned by the Cluffer update
