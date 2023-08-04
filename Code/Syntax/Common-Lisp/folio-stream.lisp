@@ -1,6 +1,6 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defclass folio-stream (gs:fundamental-character-input-stream)
+(defclass buffer-stream (gs:fundamental-character-input-stream)
   ((%lines :initarg :lines :reader lines)
    (%current-line-number :initform 0 :accessor current-line-number)
    (%current-item-number :initform 0 :accessor current-item-number)))
@@ -20,9 +20,9 @@
               (length (flx:element* lines (1- line-number))))
       (values line-number (1- item-number))))
 
-(defgeneric eof-p (folio-stream))
+(defgeneric eof-p (buffer-stream))
 
-(defmethod eof-p ((stream folio-stream))
+(defmethod eof-p ((stream buffer-stream))
   (let* ((lines (lines stream))
          (last-line-number (1- (flx:nb-elements lines)))
          (last-line (flx:element* lines last-line-number))
@@ -30,9 +30,9 @@
     (and (= (current-line-number stream) last-line-number)
          (= (current-item-number stream) last-line-length))))
 
-(defgeneric forward (folio-stream))
+(defgeneric forward (buffer-stream))
 
-(defmethod forward ((stream folio-stream))
+(defmethod forward ((stream buffer-stream))
   (with-accessors ((lines lines)
                    (current-line-number current-line-number)
                    (current-item-number current-item-number))
@@ -42,9 +42,9 @@
       (setf current-line-number l)
       (setf current-item-number c))))
 
-(defgeneric backward (folio-stream))
+(defgeneric backward (buffer-stream))
 
-(defmethod backward ((stream folio-stream))
+(defmethod backward ((stream buffer-stream))
   (with-accessors ((lines lines)
                    (current-line-number current-line-number)
                    (current-item-number current-item-number))
@@ -54,7 +54,7 @@
       (setf current-line-number l)
       (setf current-item-number c))))
 
-(defmethod gs:stream-peek-char ((stream folio-stream))
+(defmethod gs:stream-peek-char ((stream buffer-stream))
   (if (eof-p stream)
       :eof
       (with-accessors ((lines lines)
@@ -66,13 +66,13 @@
               #\Newline
               (aref line current-item-number))))))
 
-(defmethod gs:stream-read-char ((stream folio-stream))
+(defmethod gs:stream-read-char ((stream buffer-stream))
   (if (eof-p stream)
       :eof
       (prog1 (gs:stream-peek-char stream)
         (forward stream))))
 
-(defmethod gs:stream-unread-char ((stream folio-stream) char)
+(defmethod gs:stream-unread-char ((stream buffer-stream) char)
   (declare (ignore char))
   (backward stream))
 
@@ -83,8 +83,8 @@
              (unread-char char stream)
              (loop-finish))))
 
-(defun compute-max-line-width (folio-stream start-line end-line children)
-  (let ((lines (lines folio-stream)))
+(defun compute-max-line-width (buffer-stream start-line end-line children)
+  (let ((lines (lines buffer-stream)))
     (loop with rest = children
           for line-number = start-line then (1+ line-number)
           while (<= line-number end-line)

@@ -1,6 +1,6 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(defclass analyzer (folio-stream base:analyzer)
+(defclass analyzer (buffer-stream base:analyzer)
   ((%cache :initarg :cache :reader cache)))
 
 (defmethod print-object ((object analyzer) stream)

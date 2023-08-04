@@ -9,7 +9,7 @@
 
 ;;; Source positions
 
-(defmethod eclector.base:source-position ((client client) (stream folio-stream))
+(defmethod eclector.base:source-position ((client client) (stream buffer-stream))
   (cons (current-line-number stream) (current-item-number stream)))
 
 ;;; Feature expressions

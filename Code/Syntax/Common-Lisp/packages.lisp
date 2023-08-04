@@ -13,7 +13,7 @@
    #:line-length
    #:line-contents
    #:item
-   #:folio-stream
+   #:buffer-stream
    #:synchronize
    #:common-lisp-view
    #:set-common-lisp-mode
