@@ -244,6 +244,10 @@
 (defmethod line-count ((cache cache))
   (flx:nb-elements (lines cache)))
 
+;;; Given a cache and a line number, return the number of items in the
+;;; line with that line number.
+(defgeneric line-length (cache line-number))
+
 (defmethod line-length ((cache cache) line-number)
   (length (flx:element* (lines cache) line-number)))
 

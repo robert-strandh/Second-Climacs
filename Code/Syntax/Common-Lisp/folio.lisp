@@ -12,10 +12,6 @@
 ;;; Given a folio, return the number of lines contained in the folio.
 (defgeneric line-count (folio))
 
-;;; Given a folio and a line number, return the number of items in the
-;;; line with that line number.
-(defgeneric line-length (folio line-number))
-
 ;;; Given a folio and a line number, return the contents of that line
 ;;; as a vector if items.
 (defgeneric line-contents (folio line-number))
