@@ -10,7 +10,10 @@
 ;;; then used as an input to the parser.
 
 (defclass cache (folio)
-  ((%lines :initform (make-instance 'flx:standard-flexichain)
+  (;; This slot contains the Cluffer buffer that is being analyzed by
+   ;; this cache instance.
+   (%cluffer-buffer :initarg :cluffer-buffer :reader cluffer-buffer)
+   (%lines :initform (make-instance 'flx:standard-flexichain)
            :reader lines)
    (%cluffer-lines :initform (make-instance 'flx:standard-flexichain)
                    :reader cluffer-lines)
