@@ -254,5 +254,9 @@
 (defmethod item ((cache cache) line-number item-number)
   (aref (flx:element* (lines cache) line-number) item-number))
 
+;;; Given a cache and a line number, return the contents of that line
+;;; as a vector if items.
+(defgeneric line-contents (cache line-number))
+
 (defmethod line-contents ((cache cache) line-number)
   (flx:element* (lines cache) line-number))
