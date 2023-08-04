@@ -20,8 +20,6 @@
    #:set-common-lisp-mode
    #:view
    #:analyzer
-   #:scavenge
-   #:read-forms
    #:update-cache
 
    ;; Wads
