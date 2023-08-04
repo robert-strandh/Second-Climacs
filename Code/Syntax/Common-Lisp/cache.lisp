@@ -238,8 +238,8 @@
               do (delete-cache-line)))))
   (finish-scavenge cache))
 
-;;; Methods that make an instance of CACHE behave like an instance
-;;; of FOLIO.
+;;; Given a cache, return the number of lines contained in the folio.
+(defgeneric line-count (cache))
 
 (defmethod line-count ((cache cache))
   (flx:nb-elements (lines cache)))
