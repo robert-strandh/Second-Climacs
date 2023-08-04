@@ -11,7 +11,6 @@
          (analyzer (make-instance 'analyzer
                      :lines (lines cache)
                      :cache cache
-                     :folio cache
                      :buffer buffer)))
     (reinitialize-instance instance
                            :cursor cursor
