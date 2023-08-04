@@ -22,6 +22,7 @@
    #:analyzer
    #:scavenge
    #:read-forms
+   #:update-cache
 
    ;; Wads
    #:wad
