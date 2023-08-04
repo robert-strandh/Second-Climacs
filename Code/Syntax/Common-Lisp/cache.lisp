@@ -4,21 +4,16 @@
 ;;; contents of such a line may change after we have asked for it, so
 ;;; that we get a different contents each time we ask for it.  But we
 ;;; still need the line object from Cluffer, because that one is used
-;;; as a comparison in the update protocol.  The solution is to store
-;;; both the Cluffer line object and the contents as it was when we
-;;; asked for it.
-(defclass line ()
-  ((%cluffer-line :initarg :cluffer-line :reader cluffer-line)
-   (%characters :initarg  :characters
-                :type     string
-                :accessor characters)))
-
-(defmethod print-object ((object line) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s" (characters object))))
+;;; as a comparison in the update protocol.  The solution is to have
+;;; two parallel editable sequences, one containing Cluffer lines and
+;;; the other containing strings.  The sequence containing strings is
+;;; then used as an input to the parser.
 
 (defclass cache (folio)
-  ((%lines :initform (make-instance 'flx:standard-flexichain) :reader lines)
+  ((%lines :initform (make-instance 'flx:standard-flexichain)
+           :reader lines)
+   (%cluffer-lines :initform (make-instance 'flx:standard-flexichain)
+                   :reader cluffer-lines)
    (%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
@@ -151,10 +146,9 @@
           (push-to-residue cache wad)))))
 
 (defun handle-modified-line (cache line-number)
-  (let* ((line         (flx:element* (lines cache) line-number))
-         (cluffer-line (cluffer-line line))
+  (let* ((cluffer-line (flx:element* (cluffer-lines cache) line-number))
          (string       (coerce (cluffer:items cluffer-line) 'string)))
-    (setf (characters line) string))
+    (setf (flx:element* (lines cache) line-number) string))
   (loop until (next-wad-is-beyond-line-p cache line-number)
         do (process-next-wad cache line-number)))
 
@@ -174,6 +168,7 @@
 (defun scavenge (cache buffer)
   (let ((cache-initialized-p nil))
     (with-accessors ((lines lines)
+                     (cluffer-lines cluffer-lines)
                      (line-counter line-counter))
         cache
       (setf line-counter 0)
@@ -184,6 +179,7 @@
                ;; Line deletion
                (delete-cache-line ()
                  (flx:delete* lines line-counter)
+                 (flx:delete* cluffer-lines line-counter)
                  (handle-deleted-line cache line-counter))
                (remove-deleted-lines (line)
                  ;; Look at cache lines starting at LINE-COUNTER. Delete
@@ -192,7 +188,8 @@
                  ;; deleted lines between the previously processed line
                  ;; and LINE.
                  (loop for cache-line = (flx:element* lines line-counter)
-                       for cluffer-line = (cluffer-line cache-line)
+                       for cluffer-line
+                         = (flx:element* cluffer-lines line-counter)
                        until (eq line cluffer-line)
                        do (delete-cache-line)))
                ;; Handlers for Cluffer's update protocol events.
@@ -205,11 +202,9 @@
                  (incf line-counter))
                (create (line)
                  (ensure-cache-initialized)
-                 (let* ((string (coerce (cluffer:items line) 'string))
-                        (temp (make-instance 'line
-                                :cluffer-line line
-                                :characters string)))
-                   (flx:insert* lines line-counter temp))
+                 (let* ((string (coerce (cluffer:items line) 'string)))
+                   (flx:insert* lines line-counter string)
+                   (flx:insert* cluffer-lines line-counter line))
                  (handle-inserted-line cache line-counter)
                  (incf line-counter))
                (sync (line)
@@ -236,11 +231,10 @@
   (flx:nb-elements (lines cache)))
 
 (defmethod line-length ((cache cache) line-number)
-  (length (characters (flx:element* (lines cache) line-number))))
+  (length (flx:element* (lines cache) line-number)))
 
 (defmethod item ((cache cache) line-number item-number)
-  (aref (characters (flx:element* (lines cache) line-number))
-        item-number))
+  (aref (flx:element* (lines cache) line-number) item-number))
 
 (defmethod line-contents ((cache cache) line-number)
-  (characters (flx:element* (lines cache) line-number)))
+  (flx:element* (lines cache) line-number))
