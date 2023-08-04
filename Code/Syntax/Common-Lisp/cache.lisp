@@ -178,8 +178,9 @@
 ;;; Take into account modifications to the buffer by destroying the
 ;;; parts of the cache that are no longer valid, while keeping parse
 ;;; results that are not affected by such modifications.
-(defun scavenge (cache buffer)
-  (let ((cache-initialized-p nil))
+(defun scavenge (cache)
+  (let ((buffer (cluffer-buffer cache))
+        (cache-initialized-p nil))
     (with-accessors ((lines lines)
                      (cluffer-lines cluffer-lines)
                      (line-counter line-counter))
