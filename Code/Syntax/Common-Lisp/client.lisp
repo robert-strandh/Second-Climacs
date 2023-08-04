@@ -93,7 +93,7 @@
                             (end-column-offset   0 end-column-offset-p))
   (destructuring-bind ((start-line . start-column) . (end-line . end-column))
       source
-    (let* ((cache             (folio stream))
+    (let* ((cache             (cache stream))
            (word              (make-array 0 :element-type 'character
                                             :adjustable   t
                                             :fill-pointer 0))
