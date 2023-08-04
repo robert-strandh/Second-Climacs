@@ -14,6 +14,9 @@
            :reader lines)
    (%cluffer-lines :initform (make-instance 'flx:standard-flexichain)
                    :reader cluffer-lines)
+   ;; The prefix contains top-level wads in reverse order, so that the
+   ;; last wad in the prefix is the first wad in the buffer.  Every
+   ;; top-level wad in the prefix has absolute line numbers.
    (%prefix :initform '() :accessor prefix)
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
