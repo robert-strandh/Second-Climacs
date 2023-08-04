@@ -2,84 +2,80 @@
 
 ;;; A folio stream is a stream that uses a folio as a source for the
 ;;; items to return as a result of reading.
-(defclass folio-stream (trivial-gray-streams:fundamental-character-input-stream)
+(defclass folio-stream (gs:fundamental-character-input-stream)
   ((%folio :initarg :folio :reader folio)
+   (%lines :initarg :lines :reader lines)
    (%current-line-number :initform 0 :accessor current-line-number)
    (%current-item-number :initform 0 :accessor current-item-number)))
 
-(defgeneric next-position (folio line-number item-number))
+(defgeneric next-position (lines line-number item-number))
 
-(defmethod next-position ((folio folio) line-number item-number)
-  (if (= (line-length folio line-number) item-number)
+(defmethod next-position ((lines flx:flexichain) line-number item-number)
+  (if (= (length (flx:element* lines line-number)) item-number)
       (values (1+ line-number) 0)
       (values line-number (1+ item-number))))
 
-(defgeneric previous-position (folio line-number item-number))
+(defgeneric previous-position (lines line-number item-number))
 
-(defmethod previous-position ((folio folio) line-number item-number)
+(defmethod previous-position ((lines flx:flexichain) line-number item-number)
   (if (zerop item-number)
-      (values (1- line-number) (line-length folio (1- line-number)))
+      (values (1- line-number)
+              (length (flx:element* lines (1- line-number))))
       (values line-number (1- item-number))))
 
 (defgeneric eof-p (folio-stream))
 
 (defmethod eof-p ((stream folio-stream))
-  (let* ((folio (folio stream))
-         (last-line-number (1- (line-count (folio stream))))
-         (last-line-length (line-length folio last-line-number)))
+  (let* ((lines (lines stream))
+         (last-line-number (1- (flx:nb-elements lines)))
+         (last-line (flx:element* lines last-line-number))
+         (last-line-length (length last-line)))
     (and (= (current-line-number stream) last-line-number)
          (= (current-item-number stream) last-line-length))))
 
 (defgeneric forward (folio-stream))
 
 (defmethod forward ((stream folio-stream))
-  (with-accessors ((folio folio)
+  (with-accessors ((lines lines)
                    (current-line-number current-line-number)
                    (current-item-number current-item-number))
       stream
     (multiple-value-bind (l c)
-        (next-position folio current-line-number current-item-number)
+        (next-position lines current-line-number current-item-number)
       (setf current-line-number l)
       (setf current-item-number c))))
 
 (defgeneric backward (folio-stream))
 
 (defmethod backward ((stream folio-stream))
-  (with-accessors ((folio folio)
+  (with-accessors ((lines lines)
                    (current-line-number current-line-number)
                    (current-item-number current-item-number))
       stream
     (multiple-value-bind (l c)
-        (previous-position folio current-line-number current-item-number)
+        (previous-position lines current-line-number current-item-number)
       (setf current-line-number l)
       (setf current-item-number c))))
 
-(defmethod trivial-gray-streams:stream-read-char ((stream folio-stream))
+(defmethod gs:stream-peek-char ((stream folio-stream))
   (if (eof-p stream)
       :eof
-      (with-accessors ((folio folio)
+      (with-accessors ((lines lines)
                        (current-line-number current-line-number)
                        (current-item-number current-item-number))
           stream
-        (prog1 (if (= (line-length folio current-line-number)
-                      current-item-number)
-                   #\Newline
-                   (item folio current-line-number current-item-number))
-          (forward stream)))))
+        (let ((line (flx:element* lines current-line-number)))
+          (if (= (length line) current-item-number)
+              #\Newline
+              (aref line current-item-number))))))
 
-(defmethod trivial-gray-streams:stream-peek-char ((stream folio-stream))
+(defmethod gs:stream-read-char ((stream folio-stream))
   (if (eof-p stream)
       :eof
-      (with-accessors ((folio folio)
-                       (current-line-number current-line-number)
-                       (current-item-number current-item-number))
-          stream
-        (if (= (line-length folio current-line-number)
-               current-item-number)
-            #\Newline
-            (item folio current-line-number current-item-number)))))
+      (prog1 (gs:stream-peek-char stream)
+        (forward stream))))
 
-(defmethod trivial-gray-streams:stream-unread-char ((stream folio-stream) char)
+(defmethod gs:stream-unread-char ((stream folio-stream) char)
   (declare (ignore char))
   (backward stream))
 
@@ -91,7 +87,7 @@
              (loop-finish))))
 
 (defun compute-max-line-width (folio-stream start-line end-line children)
-  (let ((folio (folio folio-stream)))
+  (let ((lines (lines folio-stream)))
     (loop with rest = children
           for line-number = start-line then (1+ line-number)
           while (<= line-number end-line)
@@ -100,4 +96,4 @@
             and do (setf line-number (end-line (first rest)))
                    (pop rest)
           else
-            maximize (line-length folio line-number))))
+            maximize (length (flx:element* lines line-number)))))
