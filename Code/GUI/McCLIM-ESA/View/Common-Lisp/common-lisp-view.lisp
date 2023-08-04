@@ -497,4 +497,4 @@
 (defmethod base:update-view-from-analyzer
     ((view cl-syntax:view)
      (analyzer cl-syntax:analyzer))
-  (update-cache analyzer))
+  (cl-syntax:update-cache analyzer))

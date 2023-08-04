@@ -7,8 +7,7 @@
          (climacs-view (clim-base:climacs-view view))
          (analyzer (base:analyzer climacs-view))
          (cache (cl-syntax:folio analyzer)))
-    (cl-syntax:scavenge cache)
-    (cl-syntax:read-forms analyzer)
+    (cl-syntax:update-cache analyzer)
     (clim-base:with-current-cursor (cursor)
       (cl-syntax:indent-line cache cursor))))
 
