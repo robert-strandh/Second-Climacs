@@ -13,7 +13,7 @@
           (lambda (condition)
             (destructuring-bind (line . column)
                 (eclector.base:stream-position condition)
-              (let ((line-width (line-length (folio analyzer)
+              (let ((line-width (line-length (cache analyzer)
                                              (current-line-number analyzer)))
                     (column     (max 0 (+ column (eclector.base:position-offset condition)))))
                 (push (make-wad 'error-wad :max-line-width line-width
