@@ -16,8 +16,11 @@
                    :reader cluffer-lines)
    ;; The prefix contains top-level wads in reverse order, so that the
    ;; last wad in the prefix is the first wad in the buffer.  Every
-   ;; top-level wad in the prefix has absolute line numbers.
+   ;; top-level wad in the prefix has an absolute line number.
    (%prefix :initform '() :accessor prefix)
+   ;; The suffix contains top-level wads in the right order.  The
+   ;; first top-level wad on the suffix has an absolute line number.
+   ;; All the others have relative line numbers.
    (%suffix :initform '() :accessor suffix)
    (%residue :initform '() :accessor residue)
    (%worklist :initform '() :accessor worklist)
