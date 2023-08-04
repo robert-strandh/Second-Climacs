@@ -8,7 +8,7 @@
     `(let* ((,view-variable (clim:stream-default-view (esa:current-window)))
             (,climacs-view-variable (clim-base:climacs-view ,view-variable))
             (,analyzer-variable (base:analyzer ,climacs-view-variable))
-            (,cache-variable (cl-syntax:folio ,analyzer-variable)))
+            (,cache-variable (cl-syntax:cache ,analyzer-variable)))
        (base:update-view ,climacs-view-variable)
        (clim-base:with-current-cursor (,cursor-variable)
          ,@body))))

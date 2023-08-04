@@ -12,7 +12,7 @@
 (defmethod clim-base:make-climacs-clim-view
     ((view cl-syntax:view))
   (let* ((analyzer (base:analyzer view))
-         (cache (cl-syntax:folio analyzer)))
+         (cache (cl-syntax:cache analyzer)))
     (make-instance 'common-lisp-view :output-history cache
                                      :climacs-view view)))
 
