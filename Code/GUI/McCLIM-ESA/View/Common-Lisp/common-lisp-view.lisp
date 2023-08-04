@@ -489,8 +489,7 @@
   ;; For now, do nothing.
   nil)
 
-(defun update-cache (view analyzer)
-  (declare (ignore view))
+(defun update-cache (analyzer)
   (let* ((cache (cl-syntax:folio analyzer))
          (climacs-buffer (base:buffer analyzer))
          (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
@@ -500,4 +499,4 @@
 (defmethod base:update-view-from-analyzer
     ((view cl-syntax:view)
      (analyzer cl-syntax:analyzer))
-  (update-cache view analyzer))
+  (update-cache analyzer))
