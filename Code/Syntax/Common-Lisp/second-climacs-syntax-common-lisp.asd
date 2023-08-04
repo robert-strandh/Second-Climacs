@@ -5,7 +5,7 @@
                "spell" ; for spell checking in comments
                "utilities.print-tree") ; for debugging
   :serial t
-  :components ((:file "folio-stream")
+  :components ((:file "buffer-stream")
                (:file "cache")
                (:file "analyzer")
                (:file "token")
