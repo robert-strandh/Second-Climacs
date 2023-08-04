@@ -489,11 +489,6 @@
   ;; For now, do nothing.
   nil)
 
-(defun update-cache (analyzer)
-  (let* ((cache (cl-syntax:folio analyzer)))
-    (cl-syntax:scavenge cache)
-    (cl-syntax:read-forms analyzer)))
-
 (defmethod base:update-view-from-analyzer
     ((view cl-syntax:view)
      (analyzer cl-syntax:analyzer))
