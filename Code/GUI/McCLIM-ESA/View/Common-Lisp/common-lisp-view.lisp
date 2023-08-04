@@ -490,10 +490,8 @@
   nil)
 
 (defun update-cache (analyzer)
-  (let* ((cache (cl-syntax:folio analyzer))
-         (climacs-buffer (base:buffer analyzer))
-         (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
-    (cl-syntax:scavenge cache cluffer-buffer)
+  (let* ((cache (cl-syntax:folio analyzer)))
+    (cl-syntax:scavenge cache)
     (cl-syntax:read-forms analyzer)))
 
 (defmethod base:update-view-from-analyzer
