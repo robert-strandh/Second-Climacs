@@ -13,6 +13,7 @@
                (:file "client")
                (:file "parse")
                (:file "read-forms")
+               (:file "update-cache")
                (:file "view")
                (:file "set-mode")
                (:file "wad-descriptor")
