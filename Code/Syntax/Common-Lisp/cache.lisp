@@ -50,9 +50,16 @@
 (defgeneric push-to-suffix (cache wad)
   (:method ((cache cache) (wad wad))
     (assert (not (relative-p wad)))
-    (with-accessors ((suffix suffix)) cache
-      (unless (null suffix)
-        (absolute-to-relative (first suffix) (start-line wad)))
+    (with-accessors ((suffix suffix) (prefix prefix)) cache
+      (if (null suffix)
+          (setf (right-sibling wad) nil)
+          (progn (setf (right-sibling wad) (first suffix))
+                 (setf (left-sibling (first suffix)) wad)
+                 (absolute-to-relative (first suffix) (start-line wad))))
+      (if (null prefix)
+          (setf (left-sibling wad) nil)
+          (progn (setf (left-sibling wad) (first prefix))
+                 (setf (right-sibling (first prefix)) wad)))
       (push wad suffix))))
 
 (defgeneric pop-from-prefix (cache)
@@ -61,7 +68,16 @@
 
 (defgeneric push-to-prefix (cache wad)
   (:method ((cache cache) (wad wad))
-    (push wad (prefix cache))))
+    (with-accessors ((suffix suffix) (prefix prefix)) cache
+      (if (null prefix)
+          (setf (left-sibling wad) nil)
+          (progn (setf (left-sibling wad) (first prefix))
+                 (setf (right-sibling (first prefix)) wad)))
+      (if (null suffix)
+          (setf (right-sibling wad) nil)
+          (progn (setf (right-sibling wad) (first suffix))
+                 (setf (left-sibling (first suffix)) wad)))
+      (push wad prefix))))
 
 (defun pop-from-worklist (cache)
   (pop (worklist cache)))
