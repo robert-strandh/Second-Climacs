@@ -5,7 +5,10 @@
 ;;; conditional.
 
 (defclass basic-wad ()
-  (;; This slot contains information about the start line of the wad.
+  (;; This slot contains the parent wad of this wad, or NIL if this
+   ;; wad is a top-level wad.
+   (%parent :initarg :parent :accessor parent)
+   ;; This slot contains information about the start line of the wad.
    ;; Simple applications might always store the absolute line number
    ;; of the first line of the wad in this slot.  Other applications
    ;; might store a line number relative to some other wad.
