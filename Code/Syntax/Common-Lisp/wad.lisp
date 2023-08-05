@@ -8,6 +8,16 @@
   (;; This slot contains the parent wad of this wad, or NIL if this
    ;; wad is a top-level wad.
    (%parent :initarg :parent :accessor parent)
+   ;; This slot contains the left sibling wad of this wad, or NIL if
+   ;; this wad is the first child of its parent.  If this wad is a
+   ;; top-level wad, then this slot contains the preceding top-level
+   ;; wad, or NIL if this is the first top-level wad in the buffer.
+   (%left-sibling :initarg :left-sibling :accessor left-sibling)
+   ;; This slot contains the right sibling wad of this wad, or NIL if
+   ;; this wad is the last child of its parent.  If this wad is a
+   ;; top-level wad, then this slot contains the following top-level
+   ;; wad, or NIL if this is the last top-level wad in the buffer.
+   (%right-sibling :initarg :right-sibling :accessor right-sibling)
    ;; This slot contains information about the start line of the wad.
    ;; Simple applications might always store the absolute line number
    ;; of the first line of the wad in this slot.  Other applications
