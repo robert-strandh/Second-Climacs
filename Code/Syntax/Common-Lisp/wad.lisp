@@ -50,10 +50,14 @@
    ;; This slot contains TRUE if and only if the START-LINE slot is
    ;; relative to some other line.
    (%relative-p :initarg :relative-p :accessor relative-p)
-   (%children :initarg :children :accessor children)))
+   (%children :initform '() :initarg :children :accessor children)))
 
 (defmethod (setf children) :after (children (wad wad))
   (loop for child in children
+        do (setf (parent child) wad)))
+
+(defmethod shared-initialize :after ((wad wad) slot-names &key)
+  (loop for child in (children wad)
         do (setf (parent child) wad)))
 
 (defmethod initialize-instance :after ((object wad) &key)
