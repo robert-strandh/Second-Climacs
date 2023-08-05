@@ -52,6 +52,10 @@
    (%relative-p :initarg :relative-p :accessor relative-p)
    (%children :initarg :children :accessor children)))
 
+(defmethod (setf children) :after (children (wad wad))
+  (loop for child in children
+        do (setf (parent child) wad)))
+
 (defmethod initialize-instance :after ((object wad) &key)
   (let ((min-column-number (min (start-column object)
                                 (end-column object)
