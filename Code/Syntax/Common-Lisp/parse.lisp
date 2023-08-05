@@ -28,6 +28,15 @@
             (eclector.reader:recover))))
      ,@body))
 
+(defun wads-are-in-order-p (wad1 wad2)
+  (or (< (start-line wad1) (start-line wad2))
+      (and (= (start-line wad1) (start-line wad2))
+           (< (start-column wad1) (start-column wad2)))))
+
+(defun merge-children (children extra-children)
+  (merge 'list (copy-list children) (copy-list extra-children)
+         #'wads-are-in-order-p))
+
 ;;; Add the wads in EXTRA-CHILDREN to WAD.
 (defun add-children (wad extra-children)
   ;; Make descendants of WAD absolute so we can compute the
@@ -39,44 +48,39 @@
                    (make-absolute children (start-line wad)))
                  (map nil #'rec children)))))
     (rec wad))
-
   (let* (;; Merge children of WAD and EXTRA-CHILDREN based on their
          ;; positions.
-         (children     (merge 'list (copy-list (children wad)) (copy-list extra-children)
-                              (lambda (left right)
-                                (or (< (start-line left) (start-line right)) ; TODO make a convenience function for this
-                                    (and (= (start-line left) (start-line right))
-                                         (< (start-column left) (start-column right)))))))
+         (children (merge-children (children wad) extra-children))
          ;; Possibly push some elements of EXTRA-CHILDREN into
          ;; existing children of WAD. A wad E in EXTRA-CHILDREN must
          ;; become a child of an existing child C of WAD if the source
          ;; range of E is contained in the source range of C.
-         (children*    (loop for last-child = nil then child
-                             for last-end-line = nil then (end-line last-child)
-                             for last-end-column = nil then (end-column last-child) ; TODO consider lines
-                             for child in children
-                             if (and (member child extra-children)
-                                     (not (null last-end-column))
-                                     (or (< (end-line child) last-end-line)
-                                         (and (= (end-line child) last-end-line)
-                                              (< (start-column child) last-end-column)
-                                              (<= (end-column child) last-end-column))))
-                               do (add-children last-child (list child))
-                             else if (cond ((not (member child extra-children))
-                                            t)
-                                           ((and (or (< (end-line child) (end-line wad))
-                                                     (and (= (end-line child) (end-line wad))
-                                                          (<= (end-column child) (end-column wad))))
-                                                 (not (relative-p wad)))
-                                            (assert (not (relative-p wad)))
-                                            t)
-                                           (t
-                                            (warn "Dropping ~A (~A)~&  parent         ~A~&  previous child ~A"
-                                                  child (class-name (class-of (condition* child)))
-                                                  wad
-                                                  last-child)
-                                            nil))
-                               collect child)))
+         (children* (loop for last-child = nil then child
+                          for last-end-line = nil then (end-line last-child)
+                          for last-end-column = nil then (end-column last-child) ; TODO consider lines
+                          for child in children
+                          if (and (member child extra-children)
+                                  (not (null last-end-column))
+                                  (or (< (end-line child) last-end-line)
+                                      (and (= (end-line child) last-end-line)
+                                           (< (start-column child) last-end-column)
+                                           (<= (end-column child) last-end-column))))
+                            do (add-children last-child (list child))
+                          else if (cond ((not (member child extra-children))
+                                         t)
+                                        ((and (or (< (end-line child) (end-line wad))
+                                                  (and (= (end-line child) (end-line wad))
+                                                       (<= (end-column child) (end-column wad))))
+                                              (not (relative-p wad)))
+                                         (assert (not (relative-p wad)))
+                                         t)
+                                        (t
+                                         (warn "Dropping ~A (~A)~&  parent         ~A~&  previous child ~A"
+                                               child (class-name (class-of (condition* child)))
+                                               wad
+                                               last-child)
+                                         nil))
+                                 collect child)))
     (reinitialize-instance wad :children children*)))
 
 (defmethod reader:read-maybe-nothing :around
