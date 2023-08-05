@@ -28,14 +28,23 @@
             (eclector.reader:recover))))
      ,@body))
 
-(defun wads-are-in-order-p (wad1 wad2)
+(defun wad-starts-before-wad-p (wad1 wad2)
   (or (< (start-line wad1) (start-line wad2))
       (and (= (start-line wad1) (start-line wad2))
            (< (start-column wad1) (start-column wad2)))))
 
+(defun wad-ends-after-wad-p (wad1 wad2)
+  (or (> (end-line wad1) (end-line wad2))
+      (and (= (end-line wad1) (end-line wad2))
+           (>= (end-column wad1) (end-column wad2)))))
+
+(defun wad-contains-wad-p (wad1 wad2)
+  (and (wad-starts-before-wad-p wad1 wad2)
+       (wad-ends-after-wad-p wad1 wad2)))
+
 (defun merge-children (children extra-children)
   (merge 'list (copy-list children) (copy-list extra-children)
-         #'wads-are-in-order-p))
+         #'wad-starts-before-wad-p))
 
 ;;; Add the wads in EXTRA-CHILDREN to WAD.
 (defun add-children (wad extra-children)
