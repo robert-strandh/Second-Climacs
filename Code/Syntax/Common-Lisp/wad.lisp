@@ -62,13 +62,25 @@
    (%relative-p :initarg :relative-p :accessor relative-p)
    (%children :initform '() :initarg :children :accessor children)))
 
+(defun set-family-relations-of-children (wad)
+  (let* ((children (children wad))
+         (length (length children)))
+    (loop for child in children
+          do (setf (parent child) wad))
+    (when (plusp length)
+      (setf (left-sibling (first children)) nil)
+      (setf (right-sibling (first (last children))) nil)
+      (loop for (left right) on children
+            repeat (1- length)
+            do (setf (right-sibling left) right)
+               (setf (left-sibling right) left)))))
+
 (defmethod (setf children) :after (children (wad wad))
-  (loop for child in children
-        do (setf (parent child) wad)))
+  (declare (ignorable children))
+  (set-family-relations-of-children wad))
 
 (defmethod shared-initialize :after ((wad wad) slot-names &key)
-  (loop for child in (children wad)
-        do (setf (parent child) wad)))
+  (set-family-relations-of-children wad))
 
 (defmethod initialize-instance :after ((object wad) &key)
   (let ((min-column-number (min (start-column object)
