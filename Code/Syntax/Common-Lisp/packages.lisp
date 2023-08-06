@@ -20,6 +20,7 @@
    #:view
    #:analyzer
    #:update-cache
+   #:wad-to-cst
 
    ;; Wads
    #:wad
