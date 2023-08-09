@@ -28,18 +28,27 @@
       (apply #'base:fill-words cursor end-cursor words args)
       (cluffer:detach-cursor end-cursor))))
 
-(defun fill-semicolon-comment-using-wad-descriptor (wad-descriptors buffer cursor)
+(defun fill-semicolon-comment-using-wad-descriptor
+    (wad-descriptors buffer cursor)
   (let* ((first               (first wad-descriptors))
          (start-column-number (start-column-number first))
          (semicolon-count     (semicolon-count (wad first))))
     (let ((prefix          (format nil "~V,,,';<~>" semicolon-count))
-          (per-line-prefix (format nil "~V<~>~V,,,';<~>" start-column-number semicolon-count)))
+          (per-line-prefix (format nil "~V<~>~V,,,';<~>"
+                                   start-column-number semicolon-count)))
       (fill-paragraph-using-wad-descriptors
-       wad-descriptors buffer cursor :prefix prefix :per-line-prefix per-line-prefix))))
+       wad-descriptors buffer cursor
+       :prefix prefix :per-line-prefix per-line-prefix))))
 
 (defun fill-paragraph-candidate-p (wad-descriptor)
   (and (not (null wad-descriptor))
        (typep (wad wad-descriptor) 'semicolon-comment-wad)))
+
+;;; When this function is called, either the cursor is in a top-level
+;;; semicolon comment wad so that the current wad is not NIL, or it is
+;;; located before a top-level semicolon wad on the same line as the
+;;; cursor, so that the current wad is nil, but the next wad is a
+;;; top-level semicolon wad.
 
 (defun fill-paragraph-top-level (cache wad-descriptor buffer cursor)
   (unless (null wad-descriptor)
