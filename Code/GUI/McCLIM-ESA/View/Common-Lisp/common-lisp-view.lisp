@@ -229,13 +229,12 @@
    ;; beginning of the buffer and up to and including the last line of
    ;; this wad.  When this wad is an element of the SUFFIX, this slot
    ;; contains the the length of the longest line of all the lines
-   ;; from the first line of this parse result to the end of the
-   ;; buffer.  We can determine the width of the entire buffer by
-   ;; taking the MAX of the values of these lots for the first element
-   ;; of the prefix, the first element of the suffix, and all the
-   ;; lines in the buffer in between the last line of the first
-   ;; element of the prefix and the first line of the first element of
-   ;; the suffix.
+   ;; from the first line of this wad to the end of the buffer.  We
+   ;; can determine the width of the entire buffer by taking the MAX
+   ;; of the values of these lots for the first element of the prefix,
+   ;; the first element of the suffix, and all the lines in the buffer
+   ;; in between the last line of the first element of the prefix and
+   ;; the first line of the first element of the suffix.
    (%max-line-width-list :accessor max-line-width-list))
   (:default-initargs :single-box t :type t))
 
