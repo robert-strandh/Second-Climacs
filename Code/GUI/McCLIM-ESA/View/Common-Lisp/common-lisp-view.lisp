@@ -318,7 +318,7 @@
   (with-accessors ((prefix cl-syntax:prefix)
                    (suffix cl-syntax:suffix))
       cache
-    (cond ((and (null prefix) (null suffix))
+    (cond ((cl-syntax:cache-is-empty-p cache)
            (render-empty-cache cache pane first-line last-line))
           (t
            (adjust-for-rendering cache last-line)
