@@ -36,7 +36,15 @@
    (%time-stamp :initform nil :accessor time-stamp)
    ;; This slot contains the counter that is maintained during the
    ;; execution of the update function.
-   (%line-counter :initform 0 :accessor line-counter)))
+   (%line-counter :initform 0 :accessor line-counter)
+   ;; This slot contains a list that parallels the prefix and it
+   ;; contains the width of the prefix starting with the first element
+   ;; of the prefix.
+   (%prefix-width :initform '() :accessor prefix-width)
+   ;; This slot contains a list that parallels the suffix and it
+   ;; contains the width of the suffix starting with the first element
+   ;; of the suffix.
+   (%suffix-width :initform '() :accessor suffix-width)))
 
 ;;; Given a cache and an interval of lines, return the maxium length
 ;;; of any lines in the interval.
