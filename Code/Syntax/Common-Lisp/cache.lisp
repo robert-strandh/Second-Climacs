@@ -38,6 +38,12 @@
    ;; execution of the update function.
    (%line-counter :initform 0 :accessor line-counter)))
 
+;;; Given a cache and an interval of lines, return the maxium length
+;;; of any lines in the interval.
+(defun max-line-length (cache first-line-number last-line-number)
+  (loop for line-number from first-line-number to last-line-number
+        maximize (line-length cache line-number)))
+
 (defgeneric pop-from-suffix (cache)
   (:method ((cache cache))
     (with-accessors ((suffix suffix)) cache
