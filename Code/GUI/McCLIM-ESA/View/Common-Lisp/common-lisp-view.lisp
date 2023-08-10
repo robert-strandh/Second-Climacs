@@ -224,28 +224,8 @@
     presentation
     (clim:standard-presentation)
   cl-syntax:wad
-  (;; When this wad is an element of the PREFIX, this slot contains
-   ;; the the length of the longest line of all the lines from the
-   ;; beginning of the buffer and up to and including the last line of
-   ;; this wad.  When this wad is an element of the SUFFIX, this slot
-   ;; contains the the length of the longest line of all the lines
-   ;; from the first line of this wad to the end of the buffer.  We
-   ;; can determine the width of the entire buffer by taking the MAX
-   ;; of the values of these lots for the first element of the prefix,
-   ;; the first element of the suffix, and all the lines in the buffer
-   ;; in between the last line of the first element of the prefix and
-   ;; the first line of the first element of the suffix.
-   (%max-line-width-list :accessor max-line-width-list))
+  ()
   (:default-initargs :single-box t :type t))
-
-;;; For convenience, define methods on MAX-LINE-WIDTH-LIST on CONS and
-;;; NULL so that MAX-LINE-WIDTH-LIST can be applied to the prefix or
-;;; the suffix directly.
-(defmethod max-line-width-list ((object null))
-  0)
-
-(defmethod max-line-width-list ((object CONS))
-  (max-line-width-list (first object)))
 
 (defmethod draw-wad :around (wad start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
@@ -261,49 +241,6 @@
           (t
            (draw-right-arrow pane gutter start-ref clim:+blue+))))
   (call-next-method))
-
-;;; Given a cache and an interval of lines, return the maxium length
-;;; of any lines in the interval.
-(defun max-line-length (cache first-line-number last-line-number)
-  (loop for line-number from first-line-number to last-line-number
-        maximize (cl-syntax:line-length cache line-number)))
-
-(defmethod cl-syntax:push-to-prefix :before
-    (cache (wad presentation))
-  (with-accessors ((max-line-width-list max-line-width-list)
-                   (start-line cl-syntax:start-line)
-                   (max-line-width cl-syntax:max-line-width))
-      wad
-    (with-accessors ((prefix cl-syntax:prefix)) cache
-      (setf max-line-width-list
-            (if (null prefix)
-                (max (max-line-length cache 0 (1- start-line))
-                     max-line-width)
-                (let* ((first (first prefix))
-                       (end-line (cl-syntax:end-line first)))
-                  (max (max-line-width-list first)
-                       (max-line-length cache (1+ end-line) (1- start-line))
-                       max-line-width)))))))
-
-(defmethod cl-syntax:push-to-suffix :before
-    (cache (wad presentation))
-  (with-accessors ((max-line-width-list max-line-width-list)
-                   (end-line cl-syntax:end-line)
-                   (max-line-width cl-syntax:max-line-width))
-      wad
-    (with-accessors ((suffix cl-syntax:suffix)) cache
-      (setf max-line-width-list
-            (if (null suffix)
-                (max (max-line-length
-                      cache
-                      (1+ end-line)
-                      (1- (cl-syntax:line-count cache)))
-                     max-line-width)
-                (let* ((first (first suffix))
-                       (start-line (cl-syntax:start-line first)))
-                  (max (max-line-width-list first)
-                       (max-line-length cache (1+ end-line) (1- start-line))
-                       max-line-width)))))))
 
 (defun adjust-for-rendering (cache last-line)
   (with-accessors ((prefix cl-syntax:prefix)
@@ -428,30 +365,11 @@
       (unless (minusp last-line-number)
         (render-cache cache stream top last-line-number)))))
 
-(defun gap-start (history)
-  (let ((prefix (cl-syntax:prefix history)))
-    (if (null prefix)
-        0
-        (1+ (cl-syntax:end-line (first prefix))))))
-
-(defun gap-end (history)
-  (let ((suffix (cl-syntax:suffix history))
-        (line-count (cl-syntax:line-count history)))
-    (if (null suffix)
-        (1- line-count)
-        (1- (cl-syntax:start-line (first suffix))))))
-
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let ((pane (climi::output-history-stream history)))
     (multiple-value-bind (width height) (text-style-dimensions pane)
       (let* ((line-count (cl-syntax:line-count history))
-             (prefix (cl-syntax:prefix history))
-             (gap-start (gap-start history))
-             (suffix (cl-syntax:suffix history))
-             (gap-end (gap-end history))
-             (total-width (max (max-line-width-list prefix)
-                               (max-line-length history gap-start gap-end)
-                               (max-line-width-list suffix))))
+             (total-width (cl-syntax:total-width history)))
         (values 0 0 (* width total-width) (* height line-count))))))
 
 ;;; I don't know why this one is called at all
