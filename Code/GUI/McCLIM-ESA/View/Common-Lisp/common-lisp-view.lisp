@@ -242,19 +242,6 @@
            (draw-right-arrow pane gutter start-ref clim:+blue+))))
   (call-next-method))
 
-(defun adjust-for-rendering (cache last-line)
-  (with-accessors ((prefix cl-syntax:prefix)
-                   (suffix cl-syntax:suffix))
-      cache
-    (loop until (or (null suffix)
-                    (> (cl-syntax:start-line (first suffix))
-                       last-line))
-          do (cl-syntax:suffix-to-prefix cache))
-    (loop until (or (null prefix)
-                    (<= (cl-syntax:start-line (first prefix))
-                        last-line))
-          do (cl-syntax:prefix-to-suffix cache))))
-
 (defgeneric render-empty-cache (cache pane first-line last-line))
 
 (defmethod render-empty-cache ((cache output-history) pane first-line last-line)
@@ -321,7 +308,7 @@
     (cond ((cl-syntax:cache-is-empty-p cache)
            (render-empty-cache cache pane first-line last-line))
           (t
-           (adjust-for-rendering cache last-line)
+           (cl-syntax:adjust-for-rendering cache last-line)
            (render-trailing-whitespace cache pane first-line last-line)
            (loop for (wad2 wad1) on prefix
                  until (< (cl-syntax:end-line wad2)
