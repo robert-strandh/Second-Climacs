@@ -62,6 +62,7 @@
    #:numeric-token
    #:other-token
 
+   #:cache-is-empty-p
    #:total-width
    #:package-name
    #:package-marker-1
