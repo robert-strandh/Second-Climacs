@@ -144,6 +144,9 @@
        (max-line-length cache (gap-start cache) (gap-end cache))
        (if (null (suffix-width cache)) 0 (first (suffix-width cache)))))
 
+(defun cache-is-empty-p (cache)
+  (and (null (prefix cache)) (null (suffix cache))))
+
 (defun pop-from-worklist (cache)
   (pop (worklist cache)))
 
