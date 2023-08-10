@@ -54,8 +54,11 @@
 
 (defgeneric pop-from-suffix (cache)
   (:method ((cache cache))
-    (with-accessors ((suffix suffix)) cache
+    (with-accessors ((suffix suffix)
+                     (suffix-width suffix-width))
+        cache
       (assert (not (null suffix)))
+      (pop suffix-width)
       (let ((result (pop suffix)))
         (unless (null suffix)
           (relative-to-absolute (first suffix) (start-line result)))
@@ -64,12 +67,29 @@
 (defgeneric push-to-suffix (cache wad)
   (:method ((cache cache) (wad wad))
     (assert (not (relative-p wad)))
-    (with-accessors ((suffix suffix) (prefix prefix)) cache
+    (with-accessors ((suffix suffix)
+                     (prefix prefix)
+                     (suffix-width suffix-width)
+                     (line-count line-count))
+        cache
       (if (null suffix)
-          (setf (right-sibling wad) nil)
-          (progn (setf (right-sibling wad) (first suffix))
-                 (setf (left-sibling (first suffix)) wad)
-                 (absolute-to-relative (first suffix) (start-line wad))))
+          (progn
+            (setf (right-sibling wad) nil)
+            (push (max (max-line-length
+                        cache (1+ (end-line wad)) (1- line-count))
+                       (max-line-width wad))
+                  suffix-width))
+          (progn
+            (setf (right-sibling wad) (first suffix))
+            (setf (left-sibling (first suffix)) wad)
+            (absolute-to-relative (first suffix) (start-line wad))
+            (push (max (first suffix-width)
+                       (max-line-length
+                        cache
+                        (1+ (end-line wad))
+                        (1- (start-line (first suffix))))
+                       (max-line-width wad))
+                  suffix-width)))
       (if (null prefix)
           (setf (left-sibling wad) nil)
           (progn (setf (left-sibling wad) (first prefix))
@@ -78,20 +98,51 @@
 
 (defgeneric pop-from-prefix (cache)
   (:method ((cache cache))
+    (pop (prefix-width cache))
     (pop (prefix cache))))
 
 (defgeneric push-to-prefix (cache wad)
   (:method ((cache cache) (wad wad))
-    (with-accessors ((suffix suffix) (prefix prefix)) cache
+    (with-accessors ((suffix suffix)
+                     (prefix prefix)
+                     (prefix-width prefix-width))
+        cache
       (if (null prefix)
-          (setf (left-sibling wad) nil)
-          (progn (setf (left-sibling wad) (first prefix))
-                 (setf (right-sibling (first prefix)) wad)))
+          (progn
+            (setf (left-sibling wad) nil)
+            (push (max (max-line-length cache 0 (1- (start-line wad)))
+                       (max-line-width wad))
+                  prefix-width))
+          (progn
+            (setf (left-sibling wad) (first prefix))
+            (setf (right-sibling (first prefix)) wad)
+            (push (max (first prefix-width)
+                       (max-line-length
+                        cache
+                        (1+ (end-line (first prefix)))
+                        (1- (start-line wad)))
+                       (max-line-width wad))
+                  prefix-width)))
       (if (null suffix)
           (setf (right-sibling wad) nil)
           (progn (setf (right-sibling wad) (first suffix))
                  (setf (left-sibling (first suffix)) wad)))
       (push wad prefix))))
+
+(defun gap-start (cache)
+  (if (null (prefix cache))
+      0
+      (1+ (end-line (first (prefix cache))))))
+
+(defun gap-end (cache)
+  (if (null (suffix cache))
+      (1- (line-count cache))
+      (1- (start-line (first (suffix cache))))))
+
+(defun total-width (cache)
+  (max (if (null (prefix-width cache)) 0 (first (prefix-width cache)))
+       (max-line-length cache (gap-start cache) (gap-end cache))
+       (if (null (suffix-width cache)) 0 (first (suffix-width cache)))))
 
 (defun pop-from-worklist (cache)
   (pop (worklist cache)))
