@@ -361,3 +361,74 @@
 
 (defmethod line-contents ((cache cache) line-number)
   (flx:element* (lines cache) line-number))
+
+(defun map-empty-area
+    (cache first-line start-column last-line end-column space-function)
+  (when (or (> last-line first-line)
+            (and (= last-line first-line)
+                 (> end-column start-column)))
+    (if (= first-line last-line)
+        (funcall space-function first-line start-column end-column)
+        (progn 
+          ;; Handle the first line.
+          (let ((line-length (line-length cache first-line)))
+            (funcall space-function first-line start-column line-length))
+          ;; Handle all remaining lines except the last one.
+          (loop for line-number from first-line below last-line
+                for line-length = (line-length cache line-number)
+                do (funcall space-function line-number 0 line-length))
+          ;; Handle the last line.
+          (funcall space-function last-line 0 end-column)))))
+
+(defun map-wads-and-spaces
+    (cache first-line last-line wad-function space-function)
+  ;; Make sure no wad on the suffix starts at or before LAST-LINE.
+  (loop until (null (suffix cache))
+        while (<= (start-line (first (suffix cache))) last-line)
+        do (suffix-to-prefix cache))
+  ;; Find a suffix of the prefix (i.e., a prefix of wads in the
+  ;; buffer) such that it is not the case that the first wad of the
+  ;; prefix (i.e., the last wad of the buffer prefix) starts entirely
+  ;; after LAST-LINE.
+  (let ((remaining
+          (loop for remaining on (prefix cache)
+                when (<= (start-line (first remaining)) last-line)
+                  return remaining)))
+    (if (null remaining)
+        (let ((line-length (line-length cache last-line)))
+          (map-empty-area
+           cache first-line 0 last-line line-length space-function))
+        (progn (when (<= (end-line (first remaining)) last-line)
+                 (map-empty-area
+                  cache
+                  (end-line (first remaining))
+                  (end-column (first remaining))
+                  last-line
+                  (line-length cache last-line)
+                  space-function))
+               (loop for (wad2 wad1) on remaining
+                     until (or (null wad1)
+                               (< (end-line wad1) first-line))
+                     do (funcall wad-function wad2)
+                        (map-empty-area
+                         cache
+                         (end-line wad1)
+                         (end-column wad1)
+                         (start-line wad2)
+                         (start-column wad2)
+                         space-function)
+                     finally
+                        (if (null wad1)
+                            (map-empty-area
+                             cache
+                             0 0
+                             (start-line wad2)
+                             (start-column wad2)
+                             space-function)
+                            (map-empty-area
+                             cache
+                             (end-line wad1)
+                             (end-column wad1)
+                             (start-line wad2)
+                             (start-column wad2)
+                             space-function)))))))
