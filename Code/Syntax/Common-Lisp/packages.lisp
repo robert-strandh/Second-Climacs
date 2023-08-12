@@ -71,14 +71,6 @@
    #:package-marker-2
    #:name
    #:cache
-   #:prefix
-   #:suffix
-   #:push-to-prefix
-   #:pop-from-prefix
-   #:push-to-suffix
-   #:pop-from-suffix
-   #:prefix-to-suffix
-   #:suffix-to-prefix
    #:min-column-number
    #:max-column-number
    #:max-line-width
