@@ -372,13 +372,16 @@
         (progn 
           ;; Handle the first line.
           (let ((line-length (line-length cache first-line)))
-            (funcall space-function first-line start-column line-length))
+            (when (> line-length start-column)
+              (funcall space-function first-line start-column line-length)))
           ;; Handle all remaining lines except the last one.
-          (loop for line-number from first-line below last-line
+          (loop for line-number from (1+ first-line) below last-line
                 for line-length = (line-length cache line-number)
-                do (funcall space-function line-number 0 line-length))
+                when (> line-length 0)
+                  do (funcall space-function line-number 0 line-length))
           ;; Handle the last line.
-          (funcall space-function last-line 0 end-column)))))
+          (when (> end-column 0)
+            (funcall space-function last-line 0 end-column))))))
 
 (defun map-wads-and-spaces
     (cache first-line last-line wad-function space-function)
@@ -407,10 +410,10 @@
                   (line-length cache last-line)
                   space-function))
                (loop for (wad2 wad1) on remaining
+                     do (funcall wad-function wad2)
                      until (or (null wad1)
                                (< (end-line wad1) first-line))
-                     do (funcall wad-function wad2)
-                        (map-empty-area
+                     do (map-empty-area
                          cache
                          (end-line wad1)
                          (end-column wad1)
