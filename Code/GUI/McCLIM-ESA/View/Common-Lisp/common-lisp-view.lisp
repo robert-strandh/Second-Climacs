@@ -242,85 +242,18 @@
            (draw-right-arrow pane gutter start-ref clim:+blue+))))
   (call-next-method))
 
-(defgeneric render-empty-cache (cache pane first-line last-line))
-
-(defmethod render-empty-cache ((cache output-history) pane first-line last-line)
-  (let* ((line-count (cl-syntax:line-count cache))
-         (last-line-contents (cl-syntax:line-contents
-                              cache (1- line-count)))
-         (end-column-number (length last-line-contents)))
-    (draw-filtered-area pane cache
-                        0 0
-                        (1- line-count) end-column-number
-                        first-line last-line)))
-
-;;; When this function is called, the suffix contains no wad to be
-;;; rendered.  Either the suffix is empty, or the first parse result
-;;; on the suffix lies entirely below the visible area.  However,
-;;; there may be some whitespace between the end of the first wad on
-;;; the prefix and either the first wad on the suffix or the end of
-;;; the buffer.  This function is responsible for rendering that
-;;; whitespace.
-(defun render-trailing-whitespace (cache pane first-line last-line)
-  (with-accessors ((prefix cl-syntax:prefix)
-                   (suffix cl-syntax:suffix)
-                   (line-count cl-syntax:line-count))
-      cache
-    (unless (null prefix)
-      (let ((start-line
-              (cl-syntax:end-line (first prefix)))
-            (start-column
-              (cl-syntax:end-column (first prefix)))
-            (end-line
-              (if (null suffix)
-                  (1- line-count)
-                  (cl-syntax:start-line (first suffix))))
-            (end-column
-              (if (null suffix)
-                  (cl-syntax:line-length cache (1- line-count))
-                  (cl-syntax:start-column (first suffix)))))
-        (draw-filtered-area pane cache
-                            start-line start-column
-                            end-line end-column
-                            first-line last-line)))))
-
-;;; Render the space between two consecutive top-level wads (WAD1 and
-;;; WAD2) or (when WAD1 is NIL) between the beginning of the buffer and
-;;; WAD2.
-(defun render-gap (cache pane wad1 wad2 first-line last-line)
-  (let ((start-line
-          (if (null wad1) 0 (cl-syntax:end-line wad1)))
-        (start-column
-          (if (null wad1) 0 (cl-syntax:end-column wad1)))
-        (end-line (cl-syntax:start-line wad2))
-        (end-column (cl-syntax:start-column wad2)))
-    (draw-filtered-area pane cache
-                        start-line start-column
-                        end-line end-column
-                        first-line last-line)))
-
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
-  (with-accessors ((prefix cl-syntax:prefix)
-                   (suffix cl-syntax:suffix))
-      cache
-    (cond ((cl-syntax:cache-is-empty-p cache)
-           (render-empty-cache cache pane first-line last-line))
-          (t
-           (cl-syntax:adjust-for-rendering cache last-line)
-           (render-trailing-whitespace cache pane first-line last-line)
-           (loop for (wad2 wad1) on prefix
-                 until (< (cl-syntax:end-line wad2)
-                          first-line)
-                 do (draw-wad
-                     wad2
-                     (cl-syntax:start-line wad2)
-                     pane
-                     cache
-                     first-line
-                     last-line)
-                    (render-gap cache pane wad1 wad2 first-line last-line))))))
+  (cl-syntax:map-wads-and-spaces
+   cache first-line last-line
+   (lambda (wad)
+     (draw-wad wad (cl-syntax:start-line wad)
+               pane cache first-line last-line))
+   (lambda (line start-column end-column)
+     (draw-interval pane line
+                    (cl-syntax:line-contents cache line)
+                    start-column end-column))))
 
 ;;; Return the area of the viewport of PANE in units of line and
 ;;; column number.  We return only integers, so that if a fraction of
