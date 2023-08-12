@@ -21,6 +21,7 @@
    #:analyzer
    #:update-cache
    #:wad-to-cst
+   #:map-wads-and-spaces
 
    ;; Wads
    #:wad
