@@ -144,22 +144,6 @@
        (max-line-length cache (gap-start cache) (gap-end cache))
        (if (null (suffix-width cache)) 0 (first (suffix-width cache)))))
 
-(defun cache-is-empty-p (cache)
-  (and (null (prefix cache)) (null (suffix cache))))
-
-(defun adjust-for-rendering (cache last-line)
-  (with-accessors ((prefix prefix)
-                   (suffix suffix))
-      cache
-    (loop until (or (null suffix)
-                    (> (start-line (first suffix))
-                       last-line))
-          do (suffix-to-prefix cache))
-    (loop until (or (null prefix)
-                    (<= (start-line (first prefix))
-                        last-line))
-          do (prefix-to-suffix cache))))
-
 (defun pop-from-worklist (cache)
   (pop (worklist cache)))
 
