@@ -13,8 +13,6 @@
    #:line-length
    #:line-contents
    #:item
-   #:buffer-stream
-   #:synchronize
    #:common-lisp-view
    #:set-common-lisp-mode
    #:view
@@ -69,8 +67,6 @@
    #:package-marker-2
    #:name
    #:cache
-   #:min-column-number
-   #:max-column-number
    #:max-line-width
    #:indent-line
 
