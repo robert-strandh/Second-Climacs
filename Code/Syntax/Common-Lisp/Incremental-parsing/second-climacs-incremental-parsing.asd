@@ -16,4 +16,5 @@
    (:file "token")
    (:file "client")
    (:file "parse")
-   (:file "read-forms")))
+   (:file "read-forms")
+   (:file "update-cache")))
