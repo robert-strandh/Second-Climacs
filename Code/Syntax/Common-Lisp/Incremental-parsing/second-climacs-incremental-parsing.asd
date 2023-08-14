@@ -7,4 +7,5 @@
                "eclector")
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "wad")))
