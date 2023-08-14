@@ -8,8 +8,10 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "utilities")
    (:file "wad")
    (:file "buffer-stream")
    (:file "cache")
    (:file "analyzer")
-   (:file "token")))
+   (:file "token")
+   (:file "client")))
