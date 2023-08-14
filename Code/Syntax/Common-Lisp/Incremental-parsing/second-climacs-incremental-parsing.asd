@@ -17,4 +17,5 @@
    (:file "client")
    (:file "parse")
    (:file "read-forms")
-   (:file "update-cache")))
+   (:file "update-cache")
+   (:file "find-wad-containing-position")))
