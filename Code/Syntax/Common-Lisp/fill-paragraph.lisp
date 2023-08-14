@@ -50,32 +50,35 @@
 ;;; cursor, so that the current wad is nil, but the next wad is a
 ;;; top-level semicolon wad.
 
-(defun fill-paragraph-top-level (cache wad-descriptor buffer cursor)
-  (unless (null wad-descriptor)
-    (push-to-suffix cache (pop-from-prefix cache)))
-  ;; Now, the wad indicated by the cursor is always the first wad on
-  ;; the suffix.
-  (with-accessors ((prefix prefix) (suffix suffix)) cache
-    (loop until (or (null prefix)
-                    (not (typep (first prefix) 'semicolon-comment-wad))
-                    (< (start-line (first prefix))
-                       (1- (start-line (first suffix))))
-                    (/= (semicolon-count (first prefix))
-                        (semicolon-count (first suffix))))
-          do (push-to-suffix cache (pop-from-prefix cache)))
-    ;; Now, all the wads we are interested in are on the suffix.
+(defun fill-paragraph-top-level (cache current next buffer cursor)
+  ;; Either CURRENT is not NIL, meaning the cursor is inside the wad
+  ;; described by CURRENT and CURRENT is a semicolon wad, or CURRENT
+  ;; is NIL meaning the cursor is located before the wad described by
+  ;; NEXT on the same line as NEXT.  So either CURRENT (if CURRENT is
+  ;; not NIL) or NEXT (if CURRENT is NIL) is the a wad descriptor to
+  ;; start with.
+  (let ((start-wad (wad (if (null current) next current))))
+    ;; Loop until start-wad is the first semicolon wad in the block.
+    (loop for left-sibling = (left-sibling start-wad)
+          until (or (null left-sibling)
+                    (not (typep left-sibling 'semicolon-comment-wad))
+                    (< (start-line left-sibling)
+                       (1- (start-line start-wad)))
+                    (/= (semicolon-count left-sibling)
+                        (semicolon-count start-wad)))
+          do (setf start-wad left-sibling))
+    ;; Now collect wad descriptors of all the wads in the comment
+    ;; block.
     (let ((wad-descriptors
-            (list (make-wad-descriptor-from-wad (first suffix)))))
-      (push-to-prefix cache (pop-from-suffix cache))
-      (loop until (or (null suffix)
-                      (not (typep (first suffix) 'semicolon-comment-wad))
-                      (> (start-line (first suffix))
-                         (1+ (start-line (first prefix))))
-                      (/= (semicolon-count (first prefix))
-                          (semicolon-count (first suffix))))
-            do (push (make-wad-descriptor-from-wad (first suffix))
-                     wad-descriptors)
-               (push-to-prefix cache (pop-from-suffix cache)))
+            (loop for wad = start-wad then (right-sibling wad)
+                  for next = (right-sibling wad) then (right-sibling next)
+                  collect (make-wad-descriptor-from-wad cache wad)
+                  until (or (null next)
+                            (not (typep next 'semicolon-comment-wad))
+                            (> (start-line next)
+                               (1+ (start-line wad)))
+                            (/= (semicolon-count next)
+                                (semicolon-count wad))))))
       (fill-semicolon-comment-using-wad-descriptor
        (reverse wad-descriptors) buffer cursor))))
 
@@ -126,7 +129,7 @@
                                            :per-line-prefix "  "
                                            :suffix          "|#"))
             ((null parent)
-             (fill-paragraph-top-level cache current buffer cursor))
+             (fill-paragraph-top-level cache current next buffer cursor))
             ((null current)
              (fill-paragraph-non-top-level next buffer cursor))
             (t
