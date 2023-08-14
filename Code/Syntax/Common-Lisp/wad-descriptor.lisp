@@ -206,10 +206,11 @@
                        (t nil))
               finally (return (values previous nil nil))))))
 
-;;; Given an absolute wad, return a wad descriptor with the wad and
-;;; the interval initialized.
-(defun make-wad-descriptor-from-wad (wad)
-  (assert (not (relative-p wad)))
+;;; Given a top-level wad, make sure the wad is absolute, and then
+;;; return a wad descriptor with the wad and the interval initialized.
+(defun make-wad-descriptor-from-wad (cache wad)
+  (loop while (relative-p wad)
+        do (suffix-to-prefix cache))
   (make-instance 'wad-descriptor
     :wad wad
     :start-line-number (start-line wad)
@@ -237,11 +238,11 @@
          (prefix-wad-descriptor
            (if (null prefix)
                nil
-               (make-wad-descriptor-from-wad (first prefix))))
+               (make-wad-descriptor-from-wad cache (first prefix))))
          (suffix-wad-descriptor
            (if (null suffix)
                nil
-               (make-wad-descriptor-from-wad (first suffix)))))
+               (make-wad-descriptor-from-wad cache (first suffix)))))
     (if (null top-level-wad)
         (progn (unless (null prefix-wad-descriptor)
                  (reinitialize-instance prefix-wad-descriptor
@@ -253,7 +254,7 @@
         (let ((previous-sibling
                 (if (null (rest prefix))
                     nil
-                    (make-wad-descriptor-from-wad (second prefix)))))
+                    (make-wad-descriptor-from-wad cache (second prefix)))))
           (unless (null previous-sibling)
             (reinitialize-instance previous-sibling
               :next-sibling prefix-wad-descriptor)
