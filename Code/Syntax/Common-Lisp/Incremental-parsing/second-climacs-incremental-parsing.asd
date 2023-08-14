@@ -10,4 +10,5 @@
   ((:file "packages")
    (:file "wad")
    (:file "buffer-stream")
-   (:file "cache")))
+   (:file "cache")
+   (:file "analyzer")))
