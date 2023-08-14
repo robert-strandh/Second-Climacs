@@ -18,4 +18,5 @@
    (:file "parse")
    (:file "read-forms")
    (:file "update-cache")
-   (:file "find-wad-containing-position")))
+   (:file "find-wad-containing-position")
+   (:file "wad-descriptor")))
