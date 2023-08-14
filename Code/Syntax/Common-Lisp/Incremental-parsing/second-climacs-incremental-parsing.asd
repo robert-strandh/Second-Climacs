@@ -8,4 +8,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "wad")))
+   (:file "wad")
+   (:file "buffer-stream")))
