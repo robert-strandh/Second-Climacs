@@ -11,4 +11,5 @@
    (:file "wad")
    (:file "buffer-stream")
    (:file "cache")
-   (:file "analyzer")))
+   (:file "analyzer")
+   (:file "token")))
