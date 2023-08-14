@@ -9,4 +9,5 @@
   :components
   ((:file "packages")
    (:file "wad")
-   (:file "buffer-stream")))
+   (:file "buffer-stream")
+   (:file "cache")))
