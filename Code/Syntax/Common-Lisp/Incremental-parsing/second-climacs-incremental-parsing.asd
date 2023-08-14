@@ -14,4 +14,5 @@
    (:file "cache")
    (:file "analyzer")
    (:file "token")
-   (:file "client")))
+   (:file "client")
+   (:file "parse")))
