@@ -15,4 +15,5 @@
    (:file "analyzer")
    (:file "token")
    (:file "client")
-   (:file "parse")))
+   (:file "parse")
+   (:file "read-forms")))
