@@ -3,7 +3,7 @@
 (stealth-mixin:define-stealth-mixin
     output-history
     (clim:output-record clim:stream-output-history-mixin)
-  cl-syntax:cache
+  ip:cache
   ())
 
 (defclass common-lisp-view (clim-base:climacs-clim-view)
@@ -12,7 +12,7 @@
 (defmethod clim-base:make-climacs-clim-view
     ((view cl-syntax:view))
   (let* ((analyzer (base:analyzer view))
-         (cache (cl-syntax:cache analyzer)))
+         (cache (ip:cache analyzer)))
     (make-instance 'common-lisp-view :output-history cache
                                      :climacs-view view)))
 
@@ -148,7 +148,7 @@
                   end-line-number
                   end-column-number)
   (cond ((= start-line-number end-line-number)
-         (let ((contents (cl-syntax:line-contents
+         (let ((contents (ip:line-contents
                           cache start-line-number)))
            (declare (type string contents))
            (draw-interval pane
@@ -157,7 +157,7 @@
                           start-column-number
                           end-column-number)))
         (t
-         (let ((first (cl-syntax:line-contents
+         (let ((first (ip:line-contents
                        cache start-line-number)))
            (declare (type string first))
            (draw-interval pane
@@ -165,7 +165,7 @@
                           first
                           start-column-number
                           (length first)))
-         (let ((last (cl-syntax:line-contents
+         (let ((last (ip:line-contents
                       cache end-line-number)))
            (declare (type string last))
            (draw-interval pane
@@ -176,7 +176,7 @@
          (loop for line-number from (1+ start-line-number)
                to (1- end-line-number)
                for contents of-type string
-                  = (cl-syntax:line-contents
+                  = (ip:line-contents
                      cache line-number)
                do (draw-interval pane
                                  line-number
@@ -223,14 +223,14 @@
 (stealth-mixin:define-stealth-mixin
     presentation
     (clim:standard-presentation)
-  cl-syntax:wad
+  ip:wad
   ()
   (:default-initargs :single-box t :type t))
 
 (defmethod draw-wad :around (wad start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
-  (let ((indentation (cl-syntax::indentation wad))
-        (start-column (cl-syntax:start-column wad))
+  (let ((indentation (ip::indentation wad))
+        (start-column (ip:start-column wad))
         (gutter (clim-base:left-gutter pane)))
     (cond ((null indentation)
            nil)
@@ -245,14 +245,14 @@
 (defgeneric render-cache (cache pane first-line last-line))
 
 (defmethod render-cache ((cache output-history) pane first-line last-line)
-  (cl-syntax:map-wads-and-spaces
+  (ip:map-wads-and-spaces
    cache first-line last-line
    (lambda (wad)
-     (draw-wad wad (cl-syntax:start-line wad)
+     (draw-wad wad (ip:start-line wad)
                pane cache first-line last-line))
    (lambda (line start-column end-column)
      (draw-interval pane line
-                    (cl-syntax:line-contents cache line)
+                    (ip:line-contents cache line)
                     start-column end-column))))
 
 ;;; Return the area of the viewport of PANE in units of line and
@@ -280,7 +280,7 @@
   (clear-viewport stream)
   (multiple-value-bind (left top right bottom) (viewport-area stream)
     (declare (ignore left right))
-    (let* ((line-count (cl-syntax:line-count cache))
+    (let* ((line-count (ip:line-count cache))
            (last-line-number (min bottom (1- line-count))))
       (unless (minusp last-line-number)
         (render-cache cache stream top last-line-number)))))
@@ -288,8 +288,8 @@
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let ((pane (climi::output-history-stream history)))
     (multiple-value-bind (width height) (text-style-dimensions pane)
-      (let* ((line-count (cl-syntax:line-count history))
-             (total-width (cl-syntax:total-width history)))
+      (let* ((line-count (ip:line-count history))
+             (total-width (ip:total-width history)))
         (values 0 0 (* width total-width) (* height line-count))))))
 
 ;;; I don't know why this one is called at all
@@ -328,5 +328,5 @@
 
 (defmethod base:update-view-from-analyzer
     ((view cl-syntax:view)
-     (analyzer cl-syntax:analyzer))
-  (cl-syntax:update-cache analyzer))
+     (analyzer ip:analyzer))
+  (ip:update-cache analyzer))

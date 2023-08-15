@@ -10,15 +10,15 @@
 
 (defun up-expression (cache cursor)
   (multiple-value-bind (current parent previous next)
-      (compute-wad-descriptors cache cursor)
+      (ip:compute-wad-descriptors cache cursor)
     (declare (ignore previous next))
     (if (null current)
         (if (null parent)
             (error 'already-at-top-level)
             (base:set-cursor-positions
-             cursor (start-line-number parent) (start-column-number parent)))
+             cursor (ip:start-line-number parent) (ip:start-column-number parent)))
         (base:set-cursor-positions
-         cursor (start-line-number current) (start-column-number current)))))
+         cursor (ip:start-line-number current) (ip:start-column-number current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -33,7 +33,7 @@
   (multiple-value-bind (cursor-line-number cursor-column-number)
       (base:cursor-positions cursor)
     (let ((lines-and-wads
-            (find-wads-containing-position
+            (ip:find-wads-containing-position
              cache cursor-line-number cursor-column-number)))
       (and (not (null lines-and-wads))
            (let ((first-wad (cdr (first lines-and-wads))))
@@ -42,15 +42,15 @@
 
 (defun forward-expression (cache cursor)
   (multiple-value-bind (current parent previous next)
-      (compute-wad-descriptors cache cursor)
+      (ip:compute-wad-descriptors cache cursor)
     (declare (ignore parent previous))
     (if (null current)
         (if (null next)
             (error 'no-following-expression)
             (base:set-cursor-positions
-             cursor (end-line-number next) (end-column-number next)))
+             cursor (ip:end-line-number next) (ip:end-column-number next)))
         (base:set-cursor-positions
-         cursor (end-line-number current) (end-column-number current)))))
+         cursor (ip:end-line-number current) (ip:end-column-number current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -63,15 +63,15 @@
 
 (defun backward-expression (cache cursor)
   (multiple-value-bind (current parent previous next)
-      (compute-wad-descriptors cache cursor)
+      (ip:compute-wad-descriptors cache cursor)
     (declare (ignore parent next))
     (if (null current)
         (if (null previous)
             (error 'no-following-expression)
             (base:set-cursor-positions
-             cursor (start-line-number previous) (start-column-number previous)))
+             cursor (ip:start-line-number previous) (ip:start-column-number previous)))
         (base:set-cursor-positions
-         cursor (start-line-number current) (start-column-number current)))))
+         cursor (ip:start-line-number current) (ip:start-column-number current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -146,13 +146,13 @@
   (multiple-value-bind (line-number column-number)
       (base:cursor-positions cursor)
     (let ((lines-and-wads
-            (find-wads-containing-position cache line-number column-number)))
+            (ip:find-wads-containing-position cache line-number column-number)))
       (if (null lines-and-wads)
           (backward-expression cache cursor)
           (destructuring-bind (new-line-number . wad)
               (first (last lines-and-wads))
             (base:set-cursor-positions
-             cursor new-line-number (start-column wad)))))))
+             cursor new-line-number (ip:start-column wad)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -163,7 +163,7 @@
   (multiple-value-bind (line-number column-number)
       (base:cursor-positions cursor)
     (let ((lines-and-wads
-            (find-wads-containing-position cache line-number column-number)))
+            (ip:find-wads-containing-position cache line-number column-number)))
       (if (null lines-and-wads)
           (forward-expression cache cursor)
           (destructuring-bind (new-line-number . wad)
@@ -171,4 +171,4 @@
             (base:set-cursor-positions
              cursor
              (+ new-line-number (height wad))
-             (end-column wad)))))))
+             (ip:end-column wad)))))))

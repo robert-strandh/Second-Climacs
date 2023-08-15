@@ -8,14 +8,14 @@
 
 ;;; General wads
 
-(defmethod draw-wad ((wad cl-syntax:expression-wad)
+(defmethod draw-wad ((wad ip:expression-wad)
                      start-ref
                      pane
                      (cache output-history)
                      first-line
                      last-line)
-  (let ((expression (cl-syntax:expression wad)))
-    (if (typep expression 'cl-syntax:token)
+  (let ((expression (ip:expression wad)))
+    (if (typep expression 'ip:token)
         (draw-token-wad
          wad expression start-ref pane cache first-line last-line)
         (draw-non-token-wad
@@ -29,22 +29,22 @@
                      last-line)
   (draw-non-token-wad wad start-ref pane cache first-line last-line))
 
-(defmethod draw-wad :around ((wad cl-syntax:comment-wad)
+(defmethod draw-wad :around ((wad ip:comment-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore start-ref cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+brown+)
     (call-next-method)))
 
-(defmethod draw-wad :around ((wad cl-syntax:ignored-wad)
+(defmethod draw-wad :around ((wad ip:ignored-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore start-ref cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+gray50+)
     (call-next-method)))
 
-(defmethod draw-wad :around ((wad cl-syntax:word-wad)
+(defmethod draw-wad :around ((wad ip:word-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
-  (if (cl-syntax:misspelled wad)
+  (if (ip:misspelled wad)
       (clim:surrounding-output-with-border (pane :shape :underline
                                                  :ink            clim:+orange+
                                                  :padding        2
@@ -55,20 +55,20 @@
 
 (flet ((draw-underline (pane line-number wad)
          (multiple-value-bind (style-width style-height ascent) (text-style-dimensions pane)
-           (let* ((start-column (cl-syntax:start-column wad))
-                  (end-column (cl-syntax:end-column wad))
+           (let* ((start-column (ip:start-column wad))
+                  (end-column (ip:end-column wad))
                   (x (* start-column style-width))
                   (y (+ ascent (* line-number style-height)))
                   (width (* style-width (- end-column start-column))))
              (clim:draw-line* pane x (+ y 2) (+ x width) (+ y 2))))))
 
-  (defmethod draw-wad :around ((wad cl-syntax:labeled-object-definition-wad)
+  (defmethod draw-wad :around ((wad ip:labeled-object-definition-wad)
                                start-ref pane cache first-line last-line)
     (declare (ignore cache first-line last-line))
     (call-next-method)
     (draw-underline pane start-ref wad))
 
-  (defmethod draw-wad :around ((wad cl-syntax:labeled-object-reference-wad)
+  (defmethod draw-wad :around ((wad ip:labeled-object-reference-wad)
                                start-ref pane cache first-line last-line)
     (declare (ignore cache first-line last-line))
     (call-next-method)
@@ -76,29 +76,29 @@
 
 ;;; Token wads
 
-(defmethod draw-token-wad :around (wad (token cl-syntax:numeric-token)
+(defmethod draw-token-wad :around (wad (token ip:numeric-token)
                                    start-ref pane cache first-line last-line)
   (declare (ignore wad start-ref cache first-line last-line))
   (clim:with-drawing-options (pane :ink clim:+dark-blue+)
     (call-next-method)))
 
 (defmethod draw-token-wad :around
-    (wad (token cl-syntax:existing-symbol-token)
+    (wad (token ip:existing-symbol-token)
      start-ref pane cache first-line last-line)
   (declare (ignore wad start-ref cache first-line last-line))
-  (if (equal (cl-syntax:package-name token) "COMMON-LISP")
+  (if (equal (ip:package-name token) "COMMON-LISP")
       (clim:with-drawing-options (pane :ink clim:+purple+)
         (call-next-method))
       (call-next-method)))
 
 (defmethod draw-token-wad :before
-    (wad (token cl-syntax:non-existing-symbol-token)
+    (wad (token ip:non-existing-symbol-token)
      start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
-  (let ((pos (cl-syntax:package-marker-1 token))
-        (start (cl-syntax:start-column wad))
-        (end (cl-syntax:end-column wad))
-        (height (cl-syntax:height wad)))
+  (let ((pos (ip:package-marker-1 token))
+        (start (ip:start-column wad))
+        (end (ip:end-column wad))
+        (height (ip:height wad)))
     (unless (or (null pos)
                 (not (zerop height))
                 (zerop pos))
@@ -106,13 +106,13 @@
       (draw-rectangle pane start-ref (+ start pos 1) end clim:+red+))))
 
 (defmethod draw-token-wad :before
-    (wad (token cl-syntax:non-existing-package-symbol-token)
+    (wad (token ip:non-existing-package-symbol-token)
      start-ref pane cache first-line last-line)
   (declare (ignore cache first-line last-line))
-  (let ((pos (cl-syntax:package-marker-1 token))
-        (start (cl-syntax:start-column wad))
-        (end (cl-syntax:end-column wad))
-        (height (cl-syntax:height wad)))
+  (let ((pos (ip:package-marker-1 token))
+        (start (ip:start-column wad))
+        (end (ip:end-column wad))
+        (height (ip:height wad)))
     (unless (or (null pos) (not (zerop height)))
       (draw-rectangle pane start-ref start (+ start pos) clim:+red+)
       (draw-rectangle pane start-ref (+ start pos) end clim:+pink+))))
@@ -125,19 +125,19 @@
 
 ;;; Non-token wads
 
-(defmethod draw-non-token-wad :around ((wad cl-syntax:expression-wad)
+(defmethod draw-non-token-wad :around ((wad ip:expression-wad)
                                        start-ref pane cache first-line last-line)
-  (typecase (cl-syntax:expression wad)
+  (typecase (ip:expression wad)
     (string (clim:with-drawing-options (pane :ink clim:+dark-goldenrod+)
               (call-next-method)))
     (t      (call-next-method))))
 
 (defmethod draw-non-token-wad (wad start-ref pane cache first-line last-line)
-  (flet ((start-line (wad) (cl-syntax:start-line wad))
-         (start-column (wad) (cl-syntax:start-column wad))
-         (height (wad) (cl-syntax:height wad))
-         (end-column (wad) (cl-syntax:end-column wad)))
-    (let ((children (cl-syntax:children wad))
+  (flet ((start-line (wad) (ip:start-line wad))
+         (start-column (wad) (ip:start-column wad))
+         (height (wad) (ip:height wad))
+         (end-column (wad) (ip:end-column wad)))
+    (let ((children (ip:children wad))
           (prev-end-line start-ref)
           (prev-end-column (start-column wad))
           (ref start-ref))
@@ -168,25 +168,25 @@
                           first-line last-line))))
 
 (defun wad-is-incomplete-p (wad)
-  (loop for child in (cl-syntax:children wad)
-          thereis (or (and (typep child 'cl-syntax:error-wad)
-                           (typep (cl-syntax::condition* child)
+  (loop for child in (ip:children wad)
+          thereis (or (and (typep child 'ip:error-wad)
+                           (typep (ip::condition* child)
                                   'eclector.reader:unterminated-list))
                       (wad-is-incomplete-p child))))
 
 (defmethod draw-non-token-wad :after
-    ((wad cl-syntax:expression-wad) start-ref pane cache first-line last-line)
-  (let* ((expression (cl-syntax:expression wad))
+    ((wad ip:expression-wad) start-ref pane cache first-line last-line)
+  (let* ((expression (ip:expression wad))
          (clim-view (clim:stream-default-view pane))
          (climacs-view (clim-base:climacs-view clim-view))
          (cursor (base:cursor climacs-view))
          (cursor-line-number (cluffer:line-number cursor))
          (cursor-column-number (cluffer:cursor-position cursor)))
     (when (and (consp expression)
-               (= (+ start-ref (cl-syntax:height wad)) cursor-line-number)
-               (= (cl-syntax:end-column wad) cursor-column-number))
+               (= (+ start-ref (ip:height wad)) cursor-line-number)
+               (= (ip:end-column wad) cursor-column-number))
       (unless (wad-is-incomplete-p wad)
-        (let ((wad-start-column (cl-syntax:start-column wad)))
+        (let ((wad-start-column (ip:start-column wad)))
           (clim:with-text-face (pane :bold)
             (draw-area pane cache
                        start-ref wad-start-column

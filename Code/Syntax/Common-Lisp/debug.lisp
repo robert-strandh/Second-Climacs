@@ -3,11 +3,11 @@
 ;;; Return the first top-level wad, or NIL if there is no top-level
 ;;; wad.
 (defun first-top-level-wad (cache)
-  (if (null (prefix cache))
-      (if (null (suffix cache))
+  (if (null (ip::prefix cache))
+      (if (null (ip::suffix cache))
           nil
-          (first (suffix cache)))
-      (first (last (prefix cache)))))
+          (first (ip::suffix cache)))
+      (first (last (ip::prefix cache)))))
 
 (defun print-wad-tree (root stream)
   (utilities.print-tree:print-tree

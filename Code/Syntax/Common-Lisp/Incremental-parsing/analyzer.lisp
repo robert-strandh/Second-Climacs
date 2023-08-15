@@ -1,7 +1,8 @@
 (cl:in-package #:second-climacs-incremental-parsing)
 
 (defclass analyzer (buffer-stream)
-  ((%cache :initarg :cache :reader cache)))
+  ((%buffer :initarg :buffer :reader buffer)
+   (%cache :initarg :cache :reader cache)))
 
 (defmethod print-object ((object analyzer) stream)
   (print-unreadable-object (object stream :type t :identity t)

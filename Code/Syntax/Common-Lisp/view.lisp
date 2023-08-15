@@ -6,10 +6,10 @@
 (setf (base:view-class "asd") 'view)
 
 (defmethod initialize-instance :after ((instance view) &key buffer cursor)
-  (let* ((cache (make-instance 'cache
+  (let* ((cache (make-instance 'ip:cache
                   :cluffer-buffer (base:cluffer-buffer buffer)))
-         (analyzer (make-instance 'analyzer
-                     :lines (lines cache)
+         (analyzer (make-instance 'ip:analyzer
+                     :lines (ip:lines cache)
                      :cache cache
                      :buffer buffer)))
     (reinitialize-instance instance

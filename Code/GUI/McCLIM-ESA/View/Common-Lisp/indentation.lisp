@@ -6,8 +6,8 @@
   (let* ((view (clim:stream-default-view (esa:current-window)))
          (climacs-view (clim-base:climacs-view view))
          (analyzer (base:analyzer climacs-view))
-         (cache (cl-syntax:cache analyzer)))
-    (cl-syntax:update-cache analyzer)
+         (cache (ip:cache analyzer)))
+    (ip:update-cache analyzer)
     (clim-base:with-current-cursor (cursor)
       (cl-syntax:indent-line cache cursor))))
 

@@ -129,7 +129,7 @@
 (defmethod esa:buffers ((esa climacs))
   (remove-duplicates (loop for view in (base:views esa)
                            for analyzer = (base:analyzer view)
-                           collect (base:buffer analyzer))
+                           collect (ip:buffer analyzer))
                      :test #'eq))
 
 (defun climacs (&key new-process (process-name "Climacs"))

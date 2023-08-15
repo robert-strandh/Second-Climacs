@@ -5,6 +5,7 @@
   (:local-nicknames
    (#:clim-base #:second-climacs-clim-base)
    (#:base #:second-climacs-base)
-   (#:cl-syntax #:second-climacs-syntax-common-lisp))
+   (#:cl-syntax #:second-climacs-syntax-common-lisp)
+   (#:ip #:second-climacs-incremental-parsing))
   (:export #:move-viewport-to-cursor
            #:move-cursor-to-viewport))

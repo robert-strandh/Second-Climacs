@@ -18,9 +18,9 @@
   (when (simple-form-p wad)
     (let ((first-child (first (children wad))))
       (when (and (typep first-child 'expression-wad)
-                 (typep (expression first-child) 'symbol-token))
+                 (typep (expression first-child) 'ip:symbol-token))
         (let* ((token (expression first-child))
-               (pawn (find-pawn (package-name token) (name token))))
+               (pawn (find-pawn (package-name token) (ip:name token))))
           (unless (null pawn)
             (compute-defpackage-option-indentation wad pawn client)))))))
 

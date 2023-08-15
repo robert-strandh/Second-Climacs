@@ -7,7 +7,8 @@
                     (#:readtable #:eclector.readtable)
                     (#:base #:second-climacs-base)
                     (#:gs #:trivial-gray-streams)
-                    (#:flx #:flexichain))
+                    (#:flx #:flexichain)
+                    (#:ip #:second-climacs-incremental-parsing))
   (:export
    #:line-count
    #:line-length

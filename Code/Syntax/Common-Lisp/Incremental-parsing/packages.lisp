@@ -59,4 +59,17 @@
 
    #:total-width
    #:cache
-   #:name))
+   #:name
+   #:find-wad-beginning-line
+   #:find-wads-containing-position
+   #:make-wad-descriptor-from-wad
+   #:lines
+   #:compute-wad-descriptors
+   #:start-line-number
+   #:start-column-number
+   #:end-line-number
+   #:end-column-number
+   #:items
+   #:previous-sibling
+   #:next-sibling
+   #:buffer))
