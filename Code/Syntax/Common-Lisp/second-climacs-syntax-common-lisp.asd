@@ -6,20 +6,8 @@
                "concrete-syntax-tree"
                "utilities.print-tree") ; for debugging
   :serial t
-  :components (;; (:file "buffer-stream")
-               ;; (:file "cache")
-               ;; (:file "analyzer")
-               ;; (:file "token")
-               ;; (:file "client")
-               ;; (:file "parse")
-               ;; (:file "read-forms")
-               ;; (:file "update-cache")
-               (:file "view")
+  :components ((:file "view")
                (:file "set-mode")
-               ;; (:file "wad-descriptor")
-               ;; (:file "mapwad")
-               ;; (:file "find-wad-beginning-line")
-               ;; (:file "find-wad-containing-position")
                (:file "motion")
                (:file "regions")
                (:file "fill-paragraph")
