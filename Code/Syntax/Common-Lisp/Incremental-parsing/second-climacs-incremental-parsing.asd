@@ -18,5 +18,6 @@
    (:file "parse")
    (:file "read-forms")
    (:file "update-cache")
+   (:file "find-wad-beginning-line")
    (:file "find-wad-containing-position")
    (:file "wad-descriptor")))
