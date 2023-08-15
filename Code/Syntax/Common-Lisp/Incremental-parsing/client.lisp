@@ -104,11 +104,12 @@
                      (punctuationp (punctuationp character)))
                  (values (or spacep punctuationp) punctuationp)))
              (commit (line column checkp)
+               (declare (ignore checkp)) ; to avoid style warning.
                (when (plusp (length word))
                  (let ((source      (cons (cons line word-start-column)
                                           (cons line column)))
-                       (misspelledp (when checkp
-                                      (not (spell:english-lookup word)))))
+                       ;; FIXME: Set this to nil for now.  
+                       (misspelledp nil))
                    (push (make-result-wad 'word-wad stream source '()
                                           :misspelled misspelledp)
                          words)))
