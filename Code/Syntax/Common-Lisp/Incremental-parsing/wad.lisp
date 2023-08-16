@@ -5,7 +5,9 @@
 ;;; conditional.
 
 (defclass basic-wad ()
-  (;; This slot contains the parent wad of this wad, or NIL if this
+  (;; This slot contains the cache that this wad is part of.
+   (%cache :initarg :cache :reader cache)
+   ;; This slot contains the parent wad of this wad, or NIL if this
    ;; wad is a top-level wad.
    (%parent :initarg :parent :accessor parent)
    ;; This slot contains the left sibling wad of this wad, or NIL if
@@ -22,7 +24,9 @@
    ;; contents is valid only when the wad is on the prefix, and when
    ;; the wad is the top-level wad which is the first on the suffix.
    ;; With a wad in a different place, this slot may contain some
-   ;; obsolete value.
+   ;; obsolete value.  We define a :BEFORE method on the slot reader
+   ;; so that the wad of the argument will always be on the prefix
+   ;; when the absolute line number is asked for.
    (%absolute-start-line-number
     :initarg :absolute-start-line-number
     :accessor absolute-start-line-number)
