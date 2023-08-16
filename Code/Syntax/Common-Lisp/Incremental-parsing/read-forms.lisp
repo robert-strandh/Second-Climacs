@@ -12,7 +12,8 @@
                 current-item-number 0)
           (setf current-line-number (end-line (first prefix))
                 current-item-number (end-column (first prefix))))
-      (let ((client (make-instance 'client :stream* analyzer)))
+      (let ((client (make-instance 'client :stream* analyzer))
+            (*cache* cache))
         (eclector.reader:call-as-top-level-read
          client
          (lambda ()
