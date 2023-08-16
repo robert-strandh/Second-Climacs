@@ -22,46 +22,6 @@
    #:wad-to-cst
    #:map-wads-and-spaces
 
-   ;; Wads
-   #:wad
-   #:expression-wad
-   #:labeled-object-definition-wad
-   #:labeled-object-reference-wad
-   #:no-expression-wad
-   #:skipped-wad
-   #:comment-wad
-   #:block-command-wad
-   #:semicolon-comment-wad
-   #:word-wad
-   #:misspelled
-   #:ignored-wad
-   #:sharpsign-wad
-   #:sharpsign-plus-wad
-   #:sharpsign-minus-wad
-   #:read-suppress-wad
-   #:reader-macro-wad
-   #:error-wad
-   #:start-line
-   #:height
-   #:end-line
-   #:start-column
-   #:end-column
-   #:min-column-number
-   #:max-column-number
-   #:children
-   #:expression
-   #:token
-
-   ;; Tokens
-   #:token ; class
-   #:symbol-token
-   #:non-existing-package-symbol-token
-   #:non-existing-symbol-token
-   #:existing-symbol-token
-   #:value-token
-   #:numeric-token
-   #:other-token
-
    #:total-width
    #:package-name
    #:package-marker-1
