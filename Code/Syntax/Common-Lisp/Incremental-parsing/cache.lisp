@@ -127,6 +127,7 @@
           (setf (right-sibling wad) nil)
           (progn (setf (right-sibling wad) (first suffix))
                  (setf (left-sibling (first suffix)) wad)))
+      (compute-absolute-line-numbers wad)
       (push wad prefix))))
 
 (defun gap-start (cache)
