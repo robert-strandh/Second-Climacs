@@ -18,6 +18,14 @@
    ;; top-level wad, then this slot contains the following top-level
    ;; wad, or NIL if this is the last top-level wad in the buffer.
    (%right-sibling :initarg :right-sibling :accessor right-sibling)
+   ;; This slot contains the absolute start line of the wad.  Its
+   ;; contents is valid only when the wad is on the prefix, and when
+   ;; the wad is the top-level wad which is the first on the suffix.
+   ;; With a wad in a different place, this slot may contain some
+   ;; obsolete value.
+   (%absolute-start-line-number
+    :initarg :absolute-start-line-number
+    :accessor absolute-start-line-number)
    ;; This slot contains information about the start line of the wad.
    ;; Simple applications might always store the absolute line number
    ;; of the first line of the wad in this slot.  Other applications
