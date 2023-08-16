@@ -16,10 +16,10 @@
 (defmethod compute-defpackage-option-indentation
     ((wad ip:expression-wad) (pawn null) client)
   (when (simple-form-p wad)
-    (let ((first-child (first (children wad))))
+    (let ((first-child (first (ip:children wad))))
       (when (and (typep first-child 'ip:expression-wad)
-                 (typep (expression first-child) 'ip:symbol-token))
-        (let* ((token (expression first-child))
+                 (typep (ip:expression first-child) 'ip:symbol-token))
+        (let* ((token (ip:expression first-child))
                (pawn (find-pawn (package-name token) (ip:name token))))
           (unless (null pawn)
             (compute-defpackage-option-indentation wad pawn client)))))))

@@ -43,12 +43,12 @@
 ;;; This function is required because semicolon comment wads actually
 ;;; have a height of 1.
 (defun effective-height (wad)
-  (if (typep wad 'semicolon-comment-wad)
+  (if (typep wad 'ip:semicolon-comment-wad)
       0
-      (height wad)))
+      (ip:height wad)))
 
 (defun wads-are-on-different-lines-p (wad1 wad2)
-  (/= (effective-height wad1) (start-line wad2)))
+  (/= (effective-height wad1) (ip:start-line wad2)))
 
 (defun compute-indentation-units (wads)
   (if (null wads)
@@ -56,9 +56,9 @@
       (let* ((result '())
              (first (first wads))
              (current-indentation-unit (list first))
-             (seen-expression-wad-p (typep first 'expression-wad)))
+             (seen-expression-wad-p (typep first 'ip:expression-wad)))
           (loop for wad in (rest wads)
-                do (if (or (= (start-line wad)
+                do (if (or (= (ip:start-line wad)
                               (effective-height (first current-indentation-unit)))
                            (not seen-expression-wad-p))
                        (push wad current-indentation-unit)
@@ -69,18 +69,18 @@
                          (push (reverse current-indentation-unit) result)
                          (setf seen-expression-wad-p nil)
                          (setf current-indentation-unit (list wad))))
-                   (when (typep wad 'expression-wad)
+                   (when (typep wad 'ip:expression-wad)
                      (setf seen-expression-wad-p t)))
         (push (reverse current-indentation-unit) result)
         (reverse result))))
 
 (defun assign-indentation-of-wads-in-unit (indentation-unit indentation)
-  (unless (zerop (start-line (first indentation-unit)))
-    (setf (indentation (first indentation-unit)) indentation))
+  (unless (zerop (ip:start-line (first indentation-unit)))
+    (setf (ip:indentation (first indentation-unit)) indentation))
   (loop for (wad1 wad2) on indentation-unit
         until (null wad2)
         when (wads-are-on-different-lines-p wad1 wad2)
-          do (setf (indentation wad2) indentation)))
+          do (setf (ip:indentation wad2) indentation)))
 
 (defun assign-indentation-of-wads-in-units
     (indentation-units relative-indentations wad-column-number)
@@ -103,7 +103,7 @@
            (,seen-expression-wad-p-variable nil))
        (flet ((next ()
                 (setf current-wad nil)
-                (loop until (typep current-wad 'expression-wad)
+                (loop until (typep current-wad 'ip:expression-wad)
                       do (when (null ,current-unit-variable)
                            (setf ,seen-expression-wad-p-variable nil)
                            (if (null ,remaining-units-variable)
@@ -130,9 +130,9 @@
          ,@body))))
 
 (defmacro compute-and-assign-indentations (client wad automaton)
-  `(let* ((indentation-units (compute-indentation-units (children ,wad)))
+  `(let* ((indentation-units (compute-indentation-units (ip:children ,wad)))
           (indentations (,automaton indentation-units ,client))
-          (wad-column-number (start-column ,wad)))
+          (wad-column-number (ip:start-column ,wad)))
      (assign-indentation-of-wads-in-units
       indentation-units indentations wad-column-number)))
 

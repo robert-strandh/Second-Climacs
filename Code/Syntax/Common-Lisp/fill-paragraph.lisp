@@ -7,7 +7,7 @@
 (defun collect-words (wad-descriptors buffer)
   (mapcar (lambda (word-wad-descriptor)
             (coerce (ip:items word-wad-descriptor buffer) 'string))
-          (alexandria:mappend #'children wad-descriptors)))
+          (alexandria:mappend #'ip:children wad-descriptors)))
 
 (defun fill-paragraph-using-wad-descriptors (wad-descriptors buffer cursor
                                              &rest args &key prefix
@@ -32,7 +32,7 @@
     (wad-descriptors buffer cursor)
   (let* ((first               (first wad-descriptors))
          (start-column-number (ip:start-column-number first))
-         (semicolon-count     (semicolon-count (ip:wad first))))
+         (semicolon-count     (ip:semicolon-count (ip:wad first))))
     (let ((prefix          (format nil "~V,,,';<~>" semicolon-count))
           (per-line-prefix (format nil "~V<~>~V,,,';<~>"
                                    start-column-number semicolon-count)))
@@ -42,7 +42,7 @@
 
 (defun fill-paragraph-candidate-p (wad-descriptor)
   (and (not (null wad-descriptor))
-       (typep (ip:wad wad-descriptor) 'semicolon-comment-wad)))
+       (typep (ip:wad wad-descriptor) 'ip:semicolon-comment-wad)))
 
 ;;; When this function is called, either the cursor is in a top-level
 ;;; semicolon comment wad so that the current wad is not NIL, or it is
@@ -59,26 +59,26 @@
   ;; start with.
   (let ((start-wad (ip:wad (if (null current) next current))))
     ;; Loop until start-wad is the first semicolon wad in the block.
-    (loop for left-sibling = (left-sibling start-wad)
+    (loop for left-sibling = (ip:left-sibling start-wad)
           until (or (null left-sibling)
-                    (not (typep left-sibling 'semicolon-comment-wad))
+                    (not (typep left-sibling 'ip:semicolon-comment-wad))
                     (< (ip:start-line left-sibling)
                        (1- (ip:start-line start-wad)))
-                    (/= (semicolon-count left-sibling)
-                        (semicolon-count start-wad)))
+                    (/= (ip:semicolon-count left-sibling)
+                        (ip:semicolon-count start-wad)))
           do (setf start-wad left-sibling))
     ;; Now collect wad descriptors of all the wads in the comment
     ;; block.
     (let ((wad-descriptors
-            (loop for wad = start-wad then (right-sibling wad)
-                  for next = (right-sibling wad) then (right-sibling next)
+            (loop for wad = start-wad then (ip:right-sibling wad)
+                  for next = (ip:right-sibling wad) then (ip:right-sibling next)
                   collect (ip:make-wad-descriptor-from-wad cache wad)
                   until (or (null next)
-                            (not (typep next 'semicolon-comment-wad))
+                            (not (typep next 'ip:semicolon-comment-wad))
                             (> (ip:start-line next)
                                (1+ (ip:start-line wad)))
-                            (/= (semicolon-count next)
-                                (semicolon-count wad))))))
+                            (/= (ip:semicolon-count next)
+                                (ip:semicolon-count wad))))))
       (fill-semicolon-comment-using-wad-descriptor
        (reverse wad-descriptors) buffer cursor))))
 
@@ -111,7 +111,7 @@
                 ;; is not a semicolon comment wad, then it is an
                 ;; error.
                 (and (not (null current))
-                     (not (typep (ip:wad current) 'comment-wad)))
+                     (not (typep (ip:wad current) 'ip:comment-wad)))
                 ;; The other possibility for an error is that the
                 ;; current wad is NIL, and either the next wad is not
                 ;; a semicolon comment wad, or it is a semicolon
@@ -123,7 +123,7 @@
                                  (ip:start-line-number next))))))
         (error 'not-in-comment)))
     (let ((buffer (cluffer:buffer cursor)))
-      (cond ((and current (typep (ip:wad current) 'block-comment-wad))
+      (cond ((and current (typep (ip:wad current) 'ip:block-comment-wad))
              (fill-paragraph-using-wad-descriptors
               (list current) buffer cursor :prefix          "#|"
                                            :per-line-prefix "  "

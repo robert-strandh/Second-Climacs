@@ -7,7 +7,7 @@
      (maybe-assign-indentation 1 4)
      (next)
    tag-or-form
-     (if (atom (expression current-wad))
+     (if (atom (ip:expression current-wad))
          ;; We have a label.
          (maybe-assign-indentation 2 4)
          ;; We have a form.

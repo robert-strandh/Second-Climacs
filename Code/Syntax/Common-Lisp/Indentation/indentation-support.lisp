@@ -11,27 +11,27 @@
 ;;; name of a function, but the lambda list of of that function is
 ;;; very simple, or a symbol that we have no information about.
 (defun indent-default-function-call (wad client)
-  (let ((arguments (rest (children wad))))
+  (let ((arguments (rest (ip:children wad))))
     (unless (null arguments)
       (let* ((first-child (first arguments))
-             (first-child-start-line (start-line first-child))
-             (first-child-start-column (start-column first-child)))
+             (first-child-start-line (ip:start-line first-child))
+             (first-child-start-column (ip:start-column first-child)))
         (unless (zerop first-child-start-line)
           ;; If the start line of the first child is 0, that means
           ;; that the first child is positioned on the same line as
           ;; the operator, so we do not modify its indentation.  If it
           ;; is different from 0, then we set the indentation to be 2
           ;; columns with respect to the start column of the wad.
-          (setf (indentation first-child) (+ 2 (start-column wad))))
+          (setf (ip:indentation first-child) (+ 2 (ip:start-column wad))))
         (loop for child in (rest arguments)
-              unless (zerop (start-line child))
+              unless (zerop (ip:start-line child))
                 ;; If the start line of the child is 0, that means
                 ;; that this child is positioned on the same line as
                 ;; the previous child, so we do not modify its
                 ;; indentation.  If it is different from 0, then we
                 ;; set the indentation so that it aligns with the
                 ;; start column of the first child of the wad.
-                do (setf (indentation child) first-child-start-column)
+                do (setf (ip:indentation child) first-child-start-column)
               do (compute-form-indentation child nil client))))))
 
 ;;; We define a form to be SIMPLE if and only if it is a proper list,
@@ -42,12 +42,12 @@
   (if (null form)
       (or (null wad-children)
           (and (not (typep (car wad-children)
-                           'expression-wad))
+                           'ip:expression-wad))
                (children-correspond-p form (cdr wad-children))))
       (and (not (null wad-children))
-           (if (typep (car wad-children) 'expression-wad)
+           (if (typep (car wad-children) 'ip:expression-wad)
                (and (eq (car form)
-                        (expression (car wad-children)))
+                        (ip:expression (car wad-children)))
                     (children-correspond-p (cdr form)
                                            (cdr wad-children)))
                (children-correspond-p form (cdr wad-children))))))
@@ -56,10 +56,10 @@
   (not (null (ignore-errors (list-length object)))))
 
 (defun simple-form-p (wad)
-  (let ((expression (expression wad)))
+  (let ((expression (ip:expression wad)))
     (and (consp expression)
          (proper-list-p expression)
-         (children-correspond-p expression (children wad)))))
+         (children-correspond-p expression (ip:children wad)))))
 
 ;;; To indent the sub-forms of a composite form, we can not use the
 ;;; symbol of the operator of that form, because that symbol may not
@@ -117,8 +117,8 @@
     (gethash key *pawns*)))
 
 (defun wad-represents-symbol-p (wad symbol)
-  (and (typep wad 'expression-wad)
-       (let ((expression (expression wad)))
+  (and (typep wad 'ip:expression-wad)
+       (let ((expression (ip:expression wad)))
          (and (typep expression 'ip:symbol-token)
               (equal (package-name expression)
                      (cl:package-name (symbol-package symbol)))
@@ -126,8 +126,8 @@
                      (cl:symbol-name symbol))))))
 
 (defun first-child-wad-represents-symbol-p (wad symbol)
-  (and (typep wad 'expression-wad)
-       (let ((children (children wad)))
+  (and (typep wad 'ip:expression-wad)
+       (let ((children (ip:children wad)))
          (and (consp children)
               (wad-represents-symbol-p (first children) symbol)))))
 
@@ -135,10 +135,10 @@
   (let* ((line-number (cluffer:line-number cursor))
          (position (cluffer:cursor-position cursor))
          (wad (ip:find-wad-beginning-line cache line-number)))
-    (unless (or (null wad) (null (indentation wad)))
+    (unless (or (null wad) (null (ip:indentation wad)))
       (base:beginning-of-line cursor)
-      (let ((start-column (start-column wad))
-            (indentation (indentation wad)))
+      (let ((start-column (ip:start-column wad))
+            (indentation (ip:indentation wad)))
         (loop repeat (- start-column indentation)
               do (base:delete-item cursor))
         (loop repeat (- indentation start-column)
@@ -149,17 +149,17 @@
 ;;; Take a list of wads.  Use the column of the first one to align all
 ;;; the remaining ones that are on the beginning of a line.
 (defun align-with-first (wads)
-  (loop with indentation = (start-column (first wads))
+  (loop with indentation = (ip:start-column (first wads))
         for wad in (rest wads)
-        unless (zerop (start-line wad))
-          do (setf (indentation wad) indentation)))
+        unless (zerop (ip:start-line wad))
+          do (setf (ip:indentation wad) indentation)))
 
 ;;; Take a list of wads.  If the first wad is not first on a line, then
 ;;; then indent the others like the first one.  If the first wad IS first
 ;;; on a line, then indent every wad according to INDENTATION.
 (defun align-or-indent (wads indentation)
-  (if (zerop (start-line (first wads)))
+  (if (zerop (ip:start-line (first wads)))
       (align-with-first wads)
       (loop for wad in wads
-            unless (zerop (start-line wad))
-              do (setf (indentation wad) indentation))))
+            unless (zerop (ip:start-line wad))
+              do (setf (ip:indentation wad) indentation))))

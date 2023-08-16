@@ -11,7 +11,7 @@
      (next)
      ;; If the current wad represents a CONS, then we have the long
      ;; form.  Otherwise we have the short form.
-     (when (atom (expression current-wad))
+     (when (atom (ip:expression current-wad))
        (go short-form))
      ;; The current wad ought to be the lambda list.
      (maybe-assign-indentation 4 2)
@@ -21,16 +21,16 @@
      (compute-list-indentation current-wad client (constantly nil))
      (next)
    declaration-or-documentation-or-form
-     (when (and (consp (expression current-wad))
+     (when (and (consp (ip:expression current-wad))
                 (wad-represents-symbol-p
-                 (first (children current-wad))
+                 (first (ip:children current-wad))
                  'declare))
        (maybe-assign-indentation 3 2)
        (compute-declare-indentation current-wad client)
        (next)
        (go declaration-or-documentation-or-form))
    documentation-or-form
-     (when (stringp (expression current-wad))
+     (when (stringp (ip:expression current-wad))
        (maybe-assign-indentation 3 2)
        (next))
    form

@@ -17,9 +17,9 @@
      (compute-form-indentation current-wad nil client)
      (next)
    declaration-or-form
-     (when (and (consp (expression current-wad))
+     (when (and (consp (ip:expression current-wad))
                 (wad-represents-symbol-p
-                 (first (children current-wad))
+                 (first (ip:children current-wad))
                  'declare))
        (maybe-assign-indentation 3 2)
        (compute-declare-indentation current-wad client)

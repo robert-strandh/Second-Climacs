@@ -14,16 +14,16 @@
      (compute-lambda-list-indentation current-wad client)
      (next)
    declaration-or-documentation-or-form
-     (when (and (consp (expression current-wad))
+     (when (and (consp (ip:expression current-wad))
                 (wad-represents-symbol-p
-                 (first (children current-wad))
+                 (first (ip:children current-wad))
                  'declare))
        (maybe-assign-indentation 3 2)
        (compute-declare-indentation current-wad client)
        (next)
        (go declaration-or-documentation-or-form))
    documentation-or-form
-     (when (stringp (expression current-wad))
+     (when (stringp (ip:expression current-wad))
        (maybe-assign-indentation 3 2)
        (next))
    form

@@ -17,4 +17,4 @@
       (declare (ignore depth))
       (princ node stream))
     nil
-    #'children)))
+    #'ip:children)))

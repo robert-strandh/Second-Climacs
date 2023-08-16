@@ -37,8 +37,8 @@
              cache cursor-line-number cursor-column-number)))
       (and (not (null lines-and-wads))
            (let ((first-wad (cdr (first lines-and-wads))))
-             (or (typep first-wad 'no-expression-wad)
-                 (atom (expression first-wad))))))))
+             (or (typep first-wad 'ip:no-expression-wad)
+                 (atom (ip:expression first-wad))))))))
 
 (defun forward-expression (cache cursor)
   (multiple-value-bind (current parent previous next)
@@ -170,5 +170,5 @@
               (first (last lines-and-wads))
             (base:set-cursor-positions
              cursor
-             (+ new-line-number (height wad))
+             (+ new-line-number (ip:height wad))
              (ip:end-column wad)))))))
