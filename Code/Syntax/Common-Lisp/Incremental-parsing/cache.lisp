@@ -357,8 +357,18 @@
   (let ((top-level-wad wad))
     (loop until (null (parent top-level-wad))
           do (setf top-level-wad (parent top-level-wad)))
-    (loop while (relative-p wad)
-          do (suffix-to-prefix (cache top-level-wad)))))
+    ;; Then make sure WAD is on prefix. 
+    (loop with cache = (cache top-level-wad)
+          for suffix = (suffix cache)
+          until (null suffix)
+          until (and
+                 ;; If WAD is relative, then it is definitely not on
+                 ;; the prefix.
+                 (not (relative-p wad))
+                 ;; But it can also be the first wad on the suffix,
+                 ;; because then it is absolute and not on the prefix.
+                 (not (eq (first suffix) top-level-wad)))
+          do (suffix-to-prefix cache))))
 
 (defun map-empty-area
     (cache first-line start-column last-line end-column space-function)
