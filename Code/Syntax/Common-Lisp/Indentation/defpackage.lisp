@@ -14,10 +14,10 @@
 ;;; compute its indentation.
 ;;; FIXME: we need to access the pawn.
 (defmethod compute-defpackage-option-indentation
-    ((wad expression-wad) (pawn null) client)
+    ((wad ip:expression-wad) (pawn null) client)
   (when (simple-form-p wad)
     (let ((first-child (first (children wad))))
-      (when (and (typep first-child 'expression-wad)
+      (when (and (typep first-child 'ip:expression-wad)
                  (typep (expression first-child) 'ip:symbol-token))
         (let* ((token (expression first-child))
                (pawn (find-pawn (package-name token) (ip:name token))))

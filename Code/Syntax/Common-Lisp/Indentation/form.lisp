@@ -6,10 +6,11 @@
 ;;; which case it should not have its indentation computed at all.  Or
 ;;; it could be a compound wad, but with an unknown operator, in which
 ;;; case we compute the indentation as if the form is a function call.
-(defmethod compute-form-indentation ((wad expression-wad) (pawn null) client)
+(defmethod compute-form-indentation
+    ((wad ip:expression-wad) (pawn null) client)
   (if (simple-form-p wad)
       (let ((first-child (first (children wad))))
-        (if (and (typep first-child 'expression-wad)
+        (if (and (typep first-child 'ip:expression-wad)
                  (typep (expression first-child) 'ip:symbol-token))
             (let* ((token (expression first-child))
                    (pawn (find-pawn (package-name token)

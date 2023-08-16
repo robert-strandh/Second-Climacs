@@ -11,8 +11,8 @@
 
 (defmethod end-column ((drawn-wad drawn-wad))
   (let* ((wad       (wad drawn-wad))
-         (condition (cl-syntax::condition* wad)))
-    (+ (cl-syntax:start-column wad)
+         (condition (ip::condition* wad)))
+    (+ (ip:start-column wad)
        (if (typep condition 'end-of-file)
            0
            1))))
@@ -49,7 +49,7 @@
       (draw-error-wad-decorations pane exact-clusters)
       (format-error-annotations pane exact-clusters))))
 
-(defmethod draw-wad :around ((wad cl-syntax:error-wad)
+(defmethod draw-wad :around ((wad ip:error-wad)
                              start-ref pane cache first-line last-line)
   (declare (ignore start-ref cache first-line last-line))
   ;; Record WAD and its absolute start line for processing.
@@ -117,7 +117,7 @@
   (multiple-value-bind (width height ascent) (text-style-dimensions stream)
     (let* ((start-line   (start-line (first error-wad-cluster)))
            (wads         (mapcar #'wad error-wad-cluster))
-           (start-column (reduce #'min wads :key #'cl-syntax:start-column))
+           (start-column (reduce #'min wads :key #'ip:start-column))
            (end-column   (reduce #'max error-wad-cluster :key #'end-column))
            (y            (+ ascent (* start-line height)))
            (x            (* start-column width)))
@@ -152,7 +152,7 @@
             :for wad        =   (wad error-wad)
             :for start-line =   (start-line error-wad)
             :when (and (= start-line cursor-line)
-                       (<= (cl-syntax:start-column wad)
+                       (<= (ip:start-column wad)
                            cursor-column
                            (end-column error-wad)))
               :do (format-error-cluster-annotation stream cluster)))))
@@ -162,11 +162,11 @@
     (let* ((error-wad    (first error-wad-cluster))
            (wad          (wad error-wad))
            (start-line   (start-line error-wad))
-           (start-column (cl-syntax:start-column wad))
+           (start-column (ip:start-column wad))
            (y            (+ ascent (* start-line height) (* 1/2 height)))
            (x            (* start-column width))
            (conditions   (mapcar (alexandria:compose
-                                  #'cl-syntax::condition* #'wad)
+                                  #'ip::condition* #'wad)
                                  error-wad-cluster)))
       (format-error-conditions-annotation stream x y conditions))))
 
