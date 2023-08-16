@@ -22,7 +22,7 @@
    #:no-expression-wad
    #:skipped-wad
    #:comment-wad
-   #:block-command-wad
+   #:block-comment-wad
    #:semicolon-comment-wad
    #:word-wad
    #:misspelled
@@ -43,6 +43,10 @@
    #:children
    #:expression
    #:token
+   #:indentation
+   #:semicolon-count
+   #:left-sibling
+   #:right-sibling
 
    ;; Tokens
    #:token ; class
