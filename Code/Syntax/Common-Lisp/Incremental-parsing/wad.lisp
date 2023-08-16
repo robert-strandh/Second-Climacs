@@ -4,9 +4,13 @@
 ;;; is normally skipped, such as a comment or an inactive reader
 ;;; conditional.
 
+;;; During parsing, this variable holds the cache to which all created
+;;; wads belong.
+(defvar *cache*)
+
 (defclass basic-wad ()
   (;; This slot contains the cache that this wad is part of.
-   (%cache :initarg :cache :reader cache)
+   (%cache :initform *cache* :reader cache)
    ;; This slot contains the parent wad of this wad, or NIL if this
    ;; wad is a top-level wad.
    (%parent :initarg :parent :accessor parent)
