@@ -226,3 +226,18 @@
   (:method ((p wad))
     (assert (not (relative-p p)))
     (+ (start-line p) (height p))))
+
+(defun compute-absolute-line-numbers (top-level-wad)
+  ;; Make sure the wad itself is absolute, so that we need to compute
+  ;; the absolute line numbers only of its children.
+  (assert (not (relative-p top-level-wad)))
+  (labels ((compute-line-numbers (relative-wads offset)
+             (loop with base = offset
+                   for wad in relative-wads
+                   for absolute-start-line-number = (+ base (start-line wad))
+                   do (setf (absolute-start-line-number wad)
+                            absolute-start-line-number)
+                      (compute-line-numbers
+                       (children wad) absolute-start-line-number))))
+    (compute-line-numbers
+     (children top-level-wad) (start-line top-level-wad))))
