@@ -48,7 +48,9 @@
       (ip:height wad)))
 
 (defun wads-are-on-different-lines-p (wad1 wad2)
-  (/= (effective-height wad1) (ip:start-line wad2)))
+  (/= (+ (ip:absolute-start-line-number wad1)
+         (effective-height wad1))
+      (ip:absolute-start-line-number wad2)))
 
 (defun compute-indentation-units (wads)
   (if (null wads)
@@ -58,8 +60,8 @@
              (current-indentation-unit (list first))
              (seen-expression-wad-p (typep first 'ip:expression-wad)))
           (loop for wad in (rest wads)
-                do (if (or (= (ip:start-line wad)
-                              (effective-height (first current-indentation-unit)))
+                do (if (or (not (wads-are-on-different-lines-p
+                                 wad (first current-indentation-unit)))
                            (not seen-expression-wad-p))
                        (push wad current-indentation-unit)
                        ;; Else we add the current indentation unit to
@@ -74,8 +76,17 @@
         (push (reverse current-indentation-unit) result)
         (reverse result))))
 
+(defun wad-is-first-on-start-line-p (wad)
+  (or (and (null (ip:left-sibling wad))
+           (or (null (ip:parent wad))
+               (/= (ip:absolute-start-line-number (ip:parent wad))
+                   (ip:absolute-start-line-number wad))))
+      (/= (+ (ip:absolute-start-line-number (ip:left-sibling wad))
+             (effective-height (ip:left-sibling wad)))
+          (ip:absolute-start-line-number wad))))
+
 (defun assign-indentation-of-wads-in-unit (indentation-unit indentation)
-  (unless (zerop (ip:start-line (first indentation-unit)))
+  (when (wad-is-first-on-start-line-p (first indentation-unit))
     (setf (ip:indentation (first indentation-unit)) indentation))
   (loop for (wad1 wad2) on indentation-unit
         until (null wad2)

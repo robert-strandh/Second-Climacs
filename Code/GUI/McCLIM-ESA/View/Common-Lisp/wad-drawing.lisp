@@ -133,32 +133,39 @@
     (t      (call-next-method))))
 
 (defmethod draw-non-token-wad (wad start-ref pane cache first-line last-line)
-  (flet ((start-line (wad) (ip:start-line wad))
-         (start-column (wad) (ip:start-column wad))
+  (flet ((start-column (wad) (ip:start-column wad))
          (height (wad) (ip:height wad))
          (end-column (wad) (ip:end-column wad)))
     (let ((children (ip:children wad))
           (prev-end-line start-ref)
-          (prev-end-column (start-column wad))
-          (ref start-ref))
+          (prev-end-column (start-column wad)))
       (loop for child in children
-            for start-line = (start-line child)
             for height     = (height child)
-            until (> (+ ref start-line) last-line)
-            do (incf ref start-line)
-               ;; Ensure that only at least partially visible wads are
+            until (> (ip:absolute-start-line-number child) last-line)
+            do ;; Ensure that only at least partially visible wads are
                ;; passed to DRAW-FILTERED-AREA and DRAW-WAD.
-               (when (or (<= first-line ref            last-line)      ; start visible
-                         (<= first-line (+ ref height) last-line)      ; end visible
-                         (<= ref first-line last-line (+ ref height))) ; contains visible region
+               (when (or
+                      ;; Start visible.
+                      (<= first-line
+                          (ip:absolute-start-line-number child)
+                          last-line)
+                      ;; End visible.
+                      (<= first-line
+                          (+ (ip:absolute-start-line-number child) height)
+                          last-line)
+                      ;; Contains visible region.
+                      (<= (ip:absolute-start-line-number child)
+                          first-line
+                          last-line
+                          (+ (ip:absolute-start-line-number child) height)))
                  (draw-filtered-area pane cache
                                      prev-end-line
                                      prev-end-column
-                                     ref
+                                     (ip:absolute-start-line-number child)
                                      (start-column child)
                                      first-line last-line)
-                 (draw-wad child ref pane cache first-line last-line))
-               (setf prev-end-line   (+ ref height)
+                 (draw-wad child (ip:absolute-start-line-number child) pane cache first-line last-line))
+               (setf prev-end-line   (+ (ip:absolute-start-line-number child) height)
                      prev-end-column (end-column child)))
       (draw-filtered-area pane cache
                           prev-end-line

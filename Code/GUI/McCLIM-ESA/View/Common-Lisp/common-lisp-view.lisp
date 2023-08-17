@@ -248,7 +248,7 @@
   (ip:map-wads-and-spaces
    cache first-line last-line
    (lambda (wad)
-     (draw-wad wad (ip:start-line wad)
+     (draw-wad wad (ip:absolute-start-line-number wad)
                pane cache first-line last-line))
    (lambda (line start-column end-column)
      (draw-interval pane line
