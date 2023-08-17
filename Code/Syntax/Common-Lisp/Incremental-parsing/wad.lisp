@@ -13,7 +13,7 @@
    (%cache :initform *cache* :reader cache)
    ;; This slot contains the parent wad of this wad, or NIL if this
    ;; wad is a top-level wad.
-   (%parent :initarg :parent :accessor parent)
+   (%parent :initform nil :initarg :parent :accessor parent)
    ;; This slot contains the left sibling wad of this wad, or NIL if
    ;; this wad is the first child of its parent.  If this wad is a
    ;; top-level wad, then this slot contains the preceding top-level
@@ -112,6 +112,15 @@
     (reinitialize-instance object
                            :min-column-number min-column-number
                            :max-column-number max-column-number)))
+
+(defmethod shared-initialize :after ((wad wad) slot-names &key children)
+  (declare (ignore slot-names))
+  (loop for child in children
+        do (setf (parent child) wad)))
+
+(defmethod (setf chidren) :after (children (wad wad))
+  (loop for child in children
+        do (setf (parent child) wad)))
 
 (defmethod print-object ((object wad) stream)
   (print-unreadable-object (object stream :type t)
@@ -231,6 +240,8 @@
   ;; Make sure the wad itself is absolute, so that we need to compute
   ;; the absolute line numbers only of its children.
   (assert (not (relative-p top-level-wad)))
+  (setf (absolute-start-line-number top-level-wad)
+        (start-line top-level-wad))
   (labels ((compute-line-numbers (relative-wads offset)
              (loop with base = offset
                    for wad in relative-wads
