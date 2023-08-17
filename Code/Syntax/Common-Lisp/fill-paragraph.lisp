@@ -88,16 +88,16 @@
     ;; operation.
     (loop for previous = (ip:previous-sibling start)
           while (and (fill-paragraph-candidate-p previous)
-                     (= (1- (ip:absolute-start-line-number-number start))
-                        (ip:absolute-start-line-number-number previous)))
+                     (= (1- (ip:absolute-start-line-number start))
+                        (ip:absolute-start-line-number previous)))
           do (setf start previous))
     ;; Collect the wad descriptors involved.
     (let ((wad-descriptors (list start)))
       (loop for current = (first wad-descriptors)
             for next = (ip:next-sibling current)
             while (and (fill-paragraph-candidate-p next)
-                       (= (1+ (ip:absolute-start-line-number-number current))
-                          (ip:absolute-start-line-number-number next)))
+                       (= (1+ (ip:absolute-start-line-number current))
+                          (ip:absolute-start-line-number next)))
             do (push next wad-descriptors))
       (fill-semicolon-comment-using-wad-descriptor
        (reverse wad-descriptors) buffer cursor))))
@@ -120,7 +120,7 @@
                 (and (null current)
                      (or (not (fill-paragraph-candidate-p next))
                          (not (= cursor-line-number
-                                 (ip:absolute-start-line-number-number next))))))
+                                 (ip:absolute-start-line-number next))))))
         (error 'not-in-comment)))
     (let ((buffer (cluffer:buffer cursor)))
       (cond ((and current (typep (ip:wad current) 'ip:block-comment-wad))
