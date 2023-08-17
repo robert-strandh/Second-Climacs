@@ -248,6 +248,7 @@
                    for absolute-start-line-number = (+ base (start-line wad))
                    do (setf (absolute-start-line-number wad)
                             absolute-start-line-number)
+                      (setf base absolute-start-line-number)
                       (compute-line-numbers
                        (children wad) absolute-start-line-number))))
     (compute-line-numbers
