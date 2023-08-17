@@ -34,7 +34,6 @@
    #:reader-macro-wad
    #:error-wad
    #:absolute-start-line-number
-   #:start-line
    #:height
    #:end-line
    #:start-column
