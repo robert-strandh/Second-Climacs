@@ -80,7 +80,7 @@
                             (/= (ip:semicolon-count next)
                                 (ip:semicolon-count wad))))))
       (fill-semicolon-comment-using-wad-descriptor
-       (reverse wad-descriptors) buffer cursor))))
+       wad-descriptors buffer cursor))))
 
 (defun fill-paragraph-non-top-level (wad-descriptor buffer cursor)
   (let ((start wad-descriptor))
