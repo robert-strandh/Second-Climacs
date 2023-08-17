@@ -48,6 +48,7 @@
    #:semicolon-count
    #:left-sibling
    #:right-sibling
+   #:parent
 
    ;; Tokens
    #:token ; class
