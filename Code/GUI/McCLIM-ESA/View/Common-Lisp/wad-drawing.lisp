@@ -14,6 +14,7 @@
                      (cache output-history)
                      first-line
                      last-line)
+  (cl-syntax::compute-form-indentation wad nil nil)
   (let ((expression (ip:expression wad)))
     (if (typep expression 'ip:token)
         (draw-token-wad
