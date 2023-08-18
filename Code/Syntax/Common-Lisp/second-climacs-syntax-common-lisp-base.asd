@@ -1,4 +1,4 @@
 (defsystem "second-climacs-syntax-common-lisp-base"
-  :depends-on ("second-climacs-incremental-parsing")
+  :depends-on ("incrementalist")
   :serial t
   :components ((:file "packages")))
