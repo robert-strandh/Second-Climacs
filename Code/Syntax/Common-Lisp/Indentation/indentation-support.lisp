@@ -119,7 +119,7 @@
   (and (typep wad 'ip:expression-wad)
        (let ((expression (ip:expression wad)))
          (and (typep expression 'ip:symbol-token)
-              (equal (package-name expression)
+              (equal (ip:package-name expression)
                      (cl:package-name (symbol-package symbol)))
               (equal (ip:name expression)
                      (cl:symbol-name symbol))))))
