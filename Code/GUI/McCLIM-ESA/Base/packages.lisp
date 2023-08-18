@@ -5,7 +5,7 @@
   (:local-nicknames
    (#:base #:second-climacs-base)
    (#:cl-syntax #:second-climacs-syntax-common-lisp)
-   (#:ip #:second-climacs-incremental-parsing)
+   (#:ip #:incrementalist)
    (#:fundamental-syntax #:second-climacs-syntax-fundamental))
   (:export
    #:climacs

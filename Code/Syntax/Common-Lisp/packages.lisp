@@ -8,7 +8,7 @@
                     (#:base #:second-climacs-base)
                     (#:gs #:trivial-gray-streams)
                     (#:flx #:flexichain)
-                    (#:ip #:second-climacs-incremental-parsing))
+                    (#:ip #:incrementalist))
   (:export
    #:line-length
    #:item
