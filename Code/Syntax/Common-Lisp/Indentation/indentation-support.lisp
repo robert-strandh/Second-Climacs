@@ -15,7 +15,7 @@
     (unless (null arguments)
       (let* ((first-child (first arguments))
              (first-child-start-column (ip:start-column first-child)))
-        (unless (wads-are-on-different-lines-p wad first-child)
+        (when (wads-are-on-different-lines-p wad first-child)
           ;; If the first child is positioned on the same line as the
           ;; operator, so we do not modify its indentation.  If the
           ;; two are different, then we set the indentation to be 2
@@ -23,7 +23,7 @@
           (setf (ip:indentation first-child) (+ 2 (ip:start-column wad))))
         (loop for child in arguments
               for next in (rest arguments)
-              unless (wads-are-on-different-lines-p child next)
+              when (wads-are-on-different-lines-p child next)
                 ;; If the two consecutive are positioned on the same
                 ;; line, we do not modify the indentation.  of the
                 ;; second one.  If they are on different lines, then
