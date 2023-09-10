@@ -4,4 +4,7 @@
                "common-boot-macros")
   :serial t
   :components
-  ((:file "wad-to-cst")))
+  ((:file "packages")
+   (:file "wad-to-cst")
+   (:file "global-environment")))
+
