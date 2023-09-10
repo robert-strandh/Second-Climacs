@@ -5,6 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "wad-to-cst")
-   (:file "global-environment")))
+   (:file "wad-to-cst")))
 
