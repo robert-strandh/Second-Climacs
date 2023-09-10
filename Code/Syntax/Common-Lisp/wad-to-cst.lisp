@@ -3,9 +3,7 @@
 ;;; WAD has to be an EXPRESSION-WAD.
 (defun wad-to-cst (wad)
   (if (null (ip:children wad))
-      (make-instance 'cst:atom-cst
-        :source wad
-        :raw (ip:expression wad))
+      (cst:cst-from-expression (ip:expression wad) :source wad)
       (let ((result (cst:cst-from-expression nil)))
         (loop for child in (reverse (ip:children wad))
               when (typep child 'ip:expression-wad)
