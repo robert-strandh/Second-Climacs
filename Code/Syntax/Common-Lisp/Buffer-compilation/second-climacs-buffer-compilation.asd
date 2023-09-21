@@ -8,5 +8,4 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "trucler-extra")
    (:file "wad-to-cst")))
