@@ -1,5 +1,4 @@
-
-# Second Climacs: An Emacs-like editor 
+# Second Climacs: An Emacs-like editor
 
 Second Climacs is an Emacs-like editor written entirely
 in Common Lisp. It is called Second Climacs because it is a complete
@@ -24,7 +23,7 @@ Second Climacs:
    the Common Lisp reader in order to parse buffer contents, making
    it much closer to the way the contents is read by the Common Lisp
    compiler.
- 
+
  * Climacs depends on McCLIM for its graphic user interface.  Second
     Climacs is independent of any particular library for making
     graphic user interfaces, allowing it to be configured with
@@ -38,12 +37,14 @@ Second Climacs:
 [the Cluffer Emacs Compatiblity]:https://github.com/robert-strandh/cluffer-emacs-compatibility
 [the Stealth mixin repository]:https://github.com/robert-strandh/Stealth-mixin
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
+[the Incrementalist repository]:https://github.com/robert-strandh/incrementalist
 
    * A recent 64-bit version of SBCL
    * The system "cluffer" from [the Cluffer repository]
    * The system "cluffer-emacs-compatibility" from [the Cluffer Emacs Compatiblity]
    * The system "stealth-mixin", from [the Stealth mixin repository]
-   * The system "eclector", from [the Eclector3 repository]
+   * The system "eclector", from [the Eclector repository]
+   * The system "incrementalist" from [the Incrementalist repository]
 
 The bash script `get-dependencies.sh` will do this work for you.
 

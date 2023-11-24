@@ -9,16 +9,16 @@
   (:report "Already at top level"))
 
 (defun up-expression (cache cursor)
-  (multiple-value-bind (current parent previous next)
-      (ip:compute-wad-descriptors cache cursor)
-    (declare (ignore previous next))
+  (let* ((current (multiple-value-call #'ip:find-wads-containing-position cache
+                    (base:cursor-positions cursor)))
+         (parent  (ip:parent current)))
     (if (null current)
         (if (null parent)
             (error 'already-at-top-level)
             (base:set-cursor-positions
-             cursor (ip:start-line-number parent) (ip:start-column-number parent)))
+             cursor (ip:absolute-start-line-number parent) (ip:start-column parent)))
         (base:set-cursor-positions
-         cursor (ip:start-line-number current) (ip:start-column-number current)))))
+         cursor (ip:absolute-start-line-number current) (ip:start-column current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -30,27 +30,25 @@
   (:report "No following expression"))
 
 (defun cursor-is-inside-atomic-wad-p (cache cursor)
-  (multiple-value-bind (cursor-line-number cursor-column-number)
-      (base:cursor-positions cursor)
-    (let ((lines-and-wads
-            (ip:find-wads-containing-position
-             cache cursor-line-number cursor-column-number)))
-      (and (not (null lines-and-wads))
-           (let ((first-wad (cdr (first lines-and-wads))))
-             (or (typep first-wad 'ip:no-expression-wad)
-                 (atom (ip:expression first-wad))))))))
+  (let ((lines-and-wads
+          (multiple-value-call #'ip:find-wads-containing-position cache
+            (base:cursor-positions cursor))))
+    (and (not (null lines-and-wads))
+         (let ((first-wad (cdr (first lines-and-wads))))
+           (or (typep first-wad 'ip:no-expression-wad)
+               (atom (ip:expression first-wad)))))))
 
 (defun forward-expression (cache cursor)
-  (multiple-value-bind (current parent previous next)
-      (ip:compute-wad-descriptors cache cursor)
-    (declare (ignore parent previous))
+  (let* ((current (multiple-value-call #'ip:find-wads-containing-position cache
+                    (base:cursor-positions cursor)))
+         (next    (ip:right-sibling current)))
     (if (null current)
         (if (null next)
             (error 'no-following-expression)
             (base:set-cursor-positions
-             cursor (ip:end-line-number next) (ip:end-column-number next)))
+             cursor (ip:end-line next) (ip:end-column next)))
         (base:set-cursor-positions
-         cursor (ip:end-line-number current) (ip:end-column-number current)))))
+         cursor (ip:end-line current) (ip:end-column current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -62,16 +60,16 @@
   (:report "No preceding expression"))
 
 (defun backward-expression (cache cursor)
-  (multiple-value-bind (current parent previous next)
-      (ip:compute-wad-descriptors cache cursor)
-    (declare (ignore parent next))
+  (let* ((current  (multiple-value-call #'ip:find-wads-containing-position cache
+                     (base:cursor-positions cursor)))
+         (previous (ip:left-sibling current)))
     (if (null current)
         (if (null previous)
             (error 'no-following-expression)
             (base:set-cursor-positions
-             cursor (ip:start-line-number previous) (ip:start-column-number previous)))
+             cursor (ip:absolute-start-line-number previous) (ip:start-column previous)))
         (base:set-cursor-positions
-         cursor (ip:start-line-number current) (ip:start-column-number current)))))
+         cursor (ip:absolute-start-line-number current) (ip:start-column current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -143,16 +141,15 @@
 ;;; BEGINNING-OF-TOP-LEVEL-EXPRESSIONS.
 
 (defun beginning-of-top-level-expression (cache cursor)
-  (multiple-value-bind (line-number column-number)
-      (base:cursor-positions cursor)
-    (let ((lines-and-wads
-            (ip:find-wads-containing-position cache line-number column-number)))
-      (if (null lines-and-wads)
-          (backward-expression cache cursor)
-          (destructuring-bind (new-line-number . wad)
-              (first (last lines-and-wads))
-            (base:set-cursor-positions
-             cursor new-line-number (ip:start-column wad)))))))
+  (let ((lines-and-wads
+          (multiple-value-call #'ip:find-wads-containing-position cache
+            (base:cursor-positions cursor))))
+    (if (null lines-and-wads)
+        (backward-expression cache cursor)
+        (destructuring-bind (new-line-number . wad)
+            (first (last lines-and-wads))
+          (base:set-cursor-positions
+           cursor new-line-number (ip:start-column wad))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -160,15 +157,14 @@
 ;;; END-OF-TOP-LEVEL-EXPRESSIONS.
 
 (defun end-of-top-level-expression (cache cursor)
-  (multiple-value-bind (line-number column-number)
-      (base:cursor-positions cursor)
-    (let ((lines-and-wads
-            (ip:find-wads-containing-position cache line-number column-number)))
-      (if (null lines-and-wads)
-          (forward-expression cache cursor)
-          (destructuring-bind (new-line-number . wad)
-              (first (last lines-and-wads))
-            (base:set-cursor-positions
-             cursor
-             (+ new-line-number (ip:height wad))
-             (ip:end-column wad)))))))
+  (let ((lines-and-wads
+          (multiple-value-call #'ip:find-wads-containing-position cache
+            (base:cursor-positions cursor))))
+    (if (null lines-and-wads)
+        (forward-expression cache cursor)
+        (destructuring-bind (new-line-number . wad)
+            (first (last lines-and-wads))
+          (base:set-cursor-positions
+           cursor
+           (+ new-line-number (ip:height wad))
+           (ip:end-column wad))))))

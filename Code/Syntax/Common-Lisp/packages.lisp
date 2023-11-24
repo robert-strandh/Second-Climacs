@@ -3,12 +3,11 @@
 (defpackage #:second-climacs-syntax-common-lisp
   (:use #:common-lisp)
   (:shadow #:package-name #:symbol-name)
-  (:local-nicknames (#:reader #:eclector.reader)
-                    (#:readtable #:eclector.readtable)
-                    (#:base #:second-climacs-base)
-                    (#:gs #:trivial-gray-streams)
-                    (#:flx #:flexichain)
-                    (#:ip #:incrementalist))
+
+  (:local-nicknames
+   (#:base      #:second-climacs-base)
+   (#:ip        #:incrementalist))
+
   (:export
    #:line-length
    #:item

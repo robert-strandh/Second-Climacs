@@ -53,7 +53,7 @@
       (when (and (typep first-child 'ip:expression-wad)
                  (typep (ip:expression first-child) 'ip:symbol-token))
         (let* ((token (ip:expression first-child))
-               (pawn (find-pawn (package-name token) (ip:name token))))
+               (pawn (find-pawn (ip:package-name token) (ip:name token))))
           (unless (null pawn)
             (compute-class-option-indentation wad pawn client)))))))
 

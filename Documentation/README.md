@@ -8,6 +8,7 @@
 [the Cluffer Emacs Compatiblity]:https://github.com/robert-strandh/cluffer-emacs-compatibility
 [the Stealth mixin repository]:https://github.com/robert-strandh/Stealth-mixin
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
+[the Incrementalist repository]:https://github.com/robert-strandh/incrementalist
 
    * A LaTeX editor: (Debian) `sudo apt-get install texlive-full` or (macOS) `brew install mactex`
    * fig2dev: (Debian) `sudo apt-get install fig2dev` or (macOS) `brew install fig2dev`

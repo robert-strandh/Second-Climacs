@@ -12,6 +12,7 @@ https://github.com/robert-strandh/cluffer-emacs-compatibility
 https://github.com/robert-strandh/SICL
 https://github.com/robert-strandh/Stealth-mixin
 https://github.com/s-expressionists/Eclector
+https://github.com/robert-strandh/incrementalist
 #
 # Uncomment the following two dependencies to build the Climatis
 # (non-McClim) version of Second-CLimacs.
