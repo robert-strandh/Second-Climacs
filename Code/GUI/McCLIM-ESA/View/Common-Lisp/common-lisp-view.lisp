@@ -30,7 +30,8 @@
   (let ((text-style (clim:medium-text-style pane)))
     (values (clim:text-style-width text-style pane)
             (clim:text-style-height text-style pane)
-            (clim:text-style-ascent text-style pane))))
+            (clim:text-style-ascent text-style pane)
+            (clim:text-style-descent text-style pane))))
 
 ;;; Given a line number, return the Y coordinate of the base line of
 ;;; the line with that number.
@@ -94,17 +95,20 @@
            6 (- middle h2) 6 (- middle h1) 0 (- middle h1))
      :closed t :filled t :ink ink)))
 
-(defun draw-cursor (pane x y height)
-  (clim:draw-rectangle* pane (1- x) (- y height) (+ x 2) y
-                        :ink clim:+blue+))
+(defun draw-cursor (pane x y ascent descent)
+  (let ((width (* 1/6 (+ ascent descent))))
+    (clim:draw-rectangle* pane
+                          (- x (* 1/3 width)) (- y ascent)
+                          (+ x (* 2/3 width)) (+ y descent)
+                          :ink clim:+blue+)))
 
 ;;; Draw an interval of text from a single line.  Optimize by not
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
 (defun draw-interval (pane line-number contents start-column end-column)
-  (multiple-value-bind (width height ascent) (text-style-dimensions pane)
-    (let* ((y (+ ascent (* line-number height)))
-           (x (* start-column width))
+  (multiple-value-bind (width height ascent descent) (text-style-dimensions pane)
+    (let* ((x (* start-column width))
+           (y (+ ascent (* line-number height)))
            (clim-view (clim:stream-default-view pane))
            (climacs-view (clim-base:climacs-view clim-view))
            (cursor (base:cursor climacs-view))
@@ -121,7 +125,7 @@
       (when (and (= cursor-line-number line-number)
                  (<= start-column cursor-column-number end-column))
         (let ((cursor-x (* cursor-column-number width)))
-          (draw-cursor pane cursor-x y height))))))
+          (draw-cursor pane cursor-x y ascent descent))))))
 
 ;;; Draw an area of text defined by START-LINE-NUMBER,
 ;;; START-COLUMN-NUMBER, END-LINE-NUMBER, and END-COLUMN-NUMBER.  The
