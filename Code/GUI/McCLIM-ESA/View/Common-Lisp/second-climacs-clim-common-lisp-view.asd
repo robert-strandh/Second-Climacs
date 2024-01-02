@@ -5,8 +5,9 @@
   :serial t
   :components ((:file "packages")
                (:file "utilities")
+               (:file "drawing-utilities")
+               (:file "drawing-decorations")
+               (:file "drawing-wads")
                (:file "common-lisp-view")
-               (:file "wad-drawing")
-               (:file "error-drawing")
                (:file "common-lisp-command-table")
                (:file "indentation")))
