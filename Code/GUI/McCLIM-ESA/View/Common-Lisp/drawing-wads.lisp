@@ -1,12 +1,5 @@
 (cl:in-package #:second-climacs-clim-view-common-lisp)
 
-(stealth-mixin:define-stealth-mixin
-    presentation
-    (clim:standard-presentation)
-  ip:wad
-  ()
-  (:default-initargs :single-box t :type t))
-
 (defgeneric draw-wad (context wad start-ref cache first-line last-line))
 
 (defgeneric draw-token-wad (context wad token start-ref cache first-line last-line))
@@ -16,7 +9,7 @@
 ;;; General wads
 
 (defmethod draw-wad (context
-                     (wad presentation)
+                     (wad ip:wad)
                      start-ref
                      (cache ip:cache)
                      first-line
