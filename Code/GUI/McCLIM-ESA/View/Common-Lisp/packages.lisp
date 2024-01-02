@@ -6,6 +6,4 @@
    (#:clim-base #:second-climacs-clim-base)
    (#:base #:second-climacs-base)
    (#:cl-syntax #:second-climacs-syntax-common-lisp)
-   (#:ip #:incrementalist))
-  (:export #:move-viewport-to-cursor
-           #:move-cursor-to-viewport))
+   (#:ip #:incrementalist)))

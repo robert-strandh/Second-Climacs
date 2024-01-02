@@ -11,6 +11,7 @@
                (:file "esa-buffer")
                (:file "text-pane")
                (:file "with-current-cursor")
+               (:file "cursor-visibility")
                (:file "insert-table")
                (:file "delete-table")
                (:file "motion-table")

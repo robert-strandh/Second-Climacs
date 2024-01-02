@@ -111,7 +111,7 @@
 (defmethod clim:note-sheet-transformation-changed :after
     ((pane hrack-pane))
   (let ((pane (esa:current-window)))
-    (second-climacs-clim-view-common-lisp:move-cursor-to-viewport pane)))
+    (move-cursor-to-viewport pane)))
 
 (defmethod clim:adopt-frame :after (frame-manager (frame climacs))
   (declare (ignore frame-manager))
@@ -159,7 +159,7 @@
         (call-next-method)
         ;; This is probably wrong.  All windows may be concerned.
         (let ((pane (esa:current-window)))
-          (second-climacs-clim-view-common-lisp:move-viewport-to-cursor pane)))
+          (move-viewport-to-cursor pane)))
     (cluffer:cluffer-error (condition)
       (esa:display-message "~a" condition))
     (base:climacs-error (condition)
