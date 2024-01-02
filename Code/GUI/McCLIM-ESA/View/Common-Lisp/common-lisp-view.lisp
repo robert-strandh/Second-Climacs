@@ -193,7 +193,7 @@
       (setf sl first-line
             sc 0))
     (when (< last-line end-line)
-      (setf el end-line
+      (setf el last-line
             ec nil))
     (values sl sc el ec)))
 
