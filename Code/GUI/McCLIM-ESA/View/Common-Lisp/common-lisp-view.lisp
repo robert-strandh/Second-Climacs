@@ -112,29 +112,16 @@
            (cursor-column-number (cluffer:cursor-position cursor))
            (canonicalized-end-column-number
              (canonicalize-column-number contents end-column)))
-      ;; Maybe draw cursor rectangle at the start or at the end of the
-      ;; interval.
-      (cond ((/= cursor-line-number line-number))
-            ((= cursor-column-number start-column)
-             (draw-cursor pane x y height))
-            ((= canonicalized-end-column-number
-                cursor-column-number
-                (length contents))
-             (let ((cursor-x (* cursor-column-number width)))
-               (draw-cursor pane cursor-x y height))))
       ;; Either draw the whole interval or split the interval so that
       ;; the cursor can be drawn between the two parts.
-      (cond ((= start-column canonicalized-end-column-number))
-            ((or (not (= cursor-line-number line-number))
-                 (<= cursor-column-number start-column)
-                 (and end-column (>= cursor-column-number end-column)))
-             (clim:draw-text* pane contents x y :start start-column
-                                                :end end-column))
-            (t
-             (draw-interval pane line-number contents
-                            start-column cursor-column-number)
-             (draw-interval pane line-number contents
-                            cursor-column-number end-column))))))
+      (unless (= start-column canonicalized-end-column-number)
+        (clim:draw-text* pane contents x y :start start-column
+                                           :end end-column))
+      ;; Maybe draw cursor rectangle. TODO just do this outside of wad drawing
+      (when (and (= cursor-line-number line-number)
+                 (<= start-column cursor-column-number end-column))
+        (let ((cursor-x (* cursor-column-number width)))
+          (draw-cursor pane cursor-x y height))))))
 
 ;;; Draw an area of text defined by START-LINE-NUMBER,
 ;;; START-COLUMN-NUMBER, END-LINE-NUMBER, and END-COLUMN-NUMBER.  The
