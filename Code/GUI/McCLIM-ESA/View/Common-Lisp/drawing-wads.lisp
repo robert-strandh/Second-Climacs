@@ -44,28 +44,39 @@
     (clim:with-drawing-options (stream :ink clim:+gray50+)
       (call-next-method))))
 
-(flet ((draw-underline (context line-number wad ink thickness)
+(flet ((draw-underline (context line-number wad ink thickness dashes)
          (let* ((line-height     (line-height context))
                 (character-width (character-width context))
                 (start-column    (ip:start-column wad))
                 (end-column      (ip:end-column wad)))
            (multiple-value-bind (x y)
                (text-position context line-number start-column :include-ascent t)
-             (let ((width        (* character-width (- end-column start-column)))
-                   (thickness    (* thickness line-height)))
+             (let* ((column-count (- end-column start-column))
+                    (width        (* character-width column-count))
+                    (thickness    (* thickness line-height)))
                (clim:draw-line* (stream* context) x (+ y 2) (+ x width) (+ y 2)
                                 :ink            ink
-                                :line-thickness thickness))))))
+                                :line-thickness thickness
+                                :line-dashes    dashes))))))
+
+  (defmethod draw-wad :after (context (wad ip:word-wad)
+                              start-ref cache first-line last-line)
+    (declare (ignore cache first-line last-line))
+    (when (ip:misspelled wad)
+      (let ((dash-length (* 1/6 (line-height context))))
+        (draw-underline context start-ref wad clim:+orange+ 1/8
+                        (list (* 2 dash-length)
+                              (* 2 dash-length))))))
 
   (defmethod draw-wad :after (context (wad ip:labeled-object-definition-wad)
                               start-ref cache first-line last-line)
     (declare (ignore cache first-line last-line))
-    (draw-underline context start-ref wad clim:+foreground-ink+ 1/12))
+    (draw-underline context start-ref wad clim:+foreground-ink+ 1/12 nil))
 
   (defmethod draw-wad :after (context (wad ip:labeled-object-reference-wad)
                               start-ref cache first-line last-line)
     (declare (ignore cache first-line last-line))
-    (draw-underline context start-ref wad clim:+foreground-ink+ 1/12)))
+    (draw-underline context start-ref wad clim:+foreground-ink+ 1/12 nil)))
 
 ;;; Token wads
 
