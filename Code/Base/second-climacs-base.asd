@@ -1,6 +1,7 @@
 (defsystem "second-climacs-base"
   :depends-on ("cluffer"
-               "cluffer-emacs-compatibility")
+               "cluffer-emacs-compatibility"
+               "esa-mcclim")
   :serial t
   :components ((:file "packages")
                (:file "kill-ring")
