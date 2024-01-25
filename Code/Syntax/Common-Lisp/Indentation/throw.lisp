@@ -15,6 +15,9 @@
      (compute-form-indentation current-wad nil client)))
 
 (define-form-indentation-method
+    ('#:common-lisp '#:catch) compute-throw-indentations)
+
+(define-form-indentation-method
     ('#:common-lisp '#:throw) compute-throw-indentations)
 
 (define-form-indentation-method
