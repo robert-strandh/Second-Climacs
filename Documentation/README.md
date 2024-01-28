@@ -5,7 +5,7 @@
 1. Make sure you have installed the dependencies:
 
 [the Cluffer repository]:https://github.com/robert-strandh/Cluffer
-[the Cluffer Emacs Compatiblity]:https://github.com/robert-strandh/cluffer-emacs-compatibility
+[the text.editing repository]:https://github.com/robert-strandh/cluffer-emacs-compatibility
 [the Stealth mixin repository]:https://github.com/robert-strandh/Stealth-mixin
 [the Eclector repository]:https://github.com/s-expressionists/Eclector
 [the Incrementalist repository]:https://github.com/robert-strandh/incrementalist
@@ -15,7 +15,7 @@
    * xpdf: (Debian) `sudo apt-get install xpdf` or (macOS) `brew install xpdf`
    * (If you just installed a LaTeX editor, you may need to restart your terminal)
 
-2. Change directory to the Documentation directory: 
+2. Change directory to the Documentation directory:
    ```
    $ cd Documentation
    ```

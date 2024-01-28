@@ -2,88 +2,46 @@
 
 (clim:define-command-table delete-table)
 
-(clim:define-command
-    (com-delete-item :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:delete-item cursor)))
+(defmacro define-delete-command (name (&rest extra-parameters) &body body)
+  `(define-buffer-command (,name delete-table) ,extra-parameters
+     ,@body))
 
-(esa:set-key `(com-delete-item)
-             'delete-table
-             '((#\d :control)))
+(define-delete-command com-delete (&key (unit      'unit)
+                                        (direction 'direction))
+  (edit:perform buffer 'edit:delete unit direction))
 
-(clim:define-command
-    (com-erase-item :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:erase-item cursor)))
+(define-command-specializations (delete-table com-delete)
+  (com-kill-region      (:unit edit:region-or-item :direction :forward)  (#\w :control))
+  ;; Buffer structure units
+  (com-delete-item      (:unit edit:item           :direction :forward)  (#\d :control))
+  (com-erase-item       (:unit edit:item           :direction :backward) #\Backspace)
+  (com-kill-line        (:unit edit:semi-line      :direction :forward)  (#\k :control))
+  ;; TODO line backward is C-0 C-k in Emacs
+  (com-erase-buffer     (:unit edit:buffer         :direction :forward))
+  ;; Prose units
+  (com-delete-word      (:unit edit:word           :direction :forward)  (#\d :meta))
+  (com-erase-word       (:unit edit:word           :direction :backward) (#\Backspace :meta))
+  (com-delete-sentence  (:unit edit:sentence       :direction :forward))
+  (com-erase-sentence   (:unit edit:sentence       :direction :backward))
+  (com-delete-paragraph (:unit edit:paragraph      :direction :forward))
+  (com-erase-paragraph  (:unit edit:paragraph      :direction :backward)))
 
-(esa:set-key `(com-erase-item)
-             'delete-table
-             '((#\Backspace)))
+(define-delete-command com-delete-indentation ()
+  (edit:perform buffer 'edit:delete-indentation))
+(bind-key 'delete-table '(#\^ :meta) 'com-delete-indentation)
 
-(clim:define-command (com-delete-word :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:delete-word cursor)))
+(define-delete-command com-delete-trailing-spaces ()
+  (edit:perform buffer 'edit:delete-trailing-whitespace))
 
-(esa:set-key `(com-delete-word)
-             'delete-table
-             '((#\d :meta)))
+(define-delete-command com-fixup-whitespace ()
+  (edit:perform buffer 'edit:fixup-whitespace))
 
-(clim:define-command (com-erase-word :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (handler-bind ((error #'invoke-debugger)) (base:erase-word cursor))))
+;;; Copying and inserting
 
-(esa:set-key `(com-erase-word)
-             'delete-table
-             '((#\Backspace :meta)))
+(define-delete-command com-copy ()
+  (edit:perform buffer 'edit:copy edit:region :forward))
+(bind-key 'delete-table '(#\w :meta) 'com-copy)
 
-(clim:define-command
-    (com-kill-line :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (if (cluffer:end-of-line-p cursor)
-        (base:delete-item cursor)
-        (loop until (cluffer:end-of-line-p cursor)
-              do (base:delete-item cursor)))))
-
-(esa:set-key `(com-kill-line)
-             'delete-table
-             '((#\k :control)))
-
-(clim:define-command
-    (com-kill-region :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:kill-region cursor)))
-
-(esa:set-key `(com-kill-region)
-             'delete-table
-             '((#\w :control)))
-
-(clim:define-command
-    (com-unkill :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:unkill cursor)))
-
-(esa:set-key `(com-unkill)
-             'delete-table
-             '((#\y :control)))
-
-(clim:define-command (com-delete-indentation
-                      :name          t
-                      :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:delete-indentation cursor)))
-
-(esa:set-key `(com-delete-indentation) 'delete-table '((#\^ :meta)))
-
-(clim:define-command
-    (com-delete-trailing-spaces :name t :command-table delete-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:delete-trailing-spaces cursor)))
+(define-delete-command com-unkill ()
+  (edit:perform buffer 'edit:yank :forward))
+(bind-key 'delete-table '(#\y :control) 'com-unkill)

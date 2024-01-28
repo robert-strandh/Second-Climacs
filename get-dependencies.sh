@@ -8,8 +8,7 @@ DEPENDENCIES="
 https://github.com/robert-strandh/Acclimation
 https://github.com/robert-strandh/Clump
 https://github.com/robert-strandh/cluffer
-https://github.com/robert-strandh/cluffer-emacs-compatibility
-https://github.com/robert-strandh/SICL
+https://github.com/scymtym/text.editing
 https://github.com/robert-strandh/Stealth-mixin
 https://github.com/s-expressionists/Eclector
 https://github.com/robert-strandh/incrementalist

@@ -25,26 +25,21 @@ Second Climacs:
    compiler.
 
  * Climacs depends on McCLIM for its graphic user interface.  Second
-    Climacs is independent of any particular library for making
-    graphic user interfaces, allowing it to be configured with
-    different such libraries.  Though, at the moment, the only graphic
-    user interface that exists uses McCLIM.
+   Climacs is independent of any particular library for making graphic
+   user interfaces, allowing it to be configured with different such
+   libraries.  Though, at the moment, the only graphic user interface
+   that exists uses McCLIM.
+
 ## Quick Start
 
 1. Make sure you have installed the dependencies:
 
-[the Cluffer repository]:https://github.com/robert-strandh/Cluffer
-[the Cluffer Emacs Compatiblity]:https://github.com/robert-strandh/cluffer-emacs-compatibility
-[the Stealth mixin repository]:https://github.com/robert-strandh/Stealth-mixin
-[the Eclector repository]:https://github.com/s-expressionists/Eclector
-[the Incrementalist repository]:https://github.com/robert-strandh/incrementalist
-
    * A recent 64-bit version of SBCL
-   * The system "cluffer" from [the Cluffer repository]
-   * The system "cluffer-emacs-compatibility" from [the Cluffer Emacs Compatiblity]
-   * The system "stealth-mixin", from [the Stealth mixin repository]
-   * The system "eclector", from [the Eclector repository]
-   * The system "incrementalist" from [the Incrementalist repository]
+   * the [Cluffer repository]:https://github.com/robert-strandh/Cluffer
+   * the [text.editing repository]:https://github.com/robert-strandh/cluffer-emacs-compatibility
+   * the [Stealth mixin repository]:https://github.com/robert-strandh/Stealth-mixin
+   * the [Eclector repository]:https://github.com/s-expressionists/Eclector
+   * the [Incrementalist repository]:https://github.com/robert-strandh/incrementalist
 
 The bash script `get-dependencies.sh` will do this work for you.
 

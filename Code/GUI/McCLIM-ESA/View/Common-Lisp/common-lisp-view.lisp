@@ -26,30 +26,29 @@
 
 (defmethod render-cache ((cache output-history) pane
                          first-line last-line max-column)
-  (let* ((view               (clim:stream-default-view pane))
-         (climacs-view       (clim-base:climacs-view view))
-         (point              (base:cursor climacs-view))
-         (mark               (base:mark (ip:buffer (base:analyzer climacs-view))))
-         (context            (make-instance 'context :stream pane))
-         (*drawn-error-wads* '()))
-    (draw-region context point mark first-line last-line max-column)
-    (ip:map-wads-and-spaces
-     cache first-line last-line
-     (lambda (wad)
-       (draw-wad context wad (ip:absolute-start-line-number wad)
-                 cache first-line last-line))
-     (lambda (line start-column end-column)
-       (draw-interval
-        context line (ip:line-contents cache line) start-column end-column)))
-    (draw-error-wads context *drawn-error-wads*)
-    (flet ((draw-cursor (cursor)
-             (let ((line (cluffer:line-number cursor)))
-               (when (<= first-line line last-line)
-                 (let ((column (cluffer:cursor-position cursor))
-                       (role   (if (eq cursor point) :point :active-mark)))
-                   (draw-cursor context line column :role role))))))
-      (draw-cursor point)
-      (unless (null mark) (draw-cursor mark)))))
+  (let* ((view         (clim:stream-default-view pane))
+         (climacs-view (clim-base:climacs-view view))
+         (analyzer     (base:analyzer climacs-view))
+         (buffer       (ip:buffer analyzer))
+         (context      (make-instance 'context :stream pane)))
+    ;; Draw region rectangles first, that is beneath everything.
+    (draw-regions context buffer first-line last-line max-column)
+    ;; Draw wads and buffer content.
+    (let ((*drawn-error-wads* '()))
+      ;; Draw wads, noting any errors.
+      (ip:map-wads-and-spaces
+       cache first-line last-line
+       (lambda (wad)
+         (draw-wad context wad (ip:absolute-start-line-number wad)
+                   cache first-line last-line))
+       (lambda (line start-column end-column)
+         (draw-interval
+          context line (ip:line-contents cache line) start-column end-column)))
+      ;; Draw error decorations (in buffer) annotations (near cursor)
+      ;; and gutter indicators.
+      (draw-error-wads context *drawn-error-wads*))
+    ;; Draw point and mark cursors atop everything else.
+    (draw-cursors context buffer first-line last-line)))
 
 (defmethod draw-wad :before (context wad start-ref cache first-line last-line)
   (declare (ignore cache first-line last-line))
@@ -143,7 +142,6 @@
   ;; For now, do nothing.
   nil)
 
-(defmethod base:update-view-from-analyzer
-    ((view cl-syntax:view)
-     (analyzer ip:analyzer))
+(defmethod base:update-view-from-analyzer ((view cl-syntax:view)
+                                           (analyzer ip:analyzer))
   (ip:update-cache analyzer))

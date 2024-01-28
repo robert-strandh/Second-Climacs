@@ -4,24 +4,35 @@
 
 (defun draw-region (context point mark first-line last-line max-column
                     &key (kind :primary))
-  (unless (null mark)
-    (multiple-value-bind (from to) (if (cluffer:cursor< point mark)
-                                       (values point mark)
-                                       (values mark point))
-      (multiple-value-bind (start-line start-column end-line end-column)
-          (filter-area
-           (cluffer:line-number from) (cluffer:cursor-position from)
-           (cluffer:line-number to)   (cluffer:cursor-position to)
-           first-line last-line)
-        ;; END-COLUMN is `nil' when the line which contains TO is
-        ;; after LAST-LINE.
-        (let ((end-column (or end-column max-column))
-              (ink        (ecase kind
-                            (:primary   clim:+light-blue+)
-                            (:secondary clim:+light-gray+))))
-          (draw-multiple-line-rectangle
-           context start-line start-column end-line end-column max-column
-           :ink ink :include-descent t))))))
+  (multiple-value-bind (from to) (if (cluffer:cursor< point mark)
+                                     (values point mark)
+                                     (values mark point))
+    (multiple-value-bind (start-line start-column end-line end-column)
+        (filter-area
+         (cluffer:line-number from) (cluffer:cursor-position from)
+         (cluffer:line-number to)   (cluffer:cursor-position to)
+         first-line last-line)
+      ;; END-COLUMN is `nil' when the line which contains TO is
+      ;; after LAST-LINE.
+      (let ((end-column (or end-column max-column))
+            (ink        (ecase kind
+                          (:primary   clim:+light-blue+)
+                          (:secondary clim:+light-gray+))))
+        (draw-multiple-line-rectangle
+         context start-line start-column end-line end-column max-column
+         :ink ink :include-descent t)))))
+
+(defun draw-regions (context buffer first-line last-line max-column)
+  (let ((primary-site (text.editing:site buffer)))
+    (text.editing:map-sites
+     (lambda (site)
+       (when (text.editing:mark-active-p site)
+         (let ((point (text.editing:point site))
+               (mark  (text.editing:mark site))
+               (kind  (if (eq site primary-site) :primary :secondary)))
+           (draw-region context point mark first-line last-line max-column
+                        :kind kind))))
+     buffer)))
 
 ;;; Cursor
 
@@ -55,6 +66,31 @@
           (descent (descent context)))
       (apply #'draw-cursor* (stream* context) x y
              :ascent ascent :descent descent args))))
+
+(defun draw-cursors (context buffer first-line last-line)
+  (labels ((maybe-draw-cursor (cursor role kind)
+             (let ((cursor-line-number (cluffer:line-number cursor)))
+               (when (<= first-line cursor-line-number last-line)
+                 (let ((cursor-column-number (cluffer:cursor-position cursor)))
+                   (draw-cursor context cursor-line-number cursor-column-number
+                                :role role :kind kind)))))
+           (draw-site (site kind)
+             (let ((point (text.editing:point site))
+                   (mark  (text.editing:mark site)))
+               (maybe-draw-cursor point :point kind)
+               (when mark
+                 (let ((role (if (text.editing:mark-active-p site)
+                                 :active-mark
+                                 :inactive-mark)))
+                   (maybe-draw-cursor mark role kind)))
+               (mapc (alexandria:rcurry
+                      #'maybe-draw-cursor :inactive-mark :other)
+                     (text.editing::mark-stack site)))))
+    (let ((primary-site (text.editing:site buffer)))
+      (text.editing:map-sites
+       (lambda (site)
+         (draw-site site (if (eq site primary-site) :primary :secondary)))
+       buffer))))
 
 ;;; Errors
 
@@ -151,21 +187,21 @@
 ;;; Popups that appear when the cursor is position in an error wad.
 
 (defun draw-error-annotations (context error-wad-clusters)
-  ;; TODO get the cursor in some other way
   (let* ((clim-view    (clim:stream-default-view (stream* context)))
          (climacs-view (clim-base:climacs-view clim-view))
-         (cursor       (base:cursor climacs-view)))
-    (multiple-value-bind (cursor-line cursor-column)
-        (base:cursor-positions cursor)
-      (loop :for cluster    :in error-wad-clusters
-            :for wad        =   (first cluster)
-            :for start-line =   (ip:absolute-start-line-number wad)
-            :when (and (= start-line cursor-line)
-                       (<= (ip:start-column wad)
-                           cursor-column
-                           (ip:end-column wad)))
-              :do (draw-error-cluster-annotation
-                   context start-line cursor-column cluster)))))
+         (site         (base:site climacs-view))
+         (point        (edit:point site)))
+    (loop :with cursor-line   =   (cluffer:line-number point)
+          :with cursor-column =   (cluffer:cursor-position point)
+          :for cluster        :in error-wad-clusters
+          :for wad            =   (first cluster)
+          :for start-line     =   (ip:absolute-start-line-number wad)
+          :when (and (= start-line cursor-line)
+                     (<= (ip:start-column wad)
+                         cursor-column
+                         (ip:end-column wad)))
+            :do (draw-error-cluster-annotation
+                 context start-line cursor-column cluster))))
 
 (defun draw-error-cluster-annotation (context line column error-wad-cluster)
   (let ((conditions (mapcar #'ip::condition* error-wad-cluster)))

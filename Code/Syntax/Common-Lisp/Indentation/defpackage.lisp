@@ -41,7 +41,7 @@
      (next)
    option
      (maybe-assign-indentation 2 2)
-     (compute-defpackage-option-indentation current-wad nil client)
+     ; (compute-defpackage-option-indentation current-wad nil client)
      (next)
      (go option)))
 

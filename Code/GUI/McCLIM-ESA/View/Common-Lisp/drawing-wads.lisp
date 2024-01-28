@@ -195,12 +195,15 @@
 
 (defmethod draw-compound-wad :after
     (context (wad ip:expression-wad) start-ref cache first-line last-line)
-  (let* ((expression (ip:expression wad))
-         (pane (stream* context))
-         (clim-view (clim:stream-default-view pane))
-         (climacs-view (clim-base:climacs-view clim-view))
-         (cursor (base:cursor climacs-view))
-         (cursor-line-number (cluffer:line-number cursor))
+  ;; TODO remember point and mark lines in context to avoid the repeated lookups
+  (let* ((expression           (ip:expression wad))
+         (pane                 (stream* context))
+         (clim-view            (clim:stream-default-view pane))
+         (climacs-view         (clim-base:climacs-view clim-view))
+         (analyzer             (base:analyzer climacs-view))
+         (buffer               (ip:buffer analyzer))
+         (cursor               (text.editing:point buffer))
+         (cursor-line-number   (cluffer:line-number cursor))
          (cursor-column-number (cluffer:cursor-position cursor)))
     (when (and (consp expression)
                (= (+ start-ref (ip:height wad)) cursor-line-number)

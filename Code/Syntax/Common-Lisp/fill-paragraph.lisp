@@ -19,12 +19,11 @@
          (end-line     (ip:end-line last))
          (end-column   (ip:end-column last))
          (words        (collect-words wads)))
-    (let ((end-cursor (make-instance 'base:standard-cursor :buffer buffer)))
-      (base:set-cursor-positions cursor start-line start-column)
-      (cluffer:attach-cursor
-       end-cursor (cluffer:find-line buffer end-line) end-column)
-      (apply #'base:fill-words cursor end-cursor words args)
-      (cluffer:detach-cursor end-cursor))))
+    (text.editing:move-cursor-to-line cursor start-line start-column)
+    (text.editing:with-temporary-cursor
+        (end-cursor buffer :line     end-line
+                           :position end-column)
+      (apply #'text.editing:fill-words cursor end-cursor words args))))
 
 (defun fill-semicolon-comment-using-wads (wads buffer cursor)
   (let* ((first           (first wads))
