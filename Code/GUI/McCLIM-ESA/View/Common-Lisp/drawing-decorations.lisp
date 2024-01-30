@@ -85,12 +85,49 @@
                    (maybe-draw-cursor mark role kind)))
                (mapc (alexandria:rcurry
                       #'maybe-draw-cursor :inactive-mark :other)
-                     (text.editing::mark-stack site)))))
+                     (text.editing:mark-stack site)))))
     (let ((primary-site (text.editing:site buffer)))
       (text.editing:map-sites
        (lambda (site)
          (draw-site site (if (eq site primary-site) :primary :secondary)))
        buffer))))
+
+;;; Search state
+
+(defun draw-match (context match start-line start-column end-line end-column
+                   activep max-column)
+  (declare (ignore match))
+  (let ((ink       (if activep clim:+red+ clim:+salmon+))
+        (thickness (if activep 2 1)))
+    (draw-multiple-line-rectangle
+     context start-line start-column end-line end-column max-column
+     :ink ink :filled nil :line-thickness thickness :x2-offset -2)))
+
+(defun draw-search-state (context buffer first-line last-line)
+  (alexandria:when-let* ((search-state (text.editing.search:search-state buffer))
+                         (matches      (text.editing.search:matches search-state)))
+    (let ((match->site (make-hash-table)))
+      (text.editing:map-sites
+       (lambda (site)
+         (alexandria:when-let ((match (text.editing.search:match site)))
+           (setf (gethash match match->site) site)))
+       buffer)
+      (loop :for match :across matches
+            :for start = (text.editing.search:start match)
+            :for end = (text.editing.search:end match)
+            :for start-line = (cluffer:line-number start)
+            :for end-line = (cluffer:line-number end)
+            :unless (or (< end-line first-line) (< last-line start-line))
+              :do (let ((start-column (cluffer:cursor-position start))
+                        (end-column   (cluffer:cursor-position end))
+                        (active?      (gethash match match->site))
+                        (max-column   (lambda (line-number)
+                                        (let ((line (cluffer:find-line
+                                                     buffer line-number)))
+                                         (cluffer:item-count line)))))
+                    (draw-match context match
+                                start-line start-column end-line end-column
+                                active? max-column))))))
 
 ;;; Errors
 

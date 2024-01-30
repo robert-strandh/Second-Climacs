@@ -3,7 +3,8 @@
 ;;; A STANDARD-BUFFER is a buffer that is restricted to contain a
 ;;; Cluffer buffer.
 
-(defclass standard-buffer (e:multiple-site-mixin
+(defclass standard-buffer (text.editing.search:search-state-mixin
+                           e:multiple-site-mixin
                            e:site-mixin
                            cluffer-standard-buffer:buffer
                            buffer)

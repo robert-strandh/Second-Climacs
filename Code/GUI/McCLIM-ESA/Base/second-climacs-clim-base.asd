@@ -17,5 +17,6 @@
                (:file "insert-table")
                (:file "delete-table")
                (:file "motion-table")
+               (:file "search-table")
                (:file "transform-table")
                (:file "global-command-table")))

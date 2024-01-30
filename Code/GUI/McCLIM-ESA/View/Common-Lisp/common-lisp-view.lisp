@@ -15,8 +15,11 @@
     (make-instance 'common-lisp-view :output-history cache
                                      :climacs-view view)))
 
-(defmethod clim-base:command-table ((view  cl-syntax:view))
-  (clim:find-command-table 'common-lisp-table))
+(defmethod clim-base:command-table ((view cl-syntax:view))
+  (let ((buffer (ip:buffer (base:analyzer view))))
+    (if (text.editing.search:search-state buffer)
+        (clim:find-command-table 'clim-base::incremental-search-table)
+        (clim:find-command-table 'common-lisp-table))))
 
 (defgeneric render-cache (cache pane first-line last-line max-column))
 
@@ -47,8 +50,10 @@
       ;; Draw error decorations (in buffer) annotations (near cursor)
       ;; and gutter indicators.
       (draw-error-wads context *drawn-error-wads*))
-    ;; Draw point and mark cursors atop everything else.
-    (draw-cursors context buffer first-line last-line)))
+    ;; Draw point and mark cursors and possibly search state atop
+    ;; everything else.
+    (draw-cursors context buffer first-line last-line)
+    (draw-search-state context buffer first-line last-line)))
 
 (defmethod draw-wad :before (context wad start-ref cache first-line last-line)
   (declare (ignore cache first-line last-line))

@@ -5,7 +5,8 @@
                  clim-base:ascii-insert-table
                  clim-base:delete-table
                  clim-base:motion-table
-                 clim-base::transform-table))
+                 clim-base::transform-table
+                 clim-base::search-table))
 
 #+no (clim:define-command
     (com-beginning-of-top-level-expression
