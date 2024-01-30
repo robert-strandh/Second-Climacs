@@ -203,17 +203,37 @@
          (analyzer             (base:analyzer climacs-view))
          (buffer               (ip:buffer analyzer))
          (cursor               (text.editing:point buffer))
-         (cursor-line-number   (cluffer:line-number cursor))
-         (cursor-column-number (cluffer:cursor-position cursor)))
-    (when (and (consp expression)
-               (= (+ start-ref (ip:height wad)) cursor-line-number)
-               (= (ip:end-column wad) cursor-column-number))
-      (unless (wad-is-incomplete-p wad)
-        (let ((wad-start-column (ip:start-column wad)))
-          (clim:with-text-face (pane :bold)
+         (cursor-line-number   nil) ; expensive to compute
+         (cursor-column-number (cluffer:cursor-position cursor))
+         (wad-start-line       start-ref)
+         (wad-start-column     (ip:start-column wad))
+         (wad-end-line         (+ wad-start-line (ip:height wad)))
+         (wad-end-column       (ip:end-column wad)))
+    (when (and (typep expression '(or cons string vector))
+               (or (and (= wad-end-column   cursor-column-number)
+                        (= wad-end-line     (setf cursor-line-number
+                                                  (cluffer:line-number
+                                                   cursor))))
+                   (and (= wad-start-column cursor-column-number)
+                        (= wad-start-line   (or cursor-line-number
+                                                (setf cursor-line-number
+                                                      (cluffer:line-number
+                                                       cursor)))))))
+      ;; `wad-is-incomplete-p' is expensive.
+      (let* ((completep (not (wad-is-incomplete-p wad)))
+             (ink       (if completep
+                            clim:+green+
+                            clim:+red+)))
+        (clim:with-drawing-options (pane :text-face :bold :ink ink)
+          ;; Highlight opening delimiter.
+          (draw-area context cache
+                     wad-start-line wad-start-column
+                     wad-start-line (1+ wad-start-column))
+          ;; Highlight closing delimiter if complete.
+          (when (and completep (plusp wad-end-column))
             (draw-area context cache
-                       start-ref wad-start-column
-                       start-ref (1+ wad-start-column))))))))
+                       wad-end-line (1- wad-end-column)
+                       wad-end-line wad-end-column)))))))
 
 ;;; Buffer content drawing
 
