@@ -7,5 +7,4 @@
                "trucler-native")
   :serial t
   :components
-  ((:file "packages")
-   (:file "wad-to-cst")))
+  ((:file "packages")))

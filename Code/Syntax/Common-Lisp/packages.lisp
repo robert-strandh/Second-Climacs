@@ -14,7 +14,6 @@
    #:common-lisp-view
    #:set-common-lisp-mode
    #:view
-   #:wad-to-cst
 
    #:indent-line
 
