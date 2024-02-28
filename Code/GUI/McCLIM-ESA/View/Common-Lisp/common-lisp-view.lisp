@@ -118,7 +118,7 @@
   nil)
 
 (defmethod clim-base:update-view (pane (view common-lisp-view))
-  (clim-internals::with-output-buffered (pane)
+  (progn ; clim-internals::with-output-buffered (pane)
     (let ((history (clim:stream-output-history pane))
           (gutter (clim-base:left-gutter pane)))
       (base:update-view (clim-base:climacs-view view))

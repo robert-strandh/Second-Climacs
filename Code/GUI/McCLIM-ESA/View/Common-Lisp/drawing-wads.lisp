@@ -81,14 +81,6 @@
 ;;; Token wads
 
 (defmethod draw-token-wad :around
-    (context wad (token ip:numeric-token)
-     start-ref cache first-line last-line)
-  (declare (ignore wad start-ref cache first-line last-line))
-  (let ((stream (stream* context)))
-    (clim:with-drawing-options (stream :ink clim:+dark-blue+)
-      (call-next-method))))
-
-(defmethod draw-token-wad :around
     (context wad (token ip:existing-symbol-token)
      start-ref cache first-line last-line)
   (declare (ignore wad start-ref cache first-line last-line))
@@ -141,6 +133,9 @@
 (defmethod draw-compound-wad :around (context (wad ip:expression-wad)
                                       start-ref cache first-line last-line)
   (typecase (ip:expression wad)
+    (number (let ((stream (stream* context)))
+              (clim:with-drawing-options (stream :ink clim:+dark-blue+)
+                (call-next-method))))
     (string (let ((stream (stream* context)))
               (clim:with-drawing-options (stream :ink clim:+dark-goldenrod+)
                 (call-next-method))))
