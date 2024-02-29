@@ -6,10 +6,7 @@
 (defclass view (base:view) ())
 
 (defmethod initialize-instance :after ((instance view) &key buffer)
-  (let* ((cache (make-instance 'ip:cache :cluffer-buffer buffer))
-         (analyzer (make-instance 'ip:analyzer :lines (ip:lines cache)
-                                               :cache cache
-                                               :buffer buffer)))
+  (let ((analyzer (make-instance 'ip:analyzer :buffer buffer)))
     (reinitialize-instance instance :analyzer analyzer)))
 
 (defmethod base:view-name ((view view))
