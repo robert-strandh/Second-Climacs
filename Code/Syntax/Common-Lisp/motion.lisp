@@ -16,9 +16,9 @@
         (if (null parent)
             (error 'already-at-top-level)
             (base:set-cursor-positions
-             cursor (ip:absolute-start-line-number parent) (ip:start-column parent)))
+             cursor (ip:absolute-start-line parent) (ip:start-column parent)))
         (base:set-cursor-positions
-         cursor (ip:absolute-start-line-number current) (ip:start-column current)))))
+         cursor (ip:absolute-start-line current) (ip:start-column current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -67,9 +67,9 @@
         (if (null previous)
             (error 'no-following-expression)
             (base:set-cursor-positions
-             cursor (ip:absolute-start-line-number previous) (ip:start-column previous)))
+             cursor (ip:absolute-start-line previous) (ip:start-column previous)))
         (base:set-cursor-positions
-         cursor (ip:absolute-start-line-number current) (ip:start-column current)))))
+         cursor (ip:absolute-start-line current) (ip:start-column current)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

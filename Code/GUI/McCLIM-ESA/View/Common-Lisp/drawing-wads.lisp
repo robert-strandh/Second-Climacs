@@ -149,7 +149,7 @@
           (prev-end-line start-ref)
           (prev-end-column (start-column wad)))
       (loop for child             in children
-            for start-line-number =  (ip:absolute-start-line-number child)
+            for start-line-number =  (ip:absolute-start-line child)
             for height            =  (height child)
             until (> start-line-number last-line)
             do ;; Ensure that only at least partially visible wads are
@@ -184,7 +184,7 @@
 (defun wad-is-incomplete-p (wad)
   (loop for child in (ip:children wad)
           thereis (or (and (typep child 'ip:error-wad)
-                           (typep (ip::condition* child)
+                           (typep (ip:condition child)
                                   'eclector.reader:unterminated-list))
                       (wad-is-incomplete-p child))))
 

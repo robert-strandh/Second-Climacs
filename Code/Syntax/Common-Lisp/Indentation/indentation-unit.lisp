@@ -33,7 +33,7 @@
 ;;;   * the operator of the parent wad of W, and
 ;;;   * the number and nature of the expression wads preceding it in
 ;;;     the list of siblings.
-;;;   
+;;;
 ;;; Here, since no expression wad exists, some default rule must be
 ;;; applied.  For example, in the body of a function, if no
 ;;; declaration and no documentation string precedes U, then the
@@ -48,9 +48,8 @@
       (ip:height wad)))
 
 (defun wads-are-on-different-lines-p (wad1 wad2)
-  (/= (+ (ip:absolute-start-line-number wad1)
-         (effective-height wad1))
-      (ip:absolute-start-line-number wad2)))
+  (/= (+ (ip:absolute-start-line wad1) (effective-height wad1))
+      (ip:absolute-start-line wad2)))
 
 (defun compute-indentation-units (wads)
   (if (null wads)
@@ -79,11 +78,11 @@
 (defun wad-is-first-on-start-line-p (wad)
   (if (null (ip:left-sibling wad))
       (or (null (ip:parent wad))
-          (/= (ip:absolute-start-line-number (ip:parent wad))
-              (ip:absolute-start-line-number wad)))
-      (/= (+ (ip:absolute-start-line-number (ip:left-sibling wad))
+          (/= (ip:absolute-start-line (ip:parent wad))
+              (ip:absolute-start-line wad)))
+      (/= (+ (ip:absolute-start-line (ip:left-sibling wad))
              (effective-height (ip:left-sibling wad)))
-          (ip:absolute-start-line-number wad))))
+          (ip:absolute-start-line wad))))
 
 (defun assign-indentation-of-wads-in-unit (indentation-unit indentation)
   (when (wad-is-first-on-start-line-p (first indentation-unit))

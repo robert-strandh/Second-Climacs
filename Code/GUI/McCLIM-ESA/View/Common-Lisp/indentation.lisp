@@ -7,7 +7,7 @@
          (climacs-view (clim-base:climacs-view view))
          (analyzer (base:analyzer climacs-view))
          (cache (ip:cache analyzer)))
-    (ip:update-cache analyzer)
+    (ip:update analyzer)
     (clim-base:with-current-cursor (cursor)
       (cl-syntax:indent-line cache cursor))))
 

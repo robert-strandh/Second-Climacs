@@ -42,7 +42,7 @@
       (ip:map-wads-and-spaces
        cache first-line last-line
        (lambda (wad)
-         (draw-wad context wad (ip:absolute-start-line-number wad)
+         (draw-wad context wad (ip:absolute-start-line wad)
                    cache first-line last-line))
        (lambda (line start-column end-column)
          (draw-interval
@@ -149,4 +149,4 @@
 
 (defmethod base:update-view-from-analyzer ((view cl-syntax:view)
                                            (analyzer ip:analyzer))
-  (ip:update-cache analyzer))
+  (ip:update analyzer))
