@@ -31,8 +31,10 @@
 (clim:define-command
     (com-fill-paragraph :name t :command-table common-lisp-table)
     ()
-  (with-current-cursor-and-cache (cursor cache)
-    (cl-syntax:fill-paragraph cache cursor)))
+  (let* ((buffer   (clim-base::current-buffer))
+         (view     (clim-base::current-view))
+         (analyzer (base:analyzer view)))
+    (edit:perform buffer 'cl-syntax:fill-paragraph analyzer)))
 (esa:set-key `(com-fill-paragraph) 'common-lisp-table '((#\q :meta)))
 
 (clim:define-command

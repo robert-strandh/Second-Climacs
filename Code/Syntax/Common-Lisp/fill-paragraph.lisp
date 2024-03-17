@@ -1,8 +1,8 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(define-condition not-in-comment (base:climacs-error)
+(define-condition not-in-paragraph-context (base:climacs-error)
   ()
-  (:report "Not in comment"))
+  (:report "Point is not in a context that can be interpreted as a text paragraph."))
 
 (defun collect-words (wads)
   (mapcar #'ip:items (alexandria:mappend #'ip:children wads)))
@@ -16,7 +16,7 @@
          (start-line   (ip:absolute-start-line first))
          (start-column (ip:start-column first))
          (last         (first (last wads)))
-         (end-line     (ip:end-line last))
+         (end-line     (+ (ip:absolute-start-line last) (ip:height last)))
          (end-column   (ip:end-column last))
          (words        (collect-words wads)))
     (text.editing:move-cursor-to-line cursor start-line start-column)
@@ -25,19 +25,20 @@
                            :position end-column)
       (apply #'text.editing:fill-words cursor end-cursor words args))))
 
+;;; Semicolon comments
+
 (defun fill-semicolon-comment-using-wads (wads buffer cursor)
   (let* ((first           (first wads))
          (start-column    (ip:start-column first))
          (semicolon-count (ip:semicolon-count first))
-         (prefix          (format nil "~V,,,';<~>" semicolon-count))
-         (per-line-prefix (format nil "~V<~>~V,,,';<~>"
-                                  start-column semicolon-count)))
+         (space-count     1)
+         (prefix          (format nil "~V,,,';<~>~V<~>"
+                                  semicolon-count space-count))
+         (per-line-prefix (format nil "~V<~>~A" start-column prefix)))
     (fill-paragraph-using-wads
-     wads buffer cursor :prefix prefix :per-line-prefix per-line-prefix)))
-
-(defun fill-paragraph-candidate-p (wad)
-  (and (not (null wad))
-       (typep wad 'ip:semicolon-comment-wad)))
+     wads buffer cursor :prefix          prefix
+                        :per-line-prefix per-line-prefix
+                        :suffix          #.(string #\Newline))))
 
 ;;; When this function is called, either the cursor is in a top-level
 ;;; semicolon comment wad so that the current wad is not NIL, or it is
@@ -62,8 +63,7 @@
                     (/= (ip:semicolon-count left-sibling)
                         (ip:semicolon-count start-wad)))
           do (setf start-wad left-sibling))
-    ;; Now collect wad descriptors of all the wads in the comment
-    ;; block.
+    ;; Now collect all the wads in the comment block.
     (let ((wads
             (loop for wad = start-wad then (ip:right-sibling wad)
                   for next = (ip:right-sibling wad) then (ip:right-sibling next)
@@ -94,17 +94,73 @@
           do (push next wads))
     (fill-semicolon-comment-using-wads (reverse wads) buffer cursor)))
 
-(defun fill-paragraph (cache cursor)
-  (let* ((cursor-line    (cluffer:line-number cursor))
-         (cursor-column  (cluffer:cursor-position cursor))
-         (current        (cdr (first (ip:find-wads-containing-position
-                                      cache cursor-line cursor-column))))
-         (next           (unless (null current)
-                           (ip:right-sibling current))))
+;;; Block comments
+
+(defun fill-block-comment (wad buffer cursor)
+  (fill-paragraph-using-wads (list wad) buffer cursor :prefix          "#|"
+                                                      :per-line-prefix "  "
+                                                      :suffix          "|#"))
+
+;;; String literal
+
+(defun fill-string-literal (wad buffer cursor)
+  (fill-paragraph-using-wads (list wad) buffer cursor :prefix          "\""
+                                                      :per-line-prefix ""
+                                                      :suffix          "\""))
+
+;;; Predicates
+
+(defun comment-wad-p (maybe-wad)
+  (and (not (null maybe-wad))
+       (typep maybe-wad 'ip:comment-wad)))
+
+(defun block-comment-wad-p (maybe-wad)
+  (and (not (null maybe-wad))
+       (typep maybe-wad 'ip:block-comment-wad)))
+
+(defun string-wad-p (maybe-wad)
+  (and (not (null maybe-wad))
+       (typep maybe-wad 'ip:cst-wad)
+       (stringp (cst:raw maybe-wad))))
+
+(defun fill-paragraph-candidate-p (maybe-wad)
+  (or (comment-wad-p maybe-wad)
+      (string-wad-p maybe-wad)))
+
+(defun fill-paragraph (cursor analyzer)
+  ;; FILL-PARAGRAPH may have been performed on other sites as part of
+  ;; the command that caused this call.  In that case, the buffer
+  ;; content may have changed compared to the start of the command
+  ;; execution and the wad graph in the cache of ANALYZER may no
+  ;; longer represent the buffer content.  To ensure that the wad
+  ;; graph around CURSOR is up-to-date with respect to the buffer
+  ;; content, update analyzer before working with the cache.
+  ;; TODO find a more general solution
+  (ip:update analyzer)
+  (let* ((cache         (ip:cache analyzer))
+         (cursor-line   (cluffer:line-number cursor))
+         (cursor-column (cluffer:cursor-position cursor))
+         (current       (cdr (first (ip:find-wads-containing-position
+                                     cache cursor-line cursor-column))))
+         (current       (if (typep current 'ip:word-wad)
+                            (ip:parent current)
+                            current))
+         (next          (unless (null current)
+                          (ip:right-sibling current))))
+    ;; TODO incrementalist should provide a function for this
+    (labels ((top-level-wad (wad)
+               (or (ip:parent wad) wad)))
+      (loop with top-level-wad = (top-level-wad current)
+            while (or (ip::relative-p top-level-wad)
+                      (eq top-level-wad (first (ip::suffix cache))))
+            do (ip::suffix-to-prefix cache)))
+
     (when (or ;; If the cursor is inside an atomic wad, but that wad
-              ;; is not a semicolon comment wad, then it is an error.
+              ;; is neither a semicolon comment wad nor a string wad,
+              ;; then it is an error.
               (and (not (null current))
-                   (not (typep current 'ip:comment-wad)))
+                   (not (or (comment-wad-p current)
+                            (string-wad-p current))))
               ;; The other possibility for an error is that the
               ;; current wad is NIL, and either the next wad is not a
               ;; semicolon comment wad, or it is a semicolon comment
@@ -113,16 +169,16 @@
                    (or (not (fill-paragraph-candidate-p next))
                        (not (= cursor-line
                                (ip:absolute-start-line next))))))
-      (error 'not-in-comment))
+      (error 'not-in-paragraph-context))
     (let ((buffer (cluffer:buffer cursor)))
-      (cond ((and current (typep current 'ip:block-comment-wad))
-             (fill-paragraph-using-wads
-              (list current) buffer cursor :prefix          "#|"
-                                           :per-line-prefix "  "
-                                           :suffix          "|#"))
+      (cond ((block-comment-wad-p current)
+             (fill-block-comment current buffer cursor))
+            ((string-wad-p current)
+             (fill-string-literal current buffer cursor))
+            ;; Different kinds of semicolon comments.
             ((null (ip:parent current))
-             (fill-paragraph-top-level current next buffer cursor))
+             (fill-semicolon-comment-top-level current next buffer cursor))
             ((null current)
-             (fill-paragraph-non-top-level next buffer cursor))
+             (fill-semicolon-comment-non-top-level next buffer cursor))
             (t
-             (fill-paragraph-non-top-level current buffer cursor))))))
+             (fill-semicolon-comment-non-top-level current buffer cursor))))))
