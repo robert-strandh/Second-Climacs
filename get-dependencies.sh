@@ -5,19 +5,10 @@ set -euo pipefail
 # Add dependencies URLs here
 #
 DEPENDENCIES="
-https://github.com/robert-strandh/Acclimation
-https://github.com/robert-strandh/Clump
 https://github.com/robert-strandh/cluffer
 https://github.com/scymtym/text.editing
-https://github.com/robert-strandh/Stealth-mixin
 https://github.com/s-expressionists/Eclector
-https://github.com/robert-strandh/incrementalist
-#
-# Uncomment the following two dependencies to build the Climatis
-# (non-McClim) version of Second-CLimacs.
-#
-# https://github.com/robert-strandh/Climatis
-# https://github.com/Shinmera/trivial-benchmark
+https://github.com/s-expressionists/incrementalist
 "
 
 PROJECTS_DIRECTORY=${1:-"$HOME/quicklisp/local-projects/"}
