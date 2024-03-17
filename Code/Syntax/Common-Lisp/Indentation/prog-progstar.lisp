@@ -11,7 +11,7 @@
      (compute-bindings-indentation current-wad client)
      (next)
    declaration-or-tag-or-statement
-     (when (and (consp (ip:expression current-wad))
+     (when (and (consp (cst:raw current-wad))
                 (wad-represents-symbol-p
                  (first (ip:children current-wad))
                  'declare))
@@ -20,7 +20,7 @@
        (next)
        (go declaration-or-tag-or-statement))
    tag-or-form
-     (if (atom (ip:expression current-wad))
+     (if (atom (cst:raw current-wad))
          ;; We have a label.
          (maybe-assign-indentation 2 4)
          ;; We have a form.

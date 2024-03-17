@@ -17,7 +17,7 @@
      (compute-lambda-list-indentation current-wad client)
      (next)
    declaration-or-form
-     (when (and (consp (ip:expression current-wad))
+     (when (and (consp (cst:raw current-wad))
                 (wad-represents-symbol-p
                  (first (ip:children current-wad))
                  'declare))

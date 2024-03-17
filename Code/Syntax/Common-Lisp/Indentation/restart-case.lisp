@@ -12,7 +12,7 @@
      (compute-lambda-list-indentation current-wad client)
      (next)
    option-or-declaration-or-form
-     (let ((expression (ip:expression current-wad)))
+     (let ((expression (cst:raw current-wad)))
        (when (member expression '(:interactive :report :test) :test #'eq)
          ;; We have an option.
          (maybe-assign-indentation 2 4)
@@ -26,7 +26,7 @@
          (next)
          (go option-or-declaration-or-form)))
    declaration-or-form
-     (when (and (consp (ip:expression current-wad))
+     (when (and (consp (cst:raw current-wad))
                 (wad-represents-symbol-p
                  (first (ip:children current-wad))
                  'declare))

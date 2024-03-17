@@ -1,7 +1,7 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
 (define-indentation-automaton compute-local-function-indentations
-  (tagbody 
+  (tagbody
      (next)
      ;; The current wad ought to be the name.
      (maybe-assign-indentation 1 4)
@@ -11,7 +11,7 @@
      (compute-lambda-list-indentation current-wad client)
      (next)
    declaration-or-documentation-or-form
-     (when (and (consp (ip:expression current-wad))
+     (when (and (consp (cst:raw current-wad))
                 (wad-represents-symbol-p
                  (first (ip:children current-wad))
                  'declare))
@@ -20,7 +20,7 @@
        (next)
        (go declaration-or-documentation-or-form))
    documentation-or-form
-     (when (stringp (ip:expression current-wad))
+     (when (stringp (cst:raw current-wad))
        (maybe-assign-indentation 3 2)
        (next))
    form
@@ -51,7 +51,7 @@
      (compute-local-functions-indentation current-wad client)
      (next)
    declaration-or-documentation-or-form
-     (when (and (consp (ip:expression current-wad))
+     (when (and (consp (cst:raw current-wad))
                 (wad-represents-symbol-p
                  (first (ip:children current-wad))
                  'declare))
@@ -60,7 +60,7 @@
        (next)
        (go declaration-or-documentation-or-form))
    documentation-or-form
-     (when (stringp (ip:expression current-wad))
+     (when (stringp (cst:raw current-wad))
        (maybe-assign-indentation 3 2)
        (next))
    form
