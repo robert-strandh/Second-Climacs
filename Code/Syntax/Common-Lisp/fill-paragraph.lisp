@@ -149,11 +149,15 @@
                           (ip:right-sibling current))))
     ;; TODO incrementalist should provide a function for this
     (labels ((top-level-wad (wad)
-               (or (ip:parent wad) wad)))
-      (loop with top-level-wad = (top-level-wad current)
-            while (or (ip::relative-p top-level-wad)
-                      (eq top-level-wad (first (ip::suffix cache))))
-            do (ip::suffix-to-prefix cache)))
+               (or (ip:parent wad) wad))
+             (prepare-wad (wad)
+               (unless (null wad)
+                 (loop with top-level-wad = (top-level-wad wad)
+                       while (or (ip::relative-p top-level-wad)
+                                 (eq top-level-wad (first (ip::suffix cache))))
+                       do (ip::suffix-to-prefix cache)))))
+      (prepare-wad current)
+      (prepare-wad next))
 
     (when (or ;; If the cursor is inside an atomic wad, but that wad
               ;; is neither a semicolon comment wad nor a string wad,
