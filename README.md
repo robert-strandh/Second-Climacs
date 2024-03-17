@@ -59,7 +59,7 @@ aspects of it.  As a result, there are some major differences between
 1. Compile the editor system as follows:
 
    ```lisp
-   (asdf:load-system "second-climacs-clim")
+   (ql:quickload "second-climacs-clim")
    ```
 
 1. To start Second Climacs, execute this form:
