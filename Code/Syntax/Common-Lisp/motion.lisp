@@ -35,8 +35,8 @@
             (base:cursor-positions cursor))))
     (and (not (null lines-and-wads))
          (let ((first-wad (cdr (first lines-and-wads))))
-           (or (typep first-wad 'ip:no-expression-wad)
-               (atom (ip:expression first-wad)))))))
+           (or (typep first-wad 'ip:non-cst-wad)
+               (atom (cst:raw first-wad)))))))
 
 (defun forward-expression (cache cursor)
   (let* ((current (multiple-value-call #'ip:find-wads-containing-position cache

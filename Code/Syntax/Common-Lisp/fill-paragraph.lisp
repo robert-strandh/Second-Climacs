@@ -45,7 +45,7 @@
 ;;; cursor, so that the current wad is nil, but the next wad is a
 ;;; top-level semicolon wad.
 
-(defun fill-paragraph-top-level (current next buffer cursor)
+(defun fill-semicolon-comment-top-level (current next buffer cursor)
   ;; Either CURRENT is not NIL, meaning the cursor is inside the wad
   ;; described by CURRENT and CURRENT is a semicolon wad, or CURRENT
   ;; is NIL meaning the cursor is located before the wad described by
@@ -76,7 +76,7 @@
                                 (ip:semicolon-count wad))))))
       (fill-semicolon-comment-using-wads wads buffer cursor))))
 
-(defun fill-paragraph-non-top-level (start buffer cursor)
+(defun fill-semicolon-comment-non-top-level (start buffer cursor)
   ;; Find the first semicolon comment wad to be involved in this
   ;; operation.
   (loop for previous = (ip:left-sibling start)

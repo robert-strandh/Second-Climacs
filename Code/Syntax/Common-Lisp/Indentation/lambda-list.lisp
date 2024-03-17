@@ -60,15 +60,15 @@
        ;; optional parameter.  We try to determine whether we have
        ;; an optional form to indent.
        (maybe-assign-indentation 3 3)
-       (when (typep current-wad 'ip:expression-wad)
-         (let* ((expression (ip:expression current-wad))
+       (when (typep current-wad 'ip:cst-wad)
+         (let* ((expression (cst:raw current-wad))
                 (children (ip:children current-wad)))
            (when (consp expression)
              ;; We try to find an expression wad that
              ;; follows the first child
              (let ((init-form-wad
                      (find-if (lambda (x)
-                                (typep x 'ip:expression-wad))
+                                (typep x 'ip:cst-wad))
                               (rest children))))
                (unless (null init-form-wad)
                  (compute-form-indentation init-form-wad nil client))))))
@@ -106,17 +106,17 @@
        ;; parameter.  We are mainly interested in whether there is
        ;; an INIT-FORM that should have its indentation computed.
        (maybe-assign-indentation 3 3)
-       (when (typep current-wad 'ip:expression-wad)
-         (let ((expression (ip:expression current-wad)))
+       (when (typep current-wad 'ip:cst-wad)
+         (let ((expression (cst:raw current-wad)))
            (when (and (consp expression)
                       (consp (rest expression)))
              (let ((pos (position-if
-                         (lambda (x) (typep x 'ip:expression-wad))
+                         (lambda (x) (typep x 'ip:cst-wad))
                          (ip:children current-wad))))
                (unless (null pos)
                  (let ((init-form-wad
                          (find-if
-                          (lambda (x) (typep x 'ip:expression-wad))
+                          (lambda (x) (typep x 'ip:cst-wad))
                           (ip:children current-wad)
                           :start (1+ pos))))
                    (unless (null init-form-wad)

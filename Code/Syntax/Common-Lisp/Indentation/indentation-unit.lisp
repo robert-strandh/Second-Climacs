@@ -7,7 +7,7 @@
 ;;; are divided into non-overlapping indentation units that together
 ;;; contain every such child.
 ;;;
-;;; If some indentation unit U contains an EXPRESSION-WAD, then let W
+;;; If some indentation unit U contains an CST-WAD, then let W
 ;;; be the first such wad in U.  Then there is no wad following W in U
 ;;; that starts a line.  For an expression wad V following W in U, its
 ;;; children have their indentations computed only relative to the
@@ -24,7 +24,7 @@
 ;;; declaration or a documentation string in the body of a function
 ;;; may be computed differently from a form in that body.
 ;;;
-;;; If some indentation unit U does not contain an EXPRESSION-WAD,
+;;; If some indentation unit U does not contain an CST-WAD,
 ;;; then it is the last indentation unit in the list of indentation
 ;;; units computed for the children of some expression wad.  The
 ;;; computation of the indentation for the wads of U that start a line
@@ -57,7 +57,7 @@
       (let* ((result '())
              (first (first wads))
              (current-indentation-unit (list first))
-             (seen-expression-wad-p (typep first 'ip:expression-wad)))
+             (seen-expression-wad-p (typep first 'ip:cst-wad)))
           (loop for wad in (rest wads)
                 do (if (or (not (wads-are-on-different-lines-p
                                  wad (first current-indentation-unit)))
@@ -70,7 +70,7 @@
                          (push (reverse current-indentation-unit) result)
                          (setf seen-expression-wad-p nil)
                          (setf current-indentation-unit (list wad))))
-                   (when (typep wad 'ip:expression-wad)
+                   (when (typep wad 'ip:cst-wad)
                      (setf seen-expression-wad-p t)))
         (push (reverse current-indentation-unit) result)
         (reverse result))))
@@ -113,7 +113,7 @@
            (,seen-expression-wad-p-variable nil))
        (flet ((next ()
                 (setf current-wad nil)
-                (loop until (typep current-wad 'ip:expression-wad)
+                (loop until (typep current-wad 'ip:cst-wad)
                       do (when (null ,current-unit-variable)
                            (setf ,seen-expression-wad-p-variable nil)
                            (if (null ,remaining-units-variable)

@@ -17,13 +17,13 @@
   (draw-compound-wad context wad start-ref cache first-line last-line))
 
 (defmethod draw-wad (context
-                     (wad ip:expression-wad)
+                     (wad ip:cst-wad)
                      start-ref
                      (cache ip:cache)
                      first-line
                      last-line)
   (cl-syntax::compute-form-indentation wad nil nil)
-  (let ((expression (ip:expression wad)))
+  (let ((expression (cst:raw wad)))
     (if (typep expression 'ip:token)
         (draw-token-wad
          context wad expression start-ref cache first-line last-line)
@@ -130,9 +130,9 @@
 
 ;;; Compound wads
 
-(defmethod draw-compound-wad :around (context (wad ip:expression-wad)
+(defmethod draw-compound-wad :around (context (wad ip:cst-wad)
                                       start-ref cache first-line last-line)
-  (typecase (ip:expression wad)
+  (typecase (cst:raw wad)
     (number (let ((stream (stream* context)))
               (clim:with-drawing-options (stream :ink clim:+dark-blue+)
                 (call-next-method))))
@@ -165,6 +165,9 @@
                              first-line
                              last-line
                              (+ start-line-number height)))
+                 (assert (or      (<= prev-end-line   start-line-number)
+                             (and (=  prev-end-line   start-line-number)
+                                  (<= prev-end-column (start-column child)))))
                  (draw-filtered-area context cache
                                      prev-end-line
                                      prev-end-column
@@ -189,9 +192,9 @@
                       (wad-is-incomplete-p child))))
 
 (defmethod draw-compound-wad :after
-    (context (wad ip:expression-wad) start-ref cache first-line last-line)
+    (context (wad ip:cst-wad) start-ref cache first-line last-line)
   ;; TODO remember point and mark lines in context to avoid the repeated lookups
-  (let* ((expression           (ip:expression wad))
+  (let* ((expression           (cst:raw wad))
          (pane                 (stream* context))
          (clim-view            (clim:stream-default-view pane))
          (climacs-view         (clim-base:climacs-view clim-view))
