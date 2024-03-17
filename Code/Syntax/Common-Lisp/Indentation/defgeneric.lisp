@@ -13,8 +13,8 @@
 ;;; unknown defgeneric-option name, in which case we also do not
 ;;; compute its indentation.
 (defmethod compute-defgeneric-option-indentation (wad (pawn null) client)
-  (when (typep wad 'ip:expression-wad)
-    (let ((expression (ip:expression wad)))
+  (when (typep wad 'ip:cst-wad)
+    (let ((expression (cst:raw wad)))
       (when (and (consp expression)
                  (not (null (first expression))))
         (compute-defgeneric-option-indentation

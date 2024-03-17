@@ -1,48 +1,44 @@
 (cl:in-package #:second-climacs-syntax-common-lisp)
 
-(define-condition not-in-comment (base:climacs-error)
+(define-condition not-in-paragraph-context (base:climacs-error)
   ()
-  (:report "Not in comment"))
+  (:report "Point is not in a context that can be interpreted as a text paragraph."))
 
-(defun collect-words (wad-descriptors buffer)
-  (mapcar (lambda (word-wad-descriptor)
-            (coerce (ip:items word-wad-descriptor buffer) 'string))
-          (alexandria:mappend #'ip:children wad-descriptors)))
+(defun collect-words (wads)
+  (mapcar #'ip:items (alexandria:mappend #'ip:children wads)))
 
-(defun fill-paragraph-using-wad-descriptors (wad-descriptors buffer cursor
-                                             &rest args &key prefix
-                                                             suffix
-                                                             per-line-prefix)
+(defun fill-paragraph-using-wads (wads buffer cursor
+                                  &rest args &key prefix
+                                                  suffix
+                                                  per-line-prefix)
   (declare (ignore prefix suffix per-line-prefix))
-  (let* ((first               (first wad-descriptors))
-         (start-line-number   (ip:start-line-number first))
-         (start-column-number (ip:start-column-number first))
-         (last                (first (last wad-descriptors)))
-         (end-line-number     (ip:end-line-number last))
-         (end-column-number   (ip:end-column-number last))
-         (words               (collect-words wad-descriptors buffer)))
-    (let ((end-cursor (make-instance 'base:standard-cursor :buffer buffer)))
-      (base:set-cursor-positions cursor start-line-number start-column-number)
-      (cluffer:attach-cursor
-       end-cursor (cluffer:find-line buffer end-line-number) end-column-number)
-      (apply #'base:fill-words cursor end-cursor words args)
-      (cluffer:detach-cursor end-cursor))))
+  (let* ((first        (first wads))
+         (start-line   (ip:absolute-start-line first))
+         (start-column (ip:start-column first))
+         (last         (first (last wads)))
+         (end-line     (+ (ip:absolute-start-line last) (ip:height last)))
+         (end-column   (ip:end-column last))
+         (words        (collect-words wads)))
+    (text.editing:move-cursor-to-line cursor start-line start-column)
+    (text.editing:with-temporary-cursor
+        (end-cursor buffer :line     end-line
+                           :position end-column)
+      (apply #'text.editing:fill-words cursor end-cursor words args))))
 
-(defun fill-semicolon-comment-using-wad-descriptor
-    (wad-descriptors buffer cursor)
-  (let* ((first               (first wad-descriptors))
-         (start-column-number (ip:start-column-number first))
-         (semicolon-count     (ip:semicolon-count (ip:wad first))))
-    (let ((prefix          (format nil "~V,,,';<~>" semicolon-count))
-          (per-line-prefix (format nil "~V<~>~V,,,';<~>"
-                                   start-column-number semicolon-count)))
-      (fill-paragraph-using-wad-descriptors
-       wad-descriptors buffer cursor
-       :prefix prefix :per-line-prefix per-line-prefix))))
+;;; Semicolon comments
 
-(defun fill-paragraph-candidate-p (wad-descriptor)
-  (and (not (null wad-descriptor))
-       (typep (ip:wad wad-descriptor) 'ip:semicolon-comment-wad)))
+(defun fill-semicolon-comment-using-wads (wads buffer cursor)
+  (let* ((first           (first wads))
+         (start-column    (ip:start-column first))
+         (semicolon-count (ip:semicolon-count first))
+         (space-count     1)
+         (prefix          (format nil "~V,,,';<~>~V<~>"
+                                  semicolon-count space-count))
+         (per-line-prefix (format nil "~V<~>~A" start-column prefix)))
+    (fill-paragraph-using-wads
+     wads buffer cursor :prefix          prefix
+                        :per-line-prefix per-line-prefix
+                        :suffix          #.(string #\Newline))))
 
 ;;; When this function is called, either the cursor is in a top-level
 ;;; semicolon comment wad so that the current wad is not NIL, or it is
@@ -50,87 +46,139 @@
 ;;; cursor, so that the current wad is nil, but the next wad is a
 ;;; top-level semicolon wad.
 
-(defun fill-paragraph-top-level (cache current next buffer cursor)
+(defun fill-semicolon-comment-top-level (current next buffer cursor)
   ;; Either CURRENT is not NIL, meaning the cursor is inside the wad
   ;; described by CURRENT and CURRENT is a semicolon wad, or CURRENT
   ;; is NIL meaning the cursor is located before the wad described by
   ;; NEXT on the same line as NEXT.  So either CURRENT (if CURRENT is
   ;; not NIL) or NEXT (if CURRENT is NIL) is the a wad descriptor to
   ;; start with.
-  (let ((start-wad (ip:wad (if (null current) next current))))
+  (let ((start-wad (if (null current) next current)))
     ;; Loop until start-wad is the first semicolon wad in the block.
     (loop for left-sibling = (ip:left-sibling start-wad)
           until (or (null left-sibling)
                     (not (typep left-sibling 'ip:semicolon-comment-wad))
-                    (< (ip:absolute-start-line-number left-sibling)
-                       (1- (ip:absolute-start-line-number start-wad)))
+                    (< (ip:absolute-start-line left-sibling)
+                       (1- (ip:absolute-start-line start-wad)))
                     (/= (ip:semicolon-count left-sibling)
                         (ip:semicolon-count start-wad)))
           do (setf start-wad left-sibling))
-    ;; Now collect wad descriptors of all the wads in the comment
-    ;; block.
-    (let ((wad-descriptors
+    ;; Now collect all the wads in the comment block.
+    (let ((wads
             (loop for wad = start-wad then (ip:right-sibling wad)
                   for next = (ip:right-sibling wad) then (ip:right-sibling next)
-                  collect (ip:make-wad-descriptor-from-wad cache wad)
+                  collect wad
                   until (or (null next)
                             (not (typep next 'ip:semicolon-comment-wad))
-                            (> (ip:absolute-start-line-number next)
-                               (1+ (ip:absolute-start-line-number wad)))
+                            (> (ip:absolute-start-line next)
+                               (1+ (ip:absolute-start-line wad)))
                             (/= (ip:semicolon-count next)
                                 (ip:semicolon-count wad))))))
-      (fill-semicolon-comment-using-wad-descriptor
-       wad-descriptors buffer cursor))))
+      (fill-semicolon-comment-using-wads wads buffer cursor))))
 
-(defun fill-paragraph-non-top-level (wad-descriptor buffer cursor)
-  (let ((start wad-descriptor))
-    ;; Find the first semicolon comment wad to be involved in this
-    ;; operation.
-    (loop for previous = (ip:previous-sibling start)
-          while (and (fill-paragraph-candidate-p previous)
-                     (= (1- (ip:absolute-start-line-number start))
-                        (ip:absolute-start-line-number previous)))
-          do (setf start previous))
-    ;; Collect the wad descriptors involved.
-    (let ((wad-descriptors (list start)))
-      (loop for current = (first wad-descriptors)
-            for next = (ip:next-sibling current)
-            while (and (fill-paragraph-candidate-p next)
-                       (= (1+ (ip:absolute-start-line-number current))
-                          (ip:absolute-start-line-number next)))
-            do (push next wad-descriptors))
-      (fill-semicolon-comment-using-wad-descriptor
-       (reverse wad-descriptors) buffer cursor))))
+(defun fill-semicolon-comment-non-top-level (start buffer cursor)
+  ;; Find the first semicolon comment wad to be involved in this
+  ;; operation.
+  (loop for previous = (ip:left-sibling start)
+        while (and (fill-paragraph-candidate-p previous)
+                   (= (1- (ip:absolute-start-line start))
+                      (ip:absolute-start-line previous)))
+        do (setf start previous))
+  ;; Collect the wads involved.
+  (let ((wads (list start)))
+    (loop for current = (first wads)
+          for next = (ip:right-sibling current)
+          while (and (fill-paragraph-candidate-p next)
+                     (= (1+ (ip:absolute-start-line current))
+                        (ip:absolute-start-line next)))
+          do (push next wads))
+    (fill-semicolon-comment-using-wads (reverse wads) buffer cursor)))
 
-(defun fill-paragraph (cache cursor)
-  (multiple-value-bind (current parent previous next)
-      (ip:compute-wad-descriptors cache cursor)
-    (declare (ignore previous))
-    (let ((cursor-line-number (cluffer:line-number cursor)))
-      (when (or ;; If the cursor is inside an atomic wad, but that wad
-                ;; is not a semicolon comment wad, then it is an
-                ;; error.
-                (and (not (null current))
-                     (not (typep (ip:wad current) 'ip:comment-wad)))
-                ;; The other possibility for an error is that the
-                ;; current wad is NIL, and either the next wad is not
-                ;; a semicolon comment wad, or it is a semicolon
-                ;; comment wad, but it is on a different line from the
-                ;; cursor.
-                (and (null current)
-                     (or (not (fill-paragraph-candidate-p next))
-                         (not (= cursor-line-number
-                                 (ip:absolute-start-line-number next))))))
-        (error 'not-in-comment)))
+;;; Block comments
+
+(defun fill-block-comment (wad buffer cursor)
+  (fill-paragraph-using-wads (list wad) buffer cursor :prefix          "#|"
+                                                      :per-line-prefix "  "
+                                                      :suffix          "|#"))
+
+;;; String literal
+
+(defun fill-string-literal (wad buffer cursor)
+  (fill-paragraph-using-wads (list wad) buffer cursor :prefix          "\""
+                                                      :per-line-prefix ""
+                                                      :suffix          "\""))
+
+;;; Predicates
+
+(defun comment-wad-p (maybe-wad)
+  (and (not (null maybe-wad))
+       (typep maybe-wad 'ip:comment-wad)))
+
+(defun block-comment-wad-p (maybe-wad)
+  (and (not (null maybe-wad))
+       (typep maybe-wad 'ip:block-comment-wad)))
+
+(defun string-wad-p (maybe-wad)
+  (and (not (null maybe-wad))
+       (typep maybe-wad 'ip:cst-wad)
+       (stringp (cst:raw maybe-wad))))
+
+(defun fill-paragraph-candidate-p (maybe-wad)
+  (or (comment-wad-p maybe-wad)
+      (string-wad-p maybe-wad)))
+
+(defun fill-paragraph (cursor analyzer)
+  ;; FILL-PARAGRAPH may have been performed on other sites as part of
+  ;; the command that caused this call.  In that case, the buffer
+  ;; content may have changed compared to the start of the command
+  ;; execution and the wad graph in the cache of ANALYZER may no
+  ;; longer represent the buffer content.  To ensure that the wad
+  ;; graph around CURSOR is up-to-date with respect to the buffer
+  ;; content, update analyzer before working with the cache.
+  ;; TODO find a more general solution
+  (ip:update analyzer)
+  (let* ((cache         (ip:cache analyzer))
+         (cursor-line   (cluffer:line-number cursor))
+         (cursor-column (cluffer:cursor-position cursor))
+         (current       (cdr (first (ip:find-wads-containing-position
+                                     cache cursor-line cursor-column))))
+         (current       (if (typep current 'ip:word-wad)
+                            (ip:parent current)
+                            current))
+         (next          (unless (null current)
+                          (ip:right-sibling current))))
+    ;; TODO incrementalist should provide a function for this
+    (labels ((top-level-wad (wad)
+               (or (ip:parent wad) wad)))
+      (loop with top-level-wad = (top-level-wad current)
+            while (or (ip::relative-p top-level-wad)
+                      (eq top-level-wad (first (ip::suffix cache))))
+            do (ip::suffix-to-prefix cache)))
+
+    (when (or ;; If the cursor is inside an atomic wad, but that wad
+              ;; is neither a semicolon comment wad nor a string wad,
+              ;; then it is an error.
+              (and (not (null current))
+                   (not (or (comment-wad-p current)
+                            (string-wad-p current))))
+              ;; The other possibility for an error is that the
+              ;; current wad is NIL, and either the next wad is not a
+              ;; semicolon comment wad, or it is a semicolon comment
+              ;; wad, but it is on a different line from the cursor.
+              (and (null current)
+                   (or (not (fill-paragraph-candidate-p next))
+                       (not (= cursor-line
+                               (ip:absolute-start-line next))))))
+      (error 'not-in-paragraph-context))
     (let ((buffer (cluffer:buffer cursor)))
-      (cond ((and current (typep (ip:wad current) 'ip:block-comment-wad))
-             (fill-paragraph-using-wad-descriptors
-              (list current) buffer cursor :prefix          "#|"
-                                           :per-line-prefix "  "
-                                           :suffix          "|#"))
-            ((null parent)
-             (fill-paragraph-top-level cache current next buffer cursor))
+      (cond ((block-comment-wad-p current)
+             (fill-block-comment current buffer cursor))
+            ((string-wad-p current)
+             (fill-string-literal current buffer cursor))
+            ;; Different kinds of semicolon comments.
+            ((null (ip:parent current))
+             (fill-semicolon-comment-top-level current next buffer cursor))
             ((null current)
-             (fill-paragraph-non-top-level next buffer cursor))
+             (fill-semicolon-comment-non-top-level next buffer cursor))
             (t
-             (fill-paragraph-non-top-level current buffer cursor))))))
+             (fill-semicolon-comment-non-top-level current buffer cursor))))))

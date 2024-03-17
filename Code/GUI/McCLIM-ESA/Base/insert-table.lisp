@@ -2,33 +2,24 @@
 
 (clim:define-command-table ascii-insert-table)
 
-(clim:define-command
-    (com-insert-item :name t :command-table ascii-insert-table)
-    ((item t))
-  (with-current-cursor (cursor)
-    (base:insert-item cursor item)
-    (setf (esa-buffer:needs-saving (base:buffer cursor)) t)))
+(clim:define-command (com-insert-item :name          t
+                                      :command-table ascii-insert-table)
+    ((item 'character))
+  (let ((buffer (current-buffer)))
+    (edit:perform buffer 'edit::insert-item item)
+    ; (setf (esa-buffer:needs-saving buffer) t) ; TODO too annoying for testing
+    ))
 
 (loop for i from 32 to 126
       for char = (code-char i)
-      do (esa:set-key `(com-insert-item ,char)
-                      'ascii-insert-table
-                      `((,char))))
+      do (bind-key 'ascii-insert-table `(,char) 'com-insert-item char))
+(bind-key 'ascii-insert-table '(#\Return)     'com-insert-item #\Newline)
+(bind-key 'ascii-insert-table '(#\j :control) 'com-insert-item #\Newline)
 
-(esa:set-key `(com-insert-item #\Newline)
-             'ascii-insert-table
-             '((#\Return)))
-
-(clim:define-command
-    (com-open-line :name t :command-table ascii-insert-table)
-    ()
-  (with-current-cursor (cursor)
-    (base:insert-item cursor #\Newline)
-    (base:backward-item cursor)))
-
-(esa:set-key `(com-open-line)
-             'ascii-insert-table
-             '((#\o :control)))
+(define-buffer-command (com-open-line ascii-insert-table) ()
+  (edit:perform buffer 'edit::insert-item #\Newline)
+  (edit:perform buffer 'edit:move edit:item :backward))
+(bind-key 'ascii-insert-table '(#\o :control) 'com-open-line)
 
 (clim:define-command
     (com-insert-file :name t :command-table ascii-insert-table)

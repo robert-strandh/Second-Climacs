@@ -15,7 +15,7 @@
   (clim:frame-exit clim:*application-frame*))
 
 (define-record-test-command (inspect :name t) ()
-  (clueless:inspect clim:*application-frame*))
+  (clouseau:inspect clim:*application-frame*))
 
 (define-record-test-command (com-trace :name t) ()
   (format *trace-output* "~%++++++++++++++++++++ trace~%")

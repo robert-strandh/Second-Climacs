@@ -6,7 +6,8 @@
    (#:base #:second-climacs-base)
    (#:cl-syntax #:second-climacs-syntax-common-lisp)
    (#:ip #:incrementalist)
-   (#:fundamental-syntax #:second-climacs-syntax-fundamental))
+   (#:fundamental-syntax #:second-climacs-syntax-fundamental)
+   (#:edit #:text.editing))
   (:export
    #:climacs
    #:text-pane
@@ -21,5 +22,8 @@
    #:update-view
    #:command-table
    #:left-gutter
-   #:with-current-cursor-and-view
-   #:with-current-cursor))
+   #:with-current-cursor)
+
+  (:export
+   #:move-viewport-to-cursor
+   #:move-cursor-to-viewport))

@@ -12,8 +12,8 @@
 ;;; all.  Or it could be a compound wad, but with an unknown type
 ;;; identifier, in which case we also do not compute its indentation.
 (defmethod compute-type-specifier-indentation (wad (pawn null) client)
-  (when (typep wad 'ip:expression-wad)
-    (let ((expression (ip:expression wad)))
+  (when (typep wad 'ip:cst-wad)
+    (let ((expression (cst:raw wad)))
       (when (consp expression)
         (compute-type-specifier-indentation
          wad (first expression) client)))))

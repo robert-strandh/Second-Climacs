@@ -28,12 +28,6 @@
     ('#:common-lisp '#:multiple-value-call) compute-prog1-indentations)
 
 (define-form-indentation-method
-    ('#:common-lisp '#:catch) compute-prog1-indentations)
-
-(define-form-indentation-method
-    ('#:common-lisp '#:throw) compute-prog1-indentations)
-
-(define-form-indentation-method
     ('#:common-lisp '#:unwind-protect) compute-prog1-indentations)
 
 (define-form-indentation-method

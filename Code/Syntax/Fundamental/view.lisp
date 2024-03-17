@@ -2,11 +2,9 @@
 
 (defclass view (base:view) ())
 
-(defmethod initialize-instance :after ((instance view) &key buffer cursor)
+(defmethod initialize-instance :after ((instance view) &key buffer)
   (let ((analyzer (make-instance 'analyzer :buffer buffer)))
-    (reinitialize-instance instance
-                           :cursor cursor
-                           :analyzer analyzer)))
+    (reinitialize-instance instance :analyzer analyzer)))
 
 (defmethod base:view-name ((view view))
   "Fundamental")

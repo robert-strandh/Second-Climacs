@@ -2,20 +2,13 @@
 
 (defpackage #:second-climacs-base
   (:use #:common-lisp)
+
+  (:local-nicknames
+   (#:e #:text.editing))
+
   (:export #:buffer
-           #:insert-item
-           #:delete-item
-           #:erase-item
-           #:forward-item
-           #:backward-item
-           #:beginning-of-line
-           #:end-of-line
-           #:item-before-cursor
-           #:item-after-cursor
            #:standard-buffer
-           #:standard-cursor
-           #:cluffer-buffer
-           #:make-empty-standard-buffer-and-cursor
+           #:make-empty-standard-buffer
            #:fill-buffer-from-stream
            #:analyzer
            #:update-analyzer-from-buffer
@@ -24,7 +17,7 @@
            #:view
            #:view-class
            #:view-name
-           #:cursor
+           #:site
            #:window
            #:update-view-from-analyzer
            #:update-view
@@ -35,11 +28,8 @@
            #:update-window
            #:application
            #:views
-           #:set-the-mark
-           #:exchange-cursor-and-mark
            #:move-region-to-vector
            #:kill-region
-           #:unkill
            #:next-line
            #:previous-line
            #:beginning-of-buffer
@@ -48,20 +38,8 @@
            #:backward-word
            #:delete-word
            #:erase-word
-           #:back-to-indentation
            #:delete-indentation
            #:mark
            #:climacs-error
-           #:mark-not-set
-           #:cursor-<
-           #:cursor-=
            #:cursor-positions
-           #:set-cursor-positions
-           #:search-forward
-           #:search-backward
-
-           #:whitespacep
-           #:punctuationp
-           #:insert-words-fill
-           #:fill-words
-           #:delete-trailing-spaces))
+           #:set-cursor-positions))

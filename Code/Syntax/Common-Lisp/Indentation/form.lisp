@@ -7,12 +7,12 @@
 ;;; it could be a compound wad, but with an unknown operator, in which
 ;;; case we compute the indentation as if the form is a function call.
 (defmethod compute-form-indentation
-    ((wad ip:expression-wad) (pawn null) client)
+    ((wad ip:cst-wad) (pawn null) client)
   (if (simple-form-p wad)
       (let ((first-child (first (ip:children wad))))
-        (if (and (typep first-child 'ip:expression-wad)
-                 (typep (ip:expression first-child) 'ip:symbol-token))
-            (let* ((token (ip:expression first-child))
+        (if (and (typep first-child 'ip:cst-wad)
+                 (typep (cst:raw first-child) 'ip:symbol-token))
+            (let* ((token (cst:raw first-child))
                    (pawn (find-pawn (ip:package-name token)
                                     (ip:name token))))
               (if (null pawn)

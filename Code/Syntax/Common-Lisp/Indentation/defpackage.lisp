@@ -14,12 +14,12 @@
 ;;; compute its indentation.
 ;;; FIXME: we need to access the pawn.
 (defmethod compute-defpackage-option-indentation
-    ((wad ip:expression-wad) (pawn null) client)
+    ((wad ip:cst-wad) (pawn null) client)
   (when (simple-form-p wad)
     (let ((first-child (first (ip:children wad))))
-      (when (and (typep first-child 'ip:expression-wad)
-                 (typep (ip:expression first-child) 'ip:symbol-token))
-        (let* ((token (ip:expression first-child))
+      (when (and (typep first-child 'ip:cst-wad)
+                 (typep (cst:raw first-child) 'ip:symbol-token))
+        (let* ((token (cst:raw first-child))
                (pawn (find-pawn (package-name token) (ip:name token))))
           (unless (null pawn)
             (compute-defpackage-option-indentation wad pawn client)))))))
@@ -41,7 +41,7 @@
      (next)
    option
      (maybe-assign-indentation 2 2)
-     (compute-defpackage-option-indentation current-wad nil client)
+     ; (compute-defpackage-option-indentation current-wad nil client)
      (next)
      (go option)))
 

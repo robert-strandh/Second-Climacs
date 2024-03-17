@@ -28,7 +28,7 @@
 
 (defgeneric analyzer (view))
 
-(defgeneric cursor (view))
+(defgeneric site (view))
 
 (defgeneric window (view))
 
@@ -36,11 +36,14 @@
 
 (defclass view ()
   ((%analyzer :initarg :analyzer :reader analyzer)
-   (%cursor :initarg :cursor :reader cursor)
+   ; (%site :initarg :site :reader site)
    ;; This slot contains either NIL or some object determined by the
    ;; interface manager.  If it contains NIL, this means that the view
    ;; is not currently visible.
    (%window :initform nil :accessor window)))
+
+(defmethod site ((thing view))
+  (text.editing:site (buffer (analyzer thing))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

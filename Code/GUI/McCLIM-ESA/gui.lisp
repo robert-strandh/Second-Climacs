@@ -75,19 +75,15 @@
   (:menu-bar nil)
   (:panes
    (window
-    (multiple-value-bind (buffer cursor)
-        (base:make-empty-standard-buffer-and-cursor)
+    (let ((buffer (base::make-empty-standard-buffer)))
       (setf (esa-buffer:filepath buffer)
             (first (directory ".")))
       (let* ((gutter (make-gutter-pane))
              (my-pane (make-climacs-pane gutter))
              (my-info-pane (clim:make-pane 'info-pane
                                            :master-pane my-pane
-                                           :width 900))
-             ;; (view (make-instance 'fundamental-syntax:view
-             ;;        :buffer buffer :cursor cursor))
-             (view (make-instance 'cl-syntax:view
-                     :buffer buffer :cursor cursor)))
+                                           :width       900))
+             (view (make-instance 'cl-syntax:view :buffer buffer)))
         (setf (clim:stream-recording-p my-pane) nil)
         (setf (clim:stream-end-of-line-action my-pane) :allow)
         ;; Unfortunately, the ESA top-level accesses the slot
@@ -111,7 +107,7 @@
 (defmethod clim:note-sheet-transformation-changed :after
     ((pane hrack-pane))
   (let ((pane (esa:current-window)))
-    (second-climacs-clim-view-common-lisp:move-cursor-to-viewport pane)))
+    (move-cursor-to-viewport pane)))
 
 (defmethod clim:adopt-frame :after (frame-manager (frame climacs))
   (declare (ignore frame-manager))
@@ -129,7 +125,7 @@
 (defmethod esa:buffers ((esa climacs))
   (remove-duplicates (loop for view in (base:views esa)
                            for analyzer = (base:analyzer view)
-                           collect (ip:buffer analyzer))
+                           collect (base:buffer analyzer))
                      :test #'eq))
 
 (defun climacs (&key new-process (process-name "Climacs"))
@@ -159,7 +155,7 @@
         (call-next-method)
         ;; This is probably wrong.  All windows may be concerned.
         (let ((pane (esa:current-window)))
-          (second-climacs-clim-view-common-lisp:move-viewport-to-cursor pane)))
+          (move-viewport-to-cursor pane)))
     (cluffer:cluffer-error (condition)
       (esa:display-message "~a" condition))
     (base:climacs-error (condition)
@@ -173,7 +169,7 @@
 
 (defmethod clim:frame-exit :around ((frame climacs))
   (with-current-cursor (cursor)
-    (let ((buffer (base:buffer cursor)))
+    (let ((buffer (cluffer:buffer cursor)))
       (when (and (esa-buffer:needs-saving buffer)
                  (handler-case
                      (clim:accept 'boolean

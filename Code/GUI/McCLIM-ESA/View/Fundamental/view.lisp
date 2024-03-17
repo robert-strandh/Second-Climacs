@@ -8,6 +8,9 @@
    (%max-widths-prefix :initform '() :accessor max-widths-prefix)
    (%max-widths-suffix :initform '() :accessor max-widths-suffix)))
 
+(defmethod clim:output-record-count ((record output-history))
+  0)
+
 (defmethod fundamental-syntax:push-to-prefix :after
     ((analyzer output-history) entry)
   (with-accessors ((prefix fundamental-syntax:prefix)) analyzer
@@ -62,9 +65,10 @@
          (text-width (clim:text-style-width text-style pane))
          (text-ascent (clim:text-style-ascent text-style pane))
          (y (+ text-ascent (* line-number text-height)))
-         (clim-view (clim:stream-default-view pane))
-         (climacs-view (clim-base:climacs-view clim-view))
-         (cursor (base:cursor climacs-view))
+         ; (clim-view (clim:stream-default-view pane))
+         ; (climacs-view (clim-base:climacs-view clim-view))
+         (buffer (base:buffer analyzer))
+         (cursor (text.editing:point buffer))
          (cursor-column-number (cluffer:cursor-position cursor))
          (string (coerce contents 'string)))
     (if (= (cluffer:line-number cursor) line-number)
@@ -146,7 +150,7 @@
   (with-accessors ((prefix fundamental-syntax:prefix)
                    (suffix fundamental-syntax:suffix))
     history
-    (let* ((stream (clim:output-record-parent history))
+    (let* ((stream (climi::output-history-stream history))
            (text-style (clim:medium-text-style stream))
            (text-style-height (clim:text-style-height text-style stream))
            (text-style-width (clim:text-style-width text-style stream))
@@ -171,7 +175,7 @@
     (clim:with-bounding-rectangle* (x1 y1 x2 y2) history
       (declare (ignore x1 y1))
       (clim:change-space-requirements
-       (clim:output-record-parent history)
+       (climi::output-history-stream history)
        :width x2
        :height y2))
     (clim:replay history pane)))
@@ -190,9 +194,8 @@
 
 (defun update-analyzer (view analyzer)
   (declare (ignore view))
-  (let* ((climacs-buffer (base:buffer analyzer))
-         (cluffer-buffer (base:cluffer-buffer climacs-buffer)))
-    (fundamental-syntax:scavenge analyzer cluffer-buffer)))
+  (let ((buffer (base:buffer analyzer)))
+    (fundamental-syntax:scavenge analyzer buffer)))
 
 (defmethod base:update-view-from-analyzer
     ((view fundamental-syntax:view)

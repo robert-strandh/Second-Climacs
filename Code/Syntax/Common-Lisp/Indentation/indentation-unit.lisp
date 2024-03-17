@@ -7,7 +7,7 @@
 ;;; are divided into non-overlapping indentation units that together
 ;;; contain every such child.
 ;;;
-;;; If some indentation unit U contains an EXPRESSION-WAD, then let W
+;;; If some indentation unit U contains an CST-WAD, then let W
 ;;; be the first such wad in U.  Then there is no wad following W in U
 ;;; that starts a line.  For an expression wad V following W in U, its
 ;;; children have their indentations computed only relative to the
@@ -24,7 +24,7 @@
 ;;; declaration or a documentation string in the body of a function
 ;;; may be computed differently from a form in that body.
 ;;;
-;;; If some indentation unit U does not contain an EXPRESSION-WAD,
+;;; If some indentation unit U does not contain an CST-WAD,
 ;;; then it is the last indentation unit in the list of indentation
 ;;; units computed for the children of some expression wad.  The
 ;;; computation of the indentation for the wads of U that start a line
@@ -33,7 +33,7 @@
 ;;;   * the operator of the parent wad of W, and
 ;;;   * the number and nature of the expression wads preceding it in
 ;;;     the list of siblings.
-;;;   
+;;;
 ;;; Here, since no expression wad exists, some default rule must be
 ;;; applied.  For example, in the body of a function, if no
 ;;; declaration and no documentation string precedes U, then the
@@ -48,9 +48,8 @@
       (ip:height wad)))
 
 (defun wads-are-on-different-lines-p (wad1 wad2)
-  (/= (+ (ip:absolute-start-line-number wad1)
-         (effective-height wad1))
-      (ip:absolute-start-line-number wad2)))
+  (/= (+ (ip:absolute-start-line wad1) (effective-height wad1))
+      (ip:absolute-start-line wad2)))
 
 (defun compute-indentation-units (wads)
   (if (null wads)
@@ -58,7 +57,7 @@
       (let* ((result '())
              (first (first wads))
              (current-indentation-unit (list first))
-             (seen-expression-wad-p (typep first 'ip:expression-wad)))
+             (seen-expression-wad-p (typep first 'ip:cst-wad)))
           (loop for wad in (rest wads)
                 do (if (or (not (wads-are-on-different-lines-p
                                  wad (first current-indentation-unit)))
@@ -71,7 +70,7 @@
                          (push (reverse current-indentation-unit) result)
                          (setf seen-expression-wad-p nil)
                          (setf current-indentation-unit (list wad))))
-                   (when (typep wad 'ip:expression-wad)
+                   (when (typep wad 'ip:cst-wad)
                      (setf seen-expression-wad-p t)))
         (push (reverse current-indentation-unit) result)
         (reverse result))))
@@ -79,11 +78,11 @@
 (defun wad-is-first-on-start-line-p (wad)
   (if (null (ip:left-sibling wad))
       (or (null (ip:parent wad))
-          (/= (ip:absolute-start-line-number (ip:parent wad))
-              (ip:absolute-start-line-number wad)))
-      (/= (+ (ip:absolute-start-line-number (ip:left-sibling wad))
+          (/= (ip:absolute-start-line (ip:parent wad))
+              (ip:absolute-start-line wad)))
+      (/= (+ (ip:absolute-start-line (ip:left-sibling wad))
              (effective-height (ip:left-sibling wad)))
-          (ip:absolute-start-line-number wad))))
+          (ip:absolute-start-line wad))))
 
 (defun assign-indentation-of-wads-in-unit (indentation-unit indentation)
   (when (wad-is-first-on-start-line-p (first indentation-unit))
@@ -114,7 +113,7 @@
            (,seen-expression-wad-p-variable nil))
        (flet ((next ()
                 (setf current-wad nil)
-                (loop until (typep current-wad 'ip:expression-wad)
+                (loop until (typep current-wad 'ip:cst-wad)
                       do (when (null ,current-unit-variable)
                            (setf ,seen-expression-wad-p-variable nil)
                            (if (null ,remaining-units-variable)
