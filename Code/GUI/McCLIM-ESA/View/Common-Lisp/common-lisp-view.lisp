@@ -24,8 +24,8 @@
 (defgeneric render-cache (cache pane first-line last-line max-column))
 
 ;;; This variable is used to accumulate ERROR-WAD instances as they
-;;; are drawn.
-(defvar *drawn-error-wads* '())
+;;; are encountered while drawing visible wads.
+(defvar *error-wads*)
 
 (defmethod render-cache ((cache output-history) pane
                          first-line last-line max-column)
@@ -37,7 +37,7 @@
     ;; Draw region rectangles first, that is beneath everything.
     (draw-regions context buffer first-line last-line max-column)
     ;; Draw wads and buffer content.
-    (let ((*drawn-error-wads* '()))
+    (let ((*error-wads* '()))
       ;; Draw wads, noting any errors.
       (ip:map-wads-and-spaces
        cache first-line last-line
@@ -49,7 +49,7 @@
           context line (ip:line-contents cache line) start-column end-column)))
       ;; Draw error decorations (in buffer) annotations (near cursor)
       ;; and gutter indicators.
-      (draw-error-wads context *drawn-error-wads*))
+      (draw-error-wads context *error-wads*))
     ;; Draw point and mark cursors and possibly search state atop
     ;; everything else.
     (draw-cursors context buffer first-line last-line)
@@ -70,11 +70,15 @@
           (t
            (draw-right-arrow context gutter start-ref clim:+blue+)))))
 
-(defmethod draw-wad :before (context (wad ip:error-wad)
+(defmethod draw-wad :before (context (wad ip:wad)
                              start-ref cache first-line last-line)
   (declare (ignore start-ref cache first-line last-line))
-  ;; Record WAD and its absolute start line for processing.
-  (push wad *drawn-error-wads*))
+  ;; Record encountered error wads so that the various error
+  ;; indicators can be drawn later.
+  ;; TODO `append'ing like this is slow
+  ;; must copy since `nreverse'd later
+  (alexandria:when-let ((errors (ip:errors wad)))
+    (setf *error-wads* (append *error-wads* (copy-list errors)))))
 
 ;;; Return the area of the viewport of PANE in units of line and
 ;;; column number.  We return only integers, so that if a fraction of

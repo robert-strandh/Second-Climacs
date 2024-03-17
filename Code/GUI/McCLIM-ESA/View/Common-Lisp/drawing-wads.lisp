@@ -185,17 +185,14 @@
                           first-line last-line))))
 
 (defun wad-is-incomplete-p (wad)
-  (loop for child in (ip:children wad)
-          thereis (or (and (typep child 'ip:error-wad)
-                           (typep (ip:condition child)
-                                  'eclector.reader:unterminated-list))
-                      (wad-is-incomplete-p child))))
+  (some (lambda (error)
+          (typep (ip:condition error) 'eclector.reader:missing-delimiter))
+        (ip:errors wad)))
 
 (defmethod draw-compound-wad :after
-    (context (wad ip:cst-wad) start-ref cache first-line last-line)
+    (context (wad ip:wad) start-ref cache first-line last-line)
   ;; TODO remember point and mark lines in context to avoid the repeated lookups
-  (let* ((expression           (cst:raw wad))
-         (pane                 (stream* context))
+  (let* ((pane                 (stream* context))
          (clim-view            (clim:stream-default-view pane))
          (climacs-view         (clim-base:climacs-view clim-view))
          (analyzer             (base:analyzer climacs-view))
@@ -207,7 +204,11 @@
          (wad-start-column     (ip:start-column wad))
          (wad-end-line         (+ wad-start-line (ip:height wad)))
          (wad-end-column       (ip:end-column wad)))
-    (when (and (typep expression '(or cons string vector))
+    (when (and (typecase wad
+                 (ip:cst-wad
+                  (typep (cst:raw wad) '(or cons string vector)))
+                 ((or ip:block-comment-wad ip:reader-macro-wad)
+                  t))
                (or (and (= wad-end-column   cursor-column-number)
                         (= wad-end-line     (setf cursor-line-number
                                                   (cluffer:line-number
