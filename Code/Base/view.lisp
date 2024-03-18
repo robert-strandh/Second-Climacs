@@ -43,7 +43,7 @@
    (%window :initform nil :accessor window)))
 
 (defmethod site ((thing view))
-  (text.editing:site (buffer (analyzer thing))))
+  (edit:site (buffer (analyzer thing))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

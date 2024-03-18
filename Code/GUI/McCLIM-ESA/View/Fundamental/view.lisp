@@ -68,7 +68,7 @@
          ; (clim-view (clim:stream-default-view pane))
          ; (climacs-view (clim-base:climacs-view clim-view))
          (buffer (base:buffer analyzer))
-         (cursor (text.editing:point buffer))
+         (cursor (edit:point buffer))
          (cursor-column-number (cluffer:cursor-position cursor))
          (string (coerce contents 'string)))
     (if (= (cluffer:line-number cursor) line-number)

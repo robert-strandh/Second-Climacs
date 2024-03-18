@@ -1,9 +1,13 @@
-(cl:in-package #:common-lisp-user)
+(cl:defpackage #:second-climacs-syntax-fundamental
+  (:use
+   #:common-lisp)
 
-(defpackage #:second-climacs-syntax-fundamental
-  (:use #:common-lisp)
-  (:local-nicknames (#:base #:second-climacs-base))
-  (:shadow #:list-length)
+  (:local-nicknames
+   (#:base #:second-climacs-base))
+
+  (:shadow
+   #:list-length)
+
   (:export
    #:analyzer
    #:view

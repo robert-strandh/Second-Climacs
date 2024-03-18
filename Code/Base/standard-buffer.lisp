@@ -3,9 +3,9 @@
 ;;; A STANDARD-BUFFER is a buffer that is restricted to contain a
 ;;; Cluffer buffer.
 
-(defclass standard-buffer (text.editing.search:search-state-mixin
-                           e:multiple-site-mixin
-                           e:site-mixin
+(defclass standard-buffer (edit.search:search-state-mixin
+                           edit:multiple-site-mixin
+                           edit:site-mixin
                            cluffer-standard-buffer:buffer
                            buffer)
   ())
@@ -26,7 +26,7 @@
 (defmethod fill-buffer-from-stream ((cursor cluffer:cursor) stream)
   (loop for char = (read-char stream nil nil)
         until (null char)
-        do (text.editing::insert-item cursor char)))
+        do (edit::insert-item cursor char)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

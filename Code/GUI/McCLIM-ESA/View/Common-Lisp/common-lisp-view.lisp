@@ -17,7 +17,7 @@
 
 (defmethod clim-base:command-table ((view cl-syntax:view))
   (let ((buffer (ip:buffer (base:analyzer view))))
-    (if (text.editing.search:search-state buffer)
+    (if (edit.search:search-state buffer)
         (clim:find-command-table 'clim-base::incremental-search-table)
         (clim:find-command-table 'common-lisp-table))))
 

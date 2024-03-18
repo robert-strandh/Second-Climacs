@@ -6,6 +6,6 @@
 
 (defmethod initialize-instance :after ((instance fundamental-view) &key)
   (let* ((buffer (make-empty-standard-buffer))
-         (cursor (e:point buffer))
+         (cursor (edit:point buffer))
          (analyzer (make-instance 'null-analyzer :buffer buffer)))
     (reinitialize-instance instance :cursor cursor :analyzer analyzer)))

@@ -12,22 +12,22 @@
 ;;; Ordinary search
 
 (define-search-command com-search-forward ((string 'string))
-  (unless (edit:perform buffer 'text.editing.search:search string :forward) ; TODO case mode etc
+  (unless (edit:perform buffer 'edit.search:search string :forward) ; TODO case mode etc
     (esa:display-message "No match")))
 
 (define-search-command com-search-backward ((string 'string))
-  (unless (edit:perform buffer 'text.editing.search:search string :backward)
+  (unless (edit:perform buffer 'edit.search:search string :backward)
     (esa:display-message "No match")))
 
 ;;; Incremental search
 
 (define-search-command com-incremental-search-forward ()
-  (edit:perform buffer 'text.editing.search:incremental-search :forward)
+  (edit:perform buffer 'edit.search:incremental-search :forward)
   (update-for-search buffer))
 (bind-key 'search-table '(#\s :control) 'com-incremental-search-forward)
 
 (define-search-command com-incremental-search-backward ()
-  (edit:perform buffer 'text.editing.search:incremental-search :backward)
+  (edit:perform buffer 'edit.search:incremental-search :backward)
   (update-for-search buffer))
 (bind-key 'search-table '(#\r :control) 'com-incremental-search-backward)
 
@@ -45,27 +45,27 @@
        ,@body)))
 
 (define-incremental-search-command com-finish-incremental-search ()
-  (edit:perform buffer 'text.editing.search:finish-incremental-search))
+  (edit:perform buffer 'edit.search:finish-incremental-search))
 (bind-key 'incremental-search-table '(#\Return) 'com-finish-incremental-search)
 
 (define-incremental-search-command com-abort-incremental-search ()
-  (edit:perform buffer 'text.editing.search:abort-incremental-search))
+  (edit:perform buffer 'edit.search:abort-incremental-search))
 (bind-key 'incremental-search-table '(#\c :control) 'com-abort-incremental-search) ; TODO C-g doesn't work
 
 (defun update-for-search (buffer &key comment)
-  (esa:display-message (text.editing.search:description
+  (esa:display-message (edit.search:description
                         buffer :comment comment)))
 
 (define-incremental-search-command (com-incremental-search-set-case-mode
                                     :name "Set Case Mode")
     ((mode '(member :ignore :match)))
-  (edit:perform buffer '(setf text.editing.search:case-mode) mode)
+  (edit:perform buffer '(setf edit.search:case-mode) mode)
   (update-for-search buffer))
 (bind-key 'incremental-search-table '(#\m :meta) 'com-incremental-search-set-case-mode :match)
 (bind-key 'incremental-search-table '(#\i :meta) 'com-incremental-search-set-case-mode :ignore)
 
 (define-incremental-search-command com-incremental-search-extend-query ((item 't))
-  (edit:perform buffer 'text.editing.search:extend-query item)
+  (edit:perform buffer 'edit.search:extend-query item)
   (update-for-search buffer))
 (loop for i from 32 to 126
       for char = (code-char i)
@@ -73,19 +73,19 @@
 (bind-key 'incremental-search-table '(#\j :control) 'com-incremental-search-extend-query #\Newline)
 
 (define-incremental-search-command com-incremental-search-truncate-query ()
-  (edit:perform buffer 'text.editing.search:truncate-query)
+  (edit:perform buffer 'edit.search:truncate-query)
   (update-for-search buffer))
 (bind-key 'incremental-search-table '(#\Backspace) 'com-incremental-search-truncate-query)
 
 (define-incremental-search-command com-incremental-search-next-match ()
-  (edit:perform buffer 'text.editing.search:next-match)
+  (edit:perform buffer 'edit.search:next-match)
   (update-for-search buffer :comment "Next match"))
 (bind-key 'incremental-search-table '(#\s :control) 'com-incremental-search-next-match)
 
 (define-incremental-search-command com-incremental-search-previous-match ()
-  (edit:perform buffer 'text.editing.search:previous-match)
+  (edit:perform buffer 'edit.search:previous-match)
   (update-for-search buffer :comment "Previous match"))
 (bind-key 'incremental-search-table '(#\r :control) 'com-incremental-search-previous-match)
 
 (define-incremental-search-command com-convert-matches-to-sites ()
-  (text.editing.search:convert-matches-to-sites buffer))
+  (edit.search:convert-matches-to-sites buffer))

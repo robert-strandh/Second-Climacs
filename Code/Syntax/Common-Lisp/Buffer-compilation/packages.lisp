@@ -1,8 +1,7 @@
-(cl:in-package #:common-lisp-user)
-
-(defpackage #:second-climacs-buffer-compilation
+(cl:defpackage #:second-climacs-buffer-compilation
   (:use #:common-lisp)
-  (:local-nicknames (#:clo #:clostrum)
-                    (#:tru #:trucler)
-                    (#:inc #:incrementalist))
+  (:local-nicknames
+   (#:ip  #:incrementalist)
+   (#:clo #:clostrum)
+   (#:tru #:trucler))
   (:export))

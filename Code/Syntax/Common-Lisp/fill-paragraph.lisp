@@ -19,11 +19,11 @@
          (end-line     (+ (ip:absolute-start-line last) (ip:height last)))
          (end-column   (ip:end-column last))
          (words        (collect-words wads)))
-    (text.editing:move-cursor-to-line cursor start-line start-column)
-    (text.editing:with-temporary-cursor
+    (edit:move-cursor-to-line cursor start-line start-column)
+    (edit:with-temporary-cursor
         (end-cursor buffer :line     end-line
                            :position end-column)
-      (apply #'text.editing:fill-words cursor end-cursor words args))))
+      (apply #'edit:fill-words cursor end-cursor words args))))
 
 ;;; Semicolon comments
 

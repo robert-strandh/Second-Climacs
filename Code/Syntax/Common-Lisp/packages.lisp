@@ -1,12 +1,12 @@
-(cl:in-package #:common-lisp-user)
-
-(defpackage #:second-climacs-syntax-common-lisp
+(cl:defpackage #:second-climacs-syntax-common-lisp
   (:use #:common-lisp)
   (:shadow #:package-name #:symbol-name)
 
   (:local-nicknames
-   (#:base      #:second-climacs-base)
-   (#:ip        #:incrementalist))
+   (#:edit  #:text.editing)
+   (#:ip    #:incrementalist)
+
+   (#:base  #:second-climacs-base))
 
   (:export
    #:line-length

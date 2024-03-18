@@ -138,9 +138,9 @@
       (let ((start-column (ip:start-column wad))
             (indentation (ip:indentation wad)))
         (loop repeat (- start-column indentation)
-              do (text.editing:delete-item-forward cursor))
+              do (edit:delete-item-forward cursor))
         (loop repeat (- indentation start-column)
-              do (text.editing::insert-item cursor #\Space))
+              do (edit::insert-item cursor #\Space))
         (setf (cluffer:cursor-position cursor)
               (+ position (- indentation start-column)))))))
 

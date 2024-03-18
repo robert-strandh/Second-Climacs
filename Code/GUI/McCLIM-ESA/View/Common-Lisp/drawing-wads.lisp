@@ -197,7 +197,7 @@
          (climacs-view         (clim-base:climacs-view clim-view))
          (analyzer             (base:analyzer climacs-view))
          (buffer               (ip:buffer analyzer))
-         (cursor               (text.editing:point buffer))
+         (cursor               (edit:point buffer))
          (cursor-line-number   nil) ; expensive to compute
          (cursor-column-number (cluffer:cursor-position cursor))
          (wad-start-line       start-ref)

@@ -1,13 +1,16 @@
-(cl:in-package #:common-lisp-user)
+(cl:defpackage #:second-climacs-clim-base
+  (:use
+   #:common-lisp)
 
-(defpackage #:second-climacs-clim-base
-  (:use #:common-lisp)
   (:local-nicknames
-   (#:base #:second-climacs-base)
-   (#:cl-syntax #:second-climacs-syntax-common-lisp)
-   (#:ip #:incrementalist)
+   (#:edit               #:text.editing)
+   (#:edit.search        #:text.editing.search)
+   (#:ip                 #:incrementalist)
+
+   (#:base               #:second-climacs-base)
    (#:fundamental-syntax #:second-climacs-syntax-fundamental)
-   (#:edit #:text.editing))
+   (#:cl-syntax          #:second-climacs-syntax-common-lisp))
+
   (:export
    #:climacs
    #:text-pane

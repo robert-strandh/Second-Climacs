@@ -23,12 +23,12 @@
          :ink ink :include-descent t)))))
 
 (defun draw-regions (context buffer first-line last-line max-column)
-  (let ((primary-site (text.editing:site buffer)))
-    (text.editing:map-sites
+  (let ((primary-site (edit:site buffer)))
+    (edit:map-sites
      (lambda (site)
-       (when (text.editing:mark-active-p site)
-         (let ((point (text.editing:point site))
-               (mark  (text.editing:mark site))
+       (when (edit:mark-active-p site)
+         (let ((point (edit:point site))
+               (mark  (edit:mark site))
                (kind  (if (eq site primary-site) :primary :secondary)))
            (draw-region context point mark first-line last-line max-column
                         :kind kind))))
@@ -75,19 +75,19 @@
                    (draw-cursor context cursor-line-number cursor-column-number
                                 :role role :kind kind)))))
            (draw-site (site kind)
-             (let ((point (text.editing:point site))
-                   (mark  (text.editing:mark site)))
+             (let ((point (edit:point site))
+                   (mark  (edit:mark site)))
                (maybe-draw-cursor point :point kind)
                (when mark
-                 (let ((role (if (text.editing:mark-active-p site)
+                 (let ((role (if (edit:mark-active-p site)
                                  :active-mark
                                  :inactive-mark)))
                    (maybe-draw-cursor mark role kind)))
                (mapc (alexandria:rcurry
                       #'maybe-draw-cursor :inactive-mark :other)
-                     (text.editing:mark-stack site)))))
-    (let ((primary-site (text.editing:site buffer)))
-      (text.editing:map-sites
+                     (edit:mark-stack site)))))
+    (let ((primary-site (edit:site buffer)))
+      (edit:map-sites
        (lambda (site)
          (draw-site site (if (eq site primary-site) :primary :secondary)))
        buffer))))
@@ -104,17 +104,17 @@
      :ink ink :filled nil :line-thickness thickness :x2-offset -2)))
 
 (defun draw-search-state (context buffer first-line last-line)
-  (alexandria:when-let* ((search-state (text.editing.search:search-state buffer))
-                         (matches      (text.editing.search:matches search-state)))
+  (alexandria:when-let* ((search-state (edit.search:search-state buffer))
+                         (matches      (edit.search:matches search-state)))
     (let ((match->site (make-hash-table)))
-      (text.editing:map-sites
+      (edit:map-sites
        (lambda (site)
-         (alexandria:when-let ((match (text.editing.search:match site)))
+         (alexandria:when-let ((match (edit.search:match site)))
            (setf (gethash match match->site) site)))
        buffer)
       (loop :for match :across matches
-            :for start = (text.editing.search:start match)
-            :for end = (text.editing.search:end match)
+            :for start = (edit.search:start match)
+            :for end = (edit.search:end match)
             :for start-line = (cluffer:line-number start)
             :for end-line = (cluffer:line-number end)
             :unless (or (< end-line first-line) (< last-line start-line))
