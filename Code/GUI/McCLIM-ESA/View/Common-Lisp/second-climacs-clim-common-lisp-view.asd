@@ -10,4 +10,4 @@
                (:file "drawing-wads")
                (:file "common-lisp-view")
                (:file "common-lisp-command-table")
-               (:file "indentation")))
+               #+(or) (:file "indentation")))

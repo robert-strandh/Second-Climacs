@@ -22,7 +22,8 @@
                      (cache ip:cache)
                      first-line
                      last-line)
-  (cl-syntax::compute-form-indentation wad nil nil)
+  ;; TODO doesn't work completely right. Disabled for now
+  #+(or) (cl-syntax::compute-form-indentation wad nil nil)
   (let ((expression (cst:raw wad)))
     (if (typep expression 'ip:token)
         (draw-token-wad
