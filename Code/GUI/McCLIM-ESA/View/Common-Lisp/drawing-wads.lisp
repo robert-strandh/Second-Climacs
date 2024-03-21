@@ -1,46 +1,32 @@
 (cl:in-package #:second-climacs-clim-view-common-lisp)
 
-(defgeneric draw-wad (context wad start-ref cache first-line last-line))
+(defgeneric draw-wad (context wad start-ref cache))
 
-(defgeneric draw-token-wad (context wad token start-ref cache first-line last-line))
+(defgeneric draw-token-wad (context wad token start-ref cache))
 
-(defgeneric draw-compound-wad (context wad start-ref cache first-line last-line))
+(defgeneric draw-compound-wad (context wad start-ref cache))
 
 ;;; General wads
 
-(defmethod draw-wad (context
-                     (wad ip:wad)
-                     start-ref
-                     (cache ip:cache)
-                     first-line
-                     last-line)
-  (draw-compound-wad context wad start-ref cache first-line last-line))
+(defmethod draw-wad (context (wad ip:wad) start-ref (cache ip:cache))
+  (draw-compound-wad context wad start-ref cache))
 
-(defmethod draw-wad (context
-                     (wad ip:cst-wad)
-                     start-ref
-                     (cache ip:cache)
-                     first-line
-                     last-line)
+(defmethod draw-wad (context (wad ip:cst-wad) start-ref (cache ip:cache))
   ;; TODO doesn't work completely right. Disabled for now
   #+(or) (cl-syntax::compute-form-indentation wad nil nil)
   (let ((expression (cst:raw wad)))
     (if (typep expression 'ip:token)
-        (draw-token-wad
-         context wad expression start-ref cache first-line last-line)
-        (draw-compound-wad
-         context wad start-ref cache first-line last-line))))
+        (draw-token-wad context wad expression start-ref cache)
+        (draw-compound-wad context wad start-ref cache))))
 
-(defmethod draw-wad :around (context (wad ip:comment-wad)
-                             start-ref cache first-line last-line)
-  (declare (ignore start-ref cache first-line last-line))
+(defmethod draw-wad :around (context (wad ip:comment-wad) start-ref cache)
+  (declare (ignore start-ref cache))
   (let ((stream (stream* context)))
     (clim:with-drawing-options (stream :ink clim:+brown+)
       (call-next-method))))
 
-(defmethod draw-wad :around (context (wad ip:ignored-wad)
-                             start-ref cache first-line last-line)
-  (declare (ignore start-ref cache first-line last-line))
+(defmethod draw-wad :around (context (wad ip:ignored-wad) start-ref cache)
+  (declare (ignore start-ref cache))
   (let ((stream (stream* context)))
     (clim:with-drawing-options (stream :ink clim:+gray50+)
       (call-next-method))))
@@ -60,9 +46,8 @@
                                 :line-thickness thickness
                                 :line-dashes    dashes))))))
 
-  (defmethod draw-wad :after (context (wad ip:word-wad)
-                              start-ref cache first-line last-line)
-    (declare (ignore cache first-line last-line))
+  (defmethod draw-wad :after (context (wad ip:word-wad) start-ref cache)
+    (declare (ignore cache))
     (when (ip:misspelled wad)
       (let ((dash-length (* 1/6 (line-height context))))
         (draw-underline context start-ref wad clim:+orange+ 1/8
@@ -70,21 +55,20 @@
                               (* 2 dash-length))))))
 
   (defmethod draw-wad :after (context (wad ip:labeled-object-definition-wad)
-                              start-ref cache first-line last-line)
-    (declare (ignore cache first-line last-line))
+                              start-ref cache)
+    (declare (ignore cache))
     (draw-underline context start-ref wad clim:+foreground-ink+ 1/12 nil))
 
   (defmethod draw-wad :after (context (wad ip:labeled-object-reference-wad)
-                              start-ref cache first-line last-line)
-    (declare (ignore cache first-line last-line))
+                              start-ref cache)
+    (declare (ignore cache))
     (draw-underline context start-ref wad clim:+foreground-ink+ 1/12 nil)))
 
 ;;; Token wads
 
 (defmethod draw-token-wad :around
-    (context wad (token ip:existing-symbol-token)
-     start-ref cache first-line last-line)
-  (declare (ignore wad start-ref cache first-line last-line))
+    (context wad (token ip:existing-symbol-token) start-ref cache)
+  (declare (ignore wad start-ref cache))
   (if (equal (ip:package-name token) "COMMON-LISP")
       (let ((stream (stream* context)))
         (clim:with-drawing-options (stream :ink clim:+purple+)
@@ -100,9 +84,8 @@
                                   :ink symbol-ink)))
 
   (defmethod draw-token-wad :before
-      (context wad (token ip:non-existing-symbol-token)
-       start-ref cache first-line last-line)
-    (declare (ignore cache first-line last-line))
+      (context wad (token ip:non-existing-symbol-token) start-ref cache)
+    (declare (ignore cache))
     (let ((pos (ip:package-marker-1 token))
           (start (ip:start-column wad))
           (end (ip:end-column wad))
@@ -114,8 +97,8 @@
 
   (defmethod draw-token-wad :before
       (context wad (token ip:non-existing-package-symbol-token)
-       start-ref cache first-line last-line)
-    (declare (ignore cache first-line last-line))
+       start-ref cache)
+    (declare (ignore cache))
     (let ((pos (ip:package-marker-1 token))
           (start (ip:start-column wad))
           (end (ip:end-column wad))
@@ -123,16 +106,14 @@
       (unless (or (null pos) (not (zerop height)))
         (draw-rectangles context start-ref start (+ start pos) end clim:+red+ clim:+pink+)))))
 
-(defmethod draw-token-wad
-    (context wad token start-ref (cache ip:cache) first-line last-line)
+(defmethod draw-token-wad (context wad token start-ref (cache ip:cache))
   ;; Call DRAW-COMPOUND-WAD instead of DRAW-FILTERED-AREA in case WAD
   ;; has children.
-  (draw-compound-wad context wad start-ref cache first-line last-line))
+  (draw-compound-wad context wad start-ref cache))
 
 ;;; Compound wads
 
-(defmethod draw-compound-wad :around (context (wad ip:cst-wad)
-                                      start-ref cache first-line last-line)
+(defmethod draw-compound-wad :around (context (wad ip:cst-wad) start-ref cache)
   (typecase (cst:raw wad)
     (number (let ((stream (stream* context)))
               (clim:with-drawing-options (stream :ink clim:+dark-blue+)
@@ -142,29 +123,32 @@
                 (call-next-method))))
     (t      (call-next-method))))
 
-(defmethod draw-compound-wad (context wad start-ref cache first-line last-line)
+(defmethod draw-compound-wad (context wad start-ref cache)
   (flet ((start-column (wad) (ip:start-column wad))
          (height (wad) (ip:height wad))
          (end-column (wad) (ip:end-column wad)))
-    (let ((children (ip:children wad))
-          (prev-end-line start-ref)
+    (let ((min-line        (min-line context))
+          (min-column      (min-column context))
+          (max-line        (max-line context))
+          (children        (ip:children wad))
+          (prev-end-line   start-ref)
           (prev-end-column (start-column wad)))
       (loop for child             in children
             for start-line-number =  (ip:absolute-start-line child)
             for height            =  (height child)
-            until (> start-line-number last-line)
+            until (> start-line-number max-line)
             do ;; Ensure that only at least partially visible wads are
                ;; passed to DRAW-FILTERED-AREA and DRAW-WAD.
                (when (or ;; Start visible.
-                         (<= first-line start-line-number last-line)
+                         (<= min-line start-line-number max-line)
                          ;; End visible.
-                         (<= first-line
+                         (<= min-line
                              (+ start-line-number height)
-                             last-line)
+                             max-line)
                          ;; Contains visible region.
                          (<= start-line-number
-                             first-line
-                             last-line
+                             min-line
+                             max-line
                              (+ start-line-number height)))
                  (assert (or      (<= prev-end-line   start-line-number)
                              (and (=  prev-end-line   start-line-number)
@@ -174,8 +158,8 @@
                                      prev-end-column
                                      start-line-number
                                      (start-column child)
-                                     first-line last-line)
-                 (draw-wad context child start-line-number cache first-line last-line))
+                                     min-line min-column max-line nil)
+                 (draw-wad context child start-line-number cache))
                (setf prev-end-line   (+ start-line-number height)
                      prev-end-column (end-column child)))
       (draw-filtered-area context cache
@@ -183,15 +167,14 @@
                           prev-end-column
                           (+ start-ref (height wad))
                           (end-column wad)
-                          first-line last-line))))
+                          min-line min-column max-line nil))))
 
 (defun wad-is-incomplete-p (wad)
   (some (lambda (error)
           (typep (ip:condition error) 'eclector.reader:missing-delimiter))
         (ip:errors wad)))
 
-(defmethod draw-compound-wad :after
-    (context (wad ip:wad) start-ref cache first-line last-line)
+(defmethod draw-compound-wad :after (context (wad ip:wad) start-ref cache)
   ;; TODO remember point and mark lines in context to avoid the repeated lookups
   (let* ((pane                 (stream* context))
          (clim-view            (clim:stream-default-view pane))
@@ -238,18 +221,16 @@
 ;;; Buffer content drawing
 
 (defun draw-filtered-area (context cache
-                           start-line-number start-column-number
-                           end-line-number end-column-number
-                           first-line last-line)
+                           start-line start-column end-line end-column
+                           min-line   min-column   max-line max-column)
   (multiple-value-call #'draw-area context cache
-    (filter-area start-line-number start-column-number
-                 end-line-number end-column-number
-                 first-line last-line)))
+    (filter-area start-line start-column end-line end-column
+                 min-line   min-column   max-line max-column)))
 
 ;;; Draw an area of text defined by START-LINE, START-COLUMN,
-;;; END-LINE-NUMBER, and END-COLUMN.  The text is drawn on PANE, using
-;;; the contents from CACHE.  END-COLUMN is permitted to be NIL,
-;;; meaning the end of the line designated by END-LINE.
+;;; END-LINE, and END-COLUMN.  The text is drawn on PANE, using the
+;;; contents from CACHE.  END-COLUMN is permitted to be NIL, meaning
+;;; the end of the line designated by END-LINE.
 (defun draw-area (context cache start-line start-column end-line end-column)
   (cond ((= start-line end-line)
          (let ((contents (ip:line-contents cache start-line)))
@@ -264,8 +245,7 @@
          (loop for line from (1+ start-line) to (1- end-line)
                for contents of-type string
                   = (ip:line-contents cache line)
-               do (draw-interval
-                   context line contents 0 (length contents)))
+               do (draw-interval context line contents 0 (length contents)))
          (let ((last (ip:line-contents cache end-line)))
            (declare (type string last))
            (draw-interval context end-line last 0 end-column)))))
@@ -274,10 +254,10 @@
 ;;; drawing anything if the defined interval is empty.  END-COLUMN can
 ;;; be NIL which means the end of CONTENTS.
 (defun draw-interval (context line-number contents start-column end-column)
-  (unless (= start-column (if (null end-column)
-                              (length contents)
-                              end-column))
+  (when (< start-column (if (null end-column)
+                            (length contents)
+                            end-column))
     (multiple-value-bind (x y)
         (text-position context line-number start-column :include-ascent t)
       (clim:draw-text* (stream* context) contents x y :start start-column
-                                                      :end end-column))))
+                                                      :end   end-column))))

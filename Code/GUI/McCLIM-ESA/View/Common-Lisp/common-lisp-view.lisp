@@ -21,43 +21,52 @@
         (clim:find-command-table 'clim-base::incremental-search-table)
         (clim:find-command-table 'common-lisp-table))))
 
-(defgeneric render-cache (cache pane first-line last-line max-column))
+(defgeneric render-cache (cache pane min-line min-column max-line max-column))
 
 ;;; This variable is used to accumulate ERROR-WAD instances as they
 ;;; are encountered while drawing visible wads.
 (defvar *error-wads*)
 
 (defmethod render-cache ((cache output-history) pane
-                         first-line last-line max-column)
+                         min-line min-column max-line max-column)
   (let* ((view         (clim:stream-default-view pane))
          (climacs-view (clim-base:climacs-view view))
          (analyzer     (base:analyzer climacs-view))
          (buffer       (ip:buffer analyzer))
-         (context      (make-instance 'context :stream pane)))
+         (context      (make-instance
+                        'context
+                        :stream             pane
+                        :min-line           min-line
+                        :min-column         min-column
+                        :min-column/content (first-non-whitespace-as-min-column
+                                             buffer)
+                        :max-line           max-line
+                        :max-column         max-column
+                        :max-column/content (line-length-as-max-colum buffer))))
     ;; Draw region rectangles first, that is beneath everything.
-    (draw-regions context buffer first-line last-line max-column)
+    (draw-regions context buffer)
     ;; Draw wads and buffer content.
     (let ((*error-wads* '()))
       ;; Draw wads, noting any errors.
       (ip:map-wads-and-spaces
-       cache first-line last-line
+       cache min-line max-line
        (lambda (wad)
-         (draw-wad context wad (ip:absolute-start-line wad)
-                   cache first-line last-line))
+         (draw-wad context wad (ip:absolute-start-line wad) cache))
        (lambda (line start-column end-column)
          (draw-interval
-          context line (ip:line-contents cache line) start-column end-column)))
+          context line (ip:line-contents cache line)
+          (max start-column min-column) (min end-column max-column))))
       ;; Draw error decorations (in buffer) annotations (near cursor)
       ;; and gutter indicators.
       (draw-error-wads context *error-wads*))
     ;; Draw point and mark cursors and possibly search state atop
     ;; everything else.
-    (draw-cursors context buffer first-line last-line)
-    (draw-search-state context buffer first-line last-line)))
+    (draw-cursors context buffer)
+    (draw-search-state context buffer)))
 
 ;;; TODO Doesn't work completely right. Disabled for now.
-#+(or) (defmethod draw-wad :before (context wad start-ref cache first-line last-line)
-         (declare (ignore cache first-line last-line))
+#+(or) (defmethod draw-wad :before (context wad start-ref cache)
+         (declare (ignore cache))
          (let* ((indentation (ip:indentation wad))
                 (start-column (ip:start-column wad))
                 (pane (stream* context))
@@ -71,9 +80,8 @@
                  (t
                   (draw-right-arrow context gutter start-ref clim:+blue+)))))
 
-(defmethod draw-wad :before (context (wad ip:wad)
-                             start-ref cache first-line last-line)
-  (declare (ignore start-ref cache first-line last-line))
+(defmethod draw-wad :before (context (wad ip:wad) start-ref cache)
+  (declare (ignore start-ref cache))
   ;; Record encountered error wads so that the various error
   ;; indicators can be drawn later.
   ;; TODO `append'ing like this is slow
@@ -105,11 +113,13 @@
   (declare (ignore x-offset y-offset region))
   (clear-viewport stream)
   (multiple-value-bind (left top right bottom) (viewport-area stream)
-    (declare (ignore left))
-    (let* ((line-count (ip:line-count cache))
-           (last-line-number (min bottom (1- line-count))))
-      (unless (minusp last-line-number)
-        (render-cache cache stream top last-line-number right)))))
+    (let* ((min-column  (max 0 left))
+           (line-count  (ip:line-count cache))
+           (max-line    (min bottom (1- line-count)))
+           (total-width (ip:total-width cache))
+           (max-column  (min right total-width)))
+      (unless (minusp max-line)
+        (render-cache cache stream top min-column max-line max-column)))))
 
 (defmethod clim:bounding-rectangle* ((history output-history))
   (let ((pane (climi::output-history-stream history)))

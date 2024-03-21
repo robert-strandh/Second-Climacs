@@ -2,25 +2,63 @@
 
 ;;; Position computations
 
+(defun effective-column (designator line)
+  (etypecase designator
+    (real                 designator)
+    ((or function symbol) (funcall designator line))))
+
+(defun line-length-as-max-colum (buffer)
+  (lambda (line-number)
+    (let ((line (cluffer:find-line buffer line-number)))
+      (cluffer:item-count line))))
+
+(defun first-non-whitespace-as-min-column (buffer)
+  (lambda (line-number)
+    (let ((line (cluffer:find-line buffer line-number)))
+      (or (position-if-not #'edit:whitespacep (cluffer:items line))
+          0))))
+
 ;;; The parameters START-LINE, START-COLUMN, END-LINE, and END-COLUMN
-;;; together define an initial area.  END-COLUMN may be NIL, meaning
-;;; the end of the line indicated by END-LINE.  FIRST-LINE and
-;;; LAST-LINE together define the filter.  Four values are returned:
-;;; the filtered start line, the filtered start column, the filtered
-;;; end line, and the filtered end column.  The last return value may
-;;; be NIL, indicating the end of the line indicated by the third
-;;; return value.
-(defun filter-area
-    (start-line start-column end-line end-column first-line last-line)
+;;; together define an initial area.  MIN-LINE, MIN-COLUMN, MAX-LINE,
+;;; and MAX-COLUMN together define the filter.  MIN-COLUMN and
+;;; MAX-COLUMN are designators accepted by `effective-column'.
+;;; MAX-COLUMN may be `nil' to indicate that the length of line should
+;;; be used to determine the maximum column.  Four values are
+;;; returned: the filtered start line, the filtered start column, the
+;;; filtered end line, and the filtered end column.
+(defun filter-area (start-line start-column end-line end-column
+                    min-line   min-column   max-line max-column)
   (multiple-value-bind (start-line start-column)
-      (if (< start-line first-line)
-          (values first-line 0)
-          (values start-line start-column))
+      (if (< start-line min-line)
+          (values min-line   (effective-column min-column min-line))
+          (values start-line (max start-column
+                                  (effective-column min-column start-line))))
     (multiple-value-bind (end-line end-column)
-        (if (< last-line end-line)
-            (values last-line nil)
-            (values end-line  end-column))
+        (if (< max-line end-line)
+            (values max-line (if (null max-column)
+                                 nil
+                                 (effective-column max-column max-line)))
+            (values end-line (if (null max-column)
+                                 end-column
+                                 (min end-column
+                                      (effective-column
+                                       max-column end-line)))))
       (values start-line start-column end-line end-column))))
+
+(defun map-lines-in-range (function
+                           start-line start-column end-line end-column
+                           min-line   min-column   max-line max-column)
+  (multiple-value-bind (start-line start-column end-line end-column)
+      (filter-area start-line start-column end-line end-column
+                   min-line   min-column   max-line max-column)
+    (loop :for line :from start-line :to end-line
+          :for start-column* = (if (= line start-line)
+                                   start-column
+                                   (effective-column min-column line))
+          :for end-column* = (if (= line end-line)
+                                 end-column
+                                 (effective-column max-column line))
+          :do (funcall function line start-column* end-column*))))
 
 ;;; Return the text-style width and the text-style height as two
 ;;; values.
@@ -32,16 +70,34 @@
 ;;; The drawing content
 
 (defclass context ()
-  ((%stream          :initarg  :stream
-                     :reader   stream*)
-   (%character-width :initarg  :character-width
-                     :reader   character-width)
-   (%line-height     :initarg  :line-height
-                     :reader   line-height)
-   (%ascent          :initarg  :ascent
-                     :reader   ascent)
-   (%descent         :initarg  :descent
-                     :reader   descent))
+  ((%stream             :initarg  :stream
+                        :reader   stream*)
+   ;;
+   (%character-width    :initarg  :character-width
+                        :reader   character-width)
+   (%line-height        :initarg  :line-height
+                        :reader   line-height)
+   (%ascent             :initarg  :ascent
+                        :reader   ascent)
+   (%descent            :initarg  :descent
+                        :reader   descent)
+   ;; Bounding rectangle of the buffer area being
+   ;; drawn. `min-column/content' and `max-column/content' return
+   ;; functions that can be passed to `effective-column' to compute
+   ;; the min/max column of the (non-whitespace) content for a given
+   ;; line.
+   (%min-line           :initarg :min-line
+                        :reader  min-line)
+   (%min-column         :initarg :min-column
+                        :reader  min-column)
+   (%min-column/content :initarg :min-column/content
+                        :reader  min-column/content)
+   (%max-line           :initarg :max-line
+                        :reader  max-line)
+   (%max-column         :initarg :max-column
+                        :reader  max-column)
+   (%max-column/content :initarg :max-column/content
+                        :reader  max-column/content))
   (:default-initargs
    :stream (error "required")))
 
@@ -73,17 +129,33 @@
 
 ;;; Underline
 
-(defun draw-underline-marker (context line start-column end-column
-                              &rest drawing-options
-                              &key line-thickness &allow-other-keys)
-  (multiple-value-bind (x y) (text-position context line start-column
-                                            :include-ascent t)
-    (let* ((column-count (- end-column start-column))
-           (width        (* (character-width context) column-count))
-           (thickness    (or line-thickness (* 1/8 (line-height context)))))
-      (apply #'clim:draw-line* (stream* context) x (+ y thickness) (+ x width) (+ y thickness)
-             :line-thickness thickness
-             (alexandria:remove-from-plist drawing-options :line-thickness)))))
+(defun draw-underline-marker
+    (context start-line start-column end-line end-column
+     &rest args
+     &key line-thickness
+          (min-column        (min-column/content context))
+          (max-column        (max-column/content context))
+          (empty-line-drawer 'draw-triangle-marker)
+     &allow-other-keys)
+  (let ((stream          (stream* context))
+        (thickness       (or line-thickness (* 1/8 (line-height context))))
+        (character-width (character-width context))
+        (drawing-options (alexandria:remove-from-plist
+                          args :line-thickness :min-column :max-column
+                               :empty-line-drawer)))
+    (map-lines-in-range
+     (lambda (line start-column end-column)
+       (cond ((= start-column end-column)
+              (apply empty-line-drawer context line start-column drawing-options))
+             ((< start-column end-column)
+              (let* ((column-count (- end-column start-column))
+                     (width        (* character-width column-count)))
+                (multiple-value-bind (x y)
+                    (text-position context line start-column :include-ascent t)
+                  (apply #'clim:draw-line* stream x (+ y thickness) (+ x width) (+ y thickness)
+                         :line-thickness thickness drawing-options))))))
+     start-line start-column end-line end-column
+     (min-line context) min-column (max-line context) max-column)))
 
 ;;; Triangle
 
@@ -144,22 +216,20 @@
             drawing-options :x2-offset :include-descent))))
 
 (defun draw-multiple-line-rectangle
-    (context start-line start-column end-line end-column max-column
-     &rest args &key ink filled line-thickness x2-offset include-descent)
+    (context start-line start-column end-line end-column
+     &rest args &key (min-column (min-column context))
+                     (max-column (max-column context))
+                     ink filled line-thickness x2-offset include-descent)
   (declare (ignore ink filled line-thickness x2-offset include-descent))
-  (loop :for line :from start-line :to end-line
-        :for start-column* = (if (= line start-line)
-                                 start-column
-                                 0)
-        :for end-column* = (cond ((= line end-line)
-                                  end-column)
-                                 ((realp max-column)
-                                  max-column)
-                                 (t
-                                  (funcall max-column line)))
-        :do (apply #'draw-one-line-rectangle
-                   context line start-column* end-column*
-                   args)))
+  (let ((drawing-options (alexandria:remove-from-plist
+                          args :min-column :max-column)))
+    (map-lines-in-range
+     (lambda (line start-column end-column)
+       (when (< start-column end-column)
+         (apply #'draw-one-line-rectangle context line start-column end-column
+                drawing-options)))
+     start-line start-column end-line end-column
+     (min-line context) min-column (max-line context) max-column)))
 
 ;;; Arrows
 

@@ -2,27 +2,20 @@
 
 ;;; Region
 
-(defun draw-region (context point mark first-line last-line max-column
-                    &key (kind :primary))
+(defun draw-region (context point mark &key (kind :primary))
   (multiple-value-bind (from to) (if (cluffer:cursor< point mark)
                                      (values point mark)
                                      (values mark point))
-    (multiple-value-bind (start-line start-column end-line end-column)
-        (filter-area
-         (cluffer:line-number from) (cluffer:cursor-position from)
-         (cluffer:line-number to)   (cluffer:cursor-position to)
-         first-line last-line)
-      ;; END-COLUMN is `nil' when the line which contains TO is
-      ;; after LAST-LINE.
-      (let ((end-column (or end-column max-column))
-            (ink        (ecase kind
-                          (:primary   clim:+light-blue+)
-                          (:secondary clim:+light-gray+))))
-        (draw-multiple-line-rectangle
-         context start-line start-column end-line end-column max-column
-         :ink ink :include-descent t)))))
+    (let ((ink (ecase kind
+                 (:primary   clim:+light-blue+)
+                 (:secondary clim:+light-gray+))))
+      (draw-multiple-line-rectangle
+       context
+       (cluffer:line-number from) (cluffer:cursor-position from)
+       (cluffer:line-number to)   (cluffer:cursor-position to)
+       :include-descent t :ink ink))))
 
-(defun draw-regions (context buffer first-line last-line max-column)
+(defun draw-regions (context buffer)
   (let ((primary-site (edit:site buffer)))
     (edit:map-sites
      (lambda (site)
@@ -30,8 +23,7 @@
          (let ((point (edit:point site))
                (mark  (edit:mark site))
                (kind  (if (eq site primary-site) :primary :secondary)))
-           (draw-region context point mark first-line last-line max-column
-                        :kind kind))))
+           (draw-region context point mark :kind kind))))
      buffer)))
 
 ;;; Cursor
@@ -67,43 +59,49 @@
       (apply #'draw-cursor* (stream* context) x y
              :ascent ascent :descent descent args))))
 
-(defun draw-cursors (context buffer first-line last-line)
-  (labels ((maybe-draw-cursor (cursor role kind)
-             (let ((cursor-line-number (cluffer:line-number cursor)))
-               (when (<= first-line cursor-line-number last-line)
-                 (let ((cursor-column-number (cluffer:cursor-position cursor)))
-                   (draw-cursor context cursor-line-number cursor-column-number
-                                :role role :kind kind)))))
-           (draw-site (site kind)
-             (let ((point (edit:point site))
-                   (mark  (edit:mark site)))
-               (maybe-draw-cursor point :point kind)
-               (when mark
-                 (let ((role (if (edit:mark-active-p site)
-                                 :active-mark
-                                 :inactive-mark)))
-                   (maybe-draw-cursor mark role kind)))
-               (mapc (alexandria:rcurry
-                      #'maybe-draw-cursor :inactive-mark :other)
-                     (edit:mark-stack site)))))
-    (let ((primary-site (edit:site buffer)))
-      (edit:map-sites
-       (lambda (site)
-         (draw-site site (if (eq site primary-site) :primary :secondary)))
-       buffer))))
+(defun draw-cursors (context buffer)
+  (let ((min-line (min-line context))
+        (max-line (max-line context)))
+    (labels ((maybe-draw-cursor (cursor role kind)
+               (let ((cursor-line-number (cluffer:line-number cursor)))
+                 (when (<= min-line cursor-line-number max-line)
+                   (let ((cursor-column-number (cluffer:cursor-position cursor)))
+                     (draw-cursor context cursor-line-number cursor-column-number
+                                  :role role :kind kind)))))
+             (draw-site (site kind)
+               (let ((point (edit:point site))
+                     (mark  (edit:mark site)))
+                 (maybe-draw-cursor point :point kind)
+                 (when mark
+                   (let ((role (if (edit:mark-active-p site)
+                                   :active-mark
+                                   :inactive-mark)))
+                     (maybe-draw-cursor mark role kind)))
+                 (mapc (alexandria:rcurry
+                        #'maybe-draw-cursor :inactive-mark :other)
+                       (edit:mark-stack site)))))
+      (let ((primary-site (edit:site buffer)))
+        (edit:map-sites
+         (lambda (site)
+           (draw-site site (if (eq site primary-site) :primary :secondary)))
+         buffer)))))
 
 ;;; Search state
 
 (defun draw-match (context match start-line start-column end-line end-column
-                   activep max-column)
+                   activep)
   (declare (ignore match))
-  (let ((ink       (if activep clim:+red+ clim:+salmon+))
-        (thickness (if activep 2 1)))
+  (let ((ink        (if activep clim:+red+ clim:+salmon+))
+        (thickness  (if activep 2 1)))
     (draw-multiple-line-rectangle
-     context start-line start-column end-line end-column max-column
-     :ink ink :filled nil :line-thickness thickness :x2-offset -2)))
+     context start-line start-column end-line end-column
+     :max-column     (max-column/content context)
+     :filled         nil
+     :line-thickness thickness
+     :x2-offset      -2
+     :ink            ink)))
 
-(defun draw-search-state (context buffer first-line last-line)
+(defun draw-search-state (context buffer)
   (alexandria:when-let* ((search-state (edit.search:search-state buffer))
                          (matches      (edit.search:matches search-state)))
     (let ((match->site (make-hash-table)))
@@ -112,22 +110,20 @@
          (alexandria:when-let ((match (edit.search:match site)))
            (setf (gethash match match->site) site)))
        buffer)
-      (loop :for match :across matches
+      (loop :with min-line = (min-line context)
+            :with max-line = (max-line context)
+            :for match :across matches
             :for start = (edit.search:start match)
             :for end = (edit.search:end match)
             :for start-line = (cluffer:line-number start)
             :for end-line = (cluffer:line-number end)
-            :unless (or (< end-line first-line) (< last-line start-line))
+            :unless (or (< end-line min-line) (< max-line start-line))
               :do (let ((start-column (cluffer:cursor-position start))
                         (end-column   (cluffer:cursor-position end))
-                        (active?      (gethash match match->site))
-                        (max-column   (lambda (line-number)
-                                        (let ((line (cluffer:find-line
-                                                     buffer line-number)))
-                                         (cluffer:item-count line)))))
+                        (active?      (gethash match match->site)))
                     (draw-match context match
                                 start-line start-column end-line end-column
-                                active? max-column))))))
+                                active?))))))
 
 ;;; Errors
 
@@ -216,7 +212,7 @@
 (defun draw-error-decoration (context line start-column end-column)
   (if (= end-column start-column)
       (draw-triangle-marker context line start-column :ink clim:+red+)
-      (draw-underline-marker context line start-column end-column :ink clim:+red+)))
+      (draw-underline-marker context line start-column line end-column :ink clim:+red+)))
 
 ;;; Error annotations
 ;;;
