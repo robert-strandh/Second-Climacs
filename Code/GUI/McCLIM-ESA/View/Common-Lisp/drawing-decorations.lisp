@@ -204,15 +204,16 @@
         error-wad-clusters))
 
 (defun draw-error-wad-cluster-decoration (context error-wad-cluster)
-  (let* ((start-line   (ip:absolute-start-line (first error-wad-cluster)))
+  (let* ((first-wad    (first error-wad-cluster))
+         (start-line   (ip:absolute-start-line first-wad))
+         (end-line     (+ start-line (ip:height first-wad)))
          (start-column (reduce #'min error-wad-cluster :key #'ip:start-column))
          (end-column   (reduce #'max error-wad-cluster :key #'ip:end-column)))
-    (draw-error-decoration context start-line start-column end-column)))
+    (draw-error-decoration context start-line start-column end-line end-column)))
 
-(defun draw-error-decoration (context line start-column end-column)
-  (if (= end-column start-column)
-      (draw-triangle-marker context line start-column :ink clim:+red+)
-      (draw-underline-marker context line start-column line end-column :ink clim:+red+)))
+(defun draw-error-decoration (context start-line start-column end-line end-column)
+  (draw-underline-marker context start-line start-column end-line end-column
+                         :ink clim:+red+))
 
 ;;; Error annotations
 ;;;
@@ -228,12 +229,15 @@
           :for cluster        :in error-wad-clusters
           :for wad            =   (first cluster)
           :for start-line     =   (ip:absolute-start-line wad)
-          :when (and (= start-line cursor-line)
-                     (<= (ip:start-column wad)
-                         cursor-column
-                         (ip:end-column wad)))
+          :for end-line       =   (+ start-line (ip:height wad))
+          :when (and (or (< start-line cursor-line)
+                         (and (= start-line cursor-line)
+                              (<= (ip:start-column wad) cursor-column)))
+                     (or (< cursor-line end-line)
+                         (and (= cursor-line end-line)
+                              (<= cursor-column (ip:end-column wad)))))
             :do (draw-error-cluster-annotation
-                 context start-line cursor-column cluster))))
+                 context cursor-line cursor-column cluster))))
 
 (defun draw-error-cluster-annotation (context line column error-wad-cluster)
   (let ((conditions (mapcar #'ip:condition error-wad-cluster)))
