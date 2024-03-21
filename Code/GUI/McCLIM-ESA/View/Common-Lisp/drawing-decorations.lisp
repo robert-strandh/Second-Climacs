@@ -236,8 +236,10 @@
                      (or (< cursor-line end-line)
                          (and (= cursor-line end-line)
                               (<= cursor-column (ip:end-column wad)))))
-            :do (draw-error-cluster-annotation
-                 context cursor-line cursor-column cluster))))
+            :appending cluster :into result
+          :finally (unless (null result)
+                     (draw-error-cluster-annotation
+                      context cursor-line cursor-column result)))))
 
 (defun draw-error-cluster-annotation (context line column error-wad-cluster)
   (let ((conditions (mapcar #'ip:condition error-wad-cluster)))
