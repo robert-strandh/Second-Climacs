@@ -77,9 +77,11 @@
                          line start-column middle-column end-column
                          package-ink symbol-ink)
          (draw-one-line-rectangle context line start-column middle-column
-                                  :ink package-ink)
+                                  :include-descent t
+                                  :ink             package-ink)
          (draw-one-line-rectangle context line middle-column end-column
-                                  :ink symbol-ink)))
+                                  :include-descent t
+                                  :ink             symbol-ink)))
 
   (defmethod draw-token-wad :before
       (context wad (token ip:non-existing-symbol-token) start-ref cache)
@@ -122,50 +124,42 @@
     (t      (call-next-method))))
 
 (defmethod draw-compound-wad (context wad start-ref cache)
-  (flet ((start-column (wad) (ip:start-column wad))
-         (height (wad) (ip:height wad))
-         (end-column (wad) (ip:end-column wad)))
-    (let ((min-line        (min-line context))
-          (min-column      (min-column context))
-          (max-line        (max-line context))
-          (children        (ip:children wad))
-          (prev-end-line   start-ref)
-          (prev-end-column (start-column wad)))
-      (loop for child             in children
-            for start-line-number =  (ip:absolute-start-line child)
-            for height            =  (height child)
-            until (> start-line-number max-line)
-            do ;; Ensure that only at least partially visible wads are
-               ;; passed to DRAW-FILTERED-AREA and DRAW-WAD.
-               (when (or ;; Start visible.
-                         (<= min-line start-line-number max-line)
-                         ;; End visible.
-                         (<= min-line
-                             (+ start-line-number height)
-                             max-line)
-                         ;; Contains visible region.
-                         (<= start-line-number
-                             min-line
-                             max-line
-                             (+ start-line-number height)))
-                 (assert (or      (<= prev-end-line   start-line-number)
-                             (and (=  prev-end-line   start-line-number)
-                                  (<= prev-end-column (start-column child)))))
-                 (draw-filtered-area context cache
-                                     prev-end-line
-                                     prev-end-column
-                                     start-line-number
-                                     (start-column child)
-                                     min-line min-column max-line nil)
-                 (draw-wad context child start-line-number cache))
-               (setf prev-end-line   (+ start-line-number height)
-                     prev-end-column (end-column child)))
-      (draw-filtered-area context cache
-                          prev-end-line
-                          prev-end-column
-                          (+ start-ref (height wad))
-                          (end-column wad)
-                          min-line min-column max-line nil))))
+  (let ((min-line        (min-line context))
+        (min-column      (min-column context))
+        (max-line        (max-line context))
+        (children        (ip:children wad))
+        (prev-end-line   start-ref)
+        (prev-end-column (ip:start-column wad)))
+    (loop for child      in children
+          for start-line =  (ip:absolute-start-line child)
+          for height     =  (ip:height child)
+          until (> start-line max-line)
+          do ;; Ensure that only at least partially visible wads are
+             ;; passed to DRAW-FILTERED-AREA and DRAW-WAD.
+             (when (or ;; Start visible.
+                       (<= min-line start-line max-line)
+                       ;; End visible.
+                       (<= min-line (+ start-line height) max-line)
+                       ;; Contains visible region.
+                       (<= start-line min-line max-line (+ start-line height)))
+               (assert (or      (< prev-end-line   start-line)
+                           (and (= prev-end-line   start-line)
+                                (<= prev-end-column (ip:start-column child)))))
+               (draw-filtered-area context cache
+                                   prev-end-line
+                                   prev-end-column
+                                   start-line
+                                   (ip:start-column child)
+                                   min-line min-column max-line nil)
+               (draw-wad context child start-line cache))
+             (setf prev-end-line   (+ start-line height)
+                   prev-end-column (ip:end-column child)))
+    (draw-filtered-area context cache
+                        prev-end-line
+                        prev-end-column
+                        (+ start-ref (ip:height wad))
+                        (ip:end-column wad)
+                        min-line min-column max-line nil)))
 
 (defun wad-is-incomplete-p (wad)
   (some (lambda (error)

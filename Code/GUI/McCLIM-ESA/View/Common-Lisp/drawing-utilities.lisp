@@ -167,13 +167,15 @@
                                    (height      1/4)
                                    filled
                               &allow-other-keys)
-  (let* ((thickness 1)
-         (size      (- (* height line-height) (if filled 0 (* 1/2 thickness))))
-         (points    (vector x y
-                            (+ x size) (+ y size)
-                            (- x size) (+ y size))))
-    (apply #'clim:draw-polygon* stream points
-           (alexandria:remove-from-plist drawing-options :line-height :height))))
+  (let* ((thickness       1)
+         (size            (- (* height line-height)
+                             (if filled 0 (* 1/2 thickness))))
+         (points          (vector x y
+                                  (+ x size) (+ y size)
+                                  (- x size) (+ y size)))
+         (drawing-options (alexandria:remove-from-plist
+                           drawing-options :line-height :height)))
+    (apply #'clim:draw-polygon* stream points drawing-options)))
 
 (defun draw-triangle-marker (context line column
                              &rest drawing-options &key &allow-other-keys)
@@ -204,16 +206,13 @@
 ;;; single line of text.
 (defun draw-one-line-rectangle (context line start-column end-column
                                 &rest drawing-options
-                                &key ink filled line-thickness
-                                     (x2-offset 0) include-descent)
+                                &key ink filled line-thickness include-descent)
   (declare (ignore ink filled line-thickness))
   (multiple-value-bind (x1 y1 x2 y2)
       (rectangle-coordinates context line start-column end-column
                              :include-descent include-descent)
-    (apply #'clim:draw-rectangle*
-           (stream* context) x1 y1 (+ x2 x2-offset) y2
-           (alexandria:remove-from-plist
-            drawing-options :x2-offset :include-descent))))
+    (apply #'clim:draw-rectangle* (stream* context) x1 y1 x2 y2
+           (alexandria:remove-from-plist drawing-options :include-descent))))
 
 (defun draw-multiple-line-rectangle
     (context start-line start-column end-line end-column
@@ -225,7 +224,7 @@
                           args :min-column :max-column)))
     (map-lines-in-range
      (lambda (line start-column end-column)
-       (when (< start-column end-column)
+       (when (<= start-column end-column)
          (apply #'draw-one-line-rectangle context line start-column end-column
                 drawing-options)))
      start-line start-column end-line end-column
@@ -282,6 +281,6 @@
   (declare (ignore background border))
   (multiple-value-bind (x y) (text-position context line column
                                             :include-ascent t)
-    (let ((y (+ y (* 1/2 (line-height context)))))
+    (let ((y (+ y (* 3/4 (line-height context)))))
       (apply #'draw-annotation* (stream* context) x y annotation-producer
              args))))

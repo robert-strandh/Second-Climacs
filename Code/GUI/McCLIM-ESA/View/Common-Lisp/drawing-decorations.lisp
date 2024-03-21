@@ -95,11 +95,11 @@
         (thickness  (if activep 2 1)))
     (draw-multiple-line-rectangle
      context start-line start-column end-line end-column
-     :max-column     (max-column/content context)
-     :filled         nil
-     :line-thickness thickness
-     :x2-offset      -2
-     :ink            ink)))
+     :max-column      (max-column/content context)
+     :include-descent t
+     :filled          nil
+     :line-thickness  thickness
+     :ink             ink)))
 
 (defun draw-search-state (context buffer)
   (alexandria:when-let* ((search-state (edit.search:search-state buffer))
@@ -141,9 +141,9 @@
                             (and (= previous-line line)
                                  (= end-column previous-end-column)))
                           error-wads)))
-    (draw-gutter-indicators context line-clusters)
+    (draw-gutter-indicators     context line-clusters)
     (draw-error-wad-decorations context exact-clusters)
-    (draw-error-annotations context exact-clusters)))
+    (draw-error-annotations     context exact-clusters)))
 
 ;;; Error clustering
 
@@ -164,7 +164,7 @@
                            (funcall predicate
                                     line end-column
                                     previous-line previous-end-column)))
-            :do (flush)
+              :do (flush)
             :do (push wad cluster)
             :finally (flush)))
     (nreverse clusters)))
@@ -172,23 +172,32 @@
 ;;; Gutter indicates
 
 (defun draw-gutter-indicators (context error-wad-clusters)
-  ;; Draw error indicator in gutter.
+  ;; Draw one error indicators in the gutter.
   ;; TODO this is a temporary solution. It would be better to inform
   ;; the gutter pane about errors and let it handle the drawing
   ;; itself.
-  (let* ((pane   (stream* context))
-         (gutter (second-climacs-clim-base::left-gutter pane))
-         (width  (character-width context))
-         (height (line-height context))
-         (ascent (ascent context)))
-    (loop :for cluster    :in error-wad-clusters
-          :for count      =   (length cluster)
-          :for wad        =   (first cluster)
-          :for start-line =   (ip:absolute-start-line wad)
-          :for y          =   (* start-line height)
+  (let* ((pane        (stream* context))
+         (gutter      (second-climacs-clim-base::left-gutter pane))
+         (width/1     (character-width context))
+         (width/2     (* 1/2 width/1))
+         (width/4     (* 1/2 width/2))
+         (line-height (line-height context))
+         (ascent      (ascent context)))
+    (loop :for cluster    in error-wad-clusters
+          :for count      =  (length cluster)
+          :for wad        =  (first cluster)
+          :for start-line =  (ip:absolute-start-line wad)
+          :for width      =  (if (> count 1) width/1 width/2)
+          :for height     =  (reduce #'max cluster :key #'ip:height)
+          :for y          =  (* start-line line-height)
           :do (clim:with-translation (gutter 0 y)
-                (clim:draw-rectangle* gutter 0 0 (+ width 1) height
+                (clim:draw-rectangle* gutter 0 0 width line-height
                                       :ink clim:+red+)
+                (when (plusp height)
+                  (let ((y1 line-height)
+                        (y2 (* (1+ height) line-height)))
+                    (clim:draw-rectangle* gutter 0 y1 width/4 y2
+                                          :ink clim:+red+)))
                 (when (> count 1)
                   (let ((label (princ-to-string count)))
                     (clim:draw-text* gutter label 1 ascent
@@ -217,7 +226,7 @@
 
 ;;; Error annotations
 ;;;
-;;; Popups that appear when the cursor is position in an error wad.
+;;; Popups that appear when the cursor is positioned in an error wad.
 
 (defun draw-error-annotations (context error-wad-clusters)
   (let* ((clim-view    (clim:stream-default-view (stream* context)))
