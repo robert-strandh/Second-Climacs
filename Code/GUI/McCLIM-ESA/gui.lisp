@@ -156,9 +156,10 @@
         ;; This is probably wrong.  All windows may be concerned.
         (let ((pane (esa:current-window)))
           (move-viewport-to-cursor pane)))
-    (cluffer:cluffer-error (condition)
-      (esa:display-message "~a" condition))
-    (base:climacs-error (condition)
+    ((or cluffer:cluffer-error
+         text.editing:editing-condition
+         base:climacs-error)
+        (condition)
       (esa:display-message "~a" condition))))
 
 (defmethod esa:find-applicable-command-table ((frame climacs))
