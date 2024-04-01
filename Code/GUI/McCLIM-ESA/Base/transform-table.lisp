@@ -48,3 +48,30 @@
   (com-transpose-lines (:unit edit:line :direction :forward))
   ;; Expression
   (com-transpose-expressions (:unit edit.exp:expression :direction :forward) (#\t :control :meta)))
+
+;;; Structure editing operations
+
+(define-buffer-command (com-raise transform-table)
+    (&key (unit 'unit) (direction 'direction))
+  (edit:perform buffer 'edit.exp:raise unit direction))
+(define-command-specializations (transform-table com-raise)
+  (com-raise-expression-forward  (:unit edit.exp:expression :direction :forward)  (#\r :meta))
+  (com-raise-expression-backward (:unit edit.exp:expression :direction :backward)))
+
+(define-buffer-command (com-splice transform-table)
+    (&key (unit 'unit) (direction 'direction))
+  (edit:perform buffer 'edit.exp:splice unit direction))
+(define-command-specializations (transform-table com-splice)
+  (com-splice-expression-forward  (:unit edit.exp:expression :direction :forward)  (#\s :meta))
+  (com-splice-expression-backward (:unit edit.exp:expression :direction :backward)))
+
+(define-buffer-command (com-split transform-table) (&key (unit 'unit))
+  (edit:perform buffer 'edit.exp:split unit))
+(define-command-specializations (transform-table com-split)
+  (com-split-expression          (:unit edit.exp:expression)          (#\S :meta))
+  (com-split-toplevel-expression (:unit edit.exp:toplevel-expression) (#\S :meta :control)))
+
+(define-buffer-command (com-join transform-table) (&key (unit 'unit))
+  (edit:perform buffer 'edit.exp:join unit))
+(define-command-specialization (transform-table com-join-expressions com-join (#\J :meta))
+  :unit edit.exp:expression)
