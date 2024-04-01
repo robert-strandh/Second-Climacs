@@ -60,9 +60,14 @@
                                              (direction 'direction))
   (edit:perform buffer 'edit:mark-object unit direction))
 (define-command-specializations (motion-table com-mark-object)
-  (com-mark-word       (:unit edit:word       :direction :forward) (#\@ :meta))
-  (com-mark-sentence   (:unit edit:sentence   :direction :forward))
-  (com-mark-paragraph  (:unit edit:paragraph  :direction :forward) (#\h :meta)))
+  ;; Buffer structure units
+  (com-mark-item         (:unit edit:item      :direction :forward))
+  (com-mark-line         (:unit edit:line      :direction :forward))
+  (com-mark-whole-buffer (:unit edit:buffer    :direction :forward))
+  ;; Prose units
+  (com-mark-word         (:unit edit:word      :direction :forward) (#\@ :meta))
+  (com-mark-sentence     (:unit edit:sentence  :direction :forward))
+  (com-mark-paragraph    (:unit edit:paragraph :direction :forward) (#\h :meta)))
 
 ;;; TODO different table
 
