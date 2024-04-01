@@ -5,6 +5,7 @@
   (:local-nicknames
    (#:edit               #:text.editing)
    (#:edit.search        #:text.editing.search)
+   (#:edit.exp           #:text.editing.expression)
    (#:ip                 #:incrementalist)
 
    (#:base               #:second-climacs-base)

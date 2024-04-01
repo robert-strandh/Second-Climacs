@@ -26,21 +26,26 @@
 
 (define-command-specializations (motion-table com-move)
   ;; Buffer structure units
-  (com-forward-item                 (:unit edit:item            :direction :forward)   (#\f :control))
-  (com-backward-item                (:unit edit:item            :direction :backward)  (#\b :control))
-  (com-end-of-line                  (:unit edit:line-boundary   :direction :forward)   (#\e :control))
-  (com-beginning-of-line            (:unit edit:line-boundary   :direction :backward)  (#\a :control))
-  (com-next-line                    (:unit edit:line            :direction :forward)   (#\n :control))
-  (com-previous-line                (:unit edit:line            :direction :backward)  (#\p :control))
-  (com-end-of-buffer                (:unit edit:buffer-boundary :direction :forward)   (#\> :meta))
-  (com-beginning-of-buffer          (:unit edit:buffer-boundary :direction :backward)  (#\< :meta))
+  (com-forward-item                 (:unit edit:item                    :direction :forward)  (#\f :control))
+  (com-backward-item                (:unit edit:item                    :direction :backward) (#\b :control))
+  (com-end-of-line                  (:unit edit:line-boundary           :direction :forward)  (#\e :control))
+  (com-beginning-of-line            (:unit edit:line-boundary           :direction :backward) (#\a :control))
+  (com-next-line                    (:unit edit:line                    :direction :forward)  (#\n :control))
+  (com-previous-line                (:unit edit:line                    :direction :backward) (#\p :control))
+  (com-end-of-buffer                (:unit edit:buffer-boundary         :direction :forward)  (#\> :meta))
+  (com-beginning-of-buffer          (:unit edit:buffer-boundary         :direction :backward) (#\< :meta))
   ;; Prose units
-  (com-forward-word                 (:unit edit:word            :direction :forward)   (#\f :meta))
-  (com-backward-word                (:unit edit:word            :direction :backward)  (#\b :meta))
-  (com-forward-sentence             (:unit edit:sentence        :direction :forward)   (#\e :meta))
-  (com-backward-sentence            (:unit edit:sentence        :direction :backward)  (#\a :meta))
-  (com-forward-paragraph            (:unit edit:paragraph       :direction :forward)   (#\} :meta))
-  (com-backward-paragraph           (:unit edit:paragraph       :direction :backward)  (#\{ :meta)))
+  (com-forward-word                 (:unit edit:word                    :direction :forward)  (#\f :meta))
+  (com-backward-word                (:unit edit:word                    :direction :backward) (#\b :meta))
+  (com-forward-sentence             (:unit edit:sentence                :direction :forward)  (#\e :meta))
+  (com-backward-sentence            (:unit edit:sentence                :direction :backward) (#\a :meta))
+  (com-forward-paragraph            (:unit edit:paragraph               :direction :forward)  (#\} :meta))
+  (com-backward-paragraph           (:unit edit:paragraph               :direction :backward) (#\{ :meta))
+  ;; Expressions
+  (com-forward-expression           (:unit edit.exp:expression          :direction :forward)  (#\f :control :meta))
+  (com-backward-expression          (:unit edit.exp:expression          :direction :backward) (#\b :control :meta))
+  (com-forward-toplevel-expression  (:unit edit.exp:toplevel-expression :direction :forward)  (#\e :control :meta))
+  (com-backward-toplevel-expression (:unit edit.exp:toplevel-expression :direction :backward) (#\a :control :meta)))
 
 (define-motion-command com-back-to-indentation ()
   (edit:perform buffer 'edit:back-to-indentation))
@@ -59,15 +64,19 @@
 (define-motion-command com-mark-object (&key (unit      'unit)
                                              (direction 'direction))
   (edit:perform buffer 'edit:mark-object unit direction))
+
 (define-command-specializations (motion-table com-mark-object)
   ;; Buffer structure units
-  (com-mark-item         (:unit edit:item      :direction :forward))
-  (com-mark-line         (:unit edit:line      :direction :forward))
-  (com-mark-whole-buffer (:unit edit:buffer    :direction :forward))
+  (com-mark-item                (:unit edit:item                    :direction :forward))
+  (com-mark-line                (:unit edit:line                    :direction :forward))
+  (com-mark-whole-buffer        (:unit edit:buffer                  :direction :forward))
   ;; Prose units
-  (com-mark-word         (:unit edit:word      :direction :forward) (#\@ :meta))
-  (com-mark-sentence     (:unit edit:sentence  :direction :forward))
-  (com-mark-paragraph    (:unit edit:paragraph :direction :forward) (#\h :meta)))
+  (com-mark-word                (:unit edit:word                    :direction :forward) (#\@ :meta))
+  (com-mark-sentence            (:unit edit:sentence                :direction :forward))
+  (com-mark-paragraph           (:unit edit:paragraph               :direction :forward) (#\h :meta))
+  ;; Expression
+  (com-mark-expression          (:unit edit.exp:expression          :direction :forward) (#\Space :meta :control))
+  (com-mark-toplevel-expression (:unit edit.exp:toplevel-expression :direction :forward) (#\h :meta :control)))
 
 ;;; TODO different table
 

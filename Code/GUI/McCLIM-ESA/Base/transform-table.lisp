@@ -12,23 +12,27 @@
 
 (define-command-specializations (transform-table com-change-case)
   ;; Buffer structure units
-  (com-downcase-item-forward    (:unit edit:item :direction :forward  :case :down))
-  (com-downcase-item-backward   (:unit edit:item :direction :backward :case :down))
-  (com-upcase-item-forward      (:unit edit:item :direction :forward  :case :up))
-  (com-upcase-item-backward     (:unit edit:item :direction :backward :case :up))
-  (com-capitalize-item-forward  (:unit edit:item :direction :forward  :case :capital))
-  (com-capitalize-item-backward (:unit edit:item :direction :backward :case :capital))
+  (com-downcase-item-forward         (:unit edit:item           :direction :forward  :case :down))
+  (com-downcase-item-backward        (:unit edit:item           :direction :backward :case :down))
+  (com-upcase-item-forward           (:unit edit:item           :direction :forward  :case :up))
+  (com-upcase-item-backward          (:unit edit:item           :direction :backward :case :up))
+  (com-capitalize-item-forward       (:unit edit:item           :direction :forward  :case :capital))
+  (com-capitalize-item-backward      (:unit edit:item           :direction :backward :case :capital))
   ;; Prose units
-  (com-downcase-word-forward    (:unit edit:word :direction :forward  :case :down)    (#\l :meta))
-  (com-downcase-word-backward   (:unit edit:word :direction :backward :case :down))
-  (com-upcase-word-forward      (:unit edit:word :direction :forward  :case :up)      (#\u :meta))
-  (com-upcase-word-backward     (:unit edit:word :direction :backward :case :up))
-  (com-capitalize-word-forward  (:unit edit:word :direction :forward  :case :capital) (#\c :meta))
-  (com-capitalize-word-backward (:unit edit:word :direction :backward :case :capital))
+  (com-downcase-word-forward         (:unit edit:word           :direction :forward  :case :down)    (#\l :meta))
+  (com-downcase-word-backward        (:unit edit:word           :direction :backward :case :down))
+  (com-upcase-word-forward           (:unit edit:word           :direction :forward  :case :up)      (#\u :meta))
+  (com-upcase-word-backward          (:unit edit:word           :direction :backward :case :up))
+  (com-capitalize-word-forward       (:unit edit:word           :direction :forward  :case :capital) (#\c :meta))
+  (com-capitalize-word-backward      (:unit edit:word           :direction :backward :case :capital))
 
-  (com-downcase-paragraph-forward   (:unit edit:paragraph :direction :forward :case :down))
-  (com-upcase-paragraph-forward     (:unit edit:paragraph :direction :forward :case :up))
-  (com-capitalize-paragraph-forward (:unit edit:paragraph :direction :forward :case :capital)))
+  (com-downcase-paragraph-forward    (:unit edit:paragraph      :direction :forward  :case :down))
+  (com-upcase-paragraph-forward      (:unit edit:paragraph      :direction :forward  :case :up))
+  (com-capitalize-paragraph-forward  (:unit edit:paragraph      :direction :forward  :case :capital))
+  ;; Expression
+  (com-downcase-expression-forward   (:unit edit.exp:expression :direction :forward  :case :down))
+  (com-upcase-expression-forward     (:unit edit.exp:expression :direction :forward  :case :up))
+  (com-capitalize-expression-forward (:unit edit.exp:expression :direction :forward  :case :capital)))
 
 ;;; Transposing
 
@@ -38,6 +42,9 @@
   (edit:perform buffer 'edit:transpose unit direction))
 
 (define-command-specializations (transform-table com-transpose)
+  ;; Prose units
   (com-transpose-items (:unit edit:item :direction :forward) (#\t :control))
   (com-transpose-words (:unit edit:word :direction :forward) (#\t :meta))
-  (com-transpose-lines (:unit edit:line :direction :forward)))
+  (com-transpose-lines (:unit edit:line :direction :forward))
+  ;; Expression
+  (com-transpose-expressions (:unit edit.exp:expression :direction :forward) (#\t :control :meta)))

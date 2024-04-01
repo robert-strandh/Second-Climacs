@@ -24,7 +24,10 @@
   (com-delete-sentence  (:unit edit:sentence       :direction :forward))
   (com-erase-sentence   (:unit edit:sentence       :direction :backward))
   (com-delete-paragraph (:unit edit:paragraph      :direction :forward))
-  (com-erase-paragraph  (:unit edit:paragraph      :direction :backward)))
+  (com-erase-paragraph  (:unit edit:paragraph      :direction :backward))
+  ;; Expression
+  (com-delete-expression-forward  (:unit edit.exp:expression :direction :forward)  (#\k :control :meta))
+  (com-delete-expression-backward (:unit edit.exp:expression :direction :backward) (#\Backspace :control :meta)))
 
 (define-delete-command com-delete-indentation ()
   (edit:perform buffer 'edit:delete-indentation))
