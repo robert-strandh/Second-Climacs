@@ -4,4 +4,8 @@
                "second-climacs-clim-common-lisp-view")
   :serial t
   :components ((:file "gui")
-               (:file "io")))
+               (:file "io"))
+  ;; Executable
+  :build-operation asdf:program-op
+  :build-pathname  "second-climacs"
+  :entry-point     "second-climacs-clim-base:climacs")
