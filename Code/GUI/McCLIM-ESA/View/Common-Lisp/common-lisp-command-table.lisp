@@ -8,26 +8,6 @@
                  clim-base::transform-table
                  clim-base::search-table))
 
-#+no (clim:define-command
-    (com-beginning-of-top-level-expression
-     :name t :command-table common-lisp-table)
-    ()
-  (with-current-cursor-and-cache (cursor cache)
-    (cl-syntax:beginning-of-top-level-expression cache cursor)))
-#+no (esa:set-key `(com-beginning-of-top-level-expression)
-             'common-lisp-table
-             '((#\a :meta :control)))
-
-#+no (clim:define-command
-    (com-end-of-top-level-expression
-     :name t :command-table common-lisp-table)
-    ()
-  (with-current-cursor-and-cache (cursor cache)
-    (cl-syntax:end-of-top-level-expression cache cursor)))
-#+no (esa:set-key `(com-end-of-top-level-expression)
-             'common-lisp-table
-             '((#\e :meta :control)))
-
 (clim:define-command
     (com-fill-paragraph :name t :command-table common-lisp-table)
     ()

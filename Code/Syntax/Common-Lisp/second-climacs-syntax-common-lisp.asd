@@ -7,6 +7,5 @@
   :components ((:file "expression")
                (:file "view")
                (:file "set-mode")
-               (:file "motion")
                (:file "fill-paragraph")
                (:file "debug")))

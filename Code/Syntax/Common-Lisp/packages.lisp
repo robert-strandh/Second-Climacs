@@ -21,13 +21,6 @@
 
    #:indent-line
 
-   #:up-expression
-   #:forward-expression
-   #:backward-expression
-   #:mark-expression
-   #:exchange-expressions
-   #:beginning-of-top-level-expression
-   #:end-of-top-level-expression
    #:fill-paragraph
 
    #:print-wad-tree
