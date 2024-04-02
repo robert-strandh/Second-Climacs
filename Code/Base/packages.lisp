@@ -29,18 +29,4 @@
    #:update-window
    #:application
    #:views
-   #:move-region-to-vector
-   #:kill-region
-   #:next-line
-   #:previous-line
-   #:beginning-of-buffer
-   #:end-of-buffer
-   #:forward-word
-   #:backward-word
-   #:delete-word
-   #:erase-word
-   #:delete-indentation
-   #:mark
-   #:climacs-error
-   #:cursor-positions
-   #:set-cursor-positions))
+   #:climacs-error))
