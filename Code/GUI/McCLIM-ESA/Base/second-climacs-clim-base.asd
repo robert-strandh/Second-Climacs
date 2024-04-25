@@ -19,4 +19,5 @@
                (:file "motion-table")
                (:file "search-table")
                (:file "transform-table")
+               (:file "paredit-table")
                (:file "global-command-table")))

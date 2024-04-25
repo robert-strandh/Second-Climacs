@@ -1,12 +1,13 @@
 (cl:in-package #:second-climacs-clim-view-common-lisp)
 
 (clim:define-command-table common-lisp-table
-  :inherit-from (clim-base:global-table
-                 clim-base:ascii-insert-table
+  :inherit-from (clim-base::paredit-table
+                 clim-base::transform-table
+                 clim-base::search-table
                  clim-base:delete-table
                  clim-base:motion-table
-                 clim-base::transform-table
-                 clim-base::search-table))
+                 clim-base:ascii-insert-table
+                 clim-base:global-table))
 
 (clim:define-command
     (com-fill-paragraph :name t :command-table common-lisp-table)
