@@ -2,14 +2,17 @@
 
 (clim:define-command-table transform-table)
 
+(defmacro define-transform-command (name (&rest extra-parameters) &body body)
+  `(define-buffer-command (,name transform-table) ,extra-parameters
+     ,@body))
+
 ;;; Changing case
 
-(define-buffer-command (com-change-case transform-table)
+(define-transform-command com-change-case
     (&key (unit      'unit)
           (direction 'direction)
           (case      '(member :down :up :capital)))
   (edit:perform buffer 'edit:change-case unit direction case))
-
 (define-command-specializations (transform-table com-change-case)
   ;; Buffer structure units
   (com-downcase-item-forward         (:unit edit:item           :direction :forward  :case :down))
@@ -36,42 +39,83 @@
 
 ;;; Transposing
 
-(define-buffer-command (com-transpose transform-table)
-    (&key (unit      'unit)
-          (direction 'direction))
+(define-transform-command com-transpose (&key (unit      'unit)
+                                              (direction 'direction))
   (edit:perform buffer 'edit:transpose unit direction))
-
 (define-command-specializations (transform-table com-transpose)
   ;; Prose units
   (com-transpose-items (:unit edit:item :direction :forward) (#\t :control))
   (com-transpose-words (:unit edit:word :direction :forward) (#\t :meta))
   (com-transpose-lines (:unit edit:line :direction :forward))
   ;; Expression
-  (com-transpose-expressions (:unit edit.exp:expression :direction :forward) (#\t :control :meta)))
+  (com-transpose-expressions
+   (:unit edit.exp:expression :direction :forward) (#\t :control :meta)))
 
-;;; Structure editing operations
+;;; Structure editing
 
-(define-buffer-command (com-raise transform-table)
-    (&key (unit 'unit) (direction 'direction))
+(define-transform-command com-raise (&key (unit 'unit) (direction 'direction))
   (edit:perform buffer 'edit.exp:raise unit direction))
 (define-command-specializations (transform-table com-raise)
-  (com-raise-expression-forward  (:unit edit.exp:expression :direction :forward)  (#\r :meta))
-  (com-raise-expression-backward (:unit edit.exp:expression :direction :backward)))
+  (com-raise-expression-forward
+   (:unit edit.exp:expression :direction :forward) (#\r :meta))
+  (com-raise-expression-backward
+   (:unit edit.exp:expression :direction :backward)))
 
-(define-buffer-command (com-splice transform-table)
-    (&key (unit 'unit) (direction 'direction))
+(define-transform-command com-splice (&key (unit 'unit) (direction 'direction))
   (edit:perform buffer 'edit.exp:splice unit direction))
 (define-command-specializations (transform-table com-splice)
-  (com-splice-expression-forward  (:unit edit.exp:expression :direction :forward)  (#\s :meta))
-  (com-splice-expression-backward (:unit edit.exp:expression :direction :backward)))
+  (com-splice-expression-forward
+   (:unit edit.exp:expression :direction :forward) (#\s :meta))
+  (com-splice-expression-backward
+   (:unit edit.exp:expression :direction :backward)))
 
-(define-buffer-command (com-split transform-table) (&key (unit 'unit))
+(define-transform-command com-split (&key (unit 'unit))
   (edit:perform buffer 'edit.exp:split unit))
 (define-command-specializations (transform-table com-split)
-  (com-split-expression          (:unit edit.exp:expression)          (#\S :meta))
-  (com-split-toplevel-expression (:unit edit.exp:toplevel-expression) (#\S :meta :control)))
+  (com-split-expression
+   (:unit edit.exp:expression) (#\S :meta))
+  (com-split-toplevel-expression
+   (:unit edit.exp:toplevel-expression) (#\S :meta :control)))
 
-(define-buffer-command (com-join transform-table) (&key (unit 'unit))
+(define-transform-command com-join (&key (unit 'unit))
   (edit:perform buffer 'edit.exp:join unit))
-(define-command-specialization (transform-table com-join-expressions com-join (#\J :meta))
-  :unit edit.exp:expression)
+(define-command-specializations (transform-table com-join)
+  (com-join-expressions (:unit edit.exp:expression) (#\J :meta)))
+
+(define-transform-command com-eject-expression (&key (unit      'unit)
+                                                     (direction 'direction))
+  (edit:perform buffer 'edit.exp:eject unit direction))
+(define-command-specializations (transform-table com-eject-expression)
+  (com-eject-expression-forward
+   (:unit edit.exp:expression :direction :forward) (:left :control))
+  (com-eject-expression-backward
+   (:unit edit.exp:expression :direction :backward)))
+
+(define-transform-command com-absorb-expression (&key (unit      'unit)
+                                                      (direction 'direction))
+  (edit:perform buffer 'edit.exp:absorb unit direction))
+(define-command-specializations (transform-table com-absorb-expression)
+  (com-absorb-expression-forward
+   (:unit edit.exp:expression :direction :forward) (:right :control))
+  (com-absorb-expression-backward
+   (:unit edit.exp:expression :direction :backward)))
+
+;;; Silly little demo
+
+(defun extract-as-function (cursor unit direction name)
+  ;; TODO find free variables, turn into parameter and arguments
+  (edit:with-cloned-cursor (insert cursor)
+    (let ((expression (edit:items cursor unit direction)))
+      (edit:move insert edit.exp:toplevel-expression direction)
+      (edit:insert-items insert #.(format nil "~2%"))
+      (edit:insert-items insert (format nil "(defun ~A ()~%" name))
+      (edit:insert-items insert expression)
+      (edit:insert-items insert (format nil ")~%"))
+      ;;
+      (setf (edit:items cursor unit direction) (format nil "(~A)" name)))))
+
+(define-transform-command com-extract-as-function
+    ((name 'string :prompt "function name")
+     &key (unit      'unit      :default edit.exp:region-or-expression)
+          (direction 'direction :default :forward))
+  (edit:perform buffer 'extract-as-function unit direction name))
