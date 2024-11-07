@@ -7,6 +7,21 @@
 (defun collect-words (wads)
   (mapcar #'ip:items (alexandria:mappend #'ip:children wads)))
 
+(defun map-text-wads (function outer-wads)
+  (let ((remaining-outer outer-wads)
+        (remaining-inner '()))
+    (labels ((next ()
+               (cond ((not (null remaining-inner))
+                      (pop remaining-inner))
+                     ((not (null remaining-outer))
+                      (setf remaining-inner (ip:children (pop remaining-outer)))
+                      (next))
+                     (t
+                      nil))))
+      (loop :for text-wad = (next)
+            :until (null text-wad)
+            :do (funcall function text-wad)))))
+
 (defun fill-paragraph-using-wads (wads buffer cursor
                                   &rest args &key prefix
                                                   suffix
@@ -20,21 +35,30 @@
          (end-column   (ip:end-column last))
          (words        (collect-words wads)))
     (edit:move-cursor-to-line cursor start-line start-column)
-    (edit:with-temporary-cursor
-        (end-cursor buffer :line     end-line
-                           :position end-column)
+    (edit:with-temporary-cursor (end-cursor buffer :line     end-line
+                                                   :position end-column)
       (apply #'edit:fill-words cursor end-cursor words args))))
 
 ;;; Semicolon comments
 
-(defun fill-semicolon-comment-using-wads (wads buffer cursor)
-  (let* ((first           (first wads))
-         (start-column    (ip:start-column first))
-         (semicolon-count (ip:semicolon-count first))
-         (space-count     1)
-         (prefix          (format nil "~V,,,';<~>~V<~>"
-                                  semicolon-count space-count))
-         (per-line-prefix (format nil "~V<~>~A" start-column prefix)))
+(defun fill-semicolon-comment-using-wads (wads buffer cursor
+                                          &key (indent-continuation-lines t))
+  (let* ((first               (first wads))
+         (start-column        (ip:start-column first))
+         (semicolon-count     (ip:semicolon-count first))
+         (space-count         1)
+         (line-2-start-column (if indent-continuation-lines
+                                  (second-line-start-column wads)
+                                  nil))
+         (prefix              (format nil "~V,,,';<~>~V<~>"
+                                      semicolon-count space-count))
+         (continuation-indent (if (null line-2-start-column)
+                                  0
+                                  (- line-2-start-column
+                                     semicolon-count
+                                     space-count)))
+         (per-line-prefix     (format nil "~V<~>~A~V<~>"
+                                      start-column prefix continuation-indent)))
     (fill-paragraph-using-wads
      wads buffer cursor :prefix          prefix
                         :per-line-prefix per-line-prefix
@@ -46,67 +70,71 @@
 ;;; cursor, so that the current wad is nil, but the next wad is a
 ;;; top-level semicolon wad.
 
-(defun fill-semicolon-comment-top-level (current next buffer cursor)
-  ;; Either CURRENT is not NIL, meaning the cursor is inside the wad
-  ;; described by CURRENT and CURRENT is a semicolon wad, or CURRENT
-  ;; is NIL meaning the cursor is located before the wad described by
-  ;; NEXT on the same line as NEXT.  So either CURRENT (if CURRENT is
-  ;; not NIL) or NEXT (if CURRENT is NIL) is the a wad descriptor to
-  ;; start with.
-  (let ((start-wad (if (null current) next current)))
-    ;; Loop until start-wad is the first semicolon wad in the block.
-    (loop for left-sibling = (ip:left-sibling start-wad)
-          until (or (null left-sibling)
-                    (not (typep left-sibling 'ip:semicolon-comment-wad))
-                    (< (ip:absolute-start-line left-sibling)
-                       (1- (ip:absolute-start-line start-wad)))
-                    (/= (ip:semicolon-count left-sibling)
-                        (ip:semicolon-count start-wad)))
-          do (setf start-wad left-sibling))
-    ;; Now collect all the wads in the comment block.
-    (let ((wads
-            (loop for wad = start-wad then (ip:right-sibling wad)
-                  for next = (ip:right-sibling wad) then (ip:right-sibling next)
-                  collect wad
-                  until (or (null next)
-                            (not (typep next 'ip:semicolon-comment-wad))
-                            (> (ip:absolute-start-line next)
-                               (1+ (ip:absolute-start-line wad)))
-                            (/= (ip:semicolon-count next)
-                                (ip:semicolon-count wad))))))
-      (fill-semicolon-comment-using-wads wads buffer cursor))))
+(defun compatible-semicolon-comment-p (wad semicolon-count expected-line)
+  (and (not (null wad))
+       (typep wad 'ip:semicolon-comment-wad)
+       (= (ip:semicolon-count wad) semicolon-count)
+       (= (ip:absolute-start-line wad) expected-line)))
 
-(defun fill-semicolon-comment-non-top-level (start buffer cursor)
-  ;; Find the first semicolon comment wad to be involved in this
-  ;; operation.
-  (loop for previous = (ip:left-sibling start)
-        while (and (fill-paragraph-candidate-p previous)
-                   (= (1- (ip:absolute-start-line start))
-                      (ip:absolute-start-line previous)))
-        do (setf start previous))
-  ;; Collect the wads involved.
-  (let ((wads (list start)))
-    (loop for current = (first wads)
-          for next = (ip:right-sibling current)
-          while (and (fill-paragraph-candidate-p next)
-                     (= (1+ (ip:absolute-start-line current))
-                        (ip:absolute-start-line next)))
-          do (push next wads))
-    (fill-semicolon-comment-using-wads (reverse wads) buffer cursor)))
+(defun fill-semicolon-comment (start-wad buffer cursor)
+  (let ((semicolon-count (ip:semicolon-count start-wad))
+        (wads            (list start-wad)))
+    ;; Go backwards and collect compatible wads.
+    (loop :for current = start-wad :then previous
+          :for previous = (ip:left-sibling current)
+          :while (compatible-semicolon-comment-p
+                  previous semicolon-count (1- (ip:absolute-start-line current)))
+          :do (push previous wads))
+    ;; Go forwards and collect compatible wads.
+    (loop :for current = start-wad :then next
+          :for next = (ip:right-sibling current)
+          :while (compatible-semicolon-comment-p
+                  next semicolon-count (1+ (ip:absolute-start-line current)))
+          :collect next into following-wads
+          :finally (setf wads (nconc wads following-wads)))
+    (fill-semicolon-comment-using-wads wads buffer cursor)))
 
 ;;; Block comments
 
-(defun fill-block-comment (wad buffer cursor)
-  (fill-paragraph-using-wads (list wad) buffer cursor :prefix          "#|"
-                                                      :per-line-prefix "  "
-                                                      :suffix          "|#"))
+(defun fill-block-comment (wad buffer cursor
+                           &key (indent-continuation-lines t))
+  (let* ((start-column    (if indent-continuation-lines
+                              (or (second-line-start-column (list wad))
+                                  (+ (ip:start-column wad) 2))
+                              nil))
+         (per-line-prefix (if (null start-column)
+                              "  "
+                              (make-string
+                               start-column :initial-element #\Space))))
+    (fill-paragraph-using-wads (list wad) buffer cursor
+                               :prefix          "#|"
+                               :per-line-prefix per-line-prefix
+                               :suffix          "|#")))
 
 ;;; String literal
 
-(defun fill-string-literal (wad buffer cursor)
-  (fill-paragraph-using-wads (list wad) buffer cursor :prefix          "\""
-                                                      :per-line-prefix ""
-                                                      :suffix          "\""))
+(defun fill-string-literal (wad buffer cursor
+                            &key (indent-continuation-lines t))
+  (let* ((start-column    (if indent-continuation-lines
+                              (or (second-line-start-column (list wad))
+                                  (1+ (ip:start-column wad)))
+                              nil))
+         (per-line-prefix (if (null start-column)
+                              nil
+                              (make-string
+                               start-column :initial-element #\Space))))
+    (fill-paragraph-using-wads (list wad) buffer cursor
+                               :prefix          "\""
+                               :per-line-prefix per-line-prefix
+                               :suffix          "\"")))
+
+(defun second-line-start-column (wads)
+  (let ((start-line (ip:absolute-start-line (first wads))))
+    (labels ((consider-text-wad (text-wad)
+               (when (> (ip:absolute-start-line text-wad) start-line)
+                 (return-from second-line-start-column
+                   (ip:start-column text-wad)))))
+      (map-text-wads #'consider-text-wad wads))))
 
 ;;; Predicates
 
@@ -141,7 +169,8 @@
          (cursor-line   (cluffer:line-number cursor))
          (cursor-column (cluffer:cursor-position cursor))
          (current       (cdr (first (ip:find-wads-containing-position
-                                     cache cursor-line cursor-column))))
+                                     cache cursor-line cursor-column
+                                     :start-relation '<= :end-relation '<=))))
          (current       (if (typep current 'ip:word-wad)
                             (ip:parent current)
                             current))
@@ -149,7 +178,9 @@
                           (ip:right-sibling current))))
     ;; TODO incrementalist should provide a function for this
     (labels ((top-level-wad (wad)
-               (or (ip:parent wad) wad))
+               (alexandria:if-let ((parent (ip:parent wad)))
+                 (top-level-wad parent)
+                 wad))
              (prepare-wad (wad)
                (unless (null wad)
                  (loop with top-level-wad = (top-level-wad wad)
@@ -160,29 +191,27 @@
       (prepare-wad next))
 
     (when (or ;; If the cursor is inside an atomic wad, but that wad
-              ;; is neither a semicolon comment wad nor a string wad,
-              ;; then it is an error.
-              (and (not (null current))
-                   (not (or (comment-wad-p current)
-                            (string-wad-p current))))
-              ;; The other possibility for an error is that the
-              ;; current wad is NIL, and either the next wad is not a
-              ;; semicolon comment wad, or it is a semicolon comment
-              ;; wad, but it is on a different line from the cursor.
-              (and (null current)
-                   (or (not (fill-paragraph-candidate-p next))
-                       (not (= cursor-line
-                               (ip:absolute-start-line next))))))
+           ;; is neither a semicolon comment wad nor a string wad,
+           ;; then it is an error.
+           (and (not (null current))
+                (not (or (comment-wad-p current)
+                         (string-wad-p current))))
+           ;; The other possibility for an error is that the
+           ;; current wad is NIL, and either the next wad is not a
+           ;; semicolon comment wad, or it is a semicolon comment
+           ;; wad, but it is on a different line from the cursor.
+           (and (null current)
+                (or (not (fill-paragraph-candidate-p next))
+                    (not (= cursor-line
+                            (ip:absolute-start-line next))))))
       (error 'not-in-paragraph-context))
     (let ((buffer (cluffer:buffer cursor)))
       (cond ((block-comment-wad-p current)
              (fill-block-comment current buffer cursor))
             ((string-wad-p current)
              (fill-string-literal current buffer cursor))
-            ;; Different kinds of semicolon comments.
-            ((null (ip:parent current))
-             (fill-semicolon-comment-top-level current next buffer cursor))
+            ;; Semicolon comments.
             ((null current)
-             (fill-semicolon-comment-non-top-level next buffer cursor))
+             (fill-semicolon-comment next buffer cursor))
             (t
-             (fill-semicolon-comment-non-top-level current buffer cursor))))))
+             (fill-semicolon-comment current buffer cursor))))))
