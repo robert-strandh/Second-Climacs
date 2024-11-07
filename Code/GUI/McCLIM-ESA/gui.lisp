@@ -76,8 +76,7 @@
   (:panes
    (window
     (let ((buffer (base::make-empty-standard-buffer)))
-      (setf (esa-buffer:filepath buffer)
-            (first (directory ".")))
+      (setf (esa-buffer:filepath buffer) (first (directory ".")))
       (let* ((gutter (make-gutter-pane))
              (my-pane (make-climacs-pane gutter))
              (my-info-pane (clim:make-pane 'info-pane

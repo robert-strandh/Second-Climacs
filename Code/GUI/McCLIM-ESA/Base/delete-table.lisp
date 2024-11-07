@@ -6,8 +6,7 @@
   `(define-buffer-command (,name delete-table) ,extra-parameters
      ,@body))
 
-(define-delete-command com-delete (&key (unit      'unit)
-                                        (direction 'direction))
+(define-delete-command com-delete (&key (unit 'unit) (direction 'direction))
   (edit:perform buffer 'edit:delete unit direction))
 
 (define-command-specializations (delete-table com-delete)
