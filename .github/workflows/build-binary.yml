@@ -1,0 +1,57 @@
+name: build-binary
+
+on: [push]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: install-platform-dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
+            && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
+                 sbcl
+
+      - name: checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+
+      - name: install-quicklisp
+        run: |
+          wget https://beta.quicklisp.org/quicklisp.lisp
+          sbcl --noinform --disable-debugger        \
+            --load quicklisp.lisp                   \
+            --eval '(quicklisp-quickstart:install)' \
+            --quit
+          pwd
+          ls $HOME
+
+      - name: dependencies-in-local-projects
+        run: |
+          cd "${HOME}/quicklisp/local-projects"                                       \
+            && git clone -b master https://github.com/robert-strandh/cluffer          \
+            && git clone -b master https://github.com/s-expressionists/eclector       \
+            && git clone -b main   https://github.com/s-expressionists/incrementalist \
+            && git clone -b main   https://github.com/scymtym/text.editing
+
+      - name: build-binary
+        run: |
+          sbcl --noinform --disable-debugger                                                                                           \
+            --load "${HOME}/quicklisp/setup.lisp"                                                                                      \
+            --eval '(asdf:initialize-source-registry (quote (:source-registry (:tree "'"$(pwd)"'") :ignore-inherited-configuration)))' \
+            --eval '(ql:quickload "second-climacs-clim")'                                                                              \
+            --eval '(asdf:make "second-climacs-clim")'
+
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+          mv -v Code/GUI/McCLIM-ESA/second-climacs artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: second-climacs
+          path: artifacts
