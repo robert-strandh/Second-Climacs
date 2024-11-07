@@ -21,7 +21,7 @@
 
 (define-paredit-command
     com-move-past-closing-delimiter-or-insert-delimiter-pair
-    ((opening character))
+    ((opening 'character))
   (edit:perform
    buffer 'edit:move-past-closing-delimiter-or-insert-delimiter-pair opening))
 (define-command-specializations
