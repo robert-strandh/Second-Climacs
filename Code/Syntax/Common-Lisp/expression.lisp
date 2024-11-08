@@ -51,8 +51,8 @@
                 (funcall function wad))
                ((typep wad 'ip:text-wad)) ; filter out `text-wad's
                (t
-                (setf deferred wad)
-                (setf innermostp nil))))
-       cursor-line cursor-column cache :start-relation start-relation
-       :end-relation   end-relation)
+                (setf deferred   wad
+                      innermostp nil))))
+       cache cursor-line cursor-column :start-relation start-relation
+                                       :end-relation   end-relation)
       (flush))))
