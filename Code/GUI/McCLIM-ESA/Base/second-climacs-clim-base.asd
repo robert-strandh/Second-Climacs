@@ -20,4 +20,5 @@
                (:file "search-table")
                (:file "transform-table")
                (:file "paredit-table")
+               (:file "debug-table")
                (:file "global-command-table")))
