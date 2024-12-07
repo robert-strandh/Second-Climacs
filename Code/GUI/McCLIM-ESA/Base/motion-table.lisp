@@ -78,7 +78,7 @@
   (com-mark-expression          (:unit edit.exp:expression          :direction :forward) (#\Space :meta :control))
   (com-mark-toplevel-expression (:unit edit.exp:toplevel-expression :direction :forward) (#\h :meta :control)))
 
-;;; TODO different table
+;;; Cursor commands TODO: different table
 
 (define-motion-command com-add-cursor (&key (unit      'unit)
                                             (direction 'direction))
@@ -104,6 +104,25 @@
     (event)
   (list :event event))
 
+(define-motion-command com-pop-cursor ()
+  (edit:pop-site buffer))
+(bind-key 'motion-table '(#\- :meta) 'com-pop-cursor)
+
+;;; TODO: this will become more useful once we present cursors with
+;;; the `cursor' presentation type.
+(clim:define-command (com-remove-cursor :command-table motion-table
+                                        :name          t)
+    ((site 'cursor :gesture (:delete))
+     &key (buffer 'buffer :default (current-buffer)))
+  (edit:remove-site site buffer))
+
+(define-motion-command com-rotate-cursors (&key (direction 'direction))
+  (edit:rotate-sites buffer direction))
+(bind-key 'motion-table '(#\= :meta) 'com-rotate-cursors :direction :forward)
+
+(define-motion-command com-remove-other-cursors ()
+  (edit:remove-other-sites buffer))
+
 (clim:define-command (com-move-to-pointer :command-table motion-table)
     (&key (buffer buffer :default (current-buffer))
           (event  t))
@@ -120,16 +139,5 @@
     (clim:blank-area com-move-to-pointer motion-table :gesture :select)
     (event)
   (list :event event))
-
-(define-motion-command com-remove-cursor ()
-  (edit:pop-site buffer))
-(bind-key 'motion-table '(#\- :meta) 'com-remove-cursor)
-
-(define-motion-command com-rotate-cursors (&key (direction 'direction))
-  (edit:rotate-sites buffer direction))
-(bind-key 'motion-table '(#\= :meta) 'com-rotate-cursors :direction :forward)
-
-(define-motion-command com-remove-other-cursors ()
-  (edit:remove-other-sites buffer))
 
 ;;; TODO move to some other command table
