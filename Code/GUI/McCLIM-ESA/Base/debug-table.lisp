@@ -2,6 +2,24 @@
 
 (clim:define-command-table debug-table)
 
+;;; Printing commands
+
+(defun print-expression-tree (cursor &key (stream *trace-output*))
+  (let ((toplevel-expression (edit.exp:innermost-expression-containing-cursor
+                              cursor :ast)))
+    (fresh-line stream)
+    (utilities.print-tree:print-tree
+     stream toplevel-expression
+     (utilities.print-tree:make-node-printer
+      (lambda (stream depth node)
+        (declare (ignore depth))
+        (princ node stream))
+      nil #'edit.exp:children))))
+
+(define-buffer-command (com-print-expression-tree debug-table)
+    ()
+  (edit:perform buffer 'print-expression-tree))
+
 ;;; Inspection commands
 
 (clim:define-command (com-inspect :name t :command-table debug-table) ()
