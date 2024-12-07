@@ -171,7 +171,7 @@
          (current       (cdr (first (ip:find-wads-containing-position
                                      cache cursor-line cursor-column
                                      :start-relation '<= :end-relation '<=))))
-         (current       (if (typep current 'ip:word-wad)
+         (current       (if (typep current 'ip:text-wad)
                             (ip:parent current)
                             current))
          (next          (unless (null current)
