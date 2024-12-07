@@ -116,6 +116,15 @@
      &key (buffer 'buffer :default (current-buffer)))
   (edit:remove-site site buffer))
 
+;;; TODO: this will become more useful once we present cursors with
+;;; the `cursor' presentation type.
+(clim:define-command (com-choose-primary-cursor :command-table motion-table
+                                                :name          t)
+    ((site 'cursor :gesture (:select))
+     &key (buffer 'buffer :default (current-buffer)))
+  (loop :until (eq site (edit:site buffer))
+        :do (edit:rotate-sites buffer :forward)))
+
 (define-motion-command com-rotate-cursors (&key (direction 'direction))
   (edit:rotate-sites buffer direction))
 (bind-key 'motion-table '(#\= :meta) 'com-rotate-cursors :direction :forward)
