@@ -11,6 +11,12 @@
     ()
   (clouseau:inspect (current-buffer) :new-process t))
 
+(clim:define-command (com-inspect-analyzer :name t :command-table debug-table)
+    ()
+  (let* ((view     (current-view))
+         (analyzer (base:analyzer view)))
+    (clouseau:inspect analyzer :new-process t)))
+
 ;;; Test commands
 
 (clim:define-command (com-random-edits :name t :command-table debug-table)
