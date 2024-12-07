@@ -100,6 +100,30 @@
   (com-absorb-expression-backward
    (:unit edit.exp:expression :direction :backward)))
 
+;;; Align
+
+(defun align-cursors (buffer &key (fill-element #\Space))
+  (let ((max-column 0))
+    (edit:map-sites (lambda (site)
+                      (alexandria:maxf
+                       max-column
+                       (cluffer:cursor-position (edit:point site))))
+                    buffer)
+    (edit:map-sites
+     (lambda (site)
+       (let* ((point  (edit:point site))
+              (column (cluffer:cursor-position point))
+              (count  (- max-column column))
+              (string (make-string count :initial-element fill-element)))
+         (edit:insert-items point string)))
+     buffer)))
+
+(define-buffer-command (com-align-cursors transform-table)
+    (&key (fill-element 'character :default #\Space))
+  (align-cursors buffer :fill-element fill-element))
+
+;;; Refactoring
+
 ;;; Silly little demo
 
 (defun extract-as-function (cursor unit direction name)
