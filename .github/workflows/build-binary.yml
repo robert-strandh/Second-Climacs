@@ -34,6 +34,7 @@ jobs:
           cd "${HOME}/quicklisp/local-projects"                                       \
             && git clone -b master https://github.com/robert-strandh/cluffer          \
             && git clone -b master https://github.com/s-expressionists/eclector       \
+            && git clone -b main   https://github.com/s-expressionists/spell          \
             && git clone -b main   https://github.com/s-expressionists/incrementalist \
             && git clone -b main   https://github.com/scymtym/text.editing
 
