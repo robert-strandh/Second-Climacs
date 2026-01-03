@@ -1,7 +1,8 @@
 (defsystem "second-climacs-clim"
   :depends-on ("second-climacs-clim-base"
                "second-climacs-clim-fundamental-view"
-               "second-climacs-clim-common-lisp-view")
+               "second-climacs-clim-common-lisp-view"
+               "esclados-info-pane")
   :serial t
   :components ((:file "gui")
                (:file "io"))
