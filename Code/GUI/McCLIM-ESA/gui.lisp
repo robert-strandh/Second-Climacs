@@ -3,7 +3,7 @@
 (defparameter *info-pane-text-style*
   (clim:make-text-style :fix :roman 14))
 
-(defclass info-pane (esa:info-pane)
+(defclass info-pane (info:info-pane)
   ()
   (:default-initargs
    :height 20 :max-height 20 :min-height 20
