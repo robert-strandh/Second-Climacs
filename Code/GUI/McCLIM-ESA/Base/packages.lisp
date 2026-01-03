@@ -1,4 +1,6 @@
-(cl:defpackage #:second-climacs-clim-base
+(cl:in-package #:common-lisp-user)
+
+(defpackage #:second-climacs-clim-base
   (:use
    #:common-lisp)
 
@@ -7,6 +9,7 @@
    (#:edit.search        #:text.editing.search)
    (#:edit.exp           #:text.editing.expression)
    (#:ip                 #:incrementalist)
+   (#:info               #:esclados-info-pane)
 
    (#:base               #:second-climacs-base)
    (#:fundamental-syntax #:second-climacs-syntax-fundamental)
