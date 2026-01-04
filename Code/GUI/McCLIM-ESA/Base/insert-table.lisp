@@ -7,7 +7,7 @@
     ((item 'character))
   (let ((buffer (current-buffer)))
     (edit:perform buffer 'edit::insert-item item)
-    ; (setf (esa-buffer:needs-saving buffer) t) ; TODO too annoying for testing
+    ; (setf (buf:needs-saving buffer) t) ; TODO too annoying for testing
     ))
 
 (loop for i from 32 to 126
@@ -26,7 +26,7 @@
     ((filepath 'pathname
                :prompt "Insert File: "
                :prompt-mode :raw
-               :default (esa-io::directory-of-current-buffer)
+               :default (io::directory-of-current-buffer)
                :default-type 'clim:pathname
                :insert-default t))
   (with-current-cursor (cursor)

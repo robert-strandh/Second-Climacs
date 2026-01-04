@@ -2,7 +2,8 @@
   :depends-on ("second-climacs-clim-base"
                "second-climacs-syntax-common-lisp"
                "stealth-mixin"
-               "esclados-command-table-manipulation")
+               "esclados-command-table-manipulation"
+               "esclados-frame")
   :serial t
   :components ((:file "packages")
                (:file "utilities")

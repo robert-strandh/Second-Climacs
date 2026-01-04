@@ -1,13 +1,13 @@
 (cl:in-package #:second-climacs-clim-base)
 
 (clim:define-command-table global-table
-  :inherit-from (key:global-table esa-io:esa-io-table debug-table))
+  :inherit-from (key:global-table io:io-table debug-table))
 
 ;;; Font size commands
 
 (clim:define-command (com-set-font-size :name t :command-table global-table)
     ((size '(or integer (member :smaller :larger :normal)))
-     &key (window 't :default (esa:current-window)))
+     &key (window 't :default (frame:current-window)))
   ;; TODO: this should be tied into a configuration system, of course
   ;; FIXME: This is so that the command does not signal an error on
   ;; upstream McCLIM.

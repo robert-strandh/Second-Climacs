@@ -1,7 +1,7 @@
 (cl:in-package #:second-climacs-clim-base)
 
 (defun current-view ()
-  (let ((clim-view (clim:stream-default-view (esa:current-window))))
+  (let ((clim-view (clim:stream-default-view (frame:current-window))))
     (climacs-view clim-view)))
 
 (defun current-cursor ()

@@ -10,7 +10,7 @@
 
 (clim:define-command (com-scroll :command-table motion-table)
     ((amount 'integer))
-  (let ((pane   (esa:current-window))
+  (let ((pane   (frame:current-window))
         (buffer (current-buffer)))
     (scroll pane amount 0)
     (unless (> (edit:site-count buffer) 1)

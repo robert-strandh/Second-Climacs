@@ -7,7 +7,13 @@
                "second-climacs-syntax-common-lisp"
                "esclados-standard-key-bindings"
                "esclados-command-table-manipulation"
-               "esclados-minibuffer")
+               "esclados-minibuffer"
+               "esclados-frame"
+               "esclados-pane"
+               "esclados-top-level"
+               "esclados-buffer"
+               "esclados-io"
+               "esclados-utilities")
   :serial t
   :components ((:file "packages")
                (:file "climacs-clim-view")

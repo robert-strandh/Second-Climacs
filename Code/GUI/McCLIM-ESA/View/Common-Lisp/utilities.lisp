@@ -5,7 +5,8 @@
   (let ((view-variable (gensym))
         (climacs-view-variable (gensym))
         (analyzer-variable (gensym)))
-    `(let* ((,view-variable (clim:stream-default-view (esa:current-window)))
+    `(let* ((,view-variable
+              (clim:stream-default-view (frame:current-window)))
             (,climacs-view-variable (clim-base:climacs-view ,view-variable))
             (,analyzer-variable (base:analyzer ,climacs-view-variable))
             (,cache-variable (ip:cache ,analyzer-variable)))

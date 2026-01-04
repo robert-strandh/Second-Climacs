@@ -7,6 +7,7 @@
    (#:edit        #:text.editing)
    (#:edit.search #:text.editing.search)
    (#:tbl         #:esclados-command-table-manipulation)
+   (#:frame       #:esclados-frame)
 
    (#:base        #:second-climacs-base)
    (#:cl-syntax   #:second-climacs-syntax-common-lisp)

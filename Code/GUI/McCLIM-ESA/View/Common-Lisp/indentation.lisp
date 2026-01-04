@@ -3,7 +3,7 @@
 (clim:define-command
     (com-indent-line :name t :command-table common-lisp-table)
     ()
-  (let* ((view (clim:stream-default-view (esa:current-window)))
+  (let* ((view (clim:stream-default-view (frame:current-window)))
          (climacs-view (clim-base:climacs-view view))
          (analyzer (base:analyzer climacs-view))
          (cache (ip:cache analyzer)))

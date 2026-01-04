@@ -12,12 +12,12 @@
    :incremental-redisplay t))
 
 (defun display-info (frame info-pane)
-  (let* ((pane (esa:esa-current-window frame))
+  (let* ((pane (frame:present-window frame))
          (clim-view (clim:stream-default-view pane))
          (climacs-view (climacs-view clim-view)))
     (format info-pane
             " ~a (~a)"
-            (esa-utils:name (esa:current-buffer))
+            (utils:name (frame:current-buffer))
             (base:view-name climacs-view))))
 
 (defparameter *minibuffer-pane-text-style*
@@ -68,7 +68,7 @@
 ;;; case we move the cursor.
 (defclass hrack-pane (clim:hrack-pane) ())
 
-(clim:define-application-frame climacs (esa:esa-frame-mixin
+(clim:define-application-frame climacs (frame:frame-mixin
                                         clim:standard-application-frame
                                         base:application)
   ()
@@ -76,7 +76,7 @@
   (:panes
    (window
     (let ((buffer (base::make-empty-standard-buffer)))
-      (setf (esa-buffer:filepath buffer) (first (directory ".")))
+      (setf (buf:filepath buffer) (first (directory ".")))
       (let* ((gutter (make-gutter-pane))
              (my-pane (make-climacs-pane gutter))
              (my-info-pane (clim:make-pane 'info-pane
@@ -85,11 +85,7 @@
              (view (make-instance 'cl-syntax:view :buffer buffer)))
         (setf (clim:stream-recording-p my-pane) nil)
         (setf (clim:stream-end-of-line-action my-pane) :allow)
-        ;; Unfortunately, the ESA top-level accesses the slot
-        ;; named WINDOWS directly (using WITH-SLOTS) rather than
-        ;; using the accessor, so we must initialize this slot
-        ;; by using the slot writer provided by ESA.
-        (setf (esa:windows clim:*application-frame*) (list my-pane))
+        (setf (frame:windows clim:*application-frame*) (list my-pane))
         (attach-view my-pane view)
         (clim:vertically ()
           (clim:scrolling (:height 700)
@@ -101,11 +97,11 @@
    (default (clim:vertically ()
               window
               minibuffer)))
-  (:top-level (esa:esa-top-level)))
+  (:top-level (top:top-level)))
 
 (defmethod clim:note-sheet-transformation-changed :after
     ((pane hrack-pane))
-  (let ((pane (esa:current-window)))
+  (let ((pane (frame:current-window)))
     (move-cursor-to-viewport pane)))
 
 (defmethod clim:adopt-frame :after (frame-manager (frame climacs))
@@ -115,14 +111,14 @@
     (push (climacs-view clim-view)
           (base:views frame))))
 
-(defmethod esa:windows ((esa climacs))
-  (loop for view in (base:views esa)
+(defmethod frame:windows ((frame climacs))
+  (loop for view in (base:views frame)
         for window = (base:window view)
         unless (null window)
           collect window))
 
-(defmethod esa:buffers ((esa climacs))
-  (remove-duplicates (loop for view in (base:views esa)
+(defmethod frame:buffers ((frame climacs))
+  (remove-duplicates (loop for view in (base:views frame)
                            for analyzer = (base:analyzer view)
                            collect (base:buffer analyzer))
                      :test #'eq))
@@ -153,7 +149,7 @@
       (progn
         (call-next-method)
         ;; This is probably wrong.  All windows may be concerned.
-        (let ((pane (esa:current-window)))
+        (let ((pane (frame:current-window)))
           (move-viewport-to-cursor pane)))
     ((or cluffer:cluffer-error
          text.editing:editing-condition
@@ -161,8 +157,8 @@
         (condition)
       (mini:display-message "~a" condition))))
 
-(defmethod esa:find-applicable-command-table ((frame climacs))
-  (let* ((pane (esa:esa-current-window frame))
+(defmethod frame:find-applicable-command-table ((frame climacs))
+  (let* ((pane (frame:present-window frame))
          (climacs-clim-view (clim:stream-default-view pane))
          (climacs-view (climacs-view climacs-clim-view)))
     (command-table climacs-view)))
@@ -170,12 +166,12 @@
 (defmethod clim:frame-exit :around ((frame climacs))
   (with-current-cursor (cursor)
     (let ((buffer (cluffer:buffer cursor)))
-      (when (and (esa-buffer:needs-saving buffer)
+      (when (and (buf:needs-saving buffer)
                  (handler-case
                      (clim:accept 'boolean
                                   :prompt (format nil "Save buffer?"))
                    (error () (progn (clim:beep)
                                     (mini:display-message "Invalid answer")
                                     (return-from clim:frame-exit nil)))))
-        (esa-io:save-buffer buffer))))
+        (io:save-buffer buffer))))
   (call-next-method))

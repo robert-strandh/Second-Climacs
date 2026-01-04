@@ -1,9 +1,7 @@
 (defsystem "second-climacs-base"
   :depends-on ("cluffer"
 
-               "text.editing"
-
-               "esa-mcclim")
+               "text.editing")
   :serial t
   :components ((:file "packages")
                (:file "buffer")

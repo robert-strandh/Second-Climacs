@@ -13,6 +13,12 @@
    (#:key                #:esclados-standard-key-bindings)
    (#:tbl                #:esclados-command-table-manipulation)
    (#:mini               #:esclados-minibuffer)
+   (#:frame              #:esclados-frame)
+   (#:pane               #:esclados-pane)
+   (#:top                #:esclados-top-level)
+   (#:buf                #:esclados-buffer)
+   (#:io                 #:esclados-io)
+   (#:utils              #:esclados-utils)
 
    (#:base               #:second-climacs-base)
    (#:fundamental-syntax #:second-climacs-syntax-fundamental)

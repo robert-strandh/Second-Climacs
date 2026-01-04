@@ -3,7 +3,7 @@
 (defparameter *default-text-style*
   (clim:make-text-style :fix :roman 14))
 
-(defclass text-pane (esa:esa-pane-mixin
+(defclass text-pane (pane:pane-mixin
                      clim:application-pane)
   ((%left-gutter :initarg :left-gutter :reader left-gutter))
   (:default-initargs
