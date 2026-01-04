@@ -10,6 +10,8 @@
    (#:edit.exp           #:text.editing.expression)
    (#:ip                 #:incrementalist)
    (#:info               #:esclados-info-pane)
+   (#:key                #:esclados-standard-key-bindings)
+   (#:tbl                #:esclados-command-table-manipulation)
 
    (#:base               #:second-climacs-base)
    (#:fundamental-syntax #:second-climacs-syntax-fundamental)
