@@ -23,7 +23,7 @@
 (defparameter *minibuffer-pane-text-style*
   (clim:make-text-style :fix :roman 14))
 
-(defclass minibuffer-pane (esa:minibuffer-pane)
+(defclass minibuffer-pane (mini:minibuffer-pane)
   ()
   (:default-initargs
    :text-style *minibuffer-pane-text-style*
