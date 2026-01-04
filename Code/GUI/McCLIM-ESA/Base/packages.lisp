@@ -12,6 +12,7 @@
    (#:info               #:esclados-info-pane)
    (#:key                #:esclados-standard-key-bindings)
    (#:tbl                #:esclados-command-table-manipulation)
+   (#:mini               #:esclados-minibuffer)
 
    (#:base               #:second-climacs-base)
    (#:fundamental-syntax #:second-climacs-syntax-fundamental)
