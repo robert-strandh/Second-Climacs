@@ -159,7 +159,7 @@
          text.editing:editing-condition
          base:climacs-error)
         (condition)
-      (esa:display-message "~a" condition))))
+      (mini:display-message "~a" condition))))
 
 (defmethod esa:find-applicable-command-table ((frame climacs))
   (let* ((pane (esa:esa-current-window frame))
@@ -175,7 +175,7 @@
                      (clim:accept 'boolean
                                   :prompt (format nil "Save buffer?"))
                    (error () (progn (clim:beep)
-                                    (esa:display-message "Invalid answer")
+                                    (mini:display-message "Invalid answer")
                                     (return-from clim:frame-exit nil)))))
         (esa-io:save-buffer buffer))))
   (call-next-method))

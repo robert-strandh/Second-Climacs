@@ -13,11 +13,11 @@
 
 (define-search-command com-search-forward ((string 'string))
   (unless (edit:perform buffer 'edit.search:search string :forward) ; TODO case mode etc
-    (esa:display-message "No match")))
+    (mini:display-message "No match")))
 
 (define-search-command com-search-backward ((string 'string))
   (unless (edit:perform buffer 'edit.search:search string :backward)
-    (esa:display-message "No match")))
+    (mini:display-message "No match")))
 
 ;;; Incremental search
 
@@ -53,8 +53,8 @@
 (bind-key 'incremental-search-table '(#\c :control) 'com-abort-incremental-search) ; TODO C-g doesn't work
 
 (defun update-for-search (buffer &key comment)
-  (esa:display-message (edit.search:description
-                        buffer :comment comment)))
+  (mini:display-message (edit.search:description
+                         buffer :comment comment)))
 
 (define-incremental-search-command (com-incremental-search-set-case-mode
                                     :name "Set Case Mode")
