@@ -1,7 +1,8 @@
 (defsystem "second-climacs-clim-common-lisp-view"
   :depends-on ("second-climacs-clim-base"
                "second-climacs-syntax-common-lisp"
-               "stealth-mixin")
+               "stealth-mixin"
+               "esclados-command-table-manipulation")
   :serial t
   :components ((:file "packages")
                (:file "utilities")

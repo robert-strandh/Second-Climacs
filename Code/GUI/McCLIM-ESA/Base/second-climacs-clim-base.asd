@@ -4,7 +4,9 @@
                "clouseau"
                "stealth-mixin"
                "second-climacs-syntax-fundamental"
-               "second-climacs-syntax-common-lisp")
+               "second-climacs-syntax-common-lisp"
+               "esclados-standard-key-bindings"
+               "esclados-command-table-manipulation")
   :serial t
   :components ((:file "packages")
                (:file "climacs-clim-view")
