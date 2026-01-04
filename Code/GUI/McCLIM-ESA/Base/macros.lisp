@@ -17,7 +17,7 @@
 
 (defun bind-key (table key command-name &rest command-arguments)
   (let ((command `(,command-name ,@command-arguments)))
-    (esa:set-key command table (list key))))
+    (tbl:set-key command table (list key))))
 
 (defmacro define-buffer-command ((function-name command-table &key (name t))
                                  (&rest extra-parameters)

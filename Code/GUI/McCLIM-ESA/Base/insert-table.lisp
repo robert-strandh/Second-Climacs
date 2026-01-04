@@ -33,5 +33,5 @@
     (with-open-file (stream filepath :direction :input)
       (base:fill-buffer-from-stream cursor stream))))
 
-(esa:set-key `(com-insert-file ,clim:*unsupplied-argument-marker*)
+(tbl:set-key `(com-insert-file ,clim:*unsupplied-argument-marker*)
              'ascii-insert-table '((#\x :control) (#\i)))

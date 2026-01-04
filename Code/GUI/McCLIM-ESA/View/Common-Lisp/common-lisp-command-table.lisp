@@ -16,7 +16,7 @@
          (view     (clim-base::current-view))
          (analyzer (base:analyzer view)))
     (edit:perform buffer 'cl-syntax:fill-paragraph analyzer)))
-(esa:set-key `(com-fill-paragraph) 'common-lisp-table '((#\q :meta)))
+(tbl:set-key `(com-fill-paragraph) 'common-lisp-table '((#\q :meta)))
 
 (clim:define-command
     (com-print-wad-tree :name t :command-table common-lisp-table)
@@ -28,6 +28,6 @@
       (if (null wad)
           (format *trace-output* "--no wads--~%")
           (cl-syntax:print-wad-tree wad *trace-output*)))))
-(esa:set-key `(com-print-wad-tree)
+(tbl:set-key `(com-print-wad-tree)
              'common-lisp-table
              '((#\w :meta :control)))

@@ -57,7 +57,7 @@
 
 (define-motion-command com-exchange-cursor-and-mark ()
   (edit:perform buffer 'edit:exchange-point-and-mark))
-(esa:set-key `(com-exchange-cursor-and-mark)
+(tbl:set-key `(com-exchange-cursor-and-mark)
              'motion-table
              '((#\x :control) (#\x :control)))
 

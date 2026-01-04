@@ -11,4 +11,4 @@
     (clim-base:with-current-cursor (cursor)
       (cl-syntax:indent-line cache cursor))))
 
-(esa:set-key `(com-indent-line) 'common-lisp-table '((#\i :control)))
+(tbl:set-key `(com-indent-line) 'common-lisp-table '((#\i :control)))
